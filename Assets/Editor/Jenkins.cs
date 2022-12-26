@@ -14,10 +14,10 @@ public class Jenkins
     static void PerformBuild()
     {
 
-        string target_filename = "/Build/" + APP_NAME + ".exe";
+        string target_filename = "/Build/" + APP_NAME + ".apk";
         SCENES = FindEnabledEditorScenes();
 
-        GenericBuild(SCENES, target_filename, BuildTarget.StandaloneWindows64, BuildOptions.None);
+        GenericBuild(SCENES, target_filename, BuildTarget.Android, BuildOptions.None);
     }
     private static string[] FindEnabledEditorScenes()
     {
