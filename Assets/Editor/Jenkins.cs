@@ -5,6 +5,9 @@ using UnityEditor;
 using System.IO;
 using System;
 
+delegate void DTestBuild();
+delegate void DOnTouch();
+
 public class Jenkins
 {
     static string[] SCENES = FindEnabledEditorScenes();
@@ -27,6 +30,7 @@ public class Jenkins
             if (!scene.enabled) continue;
             EditorScenes.Add(scene.path);
         }
+
         return EditorScenes.ToArray();
     }
 
