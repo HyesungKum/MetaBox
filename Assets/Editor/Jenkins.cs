@@ -36,6 +36,9 @@ public class Jenkins
 
     static void GenericBuild(string[] scenes, string target_filename, BuildTarget build_target, BuildOptions build_options)
     {
+        if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android)
+            EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
+
         BuildPipeline.BuildPlayer(scenes, Directory.GetCurrentDirectory() + target_filename, build_target, build_options);
     }
 }
