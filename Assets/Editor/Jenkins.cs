@@ -6,9 +6,6 @@ using System.IO;
 using System;
 using PlasticGui.WorkspaceWindow.ExternalTools;
 
-delegate void DTestBuild();
-delegate void DOnTouch();
-
 public class Jenkins
 {
     static string[] SCENES = FindEnabledEditorScenes();
@@ -38,8 +35,6 @@ public class Jenkins
     {
         if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android)
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
-
-        
 
         BuildPipeline.BuildPlayer(scenes, Directory.GetCurrentDirectory() + target_filename, build_target, build_options);
     }
