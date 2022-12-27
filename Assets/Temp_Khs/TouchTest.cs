@@ -15,6 +15,10 @@ public class TouchTest : MonoBehaviour
                 Debug.Log("hi");
                 touches[i] = Input.GetTouch(i);
             }
-        }  
+        }
+
+        Debug.Log(touches[0].fingerId);
+        Debug.Log(touches[0].rawPosition);
+        Debug.Log(touches[0].position);
     }
 }
