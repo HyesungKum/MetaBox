@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,25 +12,40 @@ public class Back : MonoBehaviour
 
     private void Awake()
     {
-        backButton.onClick.AddListener(() => moveScene(mainPackName));
-        backButton.onClick.AddListener(() => AppQuit());
+        backButton.onClick.AddListener(() => MoveScene(mainPackName));
+
+        //=================screen setting==================
+
+        Screen.SetResolution(1920, 1080, true);
+
+        Screen.autorotateToPortrait = true;
+        Screen.autorotateToPortraitUpsideDown = true;
+        Screen.autorotateToLandscapeLeft = true;
+        Screen.autorotateToLandscapeRight = true;
+
     }
 
-    void moveScene(string pakageName)
+    void MoveScene(string pakageName)
     {
-        AndroidJavaClass jc = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+        AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
 
-        AndroidJavaObject jo = jc.GetStatic<AndroidJavaObject>("currentActivity");
+        AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
 
-        AndroidJavaObject pm = jo.Call<AndroidJavaObject>("getPackageManager");
+        AndroidJavaObject packageManager = currentActivity.Call<AndroidJavaObject>("getPackageManager");
 
-        AndroidJavaObject intent = pm.Call<AndroidJavaObject>("getLaunchIntentForPackage", pakageName);
+        AndroidJavaObject intent = null;
 
-        jo.Call("startActivity", intent);
-    }
+        try
+        {
+            intent = packageManager.Call<AndroidJavaObject>("getLaunchIntentForPackage", pakageName);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("exception" + ex.Message);
+        }
 
-    void AppQuit()
-    {
+        currentActivity.Call("startActivity", intent);
+
         Application.Quit();
     }
 }
