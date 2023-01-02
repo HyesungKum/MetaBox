@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using KumTool.AppTransition;
 
 public class Back : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class Back : MonoBehaviour
 
     private void Awake()
     {
-        backButton.onClick.AddListener(() => MoveScene(mainPackName));
+        backButton.onClick.AddListener(() => AppTrans.MoveScene(mainPackName));
 
         //=================screen setting==================
 
@@ -25,27 +26,5 @@ public class Back : MonoBehaviour
 
     }
 
-    void MoveScene(string pakageName)
-    {
-        AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-
-        AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-
-        AndroidJavaObject packageManager = currentActivity.Call<AndroidJavaObject>("getPackageManager");
-
-        AndroidJavaObject intent = null;
-
-        try
-        {
-            intent = packageManager.Call<AndroidJavaObject>("getLaunchIntentForPackage", pakageName);
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError("exception" + ex.Message);
-        }
-
-        currentActivity.Call("startActivity", intent);
-
-        Application.Quit();
-    }
+    
 }
