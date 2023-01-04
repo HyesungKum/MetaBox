@@ -1,2 +1,0 @@
-# MetaBox
-TockTockBox Game Project
