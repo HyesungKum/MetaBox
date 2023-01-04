@@ -35,7 +35,7 @@ public class Farm : MonoBehaviour
         UIManager.Instance.AnimalNumber = animalNumber;
         for (int i = 0; i < animalNumber; i++)
         {
-            Animal animal = Instantiate<Animal>(animalPref, new Vector3(Random.Range(-8f, 8f), Random.Range(-3.5f, 2f), 0), Quaternion.identity, this.transform);
+            Animal animal = Instantiate<Animal>(animalPref, new Vector3(Random.Range(-5f, 8f), Random.Range(-4f, 3f), 0), Quaternion.identity, this.transform);
             animal.RunAwayRange = runAwayRange;
         }
     }

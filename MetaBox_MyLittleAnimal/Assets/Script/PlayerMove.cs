@@ -28,6 +28,7 @@ public class PlayerMove : MonoBehaviour
             //transform.position = Vector3.SmoothDamp(transform.position, movepoint, ref speed, 0.1f);
 
             if (transform.position.Equals(movepoint)) yield break;
+            if (Time.timeScale == 0) yield break;
             yield return null;
         }
     }

@@ -9,20 +9,19 @@ public class Animal : MonoBehaviour
     float speed;
     public float RunAwayRange { get; set; }
 
-    PlayerMove[] players = null;
+    PlayerMove player = null;
     WaitForSeconds wait2 = null;
     WaitUntil GameStart = null;
     WaitUntil runAway1 = null;
-    WaitUntil runAway2 = null;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        players = FindObjectsOfType<PlayerMove>();
+        player = FindObjectOfType<PlayerMove>();
         wait2 = new WaitForSeconds(2f);
         GameStart = new WaitUntil(() => GameManager.Instance.isGaming);
-        runAway1 = new WaitUntil(() => Mathf.Abs((players[0].transform.position - this.transform.position).magnitude) <= RunAwayRange);
-        runAway2 = new WaitUntil(() => Mathf.Abs((players[1].transform.position - this.transform.position).magnitude) <= RunAwayRange);
+        runAway1 = new WaitUntil(() => Mathf.Abs((player.transform.position - this.transform.position).magnitude) <= RunAwayRange);
 
         arrest = false;
         dir = new Vector3(Random.Range(-1f, 1f), Random.Range(-0.4f, 1f), 0);
@@ -30,8 +29,7 @@ public class Animal : MonoBehaviour
         
         StartCoroutine(nameof(RandomDir));
         StartCoroutine(nameof(RandomMove));
-        StartCoroutine(nameof(RunAwayMode1));
-        StartCoroutine(nameof(RunAwayMode2));
+        StartCoroutine(nameof(RunAwayMode));
     }
     
     IEnumerator RandomDir()
@@ -54,21 +52,12 @@ public class Animal : MonoBehaviour
         }
     }
 
-    IEnumerator RunAwayMode1()
+    IEnumerator RunAwayMode()
     {
         while (arrest == false)
         {
             yield return runAway1;
-            dir = (this.transform.position - players[0].transform.position).normalized;
-        }
-    }
-
-    IEnumerator RunAwayMode2()
-    {
-        while (arrest == false)
-        {
-            yield return runAway2;
-            dir = (this.transform.position - players[1].transform.position).normalized;
+            dir = (this.transform.position - player.transform.position).normalized;
         }
     }
 

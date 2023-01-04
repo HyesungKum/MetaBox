@@ -27,7 +27,8 @@ public class UIManager : MonoBehaviour
     }
 
     [SerializeField] Button reStart = null;
-
+    [SerializeField] Button pause = null;
+    [SerializeField] ScrollRect wantedList = null;
     [SerializeField] TextMeshProUGUI gameStartText = null;
     [SerializeField] TextMeshProUGUI timer = null;
     [SerializeField] TextMeshProUGUI catchCount = null;
@@ -44,14 +45,24 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         reStart.onClick.AddListener(() => SceneManager.LoadScene(0));
+        pause.onClick.AddListener(OnClick_Pause);
         waitHalf = new WaitForSeconds(0.5f);
         wait1 = new WaitForSeconds(1f);
         reStart.gameObject.SetActive(false);
+        pause.gameObject.SetActive(false);
+        wantedList.gameObject.SetActive(false);
         gameStartText.gameObject.SetActive(false);
         timer.gameObject.SetActive(false);
         catchCount.gameObject.SetActive(false);
     }
 
+    void OnClick_Pause()
+    {
+        if (Time.timeScale == 0) Time.timeScale = 1f;
+        else Time.timeScale = 0f;
+
+        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+    }
     public void RunStartText()
     {
         GameManager.Instance.GameSetting();
@@ -92,6 +103,8 @@ public class UIManager : MonoBehaviour
 
     IEnumerator _RunTimer()
     {
+        pause.gameObject.SetActive(true);
+        wantedList.gameObject.SetActive(true);
         timer.gameObject.SetActive(true);
         catchCount.gameObject.SetActive(true);
         catchCount.text = $"{catchNumber} / {AnimalNumber}";
