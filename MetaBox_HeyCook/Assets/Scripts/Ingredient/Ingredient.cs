@@ -10,7 +10,6 @@ public enum TrimType
     Slicing,
     Max
 }
-
 public enum CookType
 {
     Pressing,
@@ -66,6 +65,11 @@ public class Ingredient : MonoBehaviour
 
     private void Update()
     {
+        if (Rigidbody2D.velocity.magnitude < 1f )
+        {
+            Rigidbody2D.velocity = Vector2.zero;
+        }
+
         TrimCollCtl();
         CookCollCtl();
     }

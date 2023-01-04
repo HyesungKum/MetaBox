@@ -7,15 +7,16 @@ public class CookTable : MonoBehaviour
 {
     //================ObjectReferance=======================
     [Header("All Recipe List")]
-    [SerializeField] List<RecipeData> RecipeList = null; //할 수 있는 요리 리스트
+    [SerializeField] List<RecipeData> RecipeList = new(); //할 수 있는 요리 리스트
 
     [Header("Require Recipe data")]
-    [SerializeField] RecipeData requireRecipe = null; //해야하는 있는 요리
-    [SerializeField] List<IngredData> curNeedIngred = null; //지금 넣어야하는 재료 리스트
+    [SerializeField] Customer customer = null;
+    [SerializeField] RecipeData requireRecipe = null; //해야하는 요리
+    [SerializeField] List<IngredData> curNeedIngred = new(); //지금 넣어야하는 재료 리스트
 
     [Header("current ingred in pot")]
-    [SerializeField] Ingredient tempIngred = null; //방금 집어넣은 음식
-    [SerializeField] Ingredient rawFood = null;//보여지는 익히기전 음식
+    [SerializeField] Ingredient tempIngred = null;
+    [SerializeField] Ingredient rawFood = null;
 
     //===================component======================================
     private SpriteRenderer spriteRenderer = null;
@@ -45,7 +46,7 @@ public class CookTable : MonoBehaviour
         tableRoundX = Mathf.Round(this.transform.position.x * 10f) / 10f;
         tableRoundY = Mathf.Round(this.transform.position.y * 10f) / 10f;
 
-        tablePos = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z + 1f);
+        tablePos = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z + 3f);
 
         sliderPos = cookSliderObj.transform.position;
         //
@@ -53,15 +54,34 @@ public class CookTable : MonoBehaviour
 
         //
         spriteRenderer = GetComponent<SpriteRenderer>();
-
-        //
-        PickRecipe();
+        
+        //delegate chain
+        EventReciver.NewCostomer += BringRecipe;
     }
 
     void Update()
     {
         TargetMove();
         Cooking();
+    }
+
+    /// <summary>
+    /// bringing recipe by ref customer
+    /// check ingredients about target recipe
+    /// </summary>
+    void BringRecipe()
+    {
+        requireRecipe = customer.requireRecipe;
+
+        if (curNeedIngred.Count >= 0)
+        {
+            curNeedIngred.Clear();
+        }
+
+        for (int i = 0; i < requireRecipe.needIngred.Length; i++)
+        {
+            curNeedIngred.Add(requireRecipe.needIngred[i]);
+        }
     }
     void TargetMove()
     {
@@ -82,7 +102,7 @@ public class CookTable : MonoBehaviour
                 RecipeCheck();
             }
     
-            targetTr.position = Vector3.Lerp(targetTr.position, tablePos, Time.deltaTime * 3f);
+            targetTr.position = Vector3.Lerp(targetTr.position, tablePos, Time.deltaTime * 10f);
         }
     }
     void RecipeCheck()
@@ -118,7 +138,7 @@ public class CookTable : MonoBehaviour
                     //cooktable setting
                     nowCooking = true;
                     cookSliderObj.SetActive(true);
-                    cookSliderObj.transform.position = Camera.main.WorldToScreenPoint(tablePos + Vector3.up * 2f);
+                    cookSliderObj.transform.position = Camera.main.WorldToScreenPoint(tablePos + Vector3.up * 3f);
 
                     return;
                 }
@@ -132,17 +152,6 @@ public class CookTable : MonoBehaviour
         Destroy(tempIngred.gameObject);
         tempIngred = null;
     }
-    void PickRecipe()
-    {
-        int index = Random.Range(0, RecipeList.Count);
-        requireRecipe = RecipeList[index];
-
-        //ingredient list
-        for (int i = 0; i < requireRecipe.needIngred.Length; i++)
-        {
-            curNeedIngred.Add(requireRecipe.needIngred[i]);
-        }
-    }
     void Cooking()
     {
         if (!nowCooking || rawFood == null) return;
@@ -152,7 +161,6 @@ public class CookTable : MonoBehaviour
             rawFood = null;
             nowCooking = false;
             cookSliderObj.SetActive(false);
-            PickRecipe();
         }
     }
 

@@ -95,7 +95,7 @@ public class TrimTable : MonoBehaviour
                 trimSliderObj.transform.position = Camera.main.WorldToScreenPoint( tablePos + Vector3.up * 2f);
             }
 
-            targetTr.position = Vector3.Lerp(targetTr.position, tablePos, Time.deltaTime * 3f);
+            targetTr.position = Vector3.Lerp(targetTr.position, tablePos, Time.deltaTime * 10f);
         }
     }
 
@@ -142,7 +142,6 @@ public class TrimTable : MonoBehaviour
             }
         }
     }
-
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag(nameof(Ingredient)))
