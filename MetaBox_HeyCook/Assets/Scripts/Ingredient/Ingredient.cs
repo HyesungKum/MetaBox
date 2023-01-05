@@ -65,11 +65,6 @@ public class Ingredient : MonoBehaviour
 
     private void Update()
     {
-        if (Rigidbody2D.velocity.magnitude < 1f )
-        {
-            Rigidbody2D.velocity = Vector2.zero;
-        }
-
         TrimCollCtl();
         CookCollCtl();
     }
@@ -102,7 +97,7 @@ public class Ingredient : MonoBehaviour
         IsCookReady = false;
         IsCooked = false;
     }
-    
+
     /// <summary>
     /// movable collider controll when triming
     /// </summary>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using KumTool.AppTransition;
+using ToolKum.AppTransition;
 
 public class StartManager : MonoBehaviour
 {
@@ -55,7 +55,7 @@ public class StartManager : MonoBehaviour
 
     void SceneMove(int level)
     {
-        SceneManager.LoadScene("2. MainScene");
+        SceneManager.LoadScene(SceneName.Main);
     }
 
     void ShowOption()

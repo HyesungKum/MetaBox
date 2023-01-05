@@ -93,6 +93,7 @@ public class TrimTable : MonoBehaviour
 
                 trimSliderObj.SetActive(true);
                 trimSliderObj.transform.position = Camera.main.WorldToScreenPoint( tablePos + Vector3.up * 2f);
+                trimSlider.value = 0;
             }
 
             targetTr.position = Vector3.Lerp(targetTr.position, tablePos, Time.deltaTime * 10f);
@@ -138,6 +139,11 @@ public class TrimTable : MonoBehaviour
 
             if (contactIngred != tempIngred)
             {
+                if (trimSliderObj.activeSelf)
+                {
+                    trimSliderObj.SetActive(false);
+                }
+
                 targetIngred = contactIngred;
             }
         }

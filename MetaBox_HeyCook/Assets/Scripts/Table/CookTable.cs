@@ -140,6 +140,8 @@ public class CookTable : MonoBehaviour
                     cookSliderObj.SetActive(true);
                     cookSliderObj.transform.position = Camera.main.WorldToScreenPoint(tablePos + Vector3.up * 3f);
 
+                    cookSlider.value = 0;
+
                     return;
                 }
             }
@@ -203,6 +205,11 @@ public class CookTable : MonoBehaviour
 
             if ( contactIngred!= null && contactIngred.IsTrimed)
             {
+                if (cookSliderObj.activeSelf)
+                {
+                    cookSliderObj.SetActive(false);
+                }
+
                 tempIngred = contactIngred;
             }
         }

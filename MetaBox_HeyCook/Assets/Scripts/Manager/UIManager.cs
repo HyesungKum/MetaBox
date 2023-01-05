@@ -7,29 +7,33 @@ using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    //=================button=====================
-    [SerializeField] Button backButton;
-
-    //=================viewing ui=================
+    //================in game ui===================
+    [Header("In Game UI")]
     [SerializeField] TextMeshProUGUI Timer;
     [SerializeField] TextMeshProUGUI Score;
-    [SerializeField] GameObject gameOverObj;
+
+    [SerializeField] GameObject inGameUIObj;
+
+    [SerializeField] Button ExitButton;
+
+
+    //=================end game ui=================
+    [Header("End Game UI")]
+    [SerializeField] GameObject gameOverUIObj;
+
+    [SerializeField] Button RestartButton;
+    [SerializeField] Button EndExitButton;
 
     private void Awake()
     {
-        gameOverObj = GameObject.Find("GameOverText");
-
         //add button listener
-        backButton.onClick.AddListener(()=>SceneMove());
+        ExitButton.onClick.AddListener(()=>SceneMove(SceneName.Start));
+        RestartButton.onClick.AddListener(()=>SceneMove(SceneName.Main));
+        EndExitButton.onClick.AddListener(()=>SceneMove(SceneName.Start));
 
         //delegate chain
         EventReciver.ScoreModi += UIScoreModi;
         EventReciver.GameOver += UIGameOver;
-    }
-
-    private void Start()
-    {
-        gameOverObj.SetActive(false);
     }
 
     private void Update()
@@ -39,18 +43,20 @@ public class UIManager : MonoBehaviour
 
     private void OnDisable()
     {
-
         EventReciver.ScoreModi -= UIScoreModi;
         EventReciver.GameOver -= UIGameOver;
     }
 
-    void SceneMove()
+    void SceneMove(string sceneName)
     {
-        SceneManager.LoadScene("1. StartScene");
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(sceneName);
     }
+
     void UIGameOver()
     {
-        gameOverObj.SetActive(true);
+        inGameUIObj.SetActive(false);
+        gameOverUIObj.SetActive(true);
     }
 
     void UIScoreModi(int value)

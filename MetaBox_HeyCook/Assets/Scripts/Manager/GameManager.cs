@@ -20,6 +20,8 @@ public class GameManager : MonoSingleTon<GameManager>
 
     private void Awake()
     {
+        Application.targetFrameRate = 300;
+
         //initializing
         IsGameOver = false;
 
@@ -30,18 +32,6 @@ public class GameManager : MonoSingleTon<GameManager>
     private void Update()
     {
         TimeUpdate();
-
-        if (GameManager.Inst.IsGameOver)
-        {
-            if (Input.touchCount > 0)
-            {
-                if (Input.GetTouch(0).phase == TouchPhase.Ended)
-                {
-                    Time.timeScale = 1f;
-                    SceneManager.LoadScene("2. MainScene");
-                }
-            }
-        }
     }
 
     private void OnDisable()
@@ -52,6 +42,8 @@ public class GameManager : MonoSingleTon<GameManager>
 
     void TimeUpdate()
     {
+        if (IsGameOver) return;
+
         SecCount += Time.deltaTime;
 
         if (SecCount <= 1f) return;

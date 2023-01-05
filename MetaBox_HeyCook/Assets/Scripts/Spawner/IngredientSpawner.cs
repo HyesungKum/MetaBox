@@ -4,17 +4,20 @@ using UnityEngine;
 
 public class IngredientSpawner : MonoBehaviour
 {
-    [SerializeField] CountingZone CountingZone;
-
+    //===============table data========================
+    [Header("Spawn Data Table")]
     public SpawnTableData[] TableData;
-    public List<GameObject> SpawnTable = new List<GameObject>();
+    public List<GameObject> SpawnTable = new();
 
+    //================moving belt=======================
+    [Header("Ref Up Belt Scroll")]
+    [SerializeField] BeltZone BeltZone;
+
+    public int maxSpawn = 3;
     public float spawnTime = 1f;
 
-    [field:SerializeField] int Level = 0;
-
+    //================inner variables===================
     private float timer = 0f;
-    
     
     private void Awake()
     {
@@ -33,29 +36,27 @@ public class IngredientSpawner : MonoBehaviour
 
     private void Update()
     {
-        SpawnIngredient();
+        TimingSpawn();
     }
 
-    private void SpawnIngredient()
+    private void TimingSpawn()
     {
         timer += Time.deltaTime;
 
-        if (CountingZone.Counting < 3 && timer > spawnTime)
+        if (BeltZone.BeltIngred.Count < maxSpawn && timer > spawnTime)
         {
             Spawn();
             timer = 0f;
         }
     }
-
     private void Spawn()
     {
         int index = Random.Range(0, SpawnTable.Count);
 
-        GameObject instObj = Instantiate(SpawnTable[index],this.transform.position, Quaternion.identity);
-        instObj.GetComponent<Rigidbody2D>().AddForce(Vector3.up * 2f,ForceMode2D.Impulse);
-
+        Instantiate(SpawnTable[index],this.transform.position, Quaternion.identity);
     }
 
+    #region gizmo
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
@@ -63,4 +64,5 @@ public class IngredientSpawner : MonoBehaviour
         Gizmos.DrawCube(this.transform.position, this.transform.localScale);
     }
 #endif
+    #endregion
 }
