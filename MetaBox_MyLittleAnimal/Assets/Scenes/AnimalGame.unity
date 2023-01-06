@@ -453,8 +453,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 774692730}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &108305454
 MonoBehaviour:
@@ -1277,7 +1277,7 @@ GameObject:
   - component: {fileID: 774692732}
   - component: {fileID: 774692731}
   m_Layer: 0
-  m_Name: MainObjects
+  m_Name: Thieves
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1294,8 +1294,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 108305453}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1567,7 +1566,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f62eed509ef74646baad7eb8d0bcd07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainObjects: {fileID: 774692729}
+  thieves: {fileID: 0}
+  dd: 000000000000000000000000
 --- !u!1 &837466416
 GameObject:
   m_ObjectHideFlags: 0
@@ -3219,7 +3219,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1525694519
 RectTransform:
   m_ObjectHideFlags: 0

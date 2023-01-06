@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class GameManager : MonoBehaviour
 {
     static private GameManager instance;
@@ -22,10 +21,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    [SerializeField] GameObject mainObjects = null;
-    public int Level { get; set; }
+    [SerializeField] GameObject thieves = null;
+
+    public int Level { get; private set; }
+    public int[] dd = new int[3];
     public bool isGaming { get; set; } = false;
 
+    private void Start()
+    {
+        thieves.SetActive(false);
+    }
     public void LevelSetting(int level)
     {
         Level = level;
@@ -35,7 +40,7 @@ public class GameManager : MonoBehaviour
 
     public void GameSetting()
     {
-        mainObjects.SetActive(true);
+        thieves.SetActive(true);
     }
     public void GameStart()
     {
