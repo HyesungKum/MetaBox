@@ -16,7 +16,7 @@ public class MonoSingleTon<T> : MonoBehaviour where T : MonoBehaviour
 
                 if (instance == null)
                 {
-                    GameObject instObj = new(nameof(T), typeof(T));
+                    GameObject instObj = new(typeof(T).ToString(), typeof(T));
                     instance = instObj.GetComponent<T>();
                 }
             }

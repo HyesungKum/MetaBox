@@ -129,7 +129,7 @@ public class CookTable : MonoBehaviour
                     cookingIngred.Initializing();
                     
                     rawFood = tempIngred;
-                    rawFood.gameObject.transform.position = tablePos + (Vector3.back * 2f);
+                    rawFood.gameObject.transform.position = tablePos + (Vector3.back * 3f);
                     rawFood.IsCookReady = true;
                     rawFood.gameObject.name = rawFood.RecipeData.recipeName;
                     

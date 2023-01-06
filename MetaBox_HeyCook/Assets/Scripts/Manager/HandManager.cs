@@ -6,24 +6,44 @@ using UnityEngine;
 
 public class HandManager : MonoBehaviour
 {
+    [SerializeField] Camera mainCam;
     [SerializeField] GameObject TouchVfx = null;
 
     Touch[] touches = new Touch[10];
 
-    int count = 0;
+    //========================settings========================
+
+    [Header("hand Setting")]
+    [SerializeField] bool InGame = false;
 
     private void Update()
     {
-        if (GameManager.Inst.IsGameOver) return;
-
         if (Input.touchCount <= 0) return;
-        count = Input.touchCount;
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+        TouchVfxOut();
+
+        if (!InGame || GameManager.Inst.IsGameOver) return;
+        
+        Ray ray = mainCam.ScreenPointToRay(Input.GetTouch(0).position);
         RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, float.MaxValue);
 
         IngredMove(ray, hit);
         TableControll(hit);
+    }
+
+    void TouchVfxOut()
+    {
+        for (int i = 0; i < Input.touchCount; i++)
+        {
+            touches[i] = Input.GetTouch(i);
+
+            if (touches[i].phase == TouchPhase.Began)
+            {
+                GameObject instVfx = PoolCp.Inst.BringObjectCp(TouchVfx);
+
+                instVfx.transform.position = mainCam.ScreenToWorldPoint(Input.GetTouch(0).position) + Vector3.forward;
+            }
+        }
     }
 
     public void IngredMove(Ray ray, RaycastHit2D hit)
