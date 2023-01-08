@@ -14,17 +14,29 @@ public class Node
 
 public class DrawLogic : MonoBehaviour
 {
-    [SerializeField] Transform[] ObjOne = new Transform[0];
-    [SerializeField] Transform[] ObjTwo = new Transform[0];
-    [SerializeField] Transform[] ObjThree = new Transform[0];
+    [SerializeField] GameObject linePrefab = null;
+
+    [SerializeField] RectTransform objOneLinePos = null;
+    [SerializeField] RectTransform objTwoLinePos = null;
+    [SerializeField] RectTransform objThreeLinePos = null;
 
     Stack<Node> stack = new Stack<Node>();
 
-    void checkPath(Transform pos)
-    {
-        for(int i = 0; i < ObjOne.Length; i++) 
-        {
+    int objOneFinishCount = 5;
+    int objTwoFinishCount = 5;
+    int objThreeFinishCount = 9;
 
+
+    public void InstObjOneLine()
+    {
+        GameObject line = null;
+        if (objOneFinishCount > 0)
+        {
+            line = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, objOneLinePos);
+        }
+        else if (objOneFinishCount <= 0)
+        {
+            return;
         }
     }
 
@@ -35,12 +47,12 @@ public class DrawLogic : MonoBehaviour
 
     void Start()
     {
-        
+
     }
 
     void Update()
     {
-        
+
     }
 
 }

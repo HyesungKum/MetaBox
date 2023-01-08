@@ -15,7 +15,7 @@ public class WaitTimer : MonoBehaviour
         startWaitTime = gameObject.GetComponent<TextMeshProUGUI>();
         startWaitTime.text = "Game Start";
     }
-    
+
     void Update()
     {
         SetWaitTime();
@@ -24,11 +24,17 @@ public class WaitTimer : MonoBehaviour
 
     void SetWaitTime()
     {
-        waitTime -= 1 * Time.deltaTime;
-        startWaitTime.text = $"Time : {Mathf.Round(waitTime).ToString()}";
-        //Debug.Log("## waiteTime : " + waitTime);
-
-        if (waitTime <= 0)
+        if (waitTime > 0)
+        {
+            waitTime -= 1 * Time.deltaTime;
+            startWaitTime.text = $"Time : {Mathf.Round(waitTime).ToString()}";
+            //Debug.Log("## waiteTime : " + waitTime);
+        }
+        else if(waitTime == 0)
+        {
+            startWaitTime.text = "Go";
+        }
+        else if (waitTime < 0)
         {
             this.gameObject.SetActive(false);
             return;
