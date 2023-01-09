@@ -17,7 +17,6 @@ public class Clear : MonoBehaviour
     void Start()
     {
         SetingClearImg(false, false, false);
-
     }
 
     public void ClearImgOne()
@@ -38,10 +37,14 @@ public class Clear : MonoBehaviour
         SetingClearImg(true, true, true);
     }
 
-
+    /// <summary>
+    /// imgOne, imgTwo, imgThree True and False Setting
+    /// </summary>
+    /// <param name="imgOne"></param>
+    /// <param name="imgTwo"></param>
+    /// <param name="imgThree"></param>
     void SetingClearImg(bool imgOne, bool imgTwo, bool imgThree)
     {
-    
         clearImgOne.gameObject.SetActive(imgOne);
         clearImgTwo.gameObject.SetActive(imgTwo);
         clearImgThree.gameObject.SetActive(imgThree);

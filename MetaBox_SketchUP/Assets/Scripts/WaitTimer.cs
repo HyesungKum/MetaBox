@@ -8,7 +8,6 @@ public class WaitTimer : MonoBehaviour
     TextMeshProUGUI startWaitTime = null;
 
     float waitTime = 3f;
-    //int waitTime = 3;
 
     void OnEnable()
     {
@@ -19,7 +18,6 @@ public class WaitTimer : MonoBehaviour
     void Update()
     {
         SetWaitTime();
-
     }
 
     void SetWaitTime()
@@ -32,7 +30,7 @@ public class WaitTimer : MonoBehaviour
         }
         else if(waitTime == 0)
         {
-            startWaitTime.text = "Go";
+            startWaitTime.text = "Go".ToString();
         }
         else if (waitTime < 0)
         {

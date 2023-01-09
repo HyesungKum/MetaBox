@@ -1,7 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -24,6 +24,13 @@ public class UIManager : MonoBehaviour
     }
     #endregion
 
+    [SerializeField] GameObject selectPanel = null;
+    [SerializeField] Button reStartBut = null;
+
+    void Awake()
+    {
+        reStartBut.onClick.AddListener(() => OnClickRestart());
+    }
 
     void Start()
     {
@@ -33,7 +40,15 @@ public class UIManager : MonoBehaviour
     void Update()
     {
         
+
+
     }
 
+
+    
+    void OnClickRestart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
 
 }

@@ -41,6 +41,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] GameObject ImgTwoObj = null;
     [SerializeField] GameObject ImgThreeObj = null;
 
+
     void Awake()
     {
         PanelSetting(true, false, false, false, false);
@@ -54,6 +55,7 @@ public class LevelManager : MonoBehaviour
         gotoTown.onClick.AddListener(() => MoveTown(mainPackName));
         Exit.onClick.AddListener(() => AppQuit());
 
+        // LevelButton Event Setting
         levelone.onClick.AddListener(() => OnClickLevelBut());
         //leveltwo.onClick.AddListener(() => );
         //levelthree.onClick.AddListener(() => );

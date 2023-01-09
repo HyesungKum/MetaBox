@@ -8,8 +8,4 @@ using UnityEngine;
 public class ImageData : ScriptableObject
 {
 
-
-    public Transform[] start;
-    public Transform[] Image2;
-
 }

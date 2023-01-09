@@ -5,12 +5,16 @@ using UnityEngine;
 
 public class PlayTime : MonoBehaviour
 {
+    [Header("[Lose Panel]")]
+    [SerializeField] GameObject losePanel = null;
+
     TextMeshProUGUI timerText = null;
 
     float time = 600;
 
     void Awake()
     {
+        losePanel.gameObject.SetActive(false);
         timerText = gameObject.GetComponent<TextMeshProUGUI>();
     }
     void Update()
@@ -20,14 +24,14 @@ public class PlayTime : MonoBehaviour
 
     public void TimerDown()
     {
+        
         time -= 1 * Time.deltaTime;
         timerText.text = $" Time : {Mathf.Round(time).ToString()}";
         //Debug.Log("## time : " + time);
 
         if (time <= 0)
         {
-            Debug.Log("##게임 시간 종료 !!");
-            return;
+            losePanel.gameObject.SetActive(true);
         }
     }
 }

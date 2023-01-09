@@ -1,43 +1,26 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
-using ObjectPoolCP;
-using Unity.Burst.CompilerServices;
 
 public class DrawLine : MonoBehaviour
 {
     [SerializeField] GameObject linePrefab = null;
-    [SerializeField] Canvas canvas = null;
-
-    [SerializeField] RectTransform objOneLinePos = null;
-    [SerializeField] RectTransform objTwoLinePos = null;
-    [SerializeField] RectTransform objThreeLinePos = null;
     [SerializeField] GameObject clearImg = null;
 
-    public Transform[] objLinePos = new Transform[5];
-
-    public Vector3 startPos;
-    public Vector3 isendPos;
     Touch myTouch;
+    private Vector3 startPos;
+    private Vector3 firstPos;
+    private Vector3 endPos;
+    private Vertex startVertex = null;
+    private Transform startPosCheck;
+    private Transform endPosCheck;
 
-    public Transform endPos;
-
-    DrawLogic drawLogic = null;
-
-    public int objOneFinishCount = 5;
-    int objTwoFinishCount = 5;
-    int objThreeFinishCount = 9;
 
     GameObject instLine = null;
-    public Transform firstLine = null;
+    Clear clearImgs = null;
 
-    void Awake()
+    void Start()
     {
-        drawLogic = gameObject.GetComponent<DrawLogic>();
-
+        clearImgs=  gameObject.GetComponent<Clear>();
     }
 
     void Update()
@@ -49,146 +32,96 @@ public class DrawLine : MonoBehaviour
 
         RaycastHit2D objCheck = RayCheck(TouchPos);
 
-
         if (objCheck)
         {
             if (Input.GetTouch(0).phase == TouchPhase.Began)  // Have Touch
             {
-                //Debug.Log("닿은 이름이 뭐니 ?? :" +objCheck.collider.name);
-                if (objCheck.collider.name.Equals("DrowPointOne") && objOneFinishCount == 5)
+                //Debug.Log("닿은 이름이 뭐니 ?? :" + objCheck.collider.name);
+                if (objCheck.collider.name.Equals("DrowPoint"))
                 {
-
-                    //if (objOneFinishCount == 5)
-                    //{
-                    instLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, objCheck.transform.GetChild(0));
-
-
-                    objOneFinishCount -= 1;
+                    startPosCheck = objCheck.collider.transform.GetChild(0);
+                    instLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, startPosCheck);
                     startPos = Input.GetTouch(0).position;
+                    Debug.Log("startPos : " + startPos);
+                    firstPos = startPos;
+                    Debug.Log("# 1 FirstPos" + firstPos);
+
                     instLine.transform.position = startPos;
+                    Vertex collisionVertex = null;
 
-                    #region
-                    // }
-                    //else if (objOneFinishCount < 5 && objOneFinishCount > 0)
-                    //{
-                    //    instLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, endPos.GetChild(0));
-
-                    //    objOneFinishCount -= 1;
-                    //    startPos = Input.GetTouch(0).position;
-                    //    instLine.transform.position = startPos;
-                    //}
-                    //else if (objOneFinishCount <= 0) 
-                    //{
-                    //    clesrImg.ClearImgOne();
-                    //    return; 
-                    //}
-                    //Debug.Log("너는 뭐야 : " + objCheck.collider.name == "DrowPoint");
-
-                    //instLine = ObjectPoolCP.PoolCp.Inst.BringObjectCp(linePrefab);
-                    //instLine.transform.SetParent(canvas.transform, false);
-                    #endregion
-                }
-                else if (endPos == EndPos(objCheck))
-                {
-                    Debug.Log("찍히나요 ? ");
-
-                    //Debug.Log("endPos : " + endPos = EndPos(objCheck));
-                    instLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, EndPos(objCheck).GetChild(0));
-
-                    objOneFinishCount -= 1;
-                    startPos = Input.GetTouch(0).position;
-                    instLine.transform.position = startPos;
-
-                    if(objOneFinishCount <= 0 && firstLine.transform == endPos)
+                    if(objCheck.transform.TryGetComponent<Vertex>(out collisionVertex) == true)
                     {
-                        clearImg.GetComponent<Clear>().ClearImgOne();
-                            return;
+                        if (startVertex == null)
+                        {
+                            startVertex = collisionVertex;
+                        }
                     }
                 }
-                
-                
-                #region
-                ////else if (objCheck.collider.name.Equals("DrowPointOne")&& objOneFinishCount < 5 && objOneFinishCount > 0)
-                ////{
-                ////    Debug.Log("찍히니 ? ");
-                ////    instLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, endPos.GetChild(0));
-
-                ////    objOneFinishCount -= 1;
-                ////    startPos = Input.GetTouch(0).position;
-                ////    instLine.transform.position = startPos;
-                ////}
-                //else if (objCheck.collider.name.Equals("DrowPointOne") && objOneFinishCount <= 0)
-                //{
-                //    clesrImg.ClearImgOne();
-                //    return;
-                //}
-                //else if (objCheck.collider.name.Equals("DrowPointTwo"))
-                //{
-                //    instLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, objTwoLinePos);
-                //    startPos = Input.GetTouch(0).position;
-                //    instLine.transform.position = startPos;
-                //}
-                //else if (objCheck.collider.name.Equals("DrowPoint"))
-                //{
-                //    instLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, objThreeLinePos);
-                //    startPos = Input.GetTouch(0).position;
-                //    instLine.transform.position = startPos;
-                //}
-                #endregion
-
             }
-            #region
-            else if (Input.GetTouch(0).phase == TouchPhase.Moved)  // Touch Move
+            else if (objCheck.collider.name.Equals("DrowPoint"))
             {
-                //Debug.Log("objCheck.collider.name : " + objCheck.collider.name);
+                if (objCheck && Input.GetTouch(0).phase == TouchPhase.Ended)
+                {
+                    startPosCheck = objCheck.transform.GetChild(0);
+                    //Debug.Log("## 터치 땟을 때 : " + testStartPos);
+                    endPos = objCheck.transform.GetChild(0).position;
+                    Debug.Log("endPos :" + endPos);
+                    endPosCheck = objCheck.transform.GetChild(0);
+                    Debug.Log("endPoscheck : " + endPosCheck);
 
-                //Debug.Log("콜라이더 있니 ? : " + objCheck.collider);
-                Vector3 myPos = Input.GetTouch(0).position;
-                // 별
+                    if(firstPos == endPos)
+                    {
+                        clearImgs.ClearImgOne();
+                    }
+                }
+                else if (Input.GetTouch(0).phase == TouchPhase.Moved)
+                {
+                    Vertex collisionVertex = null;
+                    if (objCheck.transform.gameObject.TryGetComponent<Vertex>(out collisionVertex))
+                    {
+                        //Debug.Log(startVertex.GetNodeLength());
 
-                if (instLine != null)
-                    ThouchMoves(instLine, myPos);
+                        for (int i = 0; i < startVertex.GetNodeLength(); i++)
+                        {
+                            //Debug.Log("name");
+                            //Debug.Log(startVertex.GetNextNodeName(0));
+                            //Debug.Log(startVertex.GetNextNodeName(1));
 
-                // 이동하고 종료 시점을 체크 
-                // 이동 
+                            if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNextNodeName(i)) == 0)
+                            {
+                                startPosCheck = objCheck.collider.transform.GetChild(0);
+                                instLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, startPosCheck);
+                                startPos = Input.GetTouch(0).position;
+                                instLine.transform.position = startPos;
+                                startVertex = collisionVertex;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Destroy(instLine);
+                    }
+                }
             }
-
-            else if (Input.GetTouch(0).phase == TouchPhase.Ended)
-            {
-                endPos = objCheck.transform;
-                Debug.Log("endPos : " + endPos);
-                isendPos = objCheck.transform.position;
-                Debug.Log("isendPos : " + isendPos);
-            }
-            #endregion
-
         }
 
-    }
-
-    Transform EndPos(RaycastHit2D hit)
-    {
-        Transform ends = hit.transform;
-
-        for (int i = 0; i < objLinePos.Length; i++)
+        else if (Input.GetTouch(0).phase == TouchPhase.Moved)  // Touch Move
         {
-            Transform check = objLinePos[i];
+            Vector3 myPos = Input.GetTouch(0).position;
 
-
-            if (ends == check)
+            if (instLine != null)
             {
-                return check;
-                Debug.Log("check : "+ check);
+                instLine.transform.localScale = new Vector2(Vector3.Distance(myPos, startPos), 1);
+                instLine.transform.localRotation = Quaternion.Euler(0, 0, AngleInDeg(startPos, myPos));
             }
         }
-        return null;
     }
 
-
-    void ThouchMoves(GameObject InstObj, Vector3 myPos)
+    void CleserOne()
     {
-        InstObj.transform.localScale = new Vector2(Vector3.Distance(myPos, startPos), 1);
-        InstObj.transform.localRotation = Quaternion.Euler(0, 0, AngleInDeg(startPos, myPos));
+        clearImgs.ClearImgOne();
+
     }
 
     // RaycastHit
