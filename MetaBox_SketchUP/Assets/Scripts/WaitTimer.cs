@@ -26,16 +26,16 @@ public class WaitTimer : MonoBehaviour
         {
             waitTime -= 1 * Time.deltaTime;
             startWaitTime.text = $"Time : {Mathf.Round(waitTime).ToString()}";
-            //Debug.Log("## waiteTime : " + waitTime);
-        }
-        else if(waitTime == 0)
-        {
-            startWaitTime.text = "Go".ToString();
+
+            if (Mathf.Round(waitTime) == 0)
+            {
+                startWaitTime.text = "Go".ToString();
+            }
         }
         else if (waitTime < 0)
         {
             this.gameObject.SetActive(false);
-            return;
+                return;
         }
     }
 }

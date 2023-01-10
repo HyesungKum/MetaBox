@@ -83,6 +83,7 @@ public class LevelManager : MonoBehaviour
         PanelSetting(false,false,false,true, true);
         // Obj setting
         StartCoroutine(TimeDelayImgOne(ImgOneObj, true));
+
     }
 
     void OnClickImageTwo()

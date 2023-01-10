@@ -12,6 +12,9 @@ public class PlayTime : MonoBehaviour
 
     float time = 600;
 
+    // === development mode ===
+    //float time = 6;
+
     void Awake()
     {
         losePanel.gameObject.SetActive(false);
@@ -24,13 +27,14 @@ public class PlayTime : MonoBehaviour
 
     public void TimerDown()
     {
-        
         time -= 1 * Time.deltaTime;
         timerText.text = $" Time : {Mathf.Round(time).ToString()}";
         //Debug.Log("## time : " + time);
 
-        if (time <= 0)
+        if (Mathf.Round(time) <= 0)
         {
+            time = 0;
+            timerText.text = $" Time : {Mathf.Round(time).ToString()}";
             losePanel.gameObject.SetActive(true);
         }
     }

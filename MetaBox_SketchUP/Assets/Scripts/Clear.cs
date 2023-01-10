@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-
 public class Clear : MonoBehaviour
 {
     [SerializeField] GameObject inGamePanel = null;
+    [SerializeField] GameObject clearPanel = null;
 
     [SerializeField] GameObject clearImgOne = null;
     [SerializeField] GameObject clearImgTwo = null;
     [SerializeField] GameObject clearImgThree = null;
 
-    
 
     void Start()
     {
@@ -21,18 +20,35 @@ public class Clear : MonoBehaviour
 
     public void ClearImgOne()
     {
+        clearPanel.gameObject.SetActive(true);
         inGamePanel.gameObject.SetActive(false);
         SetingClearImg(true, false, false);
     }
 
+    public void ClearIMgObjTwo()
+    {
+        clearPanel.gameObject.SetActive(true);
+        inGamePanel.gameObject.SetActive(false);
+        SetingClearImg(false, true, false);
+    }
+
+    public void ClearIMgObjThree() 
+    {
+        clearPanel.gameObject.SetActive(true);
+        inGamePanel.gameObject.SetActive(false);
+        SetingClearImg(false, false, true);
+    }
+
     public void ClearImgTwo()
     {
+        clearPanel.gameObject.SetActive(true);
         inGamePanel.gameObject.SetActive(false);
         SetingClearImg(true, true, false);
     }
 
     public void ClearImgThree()
     {
+        clearPanel.gameObject.SetActive(true);
         inGamePanel.gameObject.SetActive(false);
         SetingClearImg(true, true, true);
     }
