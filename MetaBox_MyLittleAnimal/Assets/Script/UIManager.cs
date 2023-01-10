@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using UnityEngine.SceneManagement;
-using Unity.VisualScripting;
 
 public class UIManager : MonoBehaviour
 {
@@ -33,14 +32,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI timer = null;
     [SerializeField] TextMeshProUGUI catchCount = null;
 
-    public int AnimalNumber { get; set; }
-
     WaitForSeconds waitHalf = null;
     WaitForSeconds wait1 = null;
 
+    public int AnimalNumber { get; set; }
     int countDown = 3;
     int catchNumber = 0;
     float playTime = 50f;
+
     // Start is called before the first frame update
     void Start()
     {
