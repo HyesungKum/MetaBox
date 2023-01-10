@@ -19,12 +19,4 @@ public class QNote : MonoBehaviour
     }
 
 
-
-    private void OnDisable()
-    {
-        mySheetMusic.QNoteDisabled(this.gameObject);
-        Debug.Log("Disappear!!");
-    }
-
-
 }

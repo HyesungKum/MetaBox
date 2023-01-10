@@ -28,15 +28,13 @@ public class UiManager : MonoBehaviour
     {
         myGameResultPanel.SetActive(false);
         PlayTimer.DelegateTimer = playTimer;
-    }
 
-    private void Start()
-    {
         myTextTimer.enabled = true;
         myPanel.SetActive(true);
 
         myTextTimer.text = "Ready";
     }
+
 
     void playTimer(float t)
     {
@@ -55,7 +53,6 @@ public class UiManager : MonoBehaviour
     {
         if (myTextTimer.isActiveAndEnabled == true)
         {
-            Debug.Log("≈∏¿Ã∏” ≤®!");
             myTextTimer.enabled = false;
 
             myPanel.SetActive(false);

@@ -4,33 +4,19 @@ using Unity.VisualScripting;
 using UnityEngine;
 using ObjectPoolCP;
 using static SheetMusic;
+using static TouchManager;
 
 public class SheetMusic : MonoBehaviour
 {
-    //public delegate void DelegateSheetMusic(GameStatus myStatus);
-    //public static DelegateSheetMusic myDelegateSheetMusic;
 
+    [SerializeField] List<GameObject> qNoteList = new List<GameObject>();
 
-    List<GameObject> qNoteList = new List<GameObject>();
+    PlayableNote myPlayableNote;
 
-    bool isGameOver = false;
-
-    void Start()
+    void Awake()
     {
         checkQNote();
-
-    }
-
-
-    private void Update()
-    {
-        if (qNoteList.Count > 0)
-            return;
-
-        if (!isGameOver)
-        {
-            correctedAllNote();
-        }
+        myDelegateTouchManager = CheckPlayableNotePos;
     }
 
     void checkQNote()
@@ -46,21 +32,47 @@ public class SheetMusic : MonoBehaviour
     }
 
 
-    public void QNoteDisabled(GameObject qNote)
+
+    //new logic ======================================================================
+    public void CheckPlayableNotePos(GameObject target)
     {
-        qNoteList.Remove(qNote);
-        Debug.Log("Correct!!");
+        myPlayableNote = target.GetComponent<PlayableNote>();
+
+        foreach (GameObject note in qNoteList)
+        {
+
+            if (Vector2.Distance(note.transform.position, target.transform.position) < 0.25f)
+            {
+                myPlayableNote.MoveNote(note.transform.position, 3f);
+
+                qNoteList.Remove(note);
+                checkRemainQNote();
+
+                myPlayableNote.UseNote();
+
+                return;
+            }
+        }
+
+        // if is not touched Qnote
+        myPlayableNote.DestroyNote();
     }
 
 
-
-    void correctedAllNote()
+    void checkRemainQNote()
     {
+        if (qNoteList.Count > 0)
+            return;
+
         GameManager.Inst.UpdateGameStatus(GameStatus.GetAllQNotes);
         Debug.Log("Success!");
-        isGameOver = true;
     }
 
 
+
+    private void OnDisable()
+    {
+        qNoteList.Clear();
+    }
 
 }

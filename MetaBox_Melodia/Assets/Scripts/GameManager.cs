@@ -1,6 +1,7 @@
 using ObjectPoolCP;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -50,13 +51,18 @@ public class GameManager : MonoBehaviour
     #endregion
 
 
+    public delegate void DelegateIsGameOver(bool isOver);
+    public static DelegateIsGameOver myDelegateIsGameOver;
+
     GameStatus myGameStatus;
 
-    bool isGameOver = true;
+    bool isGameOver = false;
+    bool isGameStarted = false;
+
 
     TouchManager myTouchManager;
     UiManager myUiManager;
-    PlayTimer myPlayTimer;
+
 
     private void Awake()
     {
@@ -64,7 +70,7 @@ public class GameManager : MonoBehaviour
 
         myUiManager = FindObjectOfType<UiManager>();
         myTouchManager = FindObjectOfType<TouchManager>();
-        myPlayTimer = FindObjectOfType<PlayTimer>();
+
         myTouchManager.enabled = false;
     }
 
@@ -72,6 +78,14 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // if game is not started! and 
+        if (!isGameStarted && myGameStatus == GameStatus.StartGame)
+        {
+            myTouchManager.enabled = true;
+            isGameStarted = true;
+        }
+
+
         if (isGameOver)
         {
             switch (myGameStatus)
@@ -81,7 +95,6 @@ public class GameManager : MonoBehaviour
                     {
                         Debug.Log("Time is over!");
                         myUiManager.GameResult("시간이 없어요");
-                        myPlayTimer.StopTimer();
                         isGameOver = false;
                     }
                     break;
@@ -90,7 +103,6 @@ public class GameManager : MonoBehaviour
                     {
                         Debug.Log("Great sucess!");
                         myUiManager.GameResult("다 맞췄어요!");
-                        myPlayTimer.StopTimer();
                         isGameOver = false;
                     }
                     break;
@@ -99,14 +111,6 @@ public class GameManager : MonoBehaviour
                     {
                         Debug.Log("Too bad, so sad!");
                         myUiManager.GameResult("음표가 더이상 없어요");
-                        myPlayTimer.StopTimer();
-                        isGameOver = false;
-                    }
-                    break;
-
-                case GameStatus.StartGame:
-                    {
-                        myTouchManager.enabled = true;
                         isGameOver = false;
                     }
                     break;
@@ -114,6 +118,8 @@ public class GameManager : MonoBehaviour
                 default:
                     return;
             }
+
+            myDelegateIsGameOver(true);
 
         }
 

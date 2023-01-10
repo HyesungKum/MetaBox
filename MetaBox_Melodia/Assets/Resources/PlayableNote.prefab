@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 864539494972991919}
   - component: {fileID: 864539494972991918}
   - component: {fileID: 864539494972991889}
-  - component: {fileID: 5183422238535752757}
+  - component: {fileID: 594489963762976311}
   m_Layer: 0
   m_Name: PlayableNote
   m_TagString: Untagged
@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 864539494972991891}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -6.84, y: -0.54, z: 0}
-  m_LocalScale: {x: 0.4999999, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.1428571, y: 0.0625, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -102,7 +102,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
---- !u!114 &5183422238535752757
+--- !u!114 &594489963762976311
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -111,7 +111,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 864539494972991891}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d72bffc43eb274f488faff848044f4ef, type: 3}
+  m_Script: {fileID: 11500000, guid: 49eefb8565b18b74c9f814b0410c2ade, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   myPitchName: 0

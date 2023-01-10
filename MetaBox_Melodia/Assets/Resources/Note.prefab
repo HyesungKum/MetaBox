@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7421891757124487773}
   - component: {fileID: 7421891757124487772}
   - component: {fileID: 7421891757124487778}
-  - component: {fileID: 4085218926261866108}
   m_Layer: 0
   m_Name: Note
   m_TagString: Untagged
@@ -99,19 +98,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myPitchName: 2
---- !u!58 &4085218926261866108
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7421891757124487777}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.5

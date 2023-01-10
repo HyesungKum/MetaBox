@@ -20,8 +20,9 @@ public class PlayTimer : MonoBehaviour
     [SerializeField] float timer = 3f;
     [SerializeField] float countDown = 60f;
 
-    private void Start()
+    private void Awake()
     {
+        GameManager.myDelegateIsGameOver += gameIsOver;
         StartCoroutine(startTimer());
     }
 
@@ -32,11 +33,12 @@ public class PlayTimer : MonoBehaviour
             return;
 
 
+
         if (!isStarted)
             return;
 
-        
-        timeCountDown();    
+
+        timeCountDown();
     }
 
 
@@ -72,14 +74,13 @@ public class PlayTimer : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         GameManager.Inst.UpdateGameStatus(GameStatus.StartGame);
-
         isStarted = true;
     }
 
 
-    public void StopTimer()
+    public void gameIsOver(bool isOver)
     {
-        isGameOver = true;
+        isGameOver = isOver;
     }
 
 }

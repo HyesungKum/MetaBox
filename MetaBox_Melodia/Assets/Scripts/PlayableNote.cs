@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Converters;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,17 +10,20 @@ using static UnityEngine.GraphicsBuffer;
 
 public class PlayableNote : MonoBehaviour
 {
+    public delegate void DelegatePlayableNote(GameObject myPos);
+    public static DelegatePlayableNote myDelegatePlayableNote;
+
+
+
     [SerializeField] protected PitchName myPitchName;
     public PitchName MyPitchName { get { return myPitchName; } set { myPitchName = value; } }
 
     bool isMoving = false;
     float movingSpeed;
 
-    Vector2 originPos;
     Vector2 targetPos;
 
     Inventory myInventory;
-
 
 
     private void Awake()
@@ -36,91 +40,28 @@ public class PlayableNote : MonoBehaviour
 
             if (Vector2.Distance(this.transform.position, targetPos) <= 0f)
             {
-                Debug.Log("µµÂø!");
-
-                this.GetComponent<Collider2D>().enabled = false;
-
                 isMoving = false;
             }
         }
-
-
     }
 
 
-
-
-
-    // raycast where touched 
-    Collider2D[] shootCircleRay(Vector3 targetT)
+    public void MoveNote(Vector3 target, float speed)
     {
-        Ray2D ray;
-        ray = new Ray2D(targetT, Vector2.zero);
-
-        Collider2D[] hits = Physics2D.OverlapCircleAll(targetT, 0.5f);
-
-        return hits;
-    }
-
-
-
-    public void Landed()
-    {
-        Collider2D[] hits = shootCircleRay(this.transform.position);
-
-
-        if (hits.Length > 0)
-        {
-            for (int i = 1; i < hits.Length; ++i)
-            {
-                Debug.Log("Touched somthing!!" + hits[i].name);
-
-
-                if (hits[i].name == "QNote")
-                {
-                    movingSpeed = 3f;
-                    targetPos = hits[i].transform.position;
-
-                    hits[i].gameObject.SetActive(false);
-
-                    this.transform.parent = null;
-
-                    isMoving = true;
-
-                    Debug.Log($"Touched QNote!");
-                    return;
-                }
-            }
-
-
-            for (int i = 1; i < hits.Length; ++i)
-            {
-                if (hits[i].name == "SheetMusic")
-                {
-                    Debug.Log("Touched SheetMusic!");
-                    Invoke("goodbye", 0.25f);
-                    return;
-                }
-            }
-        }
-
-        Debug.Log("touched nothing");
-
+        movingSpeed = speed;
         isMoving = true;
-        this.transform.position = originPos;
+        targetPos = target;
     }
 
-
-    void goodbye()
+    public void DestroyNote()
     {
         myInventory.DestoyedPlayableNote(this.gameObject);
-        ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(this.gameObject);
     }
 
-    public void SetOriginPos()
+
+    public void UseNote()
     {
-        originPos = transform.position;
-    
+        myInventory.UseNote(this.gameObject);
     }
 
 }

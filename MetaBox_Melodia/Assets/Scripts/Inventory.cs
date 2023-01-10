@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,26 +26,17 @@ public class Inventory : MonoBehaviour
     private void Awake()
     {
         originPos = transform.position;
+        GameManager.myDelegateIsGameOver += gameIsOver;
+        bringAllNotes();
     }
-
-    private void Start()
-    {
-        checkQNote();
-    }
-
 
 
     private void Update()
     {
 
         if (isGameOver)
-            return;
-
-
-        if (playableNoteList.Count <= 0)
         {
-            GameManager.Inst.UpdateGameStatus(GameStatus.NoMorePlayableNote);
-            isGameOver = true;
+            return;
         }
 
 
@@ -58,14 +50,12 @@ public class Inventory : MonoBehaviour
             }
         }
 
-
-
     }
 
 
 
 
-    void checkQNote()
+    void bringAllNotes()
     {
         // get all child 
         foreach (Transform note in this.transform.GetComponentInChildren<Transform>())
@@ -73,12 +63,25 @@ public class Inventory : MonoBehaviour
             if (note.name == "PlayableNote")
             {
                 playableNoteList.Add(note.gameObject);
+
+                note.GetComponent<Collider2D>().enabled = true;
             }
         }
     }
 
 
+    public void CheckHowManyNotes()
+    {
+        if (playableNoteList.Count <= 0)
+        {
+            GameManager.Inst.UpdateGameStatus(GameStatus.NoMorePlayableNote);
+            isGameOver = true;
+        }
+    }
 
+
+
+    //Open or close inventory 
     public void OnClickInventory()
     {
         if (isInventoryOpened == false)
@@ -98,14 +101,30 @@ public class Inventory : MonoBehaviour
     }
 
 
-    public void DestoyedPlayableNote(GameObject Note)
+    public void DestoyedPlayableNote(GameObject note)
     {
-        playableNoteList.Remove(Note);
-        Note.transform.parent = null;
+        playableNoteList.Remove(note);
+        ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(note);
         Debug.Log("Good bye!!");
+
+        CheckHowManyNotes();
+    }
+
+    public void UseNote(GameObject note)
+    {
+        playableNoteList.Remove(note);
     }
 
 
+    void gameIsOver(bool isOver)
+    {
+        isGameOver = isOver;
+    }
 
+
+    private void OnDisable()
+    {
+        playableNoteList.Clear();
+    }
 
 }
