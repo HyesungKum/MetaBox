@@ -24,7 +24,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject thieves = null;
 
     public int Level { get; private set; }
-    public int[] dd = new int[3];
     public bool isGaming { get; set; } = false;
 
     private void Start()

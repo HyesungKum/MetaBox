@@ -52,7 +52,7 @@ public class DataManager
     List<StageData> listStageData = new List<StageData>();
     List<ThiefData> listThiefData = new List<ThiefData>();
 
-    /*
+    
     public void LoadGameData()
     {
         loadGameData();
@@ -60,24 +60,110 @@ public class DataManager
         loadThiefData();
     }
 
-    public static class MyExtentions
-{
-    public static void Recycle(this GameObject go)
+    void loadGameData()
     {
-        Monster mob = go.GetComponent<Monster>();
-        MonsterPool.Inst.DestroyMonster(mob);
+        TextAsset ta = Resources.Load<TextAsset>("PoliceGame");
+
+        string[] lines = ta.text.Split("\r\n");
+        
+        for (int i = 2; i < lines.Length - 2; ++i)
+        {
+            // 데이터 1줄을 컴마로 구분
+            string[] columes = lines[i].Split(',');
+
+            GameData gameData = new GameData();
+            gameData.level = int.Parse(columes[0]);
+            gameData.gameGroup = int.Parse(columes[1]);
+            gameData.stageGroup = int.Parse(columes[2]);
+            gameData.stageCount = int.Parse(columes[3]);
+            gameData.playTime = int.Parse(columes[4]);
+            gameData.playerSpeed = int.Parse(columes[5]);
+            gameData.playerArea = int.Parse(columes[6]);
+
+            listGameData.Add(gameData);
+        }
     }
-    
-}
 
-    [System.Serializable]
-public class SpawnInfo
-{
-	public int MobLevel = 1;
-	public int Count = 3;
-}
 
-public class SpawnArea_Ver2 : MonoBehaviour
+    void loadStageData()
+    {
+        TextAsset ta = Resources.Load<TextAsset>("PoliceStage");
+
+        string[] lines = ta.text.Split("\r\n");
+
+        for (int i = 2; i < lines.Length - 2; ++i)
+        {
+            // 데이터 1줄을 컴마로 구분한다.
+            string[] columes = lines[i].Split(',');
+
+            StageData stageData = new StageData();
+            stageData.stageGroup = int.Parse(columes[1]);
+            stageData.thiefGroup = int.Parse(columes[2]);
+            stageData.thiefCount = int.Parse(columes[3]);
+            stageData.wantedCount = int.Parse(columes[4]);
+            stageData.startCountdown = int.Parse(columes[5]);
+            stageData.penaltyPoint = int.Parse(columes[6]);
+
+            listStageData.Add(stageData);
+        }
+    }
+
+
+    void loadThiefData()
+    {
+        TextAsset ta = Resources.Load<TextAsset>("Thieves");
+
+        string[] lines = ta.text.Split("\r\n");
+
+        for (int i = 2; i < lines.Length - 2; ++i)
+        {
+            // 데이터 1줄을 컴마로 구분
+            string[] columes = lines[i].Split(',');
+
+            ThiefData thiefData = new ThiefData();
+            thiefData.id = int.Parse(columes[0]);
+            thiefData.thiefGroup = int.Parse(columes[2]);
+            thiefData.moveSpeed = int.Parse(columes[3]);
+            thiefData.moveTime = int.Parse(columes[4]);
+
+            listThiefData.Add(thiefData);
+        }
+    }
+
+
+
+
+    // 데이터 검색하는 함수
+    public GameData FindGameDataByLevel(int level)
+    {
+        GameData gameData = listGameData.Find(gameData => gameData.level == level);
+        return gameData;
+    }
+
+    public List<StageData> FindStageDatasByStageGroup(int stageGroup, int stageCount)
+    {
+        List<StageData> stages = new List<StageData>();
+
+        for (int i = 0; i < listStageData.Count; ++i)
+        {
+            if (listStageData[i].stageGroup == stageGroup)
+            {
+                stages.Add(listStageData[i]);
+            }
+        }
+
+        while (stages.Count > stageCount)
+        {
+            stages.RemoveAt(Random.Range(0, stages.Count));
+        }
+        return stages;
+    }
+
+
+
+    /*
+     * 
+     * public class SpawnArea_Ver2 : MonoBehaviour
 {
 	[Header("[영역정보]")]
 	[SerializeField] float width = 1f; // X 축 기준으로 크기
@@ -165,85 +251,5 @@ public class SpawnArea_Ver2 : MonoBehaviour
 	}
 #endif // UNITY_EDITOR
 }
-
-    void loadGameData()
-    {
-        TextAsset ta = Resources.Load<TextAsset>("PlayerData");
-
-        // 데이터의 모든 라인을 포함하고 있다.
-        string[] lines = ta.text.Split("\r\n");
-        // 반복문을 1부터 한 이유는 헤더를 제외하기 위해서
-        for (int i = 1; i < lines.Length - 1; ++i)
-        {
-            // 데이터 1줄을 컴마로 구분한다.
-            string[] columes = lines[i].Split(',');
-
-            PlayerData playerData = new PlayerData();
-            playerData.Level = int.Parse(columes[0]);   // 레벨
-            playerData.Exp = int.Parse(columes[1]);     // 경험치 누적값
-            playerData.AttackPower = float.Parse(columes[2]);  // 공격력
-            playerData.MaxHP = int.Parse(columes[3]);  // max hp
-
-            listPlayerData.Add(playerData);
-
-            //Debug.Log($"몬스터데이터 {i} : Level {mobData.Level} Name {mobData.Name} AP {mobData.AttackPower} MaxHP {mobData.MaxHP}");
-        }
-    }
-
-    //
-    // 몬스터 데이터
-    void loadMonsterData()
-    {
-        TextAsset ta = Resources.Load<TextAsset>("MonsterData");
-
-        string[] lines = ta.text.Split("\r\n");
-        for (int i = 1; i < lines.Length - 1; ++i)
-        {
-            // 데이터 1줄을 컴마로 구분한다.
-            string[] columes = lines[i].Split(',');
-
-            MonsterData mobData = new MonsterData();
-            mobData.Level = int.Parse(columes[0]); // 레벨
-            mobData.Name = columes[1].Trim('\"');  // 이름  : "ddd" -> ddd
-            mobData.AttackPower = float.Parse(columes[2]);  // 공격력
-            mobData.MaxHP = int.Parse(columes[3]);  // max hp
-
-            listMonsterData.Add(mobData);
-
-            //Debug.Log($"몬스터데이터 {i} : Level {mobData.Level} Name {mobData.Name} AP {mobData.AttackPower} MaxHP {mobData.MaxHP}");
-        }
-    }
-
-
-
-
-    //
-    //
-    // 데이터 검색하는 함수들..
-    public MonsterData FindMonsterDataBy(int level)
-    {
-        MonsterData mobData = listMonsterData.Find(mobData => mobData.Level == level);
-        return mobData;
-    }
-
-    public PlayerData FindPlayerDataBy(int level)
-    {
-        PlayerData playerData = listPlayerData.Find(pData => pData.Level == level);
-        return playerData;
-    }
-
-    // 경험치를 기준으로 플레이어 데이터 구하기
-    public PlayerData FindPlayerDataByExp(int exp)
-    {
-        for (int i = 0; i < listPlayerData.Count; ++i)
-        {
-            if (listPlayerData[i].Exp >= exp)
-            {
-                return listPlayerData[i];
-            }
-        }
-
-        return listPlayerData[listPlayerData.Count - 1];
-    }
     */
 }
