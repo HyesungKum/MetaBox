@@ -11,8 +11,16 @@ public class Vertex : MonoBehaviour
     public int GetNodeLength() => vertexes.Length;
     public string GetNextNodeName(int index) => vertexes[index].GetNodeName();
 
+    SpriteRenderer sprite = null;
+
     void Start()
     {
+        sprite = GetComponent<SpriteRenderer>();
         node = new Node(vertexes);
+    }
+
+    public void ColorChange()
+    {
+        sprite.color = Color.green;
     }
 }

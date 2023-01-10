@@ -1,10 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
+using ObjectPoolCP;
+using static UnityEditor.PlayerSettings;
+
 
 public class DrawLine : MonoBehaviour
 {
     [SerializeField] GameObject linePrefab = null;
     [SerializeField] GameObject clearImg = null;
+    [SerializeField] RectTransform instPos = null;
 
     Touch myTouch;
     private Vector3 startPos;
@@ -39,12 +43,20 @@ public class DrawLine : MonoBehaviour
                 //Debug.Log("¥Í¿∫ ¿Ã∏ß¿Ã ππ¥œ ?? :" + objCheck.collider.name);
                 if (objCheck.collider.name.Equals("DrowPoint"))
                 {
-                    startPosCheck = objCheck.collider.transform.GetChild(0);
-                    instLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, startPosCheck);
-                    startPos = Input.GetTouch(0).position;
-                    Debug.Log("startPos : " + startPos);
+                    //startPosCheck = objCheck.collider.transform.GetChild(0);
+                    //startPosCheck = objCheck.collider.transform;
+
+                    objCheck.transform.GetComponent<Vertex>().ColorChange();
+
+                    instLine = ObjectPoolCP.PoolCp.Inst.BringObjectCp(linePrefab);
+                    instLine.transform.parent = instPos.transform;
+
+                    //instLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, instPos);
+                    //Debug.Log("startPos : " + startPos);
                     firstPos = startPos;
-                    Debug.Log("# 1 FirstPos" + firstPos);
+                    //Debug.Log("# 1 FirstPos" + firstPos);
+
+                    startPos = Input.GetTouch(0).position;
 
                     instLine.transform.position = startPos;
                     Vertex collisionVertex = null;
@@ -62,17 +74,16 @@ public class DrawLine : MonoBehaviour
             {
                 if (objCheck && Input.GetTouch(0).phase == TouchPhase.Ended)
                 {
-                    startPosCheck = objCheck.transform.GetChild(0);
+                    //startPosCheck = objCheck.transform.GetChild(0);
+                    startPosCheck = objCheck.collider.transform;
                     //Debug.Log("## ≈Õƒ° ∂≠¿ª ∂ß : " + testStartPos);
-                    endPos = objCheck.transform.GetChild(0).position;
-                    Debug.Log("endPos :" + endPos);
-                    endPosCheck = objCheck.transform.GetChild(0);
-                    Debug.Log("endPoscheck : " + endPosCheck);
+                    //endPos = objCheck.transform.GetChild(0).position;
+                    //endPos = objCheck.transform.position;
+                    //Debug.Log("endPos :" + endPos);
+                    //endPosCheck = objCheck.transform.GetChild(0);
+                    //endPosCheck = objCheck.transform;
+                    //Debug.Log("endPoscheck : " + endPosCheck);
 
-                    if(firstPos == endPos)
-                    {
-                        clearImgs.ClearImgOne();
-                    }
                 }
                 else if (Input.GetTouch(0).phase == TouchPhase.Moved)
                 {
@@ -85,22 +96,37 @@ public class DrawLine : MonoBehaviour
                         {
                             //Debug.Log("name");
                             //Debug.Log(startVertex.GetNextNodeName(0));
-                            //Debug.Log(startVertex.GetNextNodeName(1));
+                            //Debug.Log(startVertex.GetNextNodeName(1);
 
                             if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNextNodeName(i)) == 0)
                             {
-                                startPosCheck = objCheck.collider.transform.GetChild(0);
-                                instLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, startPosCheck);
+                                //startPosCheck = objCheck.collider.transform.GetChild(0);
+                                //startPosCheck = objCheck.collider.transform;
+                                //instLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, instPos);
+                                objCheck.transform.GetComponent<Vertex>().ColorChange();
+
+                                instLine = ObjectPoolCP.PoolCp.Inst.BringObjectCp(linePrefab);
+                                instLine.transform.parent = instPos.transform;
+
                                 startPos = Input.GetTouch(0).position;
                                 instLine.transform.position = startPos;
                                 startVertex = collisionVertex;
                                 break;
                             }
+
+                            Vector3 myPos = Input.GetTouch(0).position;
+
+                            if (instLine != null)
+                            {
+                                instLine.transform.localScale = new Vector2(Vector3.Distance(myPos, startPos), 1);
+                                instLine.transform.localRotation = Quaternion.Euler(0, 0, AngleInDeg(startPos, myPos));
+                            }
                         }
                     }
                     else
                     {
-                        Destroy(instLine);
+                        ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(instLine);
+                        //Destroy(instLine);
                     }
                 }
             }
@@ -121,7 +147,6 @@ public class DrawLine : MonoBehaviour
     void CleserOne()
     {
         clearImgs.ClearImgOne();
-
     }
 
     // RaycastHit
