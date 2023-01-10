@@ -21,6 +21,7 @@ public class StartManager : MonoBehaviour
 
     [SerializeField] Button startButton;
     [SerializeField] Button optionButton;
+    [SerializeField] Button villageButton;
     [SerializeField] Button exitButton;
 
     [Header("Second Buttons")]
@@ -43,9 +44,10 @@ public class StartManager : MonoBehaviour
         Screen.autorotateToLandscapeRight = true;
 
         //=================apply button listener===================
-        startButton .onClick.AddListener(() => ShowDifficulty());
-        optionButton.onClick.AddListener(() => ShowOption());
-        exitButton  .onClick.AddListener(() => AppTrans.MoveScene(mainPackName)); ;
+        startButton  .onClick.AddListener(() => ShowDifficulty());
+        optionButton .onClick.AddListener(() => ShowOption());
+        villageButton.onClick.AddListener(() => AppTrans.MoveScene(mainPackName));
+        exitButton   .onClick.AddListener(() => Application.Quit());
 
         easyButton   .onClick.AddListener(() => SceneMove(1));
         normalButton .onClick.AddListener(() => SceneMove(2));
