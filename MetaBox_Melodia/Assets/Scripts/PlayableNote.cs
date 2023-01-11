@@ -13,8 +13,6 @@ public class PlayableNote : MonoBehaviour
     public delegate void DelegatePlayableNote(GameObject myPos);
     public static DelegatePlayableNote myDelegatePlayableNote;
 
-
-
     [SerializeField] protected PitchName myPitchName;
     public PitchName MyPitchName { get { return myPitchName; } set { myPitchName = value; } }
 
@@ -62,6 +60,8 @@ public class PlayableNote : MonoBehaviour
     public void UseNote()
     {
         myInventory.UseNote(this.gameObject);
+        SoundManager.myDelegateSoundManager("");
+
     }
 
 }

@@ -13,7 +13,6 @@ public class TouchManager : MonoBehaviour
     public static DelegateTouchManager myDelegateTouchManager;
 
 
-
     Vector3 touchedToScreen;
     Touch myTouch;
 
@@ -22,36 +21,7 @@ public class TouchManager : MonoBehaviour
     PlayableNote myNote;
     Vector3 myNoteOriginPos;
 
-    //RaycastHit hitPoint;
     RaycastHit2D hitPoint2D;
-
-
-
-
-    // code for demo test ==================================================
-    #region
-    [SerializeField] bool isTestMode = false;
-    [SerializeField] bool createNormalNote = false;
-    [SerializeField] bool deleteNote = false;
-    [SerializeField] bool createQuizNote = false;
-
-    [SerializeField] Toggle myToggle4NormalNote;
-    [SerializeField] Toggle myToggle4QuizNote;
-    [SerializeField] Toggle myToggle4DeleteNote;
-
-    [SerializeField] GameObject NormalNote;
-    [SerializeField] GameObject quizNote;
-
-    GameObject newNote;
-    #endregion
-    // code for demo test ==================================================
-
-    private void Awake()
-    {
-
-    }
-
-
 
 
     private void Update()
@@ -90,60 +60,7 @@ public class TouchManager : MonoBehaviour
         if (!hitPoint2D)
             return;
 
-
         isMyNote(hitPoint2D);
-
-        // code for demo test ==================================================
-        #region This codes for test
-        //if (isTestMode && Input.GetTouch(0).phase == TouchPhase.Began)
-        //{
-
-        //    if (createNormalNote)
-        //    {
-        //        if (hitPoint.collider.name == "SheetMusic")
-        //        {
-        //            newNote = ObjectPoolCP.PoolCp.Inst.BringObjectCp(NormalNote);
-
-        //            newNote.transform.position = touchedToScreen;
-
-        //            Debug.Log("Create normal note");
-        //        }
-
-        //        return;
-        //    }
-
-
-        //    if (createQuizNote)
-        //    {
-        //        if (hitPoint.collider.name == "SheetMusic")
-        //        {
-        //            newNote = ObjectPoolCP.PoolCp.Inst.BringObjectCp(quizNote);
-
-        //            newNote.transform.position = touchedToScreen;
-
-        //            Debug.Log("Create quiz note");
-        //        }
-
-        //        return;
-        //    }
-
-
-        //    else if (deleteNote)
-        //    {
-        //        Debug.Log($"บฮผล? {hitPoint.collider.name}");
-        //        if (hitPoint.collider.name == "QNote" || hitPoint.collider.name == "Note")
-        //        {
-        //            ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(shootRay(touchedToScreen).transform.gameObject);
-        //            Debug.Log("Destroy!");
-        //        }
-
-        //        return;
-        //    }
-        //}
-
-        #endregion
-        // code for demo test ==================================================
-
 
     }
 
@@ -156,18 +73,6 @@ public class TouchManager : MonoBehaviour
 
         ray = new Ray2D(targetT, Vector2.zero);
         hit = Physics2D.Raycast(ray.origin, ray.direction);
-
-        return hit;
-    }
-
-
-    RaycastHit2D shootRay(Vector2 targetT, LayerMask myLayerMask)
-    {
-        RaycastHit2D hit;
-        Ray2D ray;
-
-        ray = new Ray2D(targetT, Vector2.zero);
-        hit = Physics2D.Raycast(ray.origin, ray.direction, myLayerMask);
 
         return hit;
     }
@@ -224,42 +129,5 @@ public class TouchManager : MonoBehaviour
 
         }
     }
-
-
-
-
-
-
-    // code for demo test ============================================================
-    #region this codes for test
-
-    public void OnClickCreateNormalNote()
-    {
-
-        createNormalNote = myToggle4NormalNote.isOn;
-        isTestMode = myToggle4NormalNote.isOn;
-
-    }
-
-
-
-    public void OnClickCreateQuizNote()
-    {
-
-        createQuizNote = myToggle4QuizNote.isOn;
-        isTestMode = myToggle4QuizNote.isOn;
-
-    }
-
-
-    public void OnClickDeleteNote()
-    {
-        deleteNote = myToggle4DeleteNote.isOn;
-        isTestMode = myToggle4DeleteNote.isOn;
-
-    }
-    #endregion
-    // code for demo test ============================================================
-
 
 }

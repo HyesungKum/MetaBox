@@ -6,17 +6,16 @@ using ObjectPoolCP;
 
 public class SheetMusic : MonoBehaviour
 {
-
-
     [SerializeField] List<GameObject> qNoteList = new List<GameObject>();
 
     PlayableNote myPlayableNote;
+
+
 
     void Awake()
     {
         // delegate chain
         TouchManager.myDelegateTouchManager = CheckPlayableNotePos;
-
 
         checkQNote();
     }
@@ -34,8 +33,6 @@ public class SheetMusic : MonoBehaviour
     }
 
 
-
-    //new logic ======================================================================
     public void CheckPlayableNotePos(GameObject target)
     {
         myPlayableNote = target.GetComponent<PlayableNote>();

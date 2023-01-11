@@ -9,11 +9,6 @@ public class PlayTimer : MonoBehaviour
     // subject => timer
     static public Action<float> DelegateTimer;
 
-    ////// subject => time over
-    //public delegate void DelegatePlayerTimer(GameStatus myStatus);
-    //public static DelegatePlayerTimer myDelegatePlayerTimer;
-
-
     bool isStarted = false;
     bool isGameOver = false;
 
@@ -32,11 +27,8 @@ public class PlayTimer : MonoBehaviour
         if (isGameOver)
             return;
 
-
-
         if (!isStarted)
             return;
-
 
         timeCountDown();
     }
@@ -44,7 +36,6 @@ public class PlayTimer : MonoBehaviour
 
     void timeCountDown()
     {
-
         countDown -= Time.deltaTime;
 
         if (countDown <= 0)

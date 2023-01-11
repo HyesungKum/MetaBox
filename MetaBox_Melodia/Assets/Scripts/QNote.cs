@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class QNote : MonoBehaviour
 {
-    
-
+   
     [SerializeField] protected PitchName myPitchName;
     public PitchName MyPitchName { get { return myPitchName; } set { myPitchName = value; } }
 
