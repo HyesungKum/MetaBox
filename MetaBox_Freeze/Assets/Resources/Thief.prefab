@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 5769696875284073720}
   - component: {fileID: 5769696875284073721}
   - component: {fileID: 5769696875284073702}
-  - component: {fileID: 5769696875284073703}
   - component: {fileID: 5769696875284073701}
+  - component: {fileID: 4876808713026232135}
   m_Layer: 0
-  m_Name: Animal
+  m_Name: Thief
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 5769696875284073722}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 050cd0c726f23fa48aab01b61fa982e1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f123db43fcd01f742ae54792f7b4b434, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -96,26 +96,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 5769696875284073722}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 214748fbf4e9dcd49892b477f0e6b519, type: 3}
+  m_Script: {fileID: 11500000, guid: 63ed1a32a0a93e24a86614b3997a2ff7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runAwayRange: 1.5
---- !u!58 &5769696875284073703
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5769696875284073722}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 1
+  thiefImages: {fileID: 11400000, guid: f806bf22709133044a32b004356b9763, type: 2}
+  id: 0
+  speed: 0
+  spriteRenderer: {fileID: 5769696875284073721}
 --- !u!50 &5769696875284073701
 Rigidbody2D:
   serializedVersion: 4
@@ -136,4 +123,20 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
+--- !u!70 &4876808713026232135
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5769696875284073722}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 1, y: 2.5}
+  m_Direction: 0
