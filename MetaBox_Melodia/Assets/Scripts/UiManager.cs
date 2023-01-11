@@ -16,19 +16,18 @@ public class UiManager : MonoBehaviour
     [SerializeField] Button myButtonReplayMusic;        // replay music for hint
     [SerializeField] Button myButtonClickInventory;     // open note box
 
-    [Header("For test")]
-    [SerializeField] Button myButtonRestart4Test;       // re-load scene for test
-
-    [Header("Text")]
     [SerializeField] TextMeshProUGUI myTextCountdown;    // play time countdown
     [SerializeField] TextMeshProUGUI myTextTimer;       // ready time countdown
     [SerializeField] TextMeshProUGUI myTextCorrectedNote;    // text whether get correct answer or not
     [SerializeField] TextMeshProUGUI myTextResult;       // Result panel
 
-    float curTime;
+    [Header("Panel")]
+    [SerializeField] GameObject myPaneUntouchable;
+    [SerializeField] GameObject myPanelPause;
+    [SerializeField] GameObject myPanelGameResult;
 
-    public GameObject myPanel;
-    public GameObject myGameResultPanel;
+    float curTime;
+    bool isPaused = false;
 
     private void Awake()
     {
@@ -38,7 +37,7 @@ public class UiManager : MonoBehaviour
         PlayTimer.DelegateTimer = playTimer;
 
         // Game result panel 
-        myGameResultPanel.SetActive(false);
+        myPanelGameResult.SetActive(false);
 
         // text whether get correct answer or not
         myTextCorrectedNote.enabled = false;
@@ -47,7 +46,10 @@ public class UiManager : MonoBehaviour
         myTextTimer.enabled = true;
 
         // to disable touch interaction 
-        myPanel.SetActive(true);
+        myPaneUntouchable.SetActive(true);
+
+        // no show pause panel
+        myPanelPause.SetActive(false);
 
         // text for ready 
         myTextTimer.text = "Ready";
@@ -78,7 +80,7 @@ public class UiManager : MonoBehaviour
         {
             myTextTimer.enabled = false;
 
-            myPanel.SetActive(false);
+            myPaneUntouchable.SetActive(false);
         }
 
         myTextCountdown.text = Mathf.Round(curTime).ToString();
@@ -141,8 +143,26 @@ public class UiManager : MonoBehaviour
 
     public void GameResult(string text)
     {
-        myGameResultPanel.SetActive(true);
+        myPanelGameResult.SetActive(true);
         myTextResult.text = text;
+    }
+
+
+    public void OnClickPause()
+    {
+        if (isPaused == false)
+        {
+            Time.timeScale = 0f;
+            myPanelPause.SetActive(true);
+            isPaused = true;
+
+            return;
+        }
+
+        Time.timeScale = 1;
+        myPanelPause.SetActive(false);
+
+        isPaused = false;
     }
 
 }

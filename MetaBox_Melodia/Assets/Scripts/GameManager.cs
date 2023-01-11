@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour
 
     bool isGameOver = false;
     bool isGameStarted = false;
+    bool isPaused = false;
 
 
     TouchManager myTouchManager;
@@ -136,16 +137,23 @@ public class GameManager : MonoBehaviour
 
     public void OnClickQuitGame()
     {
-        SceneManager.LoadScene("DemoStart");
+        Time.timeScale = 1;
+        SceneManager.LoadScene("MelodiaStart");
     }
 
 
     // fucntion for test, reload scene 
-    public void OnClickRestart()
+    public void OnClickExitStage()
     {
-        SceneManager.LoadSceneAsync("DemoMelodia");
+        Time.timeScale = 1;
+        SceneManager.LoadSceneAsync("MelodiaLobby");
     }
 
+    public void OnClickRestart()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadSceneAsync("MelodiaEasy");
+    }
 
 
 }
