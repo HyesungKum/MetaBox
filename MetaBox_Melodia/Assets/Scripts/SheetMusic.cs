@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using ObjectPoolCP;
-using static SheetMusic;
-using static TouchManager;
 
 public class SheetMusic : MonoBehaviour
 {
+
 
     [SerializeField] List<GameObject> qNoteList = new List<GameObject>();
 
@@ -15,8 +14,11 @@ public class SheetMusic : MonoBehaviour
 
     void Awake()
     {
+        // delegate chain
+        TouchManager.myDelegateTouchManager = CheckPlayableNotePos;
+
+
         checkQNote();
-        myDelegateTouchManager = CheckPlayableNotePos;
     }
 
     void checkQNote()
@@ -48,8 +50,6 @@ public class SheetMusic : MonoBehaviour
                 qNoteList.Remove(note);
                 checkRemainQNote();
 
-                myPlayableNote.UseNote();
-
                 return;
             }
         }
@@ -62,12 +62,15 @@ public class SheetMusic : MonoBehaviour
     void checkRemainQNote()
     {
         if (qNoteList.Count > 0)
+        {
+            myPlayableNote.UseNote();
             return;
+        }
+
 
         GameManager.Inst.UpdateGameStatus(GameStatus.GetAllQNotes);
         Debug.Log("Success!");
     }
-
 
 
     private void OnDisable()

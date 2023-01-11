@@ -11,12 +11,4 @@ public class QNote : MonoBehaviour
     public PitchName MyPitchName { get { return myPitchName; } set { myPitchName = value; } }
 
 
-    SheetMusic mySheetMusic;
-
-    private void Awake()
-    {
-        mySheetMusic = this.GetComponentInParent<SheetMusic>();
-    }
-
-
 }

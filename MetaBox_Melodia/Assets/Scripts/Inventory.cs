@@ -19,10 +19,6 @@ public class Inventory : MonoBehaviour
     Vector2 originPos;
     Vector2 targetPos;
 
-
-
-
-
     private void Awake()
     {
         originPos = transform.position;
@@ -74,6 +70,7 @@ public class Inventory : MonoBehaviour
     {
         if (playableNoteList.Count <= 0)
         {
+            UiManager.myDelegateUiManager("끝났어");
             GameManager.Inst.UpdateGameStatus(GameStatus.NoMorePlayableNote);
             isGameOver = true;
         }
@@ -104,15 +101,22 @@ public class Inventory : MonoBehaviour
     public void DestoyedPlayableNote(GameObject note)
     {
         playableNoteList.Remove(note);
+
         ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(note);
-        Debug.Log("Good bye!!");
+       
+        UiManager.myDelegateUiManager("다시 생각해봐요");
 
         CheckHowManyNotes();
+        note.transform.SetParent(null);
     }
 
     public void UseNote(GameObject note)
     {
+        note.transform.SetParent(null);
         playableNoteList.Remove(note);
+
+        UiManager.myDelegateUiManager("잘했어요!");
+        CheckHowManyNotes();
     }
 
 
