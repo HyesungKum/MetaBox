@@ -997,11 +997,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   linePrefab: {fileID: 1110235797374175212, guid: 61e4d0a5c42e48f4788bf6c2b5881c06, type: 3}
-  instPos: {fileID: 1050901607}
+  instPos: {fileID: 337570766}
+  revertButton: {fileID: 1152121094}
+  mainCam: {fileID: 519420031}
+  vertices:
+  - {fileID: 494771071}
+  - {fileID: 1542033074}
+  - {fileID: 996583841}
+  - {fileID: 536417233}
+  - {fileID: 245375488}
   startVertex: {fileID: 0}
   tempVertex: {fileID: 0}
   endVertex: {fileID: 0}
-  check: {fileID: 0}
 --- !u!1 &245375485
 GameObject:
   m_ObjectHideFlags: 0
@@ -1067,7 +1074,7 @@ MonoBehaviour:
   vertexes:
   - {fileID: 494771071}
   - {fileID: 996583841}
-  nodeName: E
+  vertexName: 
 --- !u!212 &245375489
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1120,6 +1127,42 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &337570765
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 337570766}
+  m_Layer: 0
+  m_Name: LineClone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &337570766
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337570765}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1050901607}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &348041427
 GameObject:
   m_ObjectHideFlags: 0
@@ -1185,7 +1228,7 @@ MonoBehaviour:
   vertexes:
   - {fileID: 587661492}
   - {fileID: 496738949}
-  nodeName: D
+  vertexName: 
 --- !u!212 &348041431
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1375,7 +1418,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &400408004
 Transform:
   m_ObjectHideFlags: 0
@@ -1691,7 +1734,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &469496449
@@ -1925,7 +1968,7 @@ MonoBehaviour:
   vertexes:
   - {fileID: 1542033074}
   - {fileID: 245375488}
-  nodeName: A
+  vertexName: 
 --- !u!212 &494771072
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2044,7 +2087,7 @@ MonoBehaviour:
   - {fileID: 1758673621}
   - {fileID: 587661492}
   - {fileID: 348041430}
-  nodeName: A
+  vertexName: 
 --- !u!212 &496738950
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2270,7 +2313,7 @@ MonoBehaviour:
   - {fileID: 953548535}
   - {fileID: 1106445953}
   - {fileID: 1351325956}
-  nodeName: A
+  vertexName: 
 --- !u!212 &518361853
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2506,7 +2549,7 @@ MonoBehaviour:
   vertexes:
   - {fileID: 1542033074}
   - {fileID: 996583841}
-  nodeName: D
+  vertexName: 
 --- !u!212 &536417234
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2778,7 +2821,7 @@ MonoBehaviour:
   - {fileID: 496738949}
   - {fileID: 1758673621}
   - {fileID: 348041430}
-  nodeName: C
+  vertexName: 
 --- !u!212 &587661493
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3934,7 +3977,7 @@ MonoBehaviour:
   - {fileID: 1106445953}
   - {fileID: 1351325956}
   - {fileID: 1259355176}
-  nodeName: C
+  vertexName: 
 --- !u!212 &953548536
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4174,7 +4217,7 @@ MonoBehaviour:
   vertexes:
   - {fileID: 536417233}
   - {fileID: 245375488}
-  nodeName: C
+  vertexName: 
 --- !u!212 &996583842
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4460,6 +4503,7 @@ RectTransform:
   m_Children:
   - {fileID: 1152121093}
   - {fileID: 40811053}
+  - {fileID: 337570766}
   m_Father: {fileID: 2057493174}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4821,7 +4865,7 @@ MonoBehaviour:
   - {fileID: 518361852}
   - {fileID: 953548535}
   - {fileID: 1351325956}
-  nodeName: D
+  vertexName: 
 --- !u!212 &1106445954
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4957,19 +5001,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1152121095}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 192821590}
-        m_TargetAssemblyTypeName: DrawLine, Assembly-CSharp
-        m_MethodName: OnClickPopStack
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1152121095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5244,7 +5276,7 @@ MonoBehaviour:
   vertexes:
   - {fileID: 518361852}
   - {fileID: 953548535}
-  nodeName: B
+  vertexName: 
 --- !u!212 &1259355177
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5729,7 +5761,7 @@ MonoBehaviour:
   - {fileID: 1106445953}
   - {fileID: 953548535}
   - {fileID: 518361852}
-  nodeName: E
+  vertexName: 
 --- !u!212 &1351325957
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -6197,7 +6229,7 @@ MonoBehaviour:
   vertexes:
   - {fileID: 536417233}
   - {fileID: 494771071}
-  nodeName: B
+  vertexName: 
 --- !u!212 &1542033075
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -6549,7 +6581,7 @@ MonoBehaviour:
   vertexes:
   - {fileID: 496738949}
   - {fileID: 587661492}
-  nodeName: B
+  vertexName: 
 --- !u!212 &1758673622
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -7479,7 +7511,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &2057493173
 SpriteRenderer:
   m_ObjectHideFlags: 0
