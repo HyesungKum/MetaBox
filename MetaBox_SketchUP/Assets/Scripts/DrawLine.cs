@@ -13,7 +13,7 @@ public class DrawLine : MonoBehaviour
     [SerializeField] Camera mainCam = null;
 
     //=====================ref vertixes===========================
-    [SerializeField] Vertex[] vertices;
+    // [SerializeField] Vertex[] vertices;
     private GameObject handlingLine;
 
     //====================inner variables==============================
@@ -61,23 +61,26 @@ public class DrawLine : MonoBehaviour
 
                     if (hitInfo)
                     {
-                        foreach (Vertex vertex in vertices)
-                        {
-                            if (hitInfo.collider.name == vertex.name)
-                            {
-                                GameObject instLine = PoolCp.Inst.BringObjectCp(linePrefab);
+                        //foreach (Vertex vertex in vertices)
+                        //{
+                        // if (hitInfo.collider.name == vertex.name)
+                        //  {
 
-                                startPos = myTouch.position;
-                                instLine.transform.position = startPos;
 
-                                //기타 초기화 구문
+                        GameObject instLine = PoolCp.Inst.BringObjectCp(linePrefab);
 
-                                handlingLine = instLine;
-                            }
-                        }
+                        startPos = myTouch.position;
+                        instLine.transform.position = startPos;
+
+                        //기타 초기화 구문
+
+                        handlingLine = instLine;
+                        // }
+                        // }
                     }
                 }
                 break;
+            #endregion
 
             #region Move
             case TouchPhase.Moved:
