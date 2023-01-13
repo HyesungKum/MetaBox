@@ -33,9 +33,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] Button sfxSoundButton;
     [SerializeField] Slider sfxSlider;
 
-    [SerializeField] Button optionRestartButton;
-    [SerializeField] Button optionResumeButton;
-    [SerializeField] Button optionExitButton;
+    [SerializeField] Button opRestartButton;
+    [SerializeField] Button opResumeButton;
+    [SerializeField] Button opExitButton;
 
     //=================end game ui=================
     [Header("Game Over UI")]
@@ -51,8 +51,8 @@ public class UIManager : MonoBehaviour
         optionButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
 
         //===============option button listener========================================
-        optionRestartButton.onClick.AddListener(() => SceneMove(SceneName.Main));
-        optionRestartButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        opRestartButton.onClick.AddListener(() => SceneMove(SceneName.Main));
+        opRestartButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
 
         masterSoundButton.onClick.AddListener(() => SoundManager.Inst.ToggleControll("Master", masterSlider.value));
         masterSoundButton.onClick.AddListener(() => ToggleSlider(masterSlider));
@@ -66,11 +66,11 @@ public class UIManager : MonoBehaviour
         sfxSoundButton.onClick.AddListener(() => ToggleSlider(sfxSlider));
         sfxSlider.onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("SFX", call));
 
-        optionResumeButton.onClick.AddListener(() => EventReciver.CallGameResume());
-        optionResumeButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        opResumeButton.onClick.AddListener(() => EventReciver.CallGameResume());
+        opResumeButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
 
-        optionExitButton.onClick.AddListener(() => SceneMove(SceneName.Start));
-        optionExitButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        opExitButton.onClick.AddListener(() => SceneMove(SceneName.Start));
+        opExitButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
 
         //===============game end button listener======================================
         endExitButton.onClick.AddListener(() => SceneMove(SceneName.Start));
