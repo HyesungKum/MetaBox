@@ -60,8 +60,7 @@ public class PlayableNote : MonoBehaviour
     public void UseNote()
     {
         myInventory.UseNote(this.gameObject);
-        SoundManager.myDelegateSoundManager("");
-
+        //SoundManager.myDelegateSoundManager("");
     }
 
 }

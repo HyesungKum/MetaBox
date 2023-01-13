@@ -45,6 +45,7 @@ public class SheetMusic : MonoBehaviour
                 myPlayableNote.MoveNote(note.transform.position, 3f);
 
                 qNoteList.Remove(note);
+
                 checkRemainQNote();
 
                 return;

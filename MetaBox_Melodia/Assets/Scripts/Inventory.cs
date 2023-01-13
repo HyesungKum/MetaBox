@@ -112,10 +112,10 @@ public class Inventory : MonoBehaviour
 
     public void UseNote(GameObject note)
     {
-        note.transform.SetParent(null);
         playableNoteList.Remove(note);
 
         UiManager.myDelegateUiManager("잘했어요!");
+
         CheckHowManyNotes();
     }
 
