@@ -8,7 +8,7 @@ public class DeadZone: MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
+        Gizmos.color = new(1f, 0f, 0f, 0.4f);
         Gizmos.DrawCube(this.transform.position, this.transform.localScale);
     }
 #endif

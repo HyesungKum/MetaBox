@@ -56,11 +56,11 @@ public class IngredientSpawner : MonoBehaviour
         Instantiate(SpawnTable[index],this.transform.position, Quaternion.identity);
     }
 
-    #region gizmo
+    #region Editor Gizmo
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.blue;
+        Gizmos.color = new(0f, 0f, 1f, 0.4f);
         Gizmos.DrawCube(this.transform.position, this.transform.localScale);
     }
 #endif

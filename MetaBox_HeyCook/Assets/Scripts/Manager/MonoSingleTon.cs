@@ -24,4 +24,11 @@ public class MonoSingleTon<T> : MonoBehaviour where T : MonoBehaviour
             return instance;
         }
     }
+
+    private void Awake()
+    {
+        if (FindObjectOfType<SoundManager>().gameObject != this.gameObject) Destroy(this.gameObject);
+
+        DontDestroyOnLoad(this.gameObject);
+    }
 }

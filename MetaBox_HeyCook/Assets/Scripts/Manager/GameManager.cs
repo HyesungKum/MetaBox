@@ -20,13 +20,21 @@ public class GameManager : MonoSingleTon<GameManager>
 
     private void Awake()
     {
-        Application.targetFrameRate = 300;
+        Application.targetFrameRate = 60;
 
         //initializing
         IsGameOver = false;
 
         //delegate chain
         EventReciver.ScoreModi += ScoreAddSub;
+        EventReciver.GamePause += GamePasue;
+        EventReciver.GameResume += GameResume;
+    }
+
+    private void Start()
+    {
+        SoundManager.Inst.SetBGM("MainBGM");
+        SoundManager.Inst.PlayBGM();
     }
 
     private void Update()
@@ -36,8 +44,9 @@ public class GameManager : MonoSingleTon<GameManager>
 
     private void OnDisable()
     {
-
         EventReciver.ScoreModi -= ScoreAddSub;
+        EventReciver.GamePause -= GamePasue;
+        EventReciver.GameResume -= GameResume;
     }
 
     void TimeUpdate()
@@ -61,5 +70,16 @@ public class GameManager : MonoSingleTon<GameManager>
     void ScoreAddSub(int value)
     {
         Score += value;
+    }
+
+    void GamePasue()
+    {
+        Time.timeScale = 0;
+    }
+
+    void GameResume()
+    {
+        Debug.Log("게임 시간 계속");
+        Time.timeScale = 1f;   
     }
 }

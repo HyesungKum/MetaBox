@@ -4,47 +4,115 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System;
 
 public class UIManager : MonoBehaviour
 {
+    [Header("Current Active UI")]
+    [SerializeField] GameObject curUI;
+
     //================in game ui===================
     [Header("In Game UI")]
-    [SerializeField] TextMeshProUGUI Timer;
-    [SerializeField] TextMeshProUGUI Score;
+    [SerializeField] TextMeshProUGUI timer;
+    [SerializeField] TextMeshProUGUI score;
 
-    [SerializeField] GameObject inGameUIObj;
+    [SerializeField] GameObject inGameUI;
 
-    [SerializeField] Button ExitButton;
+    [SerializeField] Button optionButton;
 
+    //=================option ui===================
+    [Header("Option UI")]
+    [SerializeField] GameObject optionUI;
+
+    [SerializeField] Button masterSoundButton;
+    [SerializeField] Slider masterSlider;
+
+    [SerializeField] Button bgmSoundButton;
+    [SerializeField] Slider bgmSlider;
+
+    [SerializeField] Button sfxSoundButton;
+    [SerializeField] Slider sfxSlider;
+
+    [SerializeField] Button optionRestartButton;
+    [SerializeField] Button optionResumeButton;
+    [SerializeField] Button optionExitButton;
 
     //=================end game ui=================
-    [Header("End Game UI")]
-    [SerializeField] GameObject gameOverUIObj;
+    [Header("Game Over UI")]
+    [SerializeField] GameObject gameOverUI;
 
-    [SerializeField] Button RestartButton;
-    [SerializeField] Button EndExitButton;
+    [SerializeField] Button restartButton;
+    [SerializeField] Button endExitButton;
 
     private void Awake()
     {
-        //add button listener
-        ExitButton.onClick.AddListener(()=>SceneMove(SceneName.Start));
-        RestartButton.onClick.AddListener(()=>SceneMove(SceneName.Main));
-        EndExitButton.onClick.AddListener(()=>SceneMove(SceneName.Start));
+        //===============in game button listener=======================================
+        optionButton.onClick.AddListener(() => EventReciver.CallGamePause());
+        optionButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+
+        //===============option button listener========================================
+        optionRestartButton.onClick.AddListener(() => SceneMove(SceneName.Main));
+        optionRestartButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+
+        masterSoundButton.onClick.AddListener(() => SoundManager.Inst.ToggleControll("Master", masterSlider.value));
+        masterSoundButton.onClick.AddListener(() => ToggleSlider(masterSlider));
+        masterSlider.onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("Master", call));
+
+        bgmSoundButton.onClick.AddListener(() => SoundManager.Inst.ToggleControll("BGM", bgmSlider.value));
+        bgmSoundButton.onClick.AddListener(() => ToggleSlider(bgmSlider));
+        bgmSlider.onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("BGM", call));
+
+        sfxSoundButton.onClick.AddListener(() => SoundManager.Inst.ToggleControll("SFX", sfxSlider.value));
+        sfxSoundButton.onClick.AddListener(() => ToggleSlider(sfxSlider));
+        sfxSlider.onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("SFX", call));
+
+        optionResumeButton.onClick.AddListener(() => EventReciver.CallGameResume());
+        optionResumeButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+
+        optionExitButton.onClick.AddListener(() => SceneMove(SceneName.Start));
+        optionExitButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+
+        //===============game end button listener======================================
+        endExitButton.onClick.AddListener(() => SceneMove(SceneName.Start));
+        endExitButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+
+        restartButton.onClick.AddListener(() => SceneMove(SceneName.Main));
+        restartButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
 
         //delegate chain
         EventReciver.ScoreModi += UIScoreModi;
+        EventReciver.GamePause += UIGamePause;
+        EventReciver.GameResume += UIGameResume;
         EventReciver.GameOver += UIGameOver;
     }
 
     private void Update()
     {
-        Timer.text = string.Format("{0:D2} : {1:D2} ",(int)(GameManager.Inst.Timer/60f),(int)(GameManager.Inst.Timer % 60f));
+        timer.text = string.Format("{0:D2} : {1:D2} ",(int)(GameManager.Inst.Timer/60f),(int)(GameManager.Inst.Timer % 60f));
     }
 
     private void OnDisable()
     {
         EventReciver.ScoreModi -= UIScoreModi;
+        EventReciver.GamePause -= UIGamePause;
+        EventReciver.GameResume -= UIGameResume;
         EventReciver.GameOver -= UIGameOver;
+    }
+
+    void UIGamePause()
+    {
+        ShowUI(optionUI);
+    }
+
+    void UIGameResume()
+    {
+        Debug.Log("ui 되돌리기");
+        ShowUI(inGameUI);
+    }
+
+    void UIGameOver()
+    {
+        ShowUI(gameOverUI);
     }
 
     void SceneMove(string sceneName)
@@ -53,14 +121,23 @@ public class UIManager : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
-    void UIGameOver()
+    void ShowUI(GameObject targetUIObj)
     {
-        inGameUIObj.SetActive(false);
-        gameOverUIObj.SetActive(true);
+        curUI.SetActive(false);
+        curUI = targetUIObj;
+        curUI.SetActive(true);
+    }
+    void ToggleSlider(Slider target)
+    {
+        target.interactable = target.interactable == true ? false : true;
     }
 
+    /// <summary>
+    /// modify ui score text controll
+    /// </summary>
+    /// <param name="value">target time value</param>
     void UIScoreModi(int value)
     {
-        Score.text = GameManager.Inst.Score.ToString();
+        score.text = GameManager.Inst.Score.ToString();
     }
 }

@@ -1,11 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.UI;
 using UnityEngine;
-using UnityEngine.UIElements;
 
+#if UNITY_EDITOR
 [CustomPropertyDrawer(typeof(EditingGenericClass), true)]
 class CustomDictionaryEditor : PropertyDrawer
 {
@@ -44,3 +40,4 @@ class CustomDictionaryEditor : PropertyDrawer
         //===========================================================
     }
 }
+#endif

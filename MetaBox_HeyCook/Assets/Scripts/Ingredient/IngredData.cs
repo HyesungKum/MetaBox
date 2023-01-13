@@ -7,8 +7,8 @@ public class IngredData : ScriptableObject
 {
     public string ingredName;
 
-    public Sprite trimedImage;
     public Sprite ingredientImage;
+    public Sprite trimedImage;
 
     public int taskCount;
 

@@ -46,7 +46,7 @@ public class CookTable : MonoBehaviour
         tableRoundX = Mathf.Round(this.transform.position.x * 10f) / 10f;
         tableRoundY = Mathf.Round(this.transform.position.y * 10f) / 10f;
 
-        tablePos = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z + 3f);
+        tablePos = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z);
 
         sliderPos = cookSliderObj.transform.position;
         //
@@ -129,7 +129,7 @@ public class CookTable : MonoBehaviour
                     cookingIngred.Initializing();
                     
                     rawFood = tempIngred;
-                    rawFood.gameObject.transform.position = tablePos + (Vector3.back * 3f);
+                    rawFood.gameObject.transform.position = tablePos + (Vector3.back);
                     rawFood.IsCookReady = true;
                     rawFood.gameObject.name = rawFood.RecipeData.recipeName;
                     

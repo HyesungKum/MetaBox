@@ -29,11 +29,13 @@ public class BeltZone : MonoBehaviour
         }
     }
 
+    #region Editor
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.green;
+        Gizmos.color = new(0f, 1f, 0f, 0.4f);
         Gizmos.DrawCube(this.transform.position, this.transform.localScale);
     }
 #endif
+    #endregion
 }

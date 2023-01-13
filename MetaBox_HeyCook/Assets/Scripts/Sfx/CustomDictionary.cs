@@ -20,8 +20,6 @@ public class CustomDictionary<Tkey, Tvalue> : ISerializationCallbackReceiver
 {
     public Dictionary<Tkey, Tvalue> dictionary;
 
-    #region Editor
-#if UNITY_EDITOR
     /// <summary>
     /// Viewalbe Data for Serialize dictionary
     /// </summary>
@@ -97,13 +95,11 @@ public class CustomDictionary<Tkey, Tvalue> : ISerializationCallbackReceiver
             }
         }
     }
-#endif
-    #endregion
 
     #region Connecting Legacy Dictionary Function
     public void Add(Tkey key, Tvalue value) => dictionary.Add(key, value);
     public bool Remove(Tkey key) => dictionary.Remove(key);
-    public bool TryGetValue(Tkey key, out Tvalue value) => dictionary.TryGetValue(key, out value);
     public void Clear() => dictionary.Clear();
+    public bool TryGetValue(Tkey key, out Tvalue value) => dictionary.TryGetValue(key, out value);
     #endregion
 }
