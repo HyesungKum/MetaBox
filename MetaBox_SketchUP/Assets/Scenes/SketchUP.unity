@@ -968,7 +968,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &192821589
 Transform:
   m_ObjectHideFlags: 0
@@ -991,16 +991,25 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 192821588}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5d03db4004e46504ab2ce4d964691b18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   linePrefab: {fileID: 1110235797374175212, guid: 61e4d0a5c42e48f4788bf6c2b5881c06, type: 3}
-  instPos: {fileID: 337570766}
+  instLineTransform: {fileID: 337570766}
   revertButton: {fileID: 1152121094}
-  mainCam: {fileID: 519420031}
+  ObjOneVertiexs:
+  - {fileID: 494771071}
+  - {fileID: 1542033074}
+  - {fileID: 996583841}
+  - {fileID: 536417233}
+  - {fileID: 245375488}
+  ObjTwoVertiexs: []
+  ObjThreeVertiexs: []
   startVertex: {fileID: 0}
+  temp: {fileID: 0}
+  endVertex: {fileID: 0}
 --- !u!1 &245375485
 GameObject:
   m_ObjectHideFlags: 0
@@ -1014,7 +1023,7 @@ GameObject:
   - component: {fileID: 245375487}
   - component: {fileID: 245375488}
   m_Layer: 0
-  m_Name: DrowPoint
+  m_Name: DrowPoint5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1066,7 +1075,7 @@ MonoBehaviour:
   vertexes:
   - {fileID: 494771071}
   - {fileID: 996583841}
-  vertexName: 
+  vertexName: E
 --- !u!212 &245375489
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1220,7 +1229,7 @@ MonoBehaviour:
   vertexes:
   - {fileID: 587661492}
   - {fileID: 496738949}
-  vertexName: 
+  vertexName: D
 --- !u!212 &348041431
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1908,7 +1917,7 @@ GameObject:
   - component: {fileID: 494771070}
   - component: {fileID: 494771071}
   m_Layer: 0
-  m_Name: DrowPoint
+  m_Name: DrowPoint2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1927,7 +1936,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1051417028}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!58 &494771070
 CircleCollider2D:
@@ -1960,7 +1969,7 @@ MonoBehaviour:
   vertexes:
   - {fileID: 1542033074}
   - {fileID: 245375488}
-  vertexName: 
+  vertexName: B
 --- !u!212 &494771072
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2079,7 +2088,7 @@ MonoBehaviour:
   - {fileID: 1758673621}
   - {fileID: 587661492}
   - {fileID: 348041430}
-  vertexName: 
+  vertexName: A
 --- !u!212 &496738950
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2489,7 +2498,7 @@ GameObject:
   - component: {fileID: 536417232}
   - component: {fileID: 536417233}
   m_Layer: 0
-  m_Name: DrowPoint
+  m_Name: DrowPoint4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2541,7 +2550,7 @@ MonoBehaviour:
   vertexes:
   - {fileID: 1542033074}
   - {fileID: 996583841}
-  vertexName: 
+  vertexName: D
 --- !u!212 &536417234
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2732,7 +2741,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &574452343
 Transform:
   m_ObjectHideFlags: 0
@@ -2860,7 +2869,7 @@ MonoBehaviour:
   - {fileID: 496738949}
   - {fileID: 1758673621}
   - {fileID: 348041430}
-  vertexName: 
+  vertexName: C
 --- !u!212 &587661493
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4204,7 +4213,7 @@ GameObject:
   - component: {fileID: 996583840}
   - component: {fileID: 996583841}
   m_Layer: 0
-  m_Name: DrowPoint
+  m_Name: DrowPoint3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4256,7 +4265,7 @@ MonoBehaviour:
   vertexes:
   - {fileID: 536417233}
   - {fileID: 245375488}
-  vertexName: 
+  vertexName: C
 --- !u!212 &996583842
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4693,8 +4702,8 @@ Transform:
   m_LocalScale: {x: 0.6, y: 0.6, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 494771069}
   - {fileID: 1542033072}
+  - {fileID: 494771069}
   - {fileID: 996583839}
   - {fileID: 536417231}
   - {fileID: 245375486}
@@ -6216,7 +6225,7 @@ GameObject:
   - component: {fileID: 1542033073}
   - component: {fileID: 1542033074}
   m_Layer: 0
-  m_Name: DrowPoint
+  m_Name: DrowPoint1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6230,12 +6239,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1542033071}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.3999022, y: 0.4445, z: 0}
-  m_LocalScale: {x: 0.06, y: 0.06, z: 0}
+  m_LocalPosition: {x: -1.3999022, y: 0.4444999, z: 0}
+  m_LocalScale: {x: 0.06, y: 0.06000001, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1051417028}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!58 &1542033073
 CircleCollider2D:
@@ -6268,7 +6277,7 @@ MonoBehaviour:
   vertexes:
   - {fileID: 536417233}
   - {fileID: 494771071}
-  vertexName: 
+  vertexName: A
 --- !u!212 &1542033075
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -6620,7 +6629,7 @@ MonoBehaviour:
   vertexes:
   - {fileID: 496738949}
   - {fileID: 587661492}
-  vertexName: 
+  vertexName: B
 --- !u!212 &1758673622
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -54,7 +54,7 @@ public class DrawLogic : MonoBehaviour
                 {
                     instLine = ObjectPoolCP.PoolCp.Inst.BringObjectCp(linePrefab);
                     //Debug.Log("Ã¹ »ý¼º");
-                    instLine.transform.SetParent(instPos.transform); // Inst Line setParent 
+                    instLine.transform.SetParent(instPos); // Inst Line setParent 
 
                     instLine.transform.localScale = new Vector3(1f, 1f, 0f);
                     instLine.transform.localRotation = Quaternion.identity;
