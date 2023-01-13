@@ -24,7 +24,7 @@ public class Police : MonoBehaviour
 
     void DataSetting()
     {
-        playerSpeed = GameManager.Instance.FreezeData.playerSpeed * 0.01f;
+        playerSpeed = GameManager.Instance.FreezeData.playerSpeed * 0.02f;
         playerArea = GameManager.Instance.FreezeData.playerArea * 0.5f;
         circleArea.radius *= playerArea;
     }

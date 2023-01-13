@@ -2,8 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public delegate void CallbackArrest(Thief me);
+
 public class Thief : MonoBehaviour
 {
+    public CallbackArrest callbackArrest = null;
+
     [SerializeField] ScriptableObj thiefImages = null;
     [SerializeField] SpriteRenderer spriteRenderer = null;
 
@@ -20,20 +24,25 @@ public class Thief : MonoBehaviour
     bool arrest;
     Vector3 dir;
 
-    // Start is called before the first frame update
-    void Start()
+    void OnEnable()
     {
-        thiefSpawner = this.transform.parent.GetComponent<ThiefSpawner>();
-        police = FindObjectOfType<Police>();
-        if (spriteRenderer == null) spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
+        Debug.Log("활성화");
         runnigTime = new WaitUntil(() => (police.transform.position - this.transform.position).magnitude > 2f);
         GameStart = new WaitUntil(() => GameManager.Instance.IsGaming);
         runningAway = false;
         arrest = false;
         dir = new Vector3(Random.Range(-1f, 1f), Random.Range(-0.4f, 1f), 0);
-
         StartCoroutine(nameof(RandomDir));
         StartCoroutine(nameof(RandomMove));
+    }
+    
+    // Start is called before the first frame update
+    void Start()
+    {
+        Debug.Log("스타트");
+        thiefSpawner = this.transform.parent.GetComponent<ThiefSpawner>();
+        police = FindObjectOfType<Police>();
+        if (spriteRenderer == null) spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
     }
 
     public void OpenImage()
@@ -49,7 +58,8 @@ public class Thief : MonoBehaviour
 
     public void Remove()
     {
-        Destroy(this);
+        if(this.gameObject.activeSelf == false) return;
+        thiefSpawner.Release(this);
     }
 
     public void Setting(bool wantedThief, int id, int movespeed, int movetime)
@@ -62,6 +72,9 @@ public class Thief : MonoBehaviour
 
     IEnumerator RandomDir()
     {
+        Debug.Log("방향코루틴스타트");
+        yield return GameStart;
+        Debug.Log("방향코루틴교");
         while (arrest == false)
         {
             dir.x = Random.Range(-1f, 1f);
@@ -72,7 +85,9 @@ public class Thief : MonoBehaviour
 
     IEnumerator RandomMove()
     {
+        Debug.Log("무브코루틴스타트");
         yield return GameStart;
+        Debug.Log("무브코루틴교");
         while (GameManager.Instance.IsGaming)
         {
             transform.Translate(dir * speed * Time.deltaTime);
@@ -92,7 +107,8 @@ public class Thief : MonoBehaviour
         thiefSpawner.Hide();
         if (wantedThief) GameManager.Instance.Catch();
         else GameManager.Instance.Penalty();
-        this.gameObject.SetActive(false);
+        
+        if(callbackArrest != null) callbackArrest(this);
     }
 
     private void OnCollisionEnter2D(Collision2D collision) //동물, 벽 충돌시 방향변경
@@ -128,6 +144,13 @@ public class Thief : MonoBehaviour
         {
             runningAway = true;
             StartCoroutine(nameof(RunAwayMode));
+            dir = (this.transform.position - collision.transform.position).normalized;
+        }
+    }
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if(collision.tag != "Prison")
+        {
             dir = (this.transform.position - collision.transform.position).normalized;
         }
     }

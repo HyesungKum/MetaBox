@@ -38,8 +38,10 @@ public class GameManager : MonoBehaviour
     int penalty;
     int catchNumber;
 
+
     private void Awake()
     {
+        Application.targetFrameRate = 60;
         DataManager.Instance.LoadGameData();
     }
 
@@ -53,6 +55,10 @@ public class GameManager : MonoBehaviour
         FreezeData = DataManager.Instance.FindGameDataByLevel(level);
         StageDatas = DataManager.Instance.FindStageDatasByStageGroup(FreezeData.stageGroup, FreezeData.stageCount);
         ShuffleList(StageDatas);
+        for(int i = 0; i < StageDatas.Count; i++)
+        {
+            Debug.Log($"스테이지목록임{StageDatas[i].wantedCount} // {StageDatas[i].thiefCount}");
+        }
         stage = 0;
         PlayTime = FreezeData.playTime;
         if (FreezeDataSetting != null) FreezeDataSetting();
