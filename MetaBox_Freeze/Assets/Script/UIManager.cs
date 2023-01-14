@@ -37,7 +37,7 @@ public class UIManager : MonoBehaviour
 
     WaitForSeconds waitHalf = null;
     WaitForSeconds wait1 = null;
-
+    public int PlayTime { get; set; }
     int wantedCount;
     int countdown;
     
@@ -63,11 +63,12 @@ public class UIManager : MonoBehaviour
         this.wantedCount = wantedCount;
         this.countdown = startCountdown;
         Debug.Log(wantedCount);
-        wantedList.gameObject.SetActive(true);
+        
         for (int i = 0; i < wantedCount; i++)
         {
             Instantiate(wantedListImage, wantedList.content.transform);
         }
+        //범죄자 목록이 많을 경우 위 아래 투터치 드래그로 목록 변경 가능
     }
 
     public void Timer()
@@ -103,7 +104,11 @@ public class UIManager : MonoBehaviour
     {
         gameStartText.gameObject.SetActive(true);
         reStart.gameObject.SetActive(true);
-        gameStartText.text = "You Win";
+        gameStartText.text = "You Win" + Environment.NewLine + $"{PlayTime - GameManager.Instance.PlayTime}";
+        //모든 스테이지 클리어하는데 걸린 시간이 짧은 유저가 상위에 랭크
+        //플레이어 ID, 게임 분류 아이디(각 게임 테이블의 gameGroup), 게임 난이도(각 게임 테이블의 id), 플레이타임(초로 환산), 랭킹을 달성한 날짜와 시간 을 랭킹 DB에 저장
+        //만약 랭킹 DB에 플레이어 id가 있을 경우 현재 결과와 이전 결과를 비교해서 현재 결과가 더 짧을 경우 현재 결과로 변경
+
     }
 
     public void Lose()
@@ -139,6 +144,7 @@ public class UIManager : MonoBehaviour
         yield return waitHalf;
         gameStartText.gameObject.SetActive(false);
         GameManager.Instance.WaveStart();
+        wantedList.gameObject.SetActive(true);
         pause.gameObject.SetActive(true);
     }
 

@@ -11,7 +11,6 @@ public class Thief : MonoBehaviour
     [SerializeField] ScriptableObj thiefImages = null;
     [SerializeField] SpriteRenderer spriteRenderer = null;
 
-    ThiefSpawner thiefSpawner = null;
     Police police = null;
     WaitUntil runnigTime = null;
     WaitUntil GameStart = null;
@@ -40,7 +39,6 @@ public class Thief : MonoBehaviour
     void Start()
     {
         Debug.Log("스타트");
-        thiefSpawner = this.transform.parent.GetComponent<ThiefSpawner>();
         police = FindObjectOfType<Police>();
         if (spriteRenderer == null) spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
     }
@@ -58,8 +56,8 @@ public class Thief : MonoBehaviour
 
     public void Remove()
     {
-        if(this.gameObject.activeSelf == false) return;
-        thiefSpawner.Release(this);
+        if (callbackArrest != null) callbackArrest(this);
+        callbackArrest = null;
     }
 
     public void Setting(bool wantedThief, int id, int movespeed, int movetime)
@@ -104,19 +102,24 @@ public class Thief : MonoBehaviour
     IEnumerator Destroy()
     {
         yield return waitMoveTime;
-        thiefSpawner.Hide();
+        if (callbackArrest != null) callbackArrest(this);
+        callbackArrest = null;
+
         if (wantedThief) GameManager.Instance.Catch();
         else GameManager.Instance.Penalty();
-        
-        if(callbackArrest != null) callbackArrest(this);
     }
 
     private void OnCollisionEnter2D(Collision2D collision) //동물, 벽 충돌시 방향변경
     {
-        if (runningAway) return;
-        dir.x = -collision.contacts[0].point.x;
-        dir.y = -collision.contacts[0].point.y;
-        dir.Normalize();
+        if(collision.rigidbody == false)
+        {
+            dir.x = -collision.contacts[0].point.x;
+            dir.y = -collision.contacts[0].point.y;
+            dir.Normalize();
+        }
+        //이동 방향에 다른 NPC가 있을 경우 밀면서 이동
+        //만약 다른 NPC와 서로 반대 방향으로 이동 중 충돌할 경우 랜덤으로 현재 이동하는 방향이 아닌 다른 방향으로 이동
+        //만약 한 NPC가 PC에 의해 이동하는 방향에 다른 NPC가 이동해서 이동할경우 해당 NPC만 다른 방향으로 이동
     }
 
 
@@ -131,7 +134,7 @@ public class Thief : MonoBehaviour
                 arrest = true;
                 dir = (collision.transform.position - this.transform.position).normalized;
                 speed *= 0.7f;
-                thiefSpawner.Open();
+                GameManager.Instance.ShowImg();
                 StartCoroutine(nameof(Destroy));
             }
             else

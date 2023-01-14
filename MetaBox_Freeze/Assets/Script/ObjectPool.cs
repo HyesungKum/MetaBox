@@ -59,6 +59,7 @@ public abstract class ObjectPool<T> : MonoBehaviour where T : MonoBehaviour
 
     public void Release(T tObj)
     {
+        Debug.Log("나 비활성화");
         if (objCount >= PoolMaxSize)
         {
             Destroy(tObj);
@@ -67,6 +68,7 @@ public abstract class ObjectPool<T> : MonoBehaviour where T : MonoBehaviour
         {
             tObj.gameObject.SetActive(false);
             pool.Enqueue(tObj);
+            Debug.Log(pool.Count);
         }
     }
 

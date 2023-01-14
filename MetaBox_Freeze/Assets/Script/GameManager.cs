@@ -61,6 +61,7 @@ public class GameManager : MonoBehaviour
         }
         stage = 0;
         PlayTime = FreezeData.playTime;
+        UIManager.Instance.PlayTime = FreezeData.playTime;
         if (FreezeDataSetting != null) FreezeDataSetting();
         WaveSetting();
     }
@@ -112,8 +113,13 @@ public class GameManager : MonoBehaviour
         else UIManager.Instance.Lose();
     }
 
+    public void ShowImg()
+    {
+        thiefSpawner.Open();
+    }
     public void Catch()
     {
+        thiefSpawner.Hide();
         catchNumber++;
         UIManager.Instance.Arrest(catchNumber);
         if (catchNumber == StageDatas[stage-1].wantedCount)
@@ -124,6 +130,7 @@ public class GameManager : MonoBehaviour
 
     public void Penalty()
     {
+        thiefSpawner.Hide();
         PlayTime -= penalty;
         Debug.Log("¾Ñ ½Ç¼ö");
     }
