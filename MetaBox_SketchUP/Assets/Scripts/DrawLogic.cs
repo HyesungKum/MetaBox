@@ -21,6 +21,8 @@ public class DrawLogic : MonoBehaviour
     private int verticesCount = 0;
     int vCount;
 
+    bool isMoveEnd = false;
+
     private void Awake()
     {
         lineBackStack = new Stack<GameObject>();
@@ -52,6 +54,7 @@ public class DrawLogic : MonoBehaviour
             {
                 if (Input.GetTouch(0).phase == TouchPhase.Began)  // Touch Start
                 {
+                    isMoveEnd = false;
                     instLine = ObjectPoolCP.PoolCp.Inst.BringObjectCp(linePrefab);
                     //Debug.Log("霉 积己");
                     instLine.transform.SetParent(instPos); // Inst Line setParent 
@@ -83,6 +86,8 @@ public class DrawLogic : MonoBehaviour
 
                 else if (Input.GetTouch(0).phase == TouchPhase.Moved)
                 {
+                    isMoveEnd = false;
+
                     if (objCheck.transform.gameObject.TryGetComponent<Vertex>(out collisionVertex))
                     {
                         if (instLine != null)
@@ -109,6 +114,8 @@ public class DrawLogic : MonoBehaviour
                                     instLine.transform.localRotation = Quaternion.Euler(0, 0, AngleInDeg(startPos, myPos));
 
                                     startVertex = collisionVertex;
+                                    isMoveEnd = true;
+
 
                                     break;
                                 }
@@ -146,6 +153,7 @@ public class DrawLogic : MonoBehaviour
 
         if (Input.GetTouch(0).phase == TouchPhase.Moved)  // Touch Move
         {
+            isMoveEnd = false;
 
             Vector3 myPos = Input.GetTouch(0).position;
 
@@ -153,14 +161,18 @@ public class DrawLogic : MonoBehaviour
             {
                 instLine.transform.localScale = new Vector2(Vector3.Distance(myPos, startPos), 1);
                 instLine.transform.localRotation = Quaternion.Euler(0, 0, AngleInDeg(startPos, myPos));
+                isMoveEnd = true;
             }
         }
         else if (Input.GetTouch(0).phase == TouchPhase.Ended)
         {
-            if (instLine != null)
+            if (isMoveEnd)
             {
-                ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(instLine);
-                Debug.Log("3)昏力 凳 ??");
+                if (instLine != null)
+                {
+                    ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(instLine);
+                    Debug.Log("3)昏力 凳 ??");
+                }
             }
         }
     }

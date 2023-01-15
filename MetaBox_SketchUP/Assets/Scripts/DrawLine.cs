@@ -19,8 +19,6 @@ public class DrawLine : MonoBehaviour
     [SerializeField] Vertex[] ObjTwoVertiexs = null;
     [SerializeField] Vertex[] ObjThreeVertiexs = null;
 
-    private GameObject handlingLine;
-
     //====================inner variables=========================
     GameObject instLine = null;
     Touch myTouch;
@@ -29,13 +27,12 @@ public class DrawLine : MonoBehaviour
     public Vertex temp = null;
     public Vertex endVertex = null;
 
-
     Stack<GameObject> lineBackStack = null;
     Stack<Vertex> checkVertex = null;
 
     private int verticesCount = 0;
-
     bool isMoveEnd = false;
+    Vertex collisionVertex = null;
 
     private void Awake()
     {
@@ -43,7 +40,7 @@ public class DrawLine : MonoBehaviour
         checkVertex = new Stack<Vertex>();
 
         // Revert Button Event
-        //revertButton.onClick.AddListener(() => OnClickRevertButton());
+        revertButton.onClick.AddListener(() => OnClickRevertButton());
     }
 
     void Start()
@@ -56,8 +53,6 @@ public class DrawLine : MonoBehaviour
         if (Input.touchCount <= 0) return;
         myTouch = Input.GetTouch(0);
 
-        Vertex collisionVertex = null;
-
 
         switch (myTouch.phase)
         {
@@ -65,7 +60,6 @@ public class DrawLine : MonoBehaviour
             case TouchPhase.Began:
                 {
                     isMoveEnd = false;
-
                     TouchBeganCheck(out collisionVertex);
                 }
                 break;
@@ -75,19 +69,7 @@ public class DrawLine : MonoBehaviour
             case TouchPhase.Moved:
                 {
                     isMoveEnd = false;
-
-                    RaycastHit2D hitInfo = RayCheck(myTouch);
-
-                    if (hitInfo)
-                    {
-                        StrethchLine(instLine);
-                        isMoveEnd = true;
-                    }
-                    else
-                    {
-                        StrethchLine(instLine);
-                        isMoveEnd = true;
-                    }
+                    MoveLineInHit(out collisionVertex);
                 }
                 break;
             #endregion
@@ -95,33 +77,64 @@ public class DrawLine : MonoBehaviour
             #region Ended
             case TouchPhase.Ended:
                 {
-                    RaycastHit2D hitInfo = RayCheck(myTouch);
-
-                    if (hitInfo)
-                    {
-
-                    }
-                    else if (isMoveEnd)
-                    {
-                        DestroyLine(instLine);
-                        Debug.Log("삭제 됨");
-                    }
-                    break;
-                    #endregion
+                    LineMoveEnd(out collisionVertex);
                 }
+                break;
+                #endregion
 
+        }
+    }
+
+    void MoveLineInHit(out Vertex collisionVertex)
+    {
+        collisionVertex = null;
+        RaycastHit2D hitInfo = RayCheck(myTouch);
+
+        if (hitInfo)
+        {
+            if (hitInfo.transform.gameObject.TryGetComponent<Vertex>(out collisionVertex))
+            {
+                if (instLine != null)
+                {
+                    for (int i = 0; i < startVertex.GetNodeLength(); i++)
+                    {
+                        if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNextNodeName(i)) == 0)
+                        {
+                            collisionVertex.ColorChange(); // Color Changed 
+                            checkVertex.Push(collisionVertex);
+                            Debug.Log("## checkVertex) 스택에 하나 추가 :");
+
+                            instLine = InstLine();
+                            StrethchLine(instLine);
+                            lineBackStack.Push(instLine);
+                            Debug.Log("## lineBackStack 스택에 하나 추가 :");
+
+                            startVertex = collisionVertex;
+                            isMoveEnd = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            StrethchLine(instLine);
+            isMoveEnd = true;
         }
     }
 
     void TouchBeganCheck(out Vertex collisionVertex)
     {
         collisionVertex = null;
-
         RaycastHit2D hitInfo = RayCheck(myTouch);
 
         if (hitInfo)
         {
+            // Line Inst
             instLine = InstLine();
+            lineBackStack.Push(instLine);
+            Debug.Log("## lineBackStack 스택에 하나 추가 :");
             LineTransformReset(instLine);
 
             if (hitInfo.transform.TryGetComponent<Vertex>(out collisionVertex) == true)
@@ -129,12 +142,14 @@ public class DrawLine : MonoBehaviour
                 if (startVertex == null)
                 {
                     startVertex = collisionVertex;
-                    
+
+                    collisionVertex.StartPointColor();
+                    checkVertex.Push(collisionVertex);
+                    Debug.Log("## checkVertex) 스택에 하나 추가 :");
                 }
                 else if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNodeName()) != 0)
                 {
-                    //ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(instLine);
-                    //DestroyLine(instLine);
+                    DestroyLine(instLine);
                     Debug.Log("## 1 Pool 삭제");
                 }
             }
@@ -142,6 +157,38 @@ public class DrawLine : MonoBehaviour
     }
 
 
+    void LineMoveEnd(out Vertex collisionVertex)
+    {
+        collisionVertex = null;
+
+        RaycastHit2D hitInfo = RayCheck(myTouch);
+
+        if (hitInfo)
+        {
+            if (startVertex != null)
+            {
+                if (hitInfo.transform.gameObject.TryGetComponent<Vertex>(out collisionVertex))
+                {
+                    for (int i = 0; i < startVertex.GetNodeLength(); i++)
+                    {
+                        if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNextNodeName(i)) == 0)
+                        {
+                            return;
+                        }
+                        else if (i == startVertex.GetNodeLength() - 1)
+                        {
+                            DestroyLine(instLine);
+                        }
+                    }
+                }
+            }
+        }
+        else if (isMoveEnd == true)
+        {
+            DestroyLine(instLine);
+            //Debug.Log("삭제 됨");
+        }
+    }
 
     GameObject InstLine()
     {
@@ -160,6 +207,9 @@ public class DrawLine : MonoBehaviour
         if (line != null)
         {
             ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(instLine);
+            instLine = lineBackStack.Pop();
+            Debug.Log("## lineBackStack 스택에 하나 삭~~제 :");
+            Debug.Log("## lineBackStack.Count :" + lineBackStack.Count);
         }
     }
 
@@ -195,10 +245,15 @@ public class DrawLine : MonoBehaviour
 
     public void OnClickRevertButton()
     {
-        if (checkVertex.Count == 0) return;
+        if (lineBackStack.Count == 0 && checkVertex.Count == 0) return;
 
-        Vertex Changed = checkVertex.Pop();
-        Changed.BackOriginalColor();
+        GameObject deleteLine = instLine;
+        deleteLine = lineBackStack.Pop();
+
+        Vertex delete = collisionVertex;
+        delete = checkVertex.Pop();
+        Debug.Log("checkVertex.Count :" + checkVertex.Count);
+        delete.BackOriginalColor();
     }
 
     public static float AngleInRad(Vector3 vec1, Vector3 vec2)

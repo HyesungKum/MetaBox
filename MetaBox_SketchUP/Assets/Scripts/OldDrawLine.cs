@@ -9,6 +9,7 @@ public class OldDrawLine : MonoBehaviour
     [SerializeField] GameObject linePrefab = null;
     [SerializeField] RectTransform instPos = null;
     [SerializeField] Button revertButton = null;
+
     Touch myTouch;
 
     private Vector3 startPos;
@@ -203,7 +204,6 @@ public class OldDrawLine : MonoBehaviour
 
         ChangedColor.BackOriginalColor();
     }
-
 
     public void OnClickRevertButton()
     {
