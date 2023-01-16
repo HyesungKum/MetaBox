@@ -2,55 +2,58 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UIElements;
 
 public class Clear : MonoBehaviour
 {
     [SerializeField] GameObject inGamePanel = null;
     [SerializeField] GameObject clearPanel = null;
+    [SerializeField] GameObject clearTextPanel = null;
 
     [SerializeField] GameObject clearImgOne = null;
     [SerializeField] GameObject clearImgTwo = null;
     [SerializeField] GameObject clearImgThree = null;
 
-
-    void Start()
+    void Awake()
     {
+        clearPanel.gameObject.SetActive(false);
         SetingClearImg(false, false, false);
     }
 
     public void ClearImgOne()
     {
-        clearPanel.gameObject.SetActive(true);
-        inGamePanel.gameObject.SetActive(false);
+        PanelSetting(true, false);
         SetingClearImg(true, false, false);
     }
 
-    public void ClearIMgObjTwo()
+    public void ClearImgObjTwo()
     {
-        clearPanel.gameObject.SetActive(true);
-        inGamePanel.gameObject.SetActive(false);
+        PanelSetting(true, false);
         SetingClearImg(false, true, false);
     }
 
-    public void ClearIMgObjThree() 
+    public void ClearImgObjThree()
     {
-        clearPanel.gameObject.SetActive(true);
-        inGamePanel.gameObject.SetActive(false);
+        PanelSetting(true, false);
         SetingClearImg(false, false, true);
     }
 
     public void ClearImgTwo()
     {
-        clearPanel.gameObject.SetActive(true);
-        inGamePanel.gameObject.SetActive(false);
+        PanelSetting(true, false);
         SetingClearImg(true, true, false);
     }
 
-    public void ClearImgThree()
+    public void ClearAll()
     {
-        clearPanel.gameObject.SetActive(true);
-        inGamePanel.gameObject.SetActive(false);
+        PanelSetting(true, true);
         SetingClearImg(true, true, true);
+    }
+
+    void PanelSetting(bool clearPanelSet, bool inGamePanelSet)
+    {
+        clearPanel.gameObject.SetActive(clearPanelSet);
+        inGamePanel.gameObject.SetActive(inGamePanelSet);
     }
 
     /// <summary>
