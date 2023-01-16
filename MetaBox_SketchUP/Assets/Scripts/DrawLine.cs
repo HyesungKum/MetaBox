@@ -102,7 +102,7 @@ public class DrawLine : MonoBehaviour
                         {
                             collisionVertex.ColorChange(); // Color Changed 
                             checkVertex.Push(collisionVertex);
-                            Debug.Log("## checkVertex) 스택에 하나 추가 :");
+                            Debug.Log("## checkVertex) 스택에 하나 추가 :" + checkVertex.Count);
 
                             instLine = InstLine();
                             StrethchLine(instLine);
@@ -131,7 +131,6 @@ public class DrawLine : MonoBehaviour
 
         if (hitInfo)
         {
-            // Line Inst
             instLine = InstLine();
             lineBackStack.Push(instLine);
             Debug.Log("## lineBackStack 스택에 하나 추가 :");
@@ -145,7 +144,7 @@ public class DrawLine : MonoBehaviour
 
                     collisionVertex.StartPointColor();
                     checkVertex.Push(collisionVertex);
-                    Debug.Log("## checkVertex) 스택에 하나 추가 :");
+                    Debug.Log("## checkVertex) 스택에 하나 추가 :" + checkVertex.Count);
                 }
                 else if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNodeName()) != 0)
                 {
@@ -207,6 +206,7 @@ public class DrawLine : MonoBehaviour
         if (line != null)
         {
             ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(instLine);
+            if (lineBackStack.Count == 0) return;
             instLine = lineBackStack.Pop();
             Debug.Log("## lineBackStack 스택에 하나 삭~~제 :");
             Debug.Log("## lineBackStack.Count :" + lineBackStack.Count);
@@ -247,12 +247,12 @@ public class DrawLine : MonoBehaviour
     {
         if (lineBackStack.Count == 0 && checkVertex.Count == 0) return;
 
-        GameObject deleteLine = instLine;
-        deleteLine = lineBackStack.Pop();
+        //lineBackStack.Pop();
+        DestroyLine(instLine);
 
         Vertex delete = collisionVertex;
         delete = checkVertex.Pop();
-        Debug.Log("checkVertex.Count :" + checkVertex.Count);
+        //Debug.Log("checkVertex.Count :" + checkVertex.Count);
         delete.BackOriginalColor();
     }
 
@@ -260,6 +260,7 @@ public class DrawLine : MonoBehaviour
     {
         return Mathf.Atan2(vec2.y - vec1.y, vec2.x - vec1.x);
     }
+
     public static float AngleInDeg(Vector3 vec1, Vector3 vec2)
     {
         return AngleInRad(vec1, vec2) * 180 / Mathf.PI;
