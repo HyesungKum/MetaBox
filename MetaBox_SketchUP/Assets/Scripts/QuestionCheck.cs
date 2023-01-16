@@ -5,15 +5,24 @@ using UnityEngine;
 public class QuestionCheck : MonoBehaviour
 {
     [SerializeField] private string imgName = "";
-    [SerializeField] private int winCount = 0;
+    [SerializeField] private int ObjDrawCount = 0;
 
-    private int objOneDrawCount = 5;
+    //public string imgName;
+    void Awake()
+    {
+        SetObjName();
+    }
+
+    public string GetPrentName() => imgName;
+
+    
+    private int objOneDrawCount = 3;
     public int ObjOneDrawCount
     { get { return objOneDrawCount; }
         set { objOneDrawCount = value; } 
     }
 
-    private int objTwoDrawCount = 5;
+    private int objTwoDrawCount = 10;
     public int ObjTwoDrawCount
     {
         get { return objTwoDrawCount; }
@@ -27,11 +36,12 @@ public class QuestionCheck : MonoBehaviour
         set { objThreeDrawCount = value; }
     }
 
+    //public string GetName() => imgName;
 
-    public string ObjName(string name)
+    public string SetObjName()
     {
-        imgName = name;
+        imgName = this.gameObject.name;
+        //Debug.Log(" this.gameObject.name :" + this.gameObject.name);
         return imgName;
     }
-
 }
