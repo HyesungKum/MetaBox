@@ -55,10 +55,6 @@ public class GameManager : MonoBehaviour
         FreezeData = DataManager.Instance.FindGameDataByLevel(level);
         StageDatas = DataManager.Instance.FindStageDatasByStageGroup(FreezeData.stageGroup, FreezeData.stageCount);
         ShuffleList(StageDatas);
-        for(int i = 0; i < StageDatas.Count; i++)
-        {
-            Debug.Log($"스테이지목록임{StageDatas[i].wantedCount} // {StageDatas[i].thiefCount}");
-        }
         stage = 0;
         PlayTime = FreezeData.playTime;
         UIManager.Instance.PlayTime = FreezeData.playTime;
@@ -117,11 +113,11 @@ public class GameManager : MonoBehaviour
     {
         thiefSpawner.Open();
     }
-    public void Catch()
+    public void Catch(int id)
     {
         thiefSpawner.Hide();
         catchNumber++;
-        UIManager.Instance.Arrest(catchNumber);
+        UIManager.Instance.Arrest(id);
         if (catchNumber == StageDatas[stage-1].wantedCount)
         {
             WaveClear();

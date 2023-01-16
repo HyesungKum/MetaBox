@@ -37,8 +37,6 @@ public abstract class ObjectPool<T> : MonoBehaviour where T : MonoBehaviour
 
     public T Get()
     {
-        Debug.Log(pool.Count);
-        Debug.Log("도둑줄게");
         if (obj == null)
         {
             obj = CreatePool();
@@ -51,7 +49,6 @@ public abstract class ObjectPool<T> : MonoBehaviour where T : MonoBehaviour
         }
         else
         {
-            Debug.Log("새로 만들어줄게");
             objCount++;
             return Instantiate<T>(obj);
         }
@@ -59,7 +56,6 @@ public abstract class ObjectPool<T> : MonoBehaviour where T : MonoBehaviour
 
     public void Release(T tObj)
     {
-        Debug.Log("나 비활성화");
         if (objCount >= PoolMaxSize)
         {
             Destroy(tObj);

@@ -25,9 +25,9 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    [SerializeField] GameObject wantedListImage = null;
-    [SerializeField] Sprite arrestImage = null;
-
+    Dictionary<int, Wanted> wantedDic = new Dictionary<int, Wanted>();
+    [SerializeField] Wanted wantedListImage = null;
+    
     [SerializeField] Button reStart = null;
     [SerializeField] Button pause = null;
     [SerializeField] Button exit = null;
@@ -62,13 +62,19 @@ public class UIManager : MonoBehaviour
     {
         this.wantedCount = wantedCount;
         this.countdown = startCountdown;
-        Debug.Log(wantedCount);
-        
-        for (int i = 0; i < wantedCount; i++)
+    }
+
+    public void WantedListSetting(List<int> list)
+    {
+        wantedDic.Clear();
+        wantedList.gameObject.SetActive(true);
+        for (int i = 0; i < list.Count; i++)
         {
-            Instantiate(wantedListImage, wantedList.content.transform);
+            Wanted inst = Instantiate<Wanted>(wantedListImage, wantedList.content.transform);
+            inst.Init(list[i]);
+            wantedDic.Add(list[i], inst);
+            //범죄자 목록이 많을 경우 위 아래 투터치 드래그로 목록 변경 가능
         }
-        //범죄자 목록이 많을 경우 위 아래 투터치 드래그로 목록 변경 가능
     }
 
     public void Timer()
@@ -80,9 +86,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void Arrest(int catchCount)
+    public void Arrest(int id)
     {
-        wantedList.content.GetChild(catchCount - 1).GetComponent<Image>().sprite = arrestImage;
+        Wanted value = null;
+        if(wantedDic.TryGetValue(id, out value)) value.Arrest();
     }
 
     public void WaveStart()
@@ -144,7 +151,6 @@ public class UIManager : MonoBehaviour
         yield return waitHalf;
         gameStartText.gameObject.SetActive(false);
         GameManager.Instance.WaveStart();
-        wantedList.gameObject.SetActive(true);
         pause.gameObject.SetActive(true);
     }
 

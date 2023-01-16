@@ -25,7 +25,7 @@ public class Police : MonoBehaviour
     void DataSetting()
     {
         playerSpeed = GameManager.Instance.FreezeData.playerSpeed * 0.02f;
-        playerArea = GameManager.Instance.FreezeData.playerArea * 0.5f;
+        playerArea = GameManager.Instance.FreezeData.playerArea * 0.6f;
         circleArea.radius *= playerArea;
     }
 
@@ -37,6 +37,7 @@ public class Police : MonoBehaviour
         {
             Vector3 movePoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             movePoint.z = 0;
+            if (movePoint.y < -3.2) movePoint.y = -3.2f;
             isMoving = false;
             StartCoroutine(_Move(movePoint));
         }
@@ -62,7 +63,6 @@ public class Police : MonoBehaviour
     {
         isMoving = false;
     }
-
 
     void OnDrawGizmos()
     {

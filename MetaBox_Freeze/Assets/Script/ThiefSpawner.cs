@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public delegate void ChangeThief();
 
@@ -14,6 +12,7 @@ public class ThiefSpawner : ObjectPool<Thief>
 
     [SerializeField] Thief thiefPref = null;
     public List<ThiefData> ThiefDatas { get; private set; }
+    List<int> wantedlist = new List<int>();
 
     public override Thief CreatePool()
     {
@@ -29,6 +28,7 @@ public class ThiefSpawner : ObjectPool<Thief>
     public void Spawn(StageData stage)
     {
         ThiefDatas = DataManager.Instance.FindThiefDatasByThiefGroup(stage.thiefGroup);
+        wantedlist.Clear();
         OpenImage = null;
         HideImage = null;
         RemoveThief = null;
@@ -39,19 +39,24 @@ public class ThiefSpawner : ObjectPool<Thief>
 
         for (int i = 0; i < stage.thiefCount; i++)
         {
-            Debug.Log("µµµÏ¸¸µé±â");
             if (wantedCount <= 0) wanted = false; 
             int random = Random.Range(0, ThiefDatas.Count);
             Thief thief = Get();
             thief.transform.position = new Vector3(Random.Range(-5f, 8f), Random.Range(-3f, 3f), 0);
             if (thief.transform.parent == null) thief.transform.parent = this.transform;
             thief.Setting(wanted, ThiefDatas[random].id, ThiefDatas[random].moveSpeed, ThiefDatas[random].moveTime);
+            if (wanted)
+            {
+                wantedlist.Add(ThiefDatas[random].id);
+            }
             thief.callbackArrest = Release;
             OpenImage += thief.OpenImage;
             HideImage += thief.HideImage;
             RemoveThief += thief.Remove;
+            ThiefDatas.RemoveAt(random);
             wantedCount--;
         }
+        UIManager.Instance.WantedListSetting(wantedlist);
     }
 
     public void Open()
