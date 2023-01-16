@@ -1,106 +1,55 @@
 using ObjectPoolCP;
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class TrimTable : MonoBehaviour
 {
-    //================ObjectReferance=======================
-    [SerializeField] Ingredient targetIngred = null;
-    private Ingredient tempIngred = null;
+    //====================================ObjectReferance=============================================
+    [Header("Current Ingredient")]
+    [SerializeField] private Ingredient targetIngred = null;
+    [SerializeField] private Ingredient tempIngred = null;
 
-    [SerializeField] GameObject trimSliderObj = null;
-    Slider trimSlider = null;
+    [Header("Trim Slider")]
+    [SerializeField] private GameObject trimSliderObj = null;
+    private Slider trimSlider = null;
 
-    private SpriteRenderer spriteRenderer = null;
+    //=====================================inner variables============================================
+    private Vector3 targetPos = Vector3.zero;
 
-    //================inner variables=======================
-    Vector3 tablePos = Vector3.zero;
-    Vector3 sliderPos = Vector3.zero;
-
-    float tableRoundX;
-    float tableRoundY;
+    private float tableRoundX;
+    private float tableRoundY;
 
     private void Awake()
     {
-        //
-        trimSliderObj.transform.position = this.transform.position;
-        trimSliderObj.SetActive(false);
-
+        //Reference components
         trimSlider = trimSliderObj.GetComponent<Slider>();
+        
+        //Tagging
+        this.transform.tag = "Table";
 
-        //
+        //init inner variables
+        Initailizing();
+    }
+
+    //=====================================Initailize Inner Variables=======================================
+    private void Initailizing()
+    {
+        //TablePosition Round
         tableRoundX = Mathf.Round(this.transform.position.x * 10f) / 10f;
         tableRoundY = Mathf.Round(this.transform.position.y * 10f) / 10f;
 
-        tablePos = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z - 1f);
+        //Ingredient Position Setting
+        targetPos = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z - 1f);
 
-        sliderPos = trimSliderObj.transform.position;
-        //
-        this.transform.tag = "Table";
-
-        //
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        //Trim slider setting
+        trimSliderObj.transform.position = targetPos + Vector3.up * 3f;
+        trimSliderObj.SetActive(false);
     }
 
-    void Update()
-    {
-        TargetControll();
-        TargetMove();
-        IngredCheak();
-    }
-
-    void IngredCheak()
-    {
-        if (targetIngred == null) return;
-
-        if(targetIngred.IsTrimed)
-        {
-            trimSliderObj.SetActive(false);
-            tempIngred = null;
-            targetIngred = null;
-        }
-    }
-    void TargetControll()
-    {
-        if (targetIngred == null) return;
-
-        if (tempIngred == null)
-        {
-            tempIngred = targetIngred;
-        }
-        else if(tempIngred != targetIngred && !targetIngred.IsCliked)
-        {
-            PoolCp.Inst.DestoryObjectCp(tempIngred.gameObject);
-            tempIngred = targetIngred;
-        }
-    }
-    void TargetMove()
-    {
-        if (targetIngred == null || targetIngred.transform.position == tablePos) return;
-
-        if (!targetIngred.IsCliked)
-        {
-            Transform targetTr = targetIngred.transform;
-
-            float fixedX = Mathf.Round(targetTr.position.x * 10f) / 10f;
-            float fixedY = Mathf.Round(targetTr.position.y * 10f) / 10f;
-
-            if (tableRoundX == fixedX && tableRoundY == fixedY)
-            {
-                targetTr.position = tablePos;
-
-                targetIngred.TrimReady = true;
-
-                trimSliderObj.SetActive(true);
-                trimSliderObj.transform.position = tablePos + Vector3.up * 3f;
-                trimSlider.value = 0;
-            }
-
-            targetTr.position = Vector3.Lerp(targetTr.position, tablePos, Time.deltaTime * 10f);
-        }
-    }
-
+    //===========================================Trim Task Controll==========================================
     public void Pressing()
     {
         if (targetIngred == null) return;
@@ -108,8 +57,7 @@ public class TrimTable : MonoBehaviour
 
         //누르기 이펙트
 
-        targetIngred.curTask++;
-        trimSlider.value = targetIngred.curTask / targetIngred.needTask;
+        TaskControll();
     }
     public void Touching()
     {
@@ -117,9 +65,8 @@ public class TrimTable : MonoBehaviour
         if (!(targetIngred.TrimReady && targetIngred.TrimType == TrimType.Touching)) return;
 
         //터치 이펙트
-        
-        targetIngred.curTask++;
-        trimSlider.value = targetIngred.curTask / targetIngred.needTask;
+
+        TaskControll();
     }
     public void Slicing()
     {
@@ -128,40 +75,99 @@ public class TrimTable : MonoBehaviour
 
         //자르기 이펙트
 
+        TaskControll();
+    }
+    private void TaskControll()
+    {
         targetIngred.curTask++;
         trimSlider.value = targetIngred.curTask / targetIngred.needTask;
+
+        if (trimSlider.value == 1)
+        {
+            trimSliderObj.SetActive(false);
+            targetIngred.OnTrim();
+            targetIngred = null;
+        }
     }
 
-    void OnTriggerStay2D(Collider2D collision)
+    //=========================================Ingredeint In Out ============================================
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag(nameof(Ingredient)))
         {
             Ingredient contactIngred = collision.transform.GetComponent<Ingredient>();
 
-            if (contactIngred != tempIngred)
-            {
-                if (trimSliderObj.activeSelf)
-                {
-                    trimSliderObj.SetActive(false);
-                }
+            if (contactIngred.IsTrimed) return;
+            if (contactIngred.IsCooked) return;
 
-                targetIngred = contactIngred;
+            tempIngred = contactIngred;
+        }
+    }
+    void OnTriggerStay2D(Collider2D collision)
+    {
+        if (tempIngred == null) return;
+
+        if (collision.gameObject == tempIngred.gameObject)
+        {
+            if (!tempIngred.IsCliked)
+            {
+                StartCoroutine(nameof(TargetMove));
             }
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
+        if (tempIngred == null) return;
+
         if (collision.CompareTag(nameof(Ingredient)))
         {
-            Ingredient contactIngred = collision.transform.GetComponent<Ingredient>();
-
-            if (targetIngred == null || targetIngred.IsTrimed) return;
-
-            if (!targetIngred.TrimReady && contactIngred == targetIngred)
+            if (collision.transform.gameObject == tempIngred.gameObject)
             {
-                targetIngred = null;
-                tempIngred = null;
+                if (tempIngred.IsCliked)
+                {
+                    tempIngred = null;
+                }
             }
+        }
+    }
+
+    //======================================Target Obj Move Production=======================================
+    IEnumerator TargetMove()
+    {
+        Transform targetTr = tempIngred.transform;
+
+        while (true)
+        {
+            if (tempIngred == null) yield break;
+
+            //lerp and round position
+            float fixedX = Mathf.Round(targetTr.position.x * 10f) / 10f;
+            float fixedY = Mathf.Round(targetTr.position.y * 10f) / 10f;
+
+            targetTr.position = Vector3.Lerp(targetTr.position, targetPos, Time.deltaTime * 10f);
+
+            if (tableRoundX == fixedX && tableRoundY == fixedY)
+            {
+                //position controll
+                targetTr.position = targetPos;
+
+                tempIngred.TrimReady = true;
+
+                trimSliderObj.SetActive(true);
+                trimSliderObj.transform.position = targetPos + Vector3.up * 3f;
+                trimSlider.value = 0;
+
+                //current handling ingredient controll
+                if (targetIngred != null) PoolCp.Inst.DestoryObjectCp(targetIngred.gameObject);
+
+                targetIngred = tempIngred;
+                targetIngred.OnTrim();
+                tempIngred = null;
+
+                yield break;
+            }
+            
+            yield return null;
         }
     }
 }

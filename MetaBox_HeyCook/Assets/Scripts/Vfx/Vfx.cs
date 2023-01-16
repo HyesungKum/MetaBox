@@ -5,7 +5,7 @@ using ObjectPoolCP;
 [RequireComponent(typeof(SpriteRenderer))]
 public class Vfx : MonoBehaviour
 {
-    //====================ref components==============
+    //====================ref components================
     [Header("ref componetns")]
     [SerializeField] SpriteRenderer spriteRenderer;
 
@@ -16,17 +16,17 @@ public class Vfx : MonoBehaviour
     [Header("Play Duration")]
     [SerializeField] float duration;
 
-    //====================inner varables===============
-    float timer = 0f;
-    float frameTimer = 0f;
-    private int frameIndex;
+    //====================inner varables=================
+    private float timer = 0f;
+    private float frameTimer = 0f;
+    private int frameIndex = 0;
 
     private void OnEnable()
     {
         timer = 0f;
         frameTimer = 0f;
+        frameIndex = 0;
 
-        NextFrame();
         StartCoroutine(nameof(Repeat));
     }
 

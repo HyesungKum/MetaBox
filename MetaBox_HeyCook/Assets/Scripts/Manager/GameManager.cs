@@ -72,7 +72,9 @@ public class GameManager : MonoSingleTon<GameManager>
 
     void ScoreAddSub(int value)
     {
-        Score += value;
+        GameManager.Inst.Score += value;
+
+        if (Score < 0) Score = 0;
     }
 
     void GamePasue()

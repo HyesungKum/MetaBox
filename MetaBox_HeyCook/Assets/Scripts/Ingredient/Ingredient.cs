@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+//Different Cook and Trimable Ways Enum
 public enum TrimType
 {
     Pressing,
@@ -22,18 +23,18 @@ public enum CookType
 [RequireComponent(typeof(Rigidbody2D))]
 public class Ingredient : MonoBehaviour
 {
-    //===============data=====================================
+    //============================Data=====================================
     [Header("Data")]
     public RecipeData RecipeData = null;
     public IngredData IngredData = null;
 
-    //===============component================================
+    //============================Component================================
     [Header("Component")]
     public Rigidbody2D Rigidbody2D = null;
     public BoxCollider2D BoxCollider2D = null;
     public SpriteRenderer SpriteRenderer = null;
 
-    //===============flag=====================================
+    //============================Flag=====================================
     [Header("Flag")]
     public bool IsCliked;
 
@@ -43,14 +44,14 @@ public class Ingredient : MonoBehaviour
     public bool IsCooked;
     public bool IsCookReady;
 
-    //===============trimControll=============================
+    //============================trimControll=============================
     [Header("TrimControll")]
 
     public float needTask;
     public float curTask = 0;
     public TrimType TrimType;
 
-    //=====================cookControll========================
+    //==================================cookControll========================
     public CookType CookType;
 
     private void Awake()
@@ -66,12 +67,7 @@ public class Ingredient : MonoBehaviour
         Initializing();
     }
 
-    private void Update()
-    {
-        TrimCollCtl();
-        CookCollCtl();
-    }
-
+    //===================================Initailizing component and inner variables==========================
     /// <summary>
     /// sprite and collider, tag, flag initializing
     /// </summary>
@@ -101,10 +97,11 @@ public class Ingredient : MonoBehaviour
         IsCooked = false;
     }
 
+    //=====================================Trim & Cook Task Controll=========================================
     /// <summary>
-    /// movable collider controll when triming
+    /// check this ingredient can trimable and do right intrecting
     /// </summary>
-    void TrimCollCtl()
+    public void OnTrim()
     {
         if (IsTrimed || IngredData == null) return;
 
@@ -122,9 +119,9 @@ public class Ingredient : MonoBehaviour
         }
     }
     /// <summary>
-    /// movable collider controll when Cooking
+    /// check this ingredient can cookable and do right intrecting
     /// </summary>
-    void CookCollCtl()
+    public void OnCook()
     {
         if (IsCooked || RecipeData == null) return;
 

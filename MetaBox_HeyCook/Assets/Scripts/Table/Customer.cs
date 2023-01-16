@@ -7,31 +7,42 @@ using UnityEngine;
 
 public class Customer : MonoBehaviour
 {
-    [Header("All Recipe List")]
-    [SerializeField] List<RecipeData> RecipeList = null; //할 수 있는 요리 리스트
+    //=====================================Reference Data======================================
+    [Header("Reference Data")]
+    [SerializeField] List<RecipeData> RecipeList = null; //할 수 있는 요리 리스트 SO로 뭉탱이로 바꾸기
+    //[SerializeField] TalkData 대사정보
 
+    //=====================================Reference Obj=======================================
+    [Header("Current Recipe")]
     [SerializeField] public RecipeData requireRecipe = null;
+
+    [Header("Current Ingredient")]
+    [SerializeField] Ingredient tempIngred = null;
+
+    //=======================================Component==========================================
     [SerializeField] SpriteRenderer spriteRenderer = null;
 
-    [SerializeField] Ingredient tempIngred = null; //방금 집어넣은 음식
-
-    public List<string> customerText;
-
-    //================inner variables=======================
-    Vector3 tablePos = Vector3.zero;
+    //===================================inner variables========================================
+    Vector3 targetPos = Vector3.zero;
 
     float tableRoundX;
     float tableRoundY;
 
     private void Awake()
     {
-        tableRoundX = Mathf.Round(this.transform.position.x * 10f) / 10f;
-        tableRoundY = Mathf.Round(this.transform.position.y * 10f) / 10f;
-        tablePos = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z + 1f);
-
+        Initializing();
         PickRecipe();
     }
 
+    //==================================Init Inner Variables=====================================
+    private void Initializing()
+    {
+        tableRoundX = Mathf.Round(this.transform.position.x * 10f) / 10f;
+        tableRoundY = Mathf.Round(this.transform.position.y * 10f) / 10f;
+        targetPos = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z + 1f);
+    }
+
+    //=======================================Food In Out==========================================
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag(nameof(Ingredient)))
@@ -40,7 +51,6 @@ public class Customer : MonoBehaviour
             tempIngred = contactIngred;
         }
     }
-
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag(nameof(Ingredient)))
@@ -51,12 +61,22 @@ public class Customer : MonoBehaviour
             }
         }
     }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag(nameof(Ingredient)))
+        {
+            if (tempIngred.gameObject == collision.gameObject)
+            {
+                tempIngred = null;
+            }
+        }
+    }
 
+    //===================================Ingredient Move Production===============================
     IEnumerator TargetMove()
     {
         while (true)
         {
-            Debug.Log("hi");
             if (tempIngred == null) yield break;
 
             Transform targetTr = tempIngred.transform;
@@ -66,18 +86,19 @@ public class Customer : MonoBehaviour
 
             if (tableRoundX == fixedX && tableRoundY == fixedY)
             {
-                Debug.Log("음식확인");
-                targetTr.position = tablePos;
+                targetTr.position = targetPos;
 
                 FoodCompare();
                 yield break;
             }
 
-            targetTr.position = Vector3.Lerp(targetTr.position, tablePos, Time.deltaTime * 10f);
+            targetTr.position = Vector3.Lerp(targetTr.position, targetPos, Time.deltaTime * 10f);
 
             yield return null;
         }
     }
+
+    //=====================================Ingredient Data Compare================================
     void FoodCompare()
     {
         if (tempIngred.IsCooked)
@@ -111,7 +132,6 @@ public class Customer : MonoBehaviour
 
         PickRecipe();
     }
-
     void PickRecipe()
     {
         int index = Random.Range(0, RecipeList.Count);

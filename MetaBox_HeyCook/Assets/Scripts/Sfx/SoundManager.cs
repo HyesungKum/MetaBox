@@ -24,7 +24,7 @@ public class SoundManager : MonoSingleTon<SoundManager>
     [SerializeField] private AudioSource SFX2;
     [SerializeField] private AudioSource SFX3;
 
-    //========================BGM Controll===============================
+    //========================BGM Controll================================
     public void SetBGM(string sourceName)
     {
         soundData.clips.TryGetValue(sourceName, out AudioClip clip);
@@ -33,7 +33,7 @@ public class SoundManager : MonoSingleTon<SoundManager>
     public void PlayBGM() => BGMAudio.Play();
     public void StopBGM() => BGMAudio.Stop();
 
-    //=======================SFX Controll================================
+    //=======================SFX Controll=================================
     public void CallSound(string sourceName)
     {
         soundData.clips.TryGetValue(sourceName, out AudioClip clip);
