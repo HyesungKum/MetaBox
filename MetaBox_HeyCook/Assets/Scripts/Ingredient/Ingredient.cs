@@ -59,7 +59,10 @@ public class Ingredient : MonoBehaviour
         Rigidbody2D = GetComponent<Rigidbody2D>();
         BoxCollider2D = GetComponent<BoxCollider2D>();
         SpriteRenderer = GetComponent<SpriteRenderer>();
+    }
 
+    private void OnEnable()
+    {
         Initializing();
     }
 

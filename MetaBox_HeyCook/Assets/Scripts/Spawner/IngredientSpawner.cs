@@ -1,3 +1,4 @@
+using ObjectPoolCP;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -53,7 +54,7 @@ public class IngredientSpawner : MonoBehaviour
     {
         int index = Random.Range(0, SpawnTable.Count);
 
-        Instantiate(SpawnTable[index],this.transform.position, Quaternion.identity);
+        PoolCp.Inst.BringObjectCp(SpawnTable[index]).transform.SetPositionAndRotation(this.transform.position, Quaternion.identity);
     }
 
     #region Editor Gizmo

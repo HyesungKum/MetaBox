@@ -3833,6 +3833,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Score: 0
   Timer: 180
+  IsPause: 0
   IsGameOver: 0
   Level: 1
 --- !u!1 &1012105202
@@ -4188,7 +4189,7 @@ MonoBehaviour:
   sfxSlider: {fileID: 1939177069}
   opRestartButton: {fileID: 1595195685}
   opResumeButton: {fileID: 1396106729}
-  opExitButton: {fileID: 1595195685}
+  opExitButton: {fileID: 1457791676}
   gameOverUI: {fileID: 290521448}
   restartButton: {fileID: 392748133}
   endExitButton: {fileID: 852184543}
@@ -4203,7 +4204,7 @@ GameObject:
   - component: {fileID: 1308137842}
   - component: {fileID: 1308137843}
   m_Layer: 5
-  m_Name: OptionUIGroup
+  m_Name: OptionButtonSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6276,7 +6277,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 6
+  m_SortingOrder: 5
   m_TargetDisplay: 0
 --- !u!224 &1831846543
 RectTransform:

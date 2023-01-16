@@ -1,3 +1,4 @@
+using ObjectPoolCP;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -37,7 +38,7 @@ public class CookTable : MonoBehaviour
     private void Awake()
     {
         //
-        cookSliderObj.transform.position = Camera.main.ScreenToWorldPoint(this.transform.position);
+        cookSliderObj.transform.position = this.transform.position;
         cookSliderObj.SetActive(false);
 
         cookSlider = cookSliderObj.GetComponent<Slider>();
@@ -138,7 +139,7 @@ public class CookTable : MonoBehaviour
                     //cooktable setting
                     nowCooking = true;
                     cookSliderObj.SetActive(true);
-                    cookSliderObj.transform.position = Camera.main.WorldToScreenPoint(tablePos + Vector3.up * 3f);
+                    cookSliderObj.transform.position = tablePos + Vector3.up * 3f;
 
                     cookSlider.value = 0;
 
@@ -151,7 +152,7 @@ public class CookTable : MonoBehaviour
             }
         }
 
-        Destroy(tempIngred.gameObject);
+        PoolCp.Inst.DestoryObjectCp(tempIngred.gameObject);
         tempIngred = null;
     }
     void Cooking()

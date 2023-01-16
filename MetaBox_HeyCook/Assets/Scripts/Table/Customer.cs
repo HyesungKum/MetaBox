@@ -1,5 +1,7 @@
+using ObjectPoolCP;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -30,17 +32,33 @@ public class Customer : MonoBehaviour
         PickRecipe();
     }
 
-    private void Update()
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        TargetMove();
+        if (collision.CompareTag(nameof(Ingredient)))
+        {
+            Ingredient contactIngred = collision.GetComponent<Ingredient>();
+            tempIngred = contactIngred;
+        }
     }
 
-    void TargetMove()
+    private void OnTriggerStay2D(Collider2D collision)
     {
-        if (tempIngred == null || tempIngred.transform.position == tablePos) return;
-
-        if (!tempIngred.IsCliked)
+        if (collision.CompareTag(nameof(Ingredient)))
         {
+            if (!tempIngred.IsCliked)
+            {
+                StartCoroutine(nameof(TargetMove));
+            }
+        }
+    }
+
+    IEnumerator TargetMove()
+    {
+        while (true)
+        {
+            Debug.Log("hi");
+            if (tempIngred == null) yield break;
+
             Transform targetTr = tempIngred.transform;
 
             float fixedX = Mathf.Round(targetTr.position.x * 10f) / 10f;
@@ -52,9 +70,12 @@ public class Customer : MonoBehaviour
                 targetTr.position = tablePos;
 
                 FoodCompare();
+                yield break;
             }
 
             targetTr.position = Vector3.Lerp(targetTr.position, tablePos, Time.deltaTime * 10f);
+
+            yield return null;
         }
     }
     void FoodCompare()
@@ -64,7 +85,6 @@ public class Customer : MonoBehaviour
             if (tempIngred.RecipeData == requireRecipe)
             {
                 Debug.Log("∏¿¿÷¥Ÿ!");
-
                 EventReciver.CallScoreModi(100);
             }
             else
@@ -86,11 +106,12 @@ public class Customer : MonoBehaviour
                 EventReciver.CallScoreModi(-50);
             }
         }
-        Destroy(tempIngred.gameObject);
+        PoolCp.Inst.DestoryObjectCp(tempIngred.gameObject);
         tempIngred = null;
 
         PickRecipe();
     }
+
     void PickRecipe()
     {
         int index = Random.Range(0, RecipeList.Count);
@@ -98,18 +119,5 @@ public class Customer : MonoBehaviour
         spriteRenderer.sprite = requireRecipe.cooked;
 
         EventReciver.CallNewComstomer();
-    }
-
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.CompareTag(nameof(Ingredient)))
-        {
-            Ingredient contactIngred = collision.GetComponent<Ingredient>();
-
-            if (!contactIngred.IsCliked)
-            {
-                tempIngred = contactIngred;
-            }
-        }
     }
 }

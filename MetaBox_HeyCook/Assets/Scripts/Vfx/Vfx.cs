@@ -37,8 +37,8 @@ public class Vfx : MonoBehaviour
     {
         while(true)
         {
-            timer += Time.deltaTime;
-            frameTimer += Time.deltaTime;
+            timer += Time.unscaledDeltaTime;
+            frameTimer += Time.unscaledDeltaTime;
 
             //image changing
             if ((1f / fps) < frameTimer)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.SceneManagement;
+using UnityEditorInternal;
 
 public class GameManager : MonoSingleTon<GameManager>
 {
@@ -11,6 +12,7 @@ public class GameManager : MonoSingleTon<GameManager>
     public int Score = 0;
     public int Timer = 10;
 
+    public bool IsPause = false;
     public bool IsGameOver = false;
 
     public int Level = 1;
@@ -23,6 +25,7 @@ public class GameManager : MonoSingleTon<GameManager>
         Application.targetFrameRate = 60;
 
         //initializing
+        IsPause = false;
         IsGameOver = false;
 
         //delegate chain
@@ -74,12 +77,13 @@ public class GameManager : MonoSingleTon<GameManager>
 
     void GamePasue()
     {
+        GameManager.Inst.IsPause = true;
         Time.timeScale = 0;
     }
 
     void GameResume()
     {
-        Debug.Log("게임 시간 계속");
+        GameManager.Inst.IsPause = false;
         Time.timeScale = 1f;   
     }
 }

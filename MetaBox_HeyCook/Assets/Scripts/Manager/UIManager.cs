@@ -106,7 +106,6 @@ public class UIManager : MonoBehaviour
 
     void UIGameResume()
     {
-        Debug.Log("ui 되돌리기");
         ShowUI(inGameUI);
     }
 
@@ -127,6 +126,7 @@ public class UIManager : MonoBehaviour
         curUI = targetUIObj;
         curUI.SetActive(true);
     }
+
     void ToggleSlider(Slider target)
     {
         target.interactable = target.interactable == true ? false : true;

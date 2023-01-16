@@ -1,3 +1,4 @@
+using ObjectPoolCP;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,7 +24,7 @@ public class TrimTable : MonoBehaviour
     private void Awake()
     {
         //
-        trimSliderObj.transform.position = Camera.main.ScreenToWorldPoint(this.transform.position);
+        trimSliderObj.transform.position = this.transform.position;
         trimSliderObj.SetActive(false);
 
         trimSlider = trimSliderObj.GetComponent<Slider>();
@@ -70,7 +71,7 @@ public class TrimTable : MonoBehaviour
         }
         else if(tempIngred != targetIngred && !targetIngred.IsCliked)
         {
-            Destroy(tempIngred.gameObject);
+            PoolCp.Inst.DestoryObjectCp(tempIngred.gameObject);
             tempIngred = targetIngred;
         }
     }
@@ -92,7 +93,7 @@ public class TrimTable : MonoBehaviour
                 targetIngred.TrimReady = true;
 
                 trimSliderObj.SetActive(true);
-                trimSliderObj.transform.position = Camera.main.WorldToScreenPoint( tablePos + Vector3.up * 2f);
+                trimSliderObj.transform.position = tablePos + Vector3.up * 3f;
                 trimSlider.value = 0;
             }
 

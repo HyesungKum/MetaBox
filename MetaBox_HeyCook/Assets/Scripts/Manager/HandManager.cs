@@ -22,7 +22,7 @@ public class HandManager : MonoBehaviour
 
         TouchVfxOut();
 
-        if (!InGame || GameManager.Inst.IsGameOver) return;
+        if (!InGame || GameManager.Inst.IsGameOver || GameManager.Inst.IsPause) return;
         
         Ray ray = mainCam.ScreenPointToRay(Input.GetTouch(0).position);
         RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, float.MaxValue);
