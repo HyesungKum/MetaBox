@@ -16,11 +16,6 @@ public class DrawLine : MonoBehaviour
     [SerializeField] GameObject objTwo = null;
     [SerializeField] GameObject objThree = null;
 
-    //===================== ImgDrawCount (int) ==================
-    public int objOneDrawCount = 0;
-    public int objTwoDrawCount = 0;
-    public int objThreeDrawCount = 0;
-
     //==================== inner variables========================
     GameObject instLine = null;
     GameObject parentObj = null;
@@ -42,19 +37,13 @@ public class DrawLine : MonoBehaviour
 
     public int checkClearImgCount = 3;
 
-    private float delayTime = 1f;
-    private float checkTime;
-
     private void Awake()
     {
         lineBackStack = new Stack<GameObject>();
         checkVertex = new Stack<Vertex>();
 
-        //objs = FindObjectsOfType<QuestionCheck>();
-
         // Revert Button Event
         revertButton.onClick.AddListener(() => OnClickRevertButton());
-
     }
 
     void Start()
@@ -99,7 +88,7 @@ public class DrawLine : MonoBehaviour
                         ClearImg();
                     }
 
-                    Debug.Log("lineBackStack.Count :" + lineBackStack.Count);
+                    //Debug.Log("lineBackStack.Count :" + lineBackStack.Count);
                 }
                 break;
                 #endregion
@@ -136,7 +125,6 @@ public class DrawLine : MonoBehaviour
                 else if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNodeName()) != 0)
                 {
                     DestroyLine(instLine);
-                    //CountDown();
                 }
             }
         }
@@ -165,13 +153,6 @@ public class DrawLine : MonoBehaviour
                             StrethchLine(instLine);
 
                             lineBackStack.Push(instLine);
-
-                            //objOneDrawCount = lineBackStack.Count;
-                            //Debug.Log("## 2) objOneDrawCount : " + objOneDrawCount);
-
-                            // ===============
-                            //CountUp();
-
                             //Debug.Log("## lineBackStack 스택에 하나 추가 :");
                             startVertex = collisionVertex;
 
@@ -237,8 +218,9 @@ public class DrawLine : MonoBehaviour
                 Debug.Log("완료");
                 checkClearImgCount -= 1;
                 clearImg.ClearImgOne();
-
-                StartCoroutine(DelayTime(1));  
+                StartCoroutine(DelayTime(1));
+                
+                //instLine.transform.parent = null;
             }
         }
         else if (parentObj.name == objTwo.name)

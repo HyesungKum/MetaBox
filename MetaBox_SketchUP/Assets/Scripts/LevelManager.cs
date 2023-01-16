@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class LevelManager : MonoBehaviour
 {
@@ -44,9 +45,10 @@ public class LevelManager : MonoBehaviour
     [SerializeField] Button imageTwo = null;
     [SerializeField] Button imageThree = null;
 
-    [Header("InGame Timer")]
+    [Header("[InGame Timer]")]
     [SerializeField] GameObject inGameTime = null;
     [SerializeField] GameObject waitTime = null;
+    [SerializeField] TextMeshProUGUI waitTimes = null;
     [SerializeField] GameObject Timers = null;
 
     [Header("[InGame Panel]")]
@@ -54,11 +56,14 @@ public class LevelManager : MonoBehaviour
     [SerializeField] GameObject ImgOneObj = null;
     [SerializeField] GameObject ImgTwoObj = null;
     [SerializeField] GameObject ImgThreeObj = null;
+    [SerializeField] RectTransform prantTransform = null;
+
+    [SerializeField] GameObject clearPanel = null;
 
     void Awake()
     {
         PanelSetting(true, false, false, false, false);
-        InGamepanelObjSetting();
+        InGamepanelObjSetting(false, false, false);
     }
 
     void Start()
@@ -93,32 +98,24 @@ public class LevelManager : MonoBehaviour
     void OnClickImageOne()
     {
         PanelSetting(false, false, false, true, true);
-        SelectPanelSetting(false, true, true);
         // Obj setting
         StartCoroutine(TimeDelayImgOne(ImgOneObj, true));
-
-
+        //SelectPanelSetting(false, true, true);
     }
 
     void OnClickImageTwo()
     {
         PanelSetting(false, false, false, true, true);
-        SelectPanelSetting(true, false, true);
+        //SelectPanelSetting(true, false, true);
         // Obj setting
         StartCoroutine(TimeDelayImgOne(ImgTwoObj, true));
     }
 
-    void OnClickImageAgain()
-    {
-        PanelSetting(false, false, false, false, true);
-        SelectPanelSetting(false, false, true);
-        StartCoroutine(TimeDelayImgOne(ImgTwoObj, true));
-    }
 
     void OnClickImageThree()
     {
         PanelSetting(false, false, false, true, true);
-        SelectPanelSetting(true, true, false);
+        //SelectPanelSetting(true, true, false);
         // Obj setting
         StartCoroutine(TimeDelayImgOne(ImgThreeObj, true));
     }
@@ -130,7 +127,7 @@ public class LevelManager : MonoBehaviour
         imageThree.gameObject.SetActive(imgThreeActive);
     }
 
-    void InGamepanelObjSetting()
+    void InGamepanelObjSetting(bool objOne, bool ObjTwo, bool ObjThree)
     {
         ImgOneObj.SetActive(false);
         ImgTwoObj.SetActive(false);
@@ -145,16 +142,17 @@ public class LevelManager : MonoBehaviour
         {
             stagePanel.gameObject.SetActive(true);
             Timers.gameObject.SetActive(false);
-
-            imageTwo.onClick.AddListener(() => OnClickImageAgain());
+            imageTwo.onClick.RemoveListener(() => OnClickImageTwo());
 
         }
-        else if(Count == 2) 
+        else if (Count == 2)
         {
+            stagePanel.gameObject.SetActive(true);
             Timers.gameObject.SetActive(false);
         }
-        else if(Count == 3)
+        else if (Count == 3)
         {
+            stagePanel.gameObject.SetActive(true);
             Timers.gameObject.SetActive(false);
 
         }

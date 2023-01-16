@@ -11,6 +11,7 @@ public class PlayTime : MonoBehaviour
     TextMeshProUGUI timerText = null;
 
     float time = 600;
+    bool isPlay = false;
 
     // === development mode ===
     //float time = 6;
@@ -23,12 +24,15 @@ public class PlayTime : MonoBehaviour
 
     void OnEnable()
     {
-        //TimerDown();
+        isPlay = true;
     }
 
     void Update()
     {
-        TimerDown();
+        if (isPlay)
+        {
+            TimerDown();
+        }
     }
 
     public void TimerDown()
@@ -41,6 +45,8 @@ public class PlayTime : MonoBehaviour
         {
             time = 0;
             timerText.text = $" Time : {Mathf.Round(time).ToString()}";
+            this.gameObject.SetActive(false);
+            isPlay = false;
             losePanel.gameObject.SetActive(true);
         }
     }

@@ -9,6 +9,7 @@ public class Clear : MonoBehaviour
     [SerializeField] GameObject inGamePanel = null;
     [SerializeField] GameObject clearPanel = null;
     [SerializeField] GameObject clearTextPanel = null;
+    [SerializeField] TextMeshProUGUI clearText = null;
 
     [SerializeField] GameObject clearImgOne = null;
     [SerializeField] GameObject clearImgTwo = null;
@@ -46,8 +47,17 @@ public class Clear : MonoBehaviour
 
     public void ClearAll()
     {
-        PanelSetting(true, true);
+        PanelSetting(true, false);
         SetingClearImg(true, true, true);
+        StartCoroutine(TimeDelayImgOne());
+    }
+
+    IEnumerator TimeDelayImgOne()
+    {
+        yield return new WaitForSeconds(2f);
+
+        clearTextPanel.gameObject.SetActive(true);
+        clearText.text = " Clear !! ";
     }
 
     void PanelSetting(bool clearPanelSet, bool inGamePanelSet)

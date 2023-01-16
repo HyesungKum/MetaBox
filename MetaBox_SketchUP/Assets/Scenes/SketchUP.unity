@@ -967,7 +967,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &192821590
 MonoBehaviour:
@@ -988,11 +988,6 @@ MonoBehaviour:
   objOne: {fileID: 735788382}
   objTwo: {fileID: 1848141554}
   objThree: {fileID: 467972737}
-  objOneDrawCount: 0
-  objTwoDrawCount: 0
-  objThreeDrawCount: 0
-  tempStartVertex: {fileID: 0}
-  endVertex: {fileID: 0}
   checkClearImgCount: 3
 --- !u!1 &245375485
 GameObject:
@@ -1420,7 +1415,7 @@ Transform:
   - {fileID: 2130161799}
   - {fileID: 98197340}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &400408006
 SpriteRenderer:
@@ -1654,7 +1649,8 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1694232810, guid: 61e34472ff22bbd408804add99bfa979, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 61e34472ff22bbd408804add99bfa979, type: 3}
 --- !u!1 &467972737 stripped
 GameObject:
@@ -2671,7 +2667,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 650823873}
-  - {fileID: 577157207}
   - {fileID: 1161790443}
   m_Father: {fileID: 0}
   m_RootOrder: 2
@@ -2916,37 +2911,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 567320854}
   m_CullTransparentMesh: 1
---- !u!1 &577157206
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 577157207}
-  m_Layer: 0
-  m_Name: InGameCloseButton
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &577157207
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 577157206}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 526920237}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &587661489
 GameObject:
   m_ObjectHideFlags: 0
@@ -3632,7 +3596,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1069091151, guid: 3e5e9458013d67a429cd6c34da5b9b9d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 3e5e9458013d67a429cd6c34da5b9b9d, type: 3}
 --- !u!1 &735788382 stripped
 GameObject:
@@ -5702,7 +5667,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 526920237}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1161790444
 MonoBehaviour:
@@ -5719,6 +5684,7 @@ MonoBehaviour:
   inGamePanel: {fileID: 2057493172}
   clearPanel: {fileID: 400408003}
   clearTextPanel: {fileID: 470366211}
+  clearText: {fileID: 755215612}
   clearImgOne: {fileID: 1592871141}
   clearImgTwo: {fileID: 2130161798}
   clearImgThree: {fileID: 98197339}
@@ -8084,7 +8050,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1397080816, guid: b7dd7c03400bd2b4d9746682bd2a7bef, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: b7dd7c03400bd2b4d9746682bd2a7bef, type: 3}
 --- !u!1 &1848141554 stripped
 GameObject:
@@ -8231,53 +8198,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1859585189}
   m_CullTransparentMesh: 1
---- !u!1 &1865955022
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1865955023}
-  - component: {fileID: 1865955024}
-  m_Layer: 0
-  m_Name: UIManger
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1865955023
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1865955022}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1865955024
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1865955022}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc37da8a60c1429428e4c926d369cb23, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectPanel: {fileID: 622273471}
-  reStartBut: {fileID: 1020878666}
-  RevertButton: {fileID: 0}
 --- !u!1 &1906101001
 GameObject:
   m_ObjectHideFlags: 0
@@ -8597,7 +8517,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &2057493173
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -8668,7 +8588,7 @@ Transform:
   - {fileID: 1848141557}
   - {fileID: 467972740}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2074876645
 GameObject:
@@ -9094,7 +9014,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 337223881129382380, guid: 84f4eeede6b6e354290865d1ba59352a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 337223881129382381, guid: 84f4eeede6b6e354290865d1ba59352a, type: 3}
       propertyPath: m_RootOrder
@@ -9201,6 +9121,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 494421430}
     - target: {fileID: 337223881129382382, guid: 84f4eeede6b6e354290865d1ba59352a, type: 3}
+      propertyPath: clearPanel
+      value: 
+      objectReference: {fileID: 400408003}
+    - target: {fileID: 337223881129382382, guid: 84f4eeede6b6e354290865d1ba59352a, type: 3}
       propertyPath: imageThree
       value: 
       objectReference: {fileID: 1616039941}
@@ -9224,5 +9148,9 @@ PrefabInstance:
       propertyPath: inGamePanel
       value: 
       objectReference: {fileID: 2057493172}
+    - target: {fileID: 337223881129382382, guid: 84f4eeede6b6e354290865d1ba59352a, type: 3}
+      propertyPath: prantTransform
+      value: 
+      objectReference: {fileID: 337570766}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 84f4eeede6b6e354290865d1ba59352a, type: 3}

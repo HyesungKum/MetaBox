@@ -7,18 +7,23 @@ public class WaitTimer : MonoBehaviour
 {
     TextMeshProUGUI startWaitTime = null;
 
-    float waitTime = 3f;
+    float waitTime = 3;
+    bool wait = false;
 
     void OnEnable()
     {
         startWaitTime = gameObject.GetComponent<TextMeshProUGUI>();
         startWaitTime.text = "Game Start";
-        //SetWaitTime();
+        wait = true;
     }
-    
+
     void Update()
     {
-        SetWaitTime();
+        if (wait)
+        {
+            SetWaitTime();
+            //Debug.Log("wait : " + wait);
+        }
     }
 
     void SetWaitTime()
@@ -36,7 +41,8 @@ public class WaitTimer : MonoBehaviour
         else if (waitTime < 0)
         {
             this.gameObject.SetActive(false);
-                return;
+            wait = false;
+            return;
         }
     }
 }

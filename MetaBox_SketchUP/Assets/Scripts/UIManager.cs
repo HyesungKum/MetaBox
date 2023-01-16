@@ -30,9 +30,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] Button RevertButton = null;
 
-    //public Stack<GameObject> lineStack = new Stack<GameObject>();
 
-    
 
     void Awake()
     {
