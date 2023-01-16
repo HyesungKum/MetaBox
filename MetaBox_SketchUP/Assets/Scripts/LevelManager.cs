@@ -1,15 +1,29 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using Unity.VisualScripting;
-using System.Numerics;
-using UnityEngine.XR;
 
 public class LevelManager : MonoBehaviour
 {
-    [Header("[Star Panel]")]
+    #region Singleton
+    private static LevelManager instance;
+    public static LevelManager Inst
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<LevelManager>();
+                if (instance == null)
+                {
+                    instance = new GameObject(nameof(LevelManager), typeof(LevelManager)).GetComponent<LevelManager>();
+                }
+            }
+            return instance;
+        }
+    }
+    #endregion
+
+    [Header("[Start Panel]")]
     [SerializeField] GameObject StartPanel = null;
     [SerializeField] Button gameStart = null;
     [SerializeField] Button opTion = null;
@@ -24,7 +38,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] Button levelthree = null;
     [SerializeField] Button levelfour = null;
 
-    [Header("[Stage Panel]")]
+    [Header("[Select Panel]")]
     [SerializeField] GameObject stagePanel = null;
     [SerializeField] Button imageOne = null;
     [SerializeField] Button imageTwo = null;
@@ -40,7 +54,6 @@ public class LevelManager : MonoBehaviour
     [SerializeField] GameObject ImgOneObj = null;
     [SerializeField] GameObject ImgTwoObj = null;
     [SerializeField] GameObject ImgThreeObj = null;
-
 
     void Awake()
     {
@@ -60,12 +73,11 @@ public class LevelManager : MonoBehaviour
         //leveltwo.onClick.AddListener(() => );
         //levelthree.onClick.AddListener(() => );
         //levelfour.onClick.AddListener(() => );
-        
+
         // =============
         imageOne.onClick.AddListener(() => OnClickImageOne());
         imageTwo.onClick.AddListener(() => OnClickImageTwo());
         imageThree.onClick.AddListener(() => OnClickImageThree());
-
     }
 
     void OnClickStartBut()
@@ -80,24 +92,42 @@ public class LevelManager : MonoBehaviour
 
     void OnClickImageOne()
     {
-        PanelSetting(false,false,false,true, true);
+        PanelSetting(false, false, false, true, true);
+        SelectPanelSetting(false, true, true);
         // Obj setting
         StartCoroutine(TimeDelayImgOne(ImgOneObj, true));
+
 
     }
 
     void OnClickImageTwo()
     {
         PanelSetting(false, false, false, true, true);
+        SelectPanelSetting(true, false, true);
         // Obj setting
+        StartCoroutine(TimeDelayImgOne(ImgTwoObj, true));
+    }
+
+    void OnClickImageAgain()
+    {
+        PanelSetting(false, false, false, false, true);
+        SelectPanelSetting(false, false, true);
         StartCoroutine(TimeDelayImgOne(ImgTwoObj, true));
     }
 
     void OnClickImageThree()
     {
         PanelSetting(false, false, false, true, true);
+        SelectPanelSetting(true, true, false);
         // Obj setting
         StartCoroutine(TimeDelayImgOne(ImgThreeObj, true));
+    }
+
+    void SelectPanelSetting(bool imgOneActive, bool imgTwoActive, bool imgThreeActive)
+    {
+        imageOne.gameObject.SetActive(imgOneActive);
+        imageTwo.gameObject.SetActive(imgTwoActive);
+        imageThree.gameObject.SetActive(imgThreeActive);
     }
 
     void InGamepanelObjSetting()
@@ -106,6 +136,30 @@ public class LevelManager : MonoBehaviour
         ImgTwoObj.SetActive(false);
         ImgThreeObj.SetActive(false);
     }
+
+    public void SelectAgain(int Count)
+    {
+        stagePanel.gameObject.SetActive(true);
+
+        if (Count == 1)
+        {
+            stagePanel.gameObject.SetActive(true);
+            Timers.gameObject.SetActive(false);
+
+            imageTwo.onClick.AddListener(() => OnClickImageAgain());
+
+        }
+        else if(Count == 2) 
+        {
+            Timers.gameObject.SetActive(false);
+        }
+        else if(Count == 3)
+        {
+            Timers.gameObject.SetActive(false);
+
+        }
+    }
+
 
     /// <summary>
     /// ImgeObj One , ImgeObj Two, ImgeObj Three Setting and 3Seconds waiting
@@ -130,7 +184,7 @@ public class LevelManager : MonoBehaviour
     /// <param name="LevelPanels"></param>
     /// <param name="StatgePanels"></param>
     /// <param name="IngamePanels"></param>
-    void PanelSetting(bool startPanels, bool LevelPanels, bool StatgePanels, bool IngameTime,bool inGame)
+    void PanelSetting(bool startPanels, bool LevelPanels, bool StatgePanels, bool IngameTime, bool inGame)
     {
         StartPanel.gameObject.SetActive(startPanels);
         LevelPanel.gameObject.SetActive(LevelPanels);

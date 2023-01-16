@@ -1,8 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
 
 public class DrawLine : MonoBehaviour
 {
@@ -13,7 +12,6 @@ public class DrawLine : MonoBehaviour
     [SerializeField] Button revertButton = null;
 
     //===================== referance questions obj =============
-    [SerializeField] QuestionCheck[] objs = null;
     [SerializeField] GameObject objOne = null;
     [SerializeField] GameObject objTwo = null;
     [SerializeField] GameObject objThree = null;
@@ -23,16 +21,15 @@ public class DrawLine : MonoBehaviour
     public int objTwoDrawCount = 0;
     public int objThreeDrawCount = 0;
 
-    //====================inner variables========================
+    //==================== inner variables========================
     GameObject instLine = null;
     GameObject parentObj = null;
 
     Touch myTouch;
     private Vector3 startPos;
     private Vertex startVertex = null;
-    // ===== private 로 추구 꼭 변경 하기
-    public Vertex tempStartVertex = null;
-    public Vertex endVertex = null;
+    private Vertex tempStartVertex = null;
+    private Vertex endVertex = null;
 
     Vertex collisionVertex = null;
     Clear clearImg = null;
@@ -45,6 +42,9 @@ public class DrawLine : MonoBehaviour
 
     public int checkClearImgCount = 3;
 
+    private float delayTime = 1f;
+    private float checkTime;
+
     private void Awake()
     {
         lineBackStack = new Stack<GameObject>();
@@ -55,10 +55,6 @@ public class DrawLine : MonoBehaviour
         // Revert Button Event
         revertButton.onClick.AddListener(() => OnClickRevertButton());
 
-        // Draw Count Setting
-        //objOneDrawCount = objs[0].ObjOneDrawCount;
-        //objTwoDrawCount = objs[1].ObjTwoDrawCount;
-        //objThreeDrawCount = objs[2].ObjThreeDrawCount;
     }
 
     void Start()
@@ -79,7 +75,6 @@ public class DrawLine : MonoBehaviour
                 {
                     isMoveEnd = false;
                     TouchBeganCheck(out collisionVertex);
-
                 }
                 break;
             #endregion
@@ -99,10 +94,12 @@ public class DrawLine : MonoBehaviour
                 {
                     LineMoveEnd(out collisionVertex);
 
-                    //if(instLine != null) 
-                    //{
-                    //    ClearImg();
-                    //}
+                    if (instLine != null)
+                    {
+                        ClearImg();
+                    }
+
+                    Debug.Log("lineBackStack.Count :" + lineBackStack.Count);
                 }
                 break;
                 #endregion
@@ -119,7 +116,8 @@ public class DrawLine : MonoBehaviour
             instLine = InstLine();
             lineBackStack.Push(instLine);
             // ===============
-            //CountUp();
+            //objOneDrawCount = lineBackStack.Count;
+            //Debug.Log("## 1) objOneDrawCount : " + objOneDrawCount);
 
             //Debug.Log("## lineBackStack 스택에 하나 추가 :");
             LineTransformReset(instLine);
@@ -168,6 +166,9 @@ public class DrawLine : MonoBehaviour
 
                             lineBackStack.Push(instLine);
 
+                            //objOneDrawCount = lineBackStack.Count;
+                            //Debug.Log("## 2) objOneDrawCount : " + objOneDrawCount);
+
                             // ===============
                             //CountUp();
 
@@ -177,8 +178,6 @@ public class DrawLine : MonoBehaviour
                             parentObj = startVertex.transform.parent.gameObject;
 
                             isMoveEnd = true;
-
-
                             break;
                         }
                     }
@@ -231,184 +230,49 @@ public class DrawLine : MonoBehaviour
 
     void ClearImg()
     {
-        if (parentObj.name == "IsoscelesOneBrush")
+        if (parentObj.name == objOne.name)
         {
-            if (tempStartVertex == endVertex)
+            if (tempStartVertex == endVertex || lineBackStack.Count == 3)
             {
                 Debug.Log("완료");
                 checkClearImgCount -= 1;
                 clearImg.ClearImgOne();
+
+                StartCoroutine(DelayTime(1));  
             }
         }
-        else if(parentObj.name == "StarPolygonOneBrush")
+        else if (parentObj.name == objTwo.name)
         {
-            if (tempStartVertex == endVertex)
+            if (lineBackStack.Count == 10)
             {
                 Debug.Log("두번째 완료");
                 checkClearImgCount -= 1;
-                clearImg.ClearImgTwo();
+                clearImg.ClearImgObjTwo();
+
+                StartCoroutine(DelayTime(2));
             }
         }
-        else if(parentObj.name == "HouseXOneBrush")
+        else if (parentObj.name == objThree.name)
         {
-            Debug.Log("세번째 완료");
-            checkClearImgCount -= 1;
+            if (lineBackStack.Count == 8)
+            {
+                Debug.Log("세번째 완료");
+                checkClearImgCount -= 1;
+                clearImg.ClearImgObjThree();
+
+                StartCoroutine(DelayTime(3));
+            }
         }
-        else if(checkClearImgCount == 0)
+        else if (checkClearImgCount == 0)
         {
             clearImg.ClearAll();
         }
     }
 
-    void CountDown()
+    IEnumerator DelayTime(int count)
     {
-        if (parentObj != null)
-        {
-            switch (parentObj.name)
-            {
-                case "IsoscelesOneBrush":
-                    {
-                        objOneDrawCount -= 1;
-                        Debug.Log("objOneDrawCount (-)  :" + objOneDrawCount);
-
-                        if (objOneDrawCount == 0) return;
-                    }
-                    break;
-
-                case "StarPolygonOneBrush":
-                    {
-                        objTwoDrawCount -= 1;
-                        Debug.Log("objTwoDrawCount (-)  :" + objTwoDrawCount);
-
-                        if (objTwoDrawCount == 0) return;
-                    }
-                    break;
-
-                case "HouseXOneBrush":
-                    {
-                        objThreeDrawCount -= 1;
-                        Debug.Log("objThreeDrawCount (-) :" + objThreeDrawCount);
-
-                        if (objThreeDrawCount == 0) return;
-                    }
-                    break;
-            }
-        }
-    }
-
-    void CountUp()
-    {
-        if (parentObj != null)
-        {
-            switch (parentObj.name)
-            {
-                case "IsoscelesOneBrush":
-                    {
-                        objOneDrawCount += 1;
-                        Debug.Log("objOneDrawCount (+) :" + objOneDrawCount);
-
-                        //if (objOneDrawCount <= 3)
-                        //{
-                        //    Debug.Log(" 1번째 완성");
-                        //    clearImg.ClearImgOne();
-                        //    checkClearImgCount -= 1;
-                        //    Debug.Log("## 1 ) checkClearImgCount" + checkClearImgCount);
-                        //}
-                    }
-                    break;
-
-                case "StarPolygonOneBrush":
-                    {
-                        objTwoDrawCount += 1;
-                        Debug.Log("objTwoDrawCount (+)  :" + objTwoDrawCount);
-
-                        if (objTwoDrawCount <= 10)
-                        {
-                            Debug.Log(" 2번째 완성");
-                            clearImg.ClearImgObjTwo();
-                            checkClearImgCount -= 1;
-                            Debug.Log("## 2 ) checkClearImgCount" + checkClearImgCount);
-
-                            //ClearAllImg();
-                        }
-                    }
-                    break;
-
-                case "HouseXOneBrush":
-                    {
-                        objThreeDrawCount += 1;
-                        Debug.Log("objThreeDrawCount (+)  :" + objThreeDrawCount);
-
-                        if (objThreeDrawCount <= 8)
-                        {
-                            Debug.Log(" 3번째 완성");
-                            clearImg.ClearImgObjThree();
-                            checkClearImgCount -= 1;
-                            Debug.Log("## 3 ) checkClearImgCount" + checkClearImgCount);
-
-                            //ClearAllImg();
-                        }
-                    }
-                    break;
-            }
-        }
-    }
-
-    void ClearCheck()
-    {
-
-        if (parentObj != null)
-        {
-            switch (parentObj.name)
-            {
-                case "IsoscelesOneBrush":
-                    {
-                        if (objOneDrawCount == 0)
-                        {
-                            Debug.Log(" 1번째 완성");
-                            clearImg.ClearImgOne();
-                            checkClearImgCount -= 1;
-                            //ClearAllImg();
-                        }
-                    }
-                    break;
-
-                case "StarPolygonOneBrush":
-                    {
-                        if (objTwoDrawCount == 0)
-                        {
-                            Debug.Log(" 2번째 완성");
-                            clearImg.ClearImgObjTwo();
-                            checkClearImgCount -= 1;
-                            ClearAllImg();
-                        }
-                    }
-                    break;
-
-                case "HouseXOneBrush":
-                    {
-                        if (objThreeDrawCount == 0)
-                        {
-                            Debug.Log(" 3번째 완성");
-                            clearImg.ClearImgObjThree();
-                            checkClearImgCount -= 1;
-                            ClearAllImg();
-                        }
-                    }
-                    break;
-            }
-        }
-
-    }
-
-    void ClearAllImg()
-    {
-        if (checkClearImgCount > 0) return;
-
-        if (checkClearImgCount == 0)
-        {
-            clearImg.ClearAll();
-        }
+        yield return new WaitForSeconds(2f);
+        LevelManager.Inst.SelectAgain(count);
     }
 
     GameObject InstLine()

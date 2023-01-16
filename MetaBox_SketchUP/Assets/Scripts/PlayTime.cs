@@ -20,6 +20,12 @@ public class PlayTime : MonoBehaviour
         losePanel.gameObject.SetActive(false);
         timerText = gameObject.GetComponent<TextMeshProUGUI>();
     }
+
+    void OnEnable()
+    {
+        //TimerDown();
+    }
+
     void Update()
     {
         TimerDown();

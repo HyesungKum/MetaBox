@@ -13,8 +13,9 @@ public class WaitTimer : MonoBehaviour
     {
         startWaitTime = gameObject.GetComponent<TextMeshProUGUI>();
         startWaitTime.text = "Game Start";
+        //SetWaitTime();
     }
-
+    
     void Update()
     {
         SetWaitTime();
