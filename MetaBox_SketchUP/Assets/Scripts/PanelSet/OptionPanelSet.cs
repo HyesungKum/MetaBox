@@ -8,6 +8,12 @@ public class OptionPanelSet : MonoBehaviour
     [SerializeField] Button backStartPanelBut = null;
     [SerializeField] GameObject startPanel = null;
 
+    [Header("[Audio Slider]")]
+    [SerializeField] Slider bgmSlider = null;
+    [SerializeField] Slider audioSlider = null;
+
+    // ======= 추후 음량 조절 기능 추가 =====
+
     void Awake()
     {
         backStartPanelBut.onClick.AddListener(() => OnClickBakcButton());

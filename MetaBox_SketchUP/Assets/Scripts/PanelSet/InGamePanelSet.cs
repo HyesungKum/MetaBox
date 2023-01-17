@@ -30,6 +30,7 @@ public class InGamePanelSet : MonoBehaviour
     [SerializeField] GameObject inGameOther = null;
     [SerializeField] GameObject losePanel = null;
     [SerializeField] GameObject winPanel = null;
+    [SerializeField] GameObject optionPanel = null;
 
     [SerializeField] GameObject onBushObj = null;
     [SerializeField] GameObject clearImgPanel = null;
@@ -42,6 +43,10 @@ public class InGamePanelSet : MonoBehaviour
     [Header("[ReStart]")]
     [SerializeField] Button loseReStartBut = null;
     [SerializeField] Button winReStartBut = null;
+    [SerializeField] Button optionBut = null;
+    [SerializeField] Button inGameCloseBut = null;
+
+    bool isOptionPanelOpen = false;
 
     void Awake()
     {
@@ -52,6 +57,8 @@ public class InGamePanelSet : MonoBehaviour
 
         loseReStartBut.onClick.AddListener(() => OnClickReStartPanel());
         winReStartBut.onClick.AddListener(() => OnClickReStartPanel());
+        optionBut.onClick.AddListener(() => OptionPanelSet());
+        inGameCloseBut.onClick.AddListener(() => InGameOptionCloseBut());
     }
 
     void FirstSetting()
@@ -96,6 +103,16 @@ public class InGamePanelSet : MonoBehaviour
         ImgOne.gameObject.SetActive(oneSet);
         ImgTwo.gameObject.SetActive(twoSet);
         ImgThree.gameObject.SetActive(threeSet);
+    }
+
+    void OptionPanelSet()
+    {
+        optionPanel.gameObject.SetActive(true);
+    }
+
+    void InGameOptionCloseBut()
+    {
+        optionPanel.gameObject.SetActive(false);
     }
 
     void OnClickReStartPanel()
