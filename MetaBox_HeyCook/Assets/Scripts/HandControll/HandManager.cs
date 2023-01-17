@@ -45,6 +45,9 @@ public class HandManager : MonoBehaviour
     }
     private void OnDisable()
     {
+        //application quit exception
+        if (TouchEventGenerator.Inst == null) return;
+
         //touch unchain
         for (int i = 0; i < TouchEventGenerator.Inst.touchBegan.Length; i++)
         {

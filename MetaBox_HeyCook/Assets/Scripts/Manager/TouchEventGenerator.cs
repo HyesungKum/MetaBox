@@ -17,38 +17,36 @@ public class TouchEventGenerator : MonoSingleTon<TouchEventGenerator>
 
     private void Update()
     {
+        touchCount = Input.touchCount;
+
+        if (touchCount == 0) return;
+
+        for (int i = 0; i < touchCount; i++)
         {
-            touchCount = Input.touchCount;
+            touches[i] = Input.GetTouch(i);
 
-            if (touchCount == 0) return;
+            Vector3 pos = touches[i].position;
+            TouchPhase phase = touches[i].phase;
 
-            for (int i = 0; i < touchCount; i++)
+            if (phase == TouchPhase.Began)
             {
-                touches[i] = Input.GetTouch(i);
-
-                Vector3 pos = touches[i].position;
-                TouchPhase phase = touches[i].phase;
-
-                if (phase == TouchPhase.Began)
-                {
-                    touchBegan[i]?.Invoke(i, pos);
-                }
-                else if (phase == TouchPhase.Stationary)
-                {
-                    touchStationary[i]?.Invoke(i, pos);
-                }
-                else if (phase == TouchPhase.Moved)
-                {
-                    touchMoved[i]?.Invoke(i, pos);
-                }
-                else if (phase == TouchPhase.Ended)
-                {
-                    touchEnded[i]?.Invoke(i, pos);
-                }
-                else if (phase == TouchPhase.Canceled)
-                {
-                    touchCancled[i]?.Invoke(i, pos);
-                }
+                touchBegan[i]?.Invoke(i, pos);
+            }
+            else if (phase == TouchPhase.Stationary)
+            {
+                touchStationary[i]?.Invoke(i, pos);
+            }
+            else if (phase == TouchPhase.Moved)
+            {
+                touchMoved[i]?.Invoke(i, pos);
+            }
+            else if (phase == TouchPhase.Ended)
+            {
+                touchEnded[i]?.Invoke(i, pos);
+            }
+            else if (phase == TouchPhase.Canceled)
+            {
+                touchCancled[i]?.Invoke(i, pos);
             }
         }
     }
