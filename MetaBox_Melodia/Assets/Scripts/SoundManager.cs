@@ -136,25 +136,11 @@ public class SoundManager : MonoBehaviour
     }
 
 
-    public void OnClickReplay()
+    public void ReplayMusic()
     {
         Debug.Log("¿Ωæ«¿ª ¥ŸΩ√ ∆≤æÓ¡‡~");
-
-        delayCoolTime();
     }
 
-    void delayCoolTime()
-    {
-        myButtonReplay.interactable = false;
-
-        Invoke("readyReplay", easyModeCoolTime);
-
-    }
-
-    void readyReplay()
-    {
-        myButtonReplay.interactable = true;
-    }
 
 
 

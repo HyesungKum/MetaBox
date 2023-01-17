@@ -29,6 +29,12 @@ public class UiManager : MonoBehaviour
     [SerializeField] Slider myAudioSliderBGM;
     [SerializeField] Slider myAudioSliderSFX;
 
+
+    [Header("Buttons")]
+    [SerializeField] Button myButtonReplay;
+    [SerializeField] float replayCoolTime;
+    public float ReplayCoolTime { set { replayCoolTime = value; } }
+
     float curTime;
     bool isPaused = false;
 
@@ -153,6 +159,26 @@ public class UiManager : MonoBehaviour
         myPanelGameResult.SetActive(true);
         myTextResult.text = text;
     }
+
+
+
+    public void OnClickReplay()
+    {
+        SoundManager.Inst.ReplayMusic();
+
+        myButtonReplay.interactable = false;
+
+        Invoke("readyReplay", replayCoolTime);
+    }
+
+    void readyReplay()
+    {
+        myButtonReplay.interactable = true;
+    }
+
+
+
+
 
 
     // Option panel ==========================================================

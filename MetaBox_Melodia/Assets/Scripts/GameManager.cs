@@ -48,6 +48,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Play Time")]
     [SerializeField] float myPlayableTime;
+    [SerializeField] float myCoolTime;
     [SerializeField] float countDown;
 
 
@@ -80,7 +81,11 @@ public class GameManager : MonoBehaviour
         if (!isGameStarted && myGameStatus == GameStatus.StartGame)
         {
             PlayTimer.DelegateTimer += timeCountDown;
+
+            // set play time and cool time 
             myUiManager.MyPlayableTime = myPlayableTime;
+            myUiManager.ReplayCoolTime = myCoolTime;
+
             myTouchManager.enabled = true;
             isGameStarted = true;
         }
@@ -137,6 +142,7 @@ public class GameManager : MonoBehaviour
                 {
                     Debug.Log("쉬운 모드!");
                     myPlayableTime = 180f;
+                    myCoolTime = 15;
                 }
                 break;
             case SceneModeController.SceneMode.NormalMode:

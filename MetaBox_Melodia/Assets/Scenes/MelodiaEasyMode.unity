@@ -2107,7 +2107,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1579957621}
         m_TargetAssemblyTypeName: UiManager, Assembly-CSharp
-        m_MethodName: onclickReplayMusic
+        m_MethodName: OnClickReplay
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3827,6 +3827,8 @@ MonoBehaviour:
   myAudioSliderMaster: {fileID: 1550827889}
   myAudioSliderBGM: {fileID: 1837716845}
   myAudioSliderSFX: {fileID: 2018731132}
+  myButtonReplay: {fileID: 803902645}
+  replayCoolTime: 0
 --- !u!1 &1583101715
 GameObject:
   m_ObjectHideFlags: 0
@@ -4657,6 +4659,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myPlayableTime: 0
+  myCoolTime: 0
   countDown: 0
 --- !u!4 &1949546657
 Transform:
