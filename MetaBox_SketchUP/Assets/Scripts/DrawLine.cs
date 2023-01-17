@@ -22,20 +22,21 @@ public class DrawLine : MonoBehaviour
 
     Touch myTouch;
     private Vector3 startPos;
-    private Vertex startVertex = null;
-    private Vertex tempStartVertex = null;
-    private Vertex endVertex = null;
-
-    Vertex collisionVertex = null;
-    Clear clearImg = null;
+    // ==== private 변경 꼭 하기 !!!!!
+    public Vertex startVertex = null;
+    public Vertex collisionVertex = null;
 
     Stack<GameObject> lineBackStack = null;
+    Stack<GameObject> ObjTwoBackStack = null;
+    Stack<GameObject> ObjThreeBackStack = null;
+
     Stack<Vertex> checkVertex = null;
 
     private int verticesCount = 0;
     bool isMoveEnd = false;
 
     public int checkClearImgCount = 3;
+    public int checklineStackCount = 0;
 
     private void Awake()
     {
@@ -49,7 +50,6 @@ public class DrawLine : MonoBehaviour
     void Start()
     {
         verticesCount = FindObjectsOfType<Vertex>().Length;
-        clearImg = FindObjectOfType<Clear>();
     }
 
     void Update()
@@ -73,7 +73,6 @@ public class DrawLine : MonoBehaviour
                 {
                     isMoveEnd = false;
                     MoveLineInHit(out collisionVertex);
-
                 }
                 break;
             #endregion
@@ -82,13 +81,6 @@ public class DrawLine : MonoBehaviour
             case TouchPhase.Ended:
                 {
                     LineMoveEnd(out collisionVertex);
-
-                    if (instLine != null)
-                    {
-                        ClearImg();
-                    }
-
-                    //Debug.Log("lineBackStack.Count :" + lineBackStack.Count);
                 }
                 break;
                 #endregion
@@ -103,24 +95,18 @@ public class DrawLine : MonoBehaviour
         if (hitInfo)
         {
             instLine = InstLine();
-            lineBackStack.Push(instLine);
-            // ===============
-            //objOneDrawCount = lineBackStack.Count;
-            //Debug.Log("## 1) objOneDrawCount : " + objOneDrawCount);
 
-            //Debug.Log("## lineBackStack 스택에 하나 추가 :");
             LineTransformReset(instLine);
 
             if (hitInfo.transform.TryGetComponent<Vertex>(out collisionVertex) == true)
             {
                 if (startVertex == null)
                 {
-                    tempStartVertex = collisionVertex;
                     startVertex = collisionVertex;
 
                     collisionVertex.StartPointColor();
                     checkVertex.Push(collisionVertex);
-                    //Debug.Log("## checkVertex) 스택에 하나 추가 :" + checkVertex.Count);
+                    parentObj = startVertex.transform.parent.gameObject;
                 }
                 else if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNodeName()) != 0)
                 {
@@ -133,6 +119,7 @@ public class DrawLine : MonoBehaviour
     void MoveLineInHit(out Vertex collisionVertex)
     {
         collisionVertex = null;
+
         RaycastHit2D hitInfo = RayCheck(myTouch);
 
         if (hitInfo)
@@ -147,16 +134,11 @@ public class DrawLine : MonoBehaviour
                         {
                             collisionVertex.ColorChange(); // Color Changed 
                             checkVertex.Push(collisionVertex);
-                            //Debug.Log("## checkVertex) 스택에 하나 추가 :" + checkVertex.Count);
 
                             instLine = InstLine();
                             StrethchLine(instLine);
 
-                            lineBackStack.Push(instLine);
-                            //Debug.Log("## lineBackStack 스택에 하나 추가 :");
                             startVertex = collisionVertex;
-
-                            parentObj = startVertex.transform.parent.gameObject;
 
                             isMoveEnd = true;
                             break;
@@ -184,7 +166,6 @@ public class DrawLine : MonoBehaviour
             {
                 if (hitInfo.transform.gameObject.TryGetComponent<Vertex>(out collisionVertex))
                 {
-
                     for (int i = 0; i < startVertex.GetNodeLength(); i++)
                     {
                         if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNextNodeName(i)) == 0)
@@ -194,67 +175,111 @@ public class DrawLine : MonoBehaviour
                         else if (i == startVertex.GetNodeLength() - 1)
                         {
                             DestroyLine(instLine);
-                            //CountDown();
                         }
                     }
                 }
-                endVertex = collisionVertex;
             }
+            ClearImg();
         }
         else if (isMoveEnd == true)
         {
-            DestroyLine(instLine);
-            //CountDown();
-            //CountUp();
+            if (instLine != null)
+            {
+                DestroyLine(instLine);
+            }
         }
+    }
+
+    void SetPlayAgain(bool clearImgOneSet, bool clearImgTwoSet, bool clearImgThreeSet)
+    {
+        InGamePanelSet.Inst.ClearPanelSet(true);
+        InGamePanelSet.Inst.ClearImgSet(clearImgOneSet, clearImgTwoSet, clearImgThreeSet);
+
+        int Childcount = instLineTransform.childCount;
+
+        for (int i = 0; i < Childcount; i++)
+        {
+            DestroyLine(instLineTransform.GetChild(i).gameObject);
+        }
+
+        lineBackStack.Clear();
+        Debug.Log("스택 클리어 ??" + lineBackStack.Count);
+
+        startVertex = null;
+        //collisionVertex = null;
+
+        StartCoroutine(delayTime());
+    }
+
+    IEnumerator delayTime()
+    {
+        yield return new WaitForSeconds(2f);
+
+        InGamePanelSet.Inst.ClearPanelSet(false);
+        InGamePanelSet.Inst.SelectPanelSet(true);
     }
 
     void ClearImg()
     {
-        if (parentObj.name == objOne.name)
+        if (instLine != null)
         {
-            if (tempStartVertex == endVertex || lineBackStack.Count == 3)
+            if (lineBackStack.Count == 3)
             {
-                Debug.Log("완료");
+                Debug.Log("## 1 ) 완료");
                 checkClearImgCount -= 1;
-                clearImg.ClearImgOne();
-                StartCoroutine(DelayTime(1));
-                
-                //instLine.transform.parent = null;
+
+                objOne.gameObject.SetActive(false);
+                SetPlayAgain(true, false, false);
+                StartCoroutine(delayTime());
+
+                AllClear();
+
+                return;
             }
-        }
-        else if (parentObj.name == objTwo.name)
-        {
             if (lineBackStack.Count == 10)
             {
                 Debug.Log("두번째 완료");
                 checkClearImgCount -= 1;
-                clearImg.ClearImgObjTwo();
 
-                StartCoroutine(DelayTime(2));
+                objTwo.gameObject.SetActive(false);
+                SetPlayAgain(false, true, false);
+                StartCoroutine(delayTime());
+
+                AllClear();
+
+                return;
             }
-        }
-        else if (parentObj.name == objThree.name)
-        {
             if (lineBackStack.Count == 8)
             {
                 Debug.Log("세번째 완료");
                 checkClearImgCount -= 1;
-                clearImg.ClearImgObjThree();
 
-                StartCoroutine(DelayTime(3));
+                objThree.gameObject.SetActive(false);
+                SetPlayAgain(false, false, true);
+                StartCoroutine(delayTime());
+
+                AllClear();
+
+                return;
             }
-        }
-        else if (checkClearImgCount == 0)
-        {
-            clearImg.ClearAll();
         }
     }
 
-    IEnumerator DelayTime(int count)
+    void AllClear()
     {
-        yield return new WaitForSeconds(2f);
-        LevelManager.Inst.SelectAgain(count);
+        if (checkClearImgCount == 0)
+        {
+            Debug.Log("## All Clear) lineBackStack.Count :" + checkClearImgCount);
+
+            objOne.gameObject.SetActive(false);
+            objTwo.gameObject.SetActive(false);
+            objThree.gameObject.SetActive(false);
+
+            InGamePanelSet.Inst.ClearPanelSet(true);
+            InGamePanelSet.Inst.ClearImgSet(true, true, true);
+
+            InGamePanelSet.Inst.WinPanelSet(true);
+        }
     }
 
     GameObject InstLine()
@@ -262,9 +287,11 @@ public class DrawLine : MonoBehaviour
         GameObject instLine = ObjectPoolCP.PoolCp.Inst.BringObjectCp(linePrefab);
         instLine.transform.SetParent(instLineTransform);
 
+        lineBackStack.Push(instLine);
+        Debug.Log("lineBackStack.Count (## Push )) : " + lineBackStack.Count);
+
         startPos = myTouch.position;
         instLine.transform.position = startPos;
-        //Debug.Log("StartPos : " + startPos);
 
         return instLine;
     }
@@ -274,9 +301,18 @@ public class DrawLine : MonoBehaviour
         if (line != null)
         {
             ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(instLine);
+
             if (lineBackStack.Count == 0) return;
             instLine = lineBackStack.Pop();
+            lineBackStackPopCount(lineBackStack.Count);
+            Debug.Log("lineBackStack.Count (## Pop )) : " + lineBackStack.Count);
         }
+    }
+
+    void lineBackStackPopCount(int Count)
+    {
+        checklineStackCount = Count;
+        Debug.Log("check 리턴 값 :" + checklineStackCount);
     }
 
     // Line Transform Resetting
@@ -316,7 +352,6 @@ public class DrawLine : MonoBehaviour
 
         Vertex delete = collisionVertex;
         delete = checkVertex.Pop();
-        //Debug.Log("checkVertex.Count :" + checkVertex.Count);
         delete.BackOriginalColor();
     }
 
