@@ -13,9 +13,9 @@ public class PlayTimer : MonoBehaviour
     bool isGameOver = false;
 
     [SerializeField] float timer = 3f;
-    [SerializeField] float countDown = 60f;
+    [SerializeField] float curTime = 0f;
 
-    private void Awake()
+    private void Start()
     {
         GameManager.myDelegateIsGameOver += gameIsOver;
         StartCoroutine(startTimer());
@@ -36,16 +36,9 @@ public class PlayTimer : MonoBehaviour
 
     void timeCountDown()
     {
-        countDown -= Time.deltaTime;
+        curTime += Time.deltaTime;
 
-        if (countDown <= 0)
-        {
-            GameManager.Inst.UpdateGameStatus(GameStatus.TimeOver);
-            isGameOver = true;
-            return;
-        }
-
-        DelegateTimer(countDown);
+        DelegateTimer(curTime);
     }
 
 
@@ -69,7 +62,7 @@ public class PlayTimer : MonoBehaviour
     }
 
 
-    public void gameIsOver(bool isOver)
+    void gameIsOver(bool isOver)
     {
         isGameOver = isOver;
     }

@@ -4,15 +4,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static TouchManager;
-using static UnityEngine.GraphicsBuffer;
 
 public class TouchManager : MonoBehaviour
 {
-    public delegate void DelegateTouchManager(GameObject myPos);
-    public static DelegateTouchManager myDelegateTouchManager;
-
-
     Vector3 touchedToScreen;
     Touch myTouch;
 
@@ -113,21 +107,7 @@ public class TouchManager : MonoBehaviour
     {
         isDragging = false;
 
-        RaycastHit2D hit = shootRay(myNote.transform.position);
-
-
-        if (!hit)
-        {
-            myNote.transform.position = myNoteOriginPos;
-            hitPoint2D.collider.enabled = true;
-        }
-
-        // layer 7 is SheetMusic
-        else if (hit.transform.gameObject.layer == 7)
-        {
-            myDelegateTouchManager(myNote.gameObject);
-
-        }
+        myNote.Dropped();
     }
 
 }

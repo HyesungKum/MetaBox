@@ -1,20 +1,7 @@
-using ObjectPoolCP;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public enum PitchName
-{
-    Do,
-    Le,
-    Mi,
-    Pa,
-    Sol,
-    La,
-    Si
-}
 
 
 public enum GameStatus
@@ -50,30 +37,40 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-
     public delegate void DelegateIsGameOver(bool isOver);
     public static DelegateIsGameOver myDelegateIsGameOver;
+
 
     GameStatus myGameStatus;
 
     bool isGameOver = false;
     bool isGameStarted = false;
-    bool isPaused = false;
+
+    [Header("Play Time")]
+    [SerializeField] float myPlayableTime;
+    [SerializeField] float countDown;
+
+
+
 
 
     TouchManager myTouchManager;
     UiManager myUiManager;
 
-
     private void Awake()
     {
+
         myGameStatus = GameStatus.Idle;
 
         myUiManager = FindObjectOfType<UiManager>();
         myTouchManager = FindObjectOfType<TouchManager>();
 
         myTouchManager.enabled = false;
+
+        WhatLevelDoWePlay();
     }
+
+
 
 
     // Update is called once per frame
@@ -82,6 +79,8 @@ public class GameManager : MonoBehaviour
         // if game is not started! and 
         if (!isGameStarted && myGameStatus == GameStatus.StartGame)
         {
+            PlayTimer.DelegateTimer += timeCountDown;
+            myUiManager.MyPlayableTime = myPlayableTime;
             myTouchManager.enabled = true;
             isGameStarted = true;
         }
@@ -127,6 +126,63 @@ public class GameManager : MonoBehaviour
     }
 
 
+
+    void WhatLevelDoWePlay()
+    {
+        Debug.Log("무슨 모드?");
+
+        switch (SceneModeController.MySceneMode)
+        {
+            case SceneModeController.SceneMode.EasyMode:
+                {
+                    Debug.Log("쉬운 모드!");
+                    myPlayableTime = 180f;
+                }
+                break;
+            case SceneModeController.SceneMode.NormalMode:
+                {
+                    //depends on mode
+                    //countDown = 180f;
+
+                }
+                break;
+
+            case SceneModeController.SceneMode.DifficultMode:
+                {
+                    //depends on mode
+                    //countDown = 180f;
+
+                }
+                break;
+
+            case SceneModeController.SceneMode.ExtremeMode:
+                {
+                    //depends on mode
+                    //countDown = 180f;
+
+                }
+                break;
+        }
+
+        Debug.Log("무슨 모드? " + SceneModeController.MySceneMode);
+
+
+    }
+
+
+
+    void timeCountDown(float t)
+    {
+        countDown = myPlayableTime - t;
+        if (countDown <= 0)
+        {
+            UpdateGameStatus(GameStatus.TimeOver);
+            Debug.Log("시간이 없어요");
+        }
+
+    }
+
+
     public void UpdateGameStatus(GameStatus myStatus)
     {
         myGameStatus = myStatus;
@@ -138,7 +194,10 @@ public class GameManager : MonoBehaviour
     public void OnClickQuitGame()
     {
         Time.timeScale = 1;
-        SceneManager.LoadScene("MelodiaStart");
+        SceneManager.LoadScene("MelodiaLobby");
+
+        // back to start scene
+        SceneModeController.MySceneMode = SceneModeController.SceneMode.StartScene;      // turn start panel on, turn lobby panel off
     }
 
 
@@ -146,13 +205,17 @@ public class GameManager : MonoBehaviour
     public void OnClickExitStage()
     {
         Time.timeScale = 1;
-        SceneManager.LoadSceneAsync("MelodiaLobby");
+        SceneManager.LoadScene("MelodiaLobby");
+
+        // re-select mode 
+        SceneModeController.MySceneMode = SceneModeController.SceneMode.LobbyScene;      // turn start panel on, turn lobby panel off
+
     }
 
     public void OnClickRestart()
     {
         Time.timeScale = 1;
-        SceneManager.LoadSceneAsync("MelodiaEasy");
+        SceneManager.LoadScene("MelodiaEasyMode");
     }
 
 

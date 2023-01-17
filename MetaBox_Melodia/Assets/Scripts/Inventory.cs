@@ -6,49 +6,13 @@ using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour
 {
-
-    bool isGameOver = false;
-
-    bool isMoving = false;
-    bool isInventoryOpened = false;
-
-    [SerializeField] Vector2 openPos = new Vector2(7, 0.5f);
-    [SerializeField] float movingSpeed = 10f;
     [SerializeField] List<GameObject> playableNoteList = new List<GameObject>();
 
-    Vector2 originPos;
-    Vector2 targetPos;
 
     private void Awake()
     {
-        originPos = transform.position;
-        GameManager.myDelegateIsGameOver += gameIsOver;
         bringAllNotes();
     }
-
-
-    private void Update()
-    {
-
-        if (isGameOver)
-        {
-            return;
-        }
-
-
-        if (isMoving)
-        {
-            this.transform.position = Vector2.MoveTowards(this.transform.position, targetPos, Time.deltaTime * movingSpeed);
-
-            if (Vector2.Distance(this.transform.position, targetPos) <= 0)
-            {
-                isMoving = false;
-            }
-        }
-
-    }
-
-
 
 
     void bringAllNotes()
@@ -72,28 +36,6 @@ public class Inventory : MonoBehaviour
         {
             UiManager.myDelegateUiManager("끝났어");
             GameManager.Inst.UpdateGameStatus(GameStatus.NoMorePlayableNote);
-            isGameOver = true;
-        }
-    }
-
-
-
-    //Open or close inventory 
-    public void OnClickInventory()
-    {
-        if (isInventoryOpened == false)
-        {
-            targetPos = openPos;
-            isMoving = true;
-            isInventoryOpened = true;
-        }
-
-        else if (isInventoryOpened == true)
-        {
-
-            targetPos = originPos;
-            isMoving = true;
-            isInventoryOpened = false; ;
         }
     }
 
@@ -117,12 +59,6 @@ public class Inventory : MonoBehaviour
         UiManager.myDelegateUiManager("잘했어요!");
 
         CheckHowManyNotes();
-    }
-
-
-    void gameIsOver(bool isOver)
-    {
-        isGameOver = isOver;
     }
 
 

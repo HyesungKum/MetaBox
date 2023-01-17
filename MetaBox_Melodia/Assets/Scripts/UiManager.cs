@@ -1,20 +1,17 @@
-using ObjectPoolCP;
-using System.Collections;
-using System.Collections.Generic;
+
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
+
 
 public class UiManager : MonoBehaviour
 {
+    public static DelegateAudioControl myDelegateAudioControl;
+
+
     public delegate void DelegateUiManager(string myText);
     public static DelegateUiManager myDelegateUiManager;
-
-    [Header("Button")]
-    [SerializeField] Button myButtonReplayMusic;        // replay music for hint
-    [SerializeField] Button myButtonClickInventory;     // open note box
 
     [SerializeField] TextMeshProUGUI myTextCountdown;    // play time countdown
     [SerializeField] TextMeshProUGUI myTextTimer;       // ready time countdown
@@ -26,14 +23,24 @@ public class UiManager : MonoBehaviour
     [SerializeField] GameObject myPanelPause;
     [SerializeField] GameObject myPanelGameResult;
 
+
+    [Header("Audio Volume Control")]
+    [SerializeField] Slider myAudioSliderMaster;
+    [SerializeField] Slider myAudioSliderBGM;
+    [SerializeField] Slider myAudioSliderSFX;
+
     float curTime;
     bool isPaused = false;
 
-    private void Awake()
+    float myPlayableTime;
+    public float MyPlayableTime { set { myPlayableTime = value; } }
+
+
+
+    private void Start()
     {
         // delegate chain
         myDelegateUiManager = correctedNote;
-        myDelegateUiManager += correctedNote;
         PlayTimer.DelegateTimer = playTimer;
 
         // Game result panel 
@@ -56,13 +63,14 @@ public class UiManager : MonoBehaviour
     }
 
 
+
     // timer for start
     void playTimer(float t)
     {
         if (t <= 1)
         {
             myTextTimer.text = "Go!";
-            PlayTimer.DelegateTimer += playCountdown;
+            PlayTimer.DelegateTimer += playCountDown;
             PlayTimer.DelegateTimer -= playTimer;
             return;
         }
@@ -72,9 +80,9 @@ public class UiManager : MonoBehaviour
 
 
     // time count down for play time 
-    public void playCountdown(float t)
+    public void playCountDown(float t)
     {
-        curTime = t;
+        curTime = myPlayableTime - t;
 
         if (myTextTimer.isActiveAndEnabled == true)
         {
@@ -137,7 +145,6 @@ public class UiManager : MonoBehaviour
         }
 
         myTextCorrectedNote.enabled = false;
-
     }
 
 
@@ -148,8 +155,11 @@ public class UiManager : MonoBehaviour
     }
 
 
+    // Option panel ==========================================================
     public void OnClickPause()
     {
+        CurrentVolume();
+
         if (isPaused == false)
         {
             Time.timeScale = 0f;
@@ -164,5 +174,44 @@ public class UiManager : MonoBehaviour
 
         isPaused = false;
     }
+
+
+    public void MasterAudioControl()
+    {
+        float volume = myAudioSliderMaster.value;
+
+        myDelegateAudioControl("Master", volume);
+    }
+
+    public void BGMAudioControl()
+    {
+        float volume = myAudioSliderBGM.value;
+
+        myDelegateAudioControl("BGM", volume);
+    }
+
+    public void SFXAudioControl()
+    {
+        float volume = myAudioSliderSFX.value;
+
+        myDelegateAudioControl("SFX", volume);
+    }
+
+
+    void CurrentVolume()
+    {
+        float masterVolume;
+        float bGMVolume;
+        float sFXVolume;
+
+        SoundManager.Inst.MyAudioMixer.GetFloat("Master", out masterVolume);
+        SoundManager.Inst.MyAudioMixer.GetFloat("BGM", out bGMVolume);
+        SoundManager.Inst.MyAudioMixer.GetFloat("SFX", out sFXVolume);
+
+        myAudioSliderMaster.value = masterVolume;
+        myAudioSliderBGM.value = bGMVolume;
+        myAudioSliderSFX.value = sFXVolume;
+    }
+    // Option panel ==========================================================
 
 }
