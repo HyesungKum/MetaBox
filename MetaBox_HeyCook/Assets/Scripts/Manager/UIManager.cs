@@ -1,53 +1,51 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
-using System;
 
 public class UIManager : MonoBehaviour
 {
-    [Header("Current Active UI")]
+    [Header("[Current Active UI]")]
     [SerializeField] GameObject curUI;
 
     //================in game ui===================
-    [Header("In Game UI")]
+    [Header("[In Game UI]")]
+    [SerializeField] GameObject inGameUI;
+    [Space]
     [SerializeField] TextMeshProUGUI timer;
     [SerializeField] TextMeshProUGUI score;
-
-    [SerializeField] GameObject inGameUI;
-
+    [Space]
     [SerializeField] Button optionButton;
 
     //=================option ui===================
-    [Header("Option UI")]
+    [Header("[Option UI]")]
     [SerializeField] GameObject optionUI;
-
+    [Space]
     [SerializeField] Button masterSoundButton;
     [SerializeField] Slider masterSlider;
-
+    [Space]
     [SerializeField] Button bgmSoundButton;
     [SerializeField] Slider bgmSlider;
-
+    [Space]
     [SerializeField] Button sfxSoundButton;
     [SerializeField] Slider sfxSlider;
-
+    [Space]
     [SerializeField] Button opRestartButton;
     [SerializeField] Button opResumeButton;
+    [Space]
     [SerializeField] Button opExitButton;
 
     //=================end game ui=================
-    [Header("Game Over UI")]
+    [Header("[Game Over UI]")]
     [SerializeField] GameObject gameOverUI;
-
+    [Space]
     [SerializeField] Button restartButton;
     [SerializeField] Button endExitButton;
 
     private void Awake()
     {
         //===============in game button listener=======================================
-        optionButton.onClick.AddListener(() => EventReciver.CallGamePause());
+        optionButton.onClick.AddListener(() => StaticEventReciver.CallGamePause());
         optionButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
 
         //===============option button listener========================================
@@ -66,7 +64,7 @@ public class UIManager : MonoBehaviour
         sfxSoundButton.onClick.AddListener(() => ToggleSlider(sfxSlider));
         sfxSlider.onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("SFX", call));
 
-        opResumeButton.onClick.AddListener(() => EventReciver.CallGameResume());
+        opResumeButton.onClick.AddListener(() => StaticEventReciver.CallGameResume());
         opResumeButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
 
         opExitButton.onClick.AddListener(() => SceneMove(SceneName.Start));
@@ -80,46 +78,40 @@ public class UIManager : MonoBehaviour
         restartButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
 
         //delegate chain
-        EventReciver.ScoreModi += UIScoreModi;
-        EventReciver.GamePause += UIGamePause;
-        EventReciver.GameResume += UIGameResume;
-        EventReciver.GameOver += UIGameOver;
+        StaticEventReciver.ScoreModi += UIScoreModi;
+        StaticEventReciver.GamePause += UIGamePause;
+        StaticEventReciver.GameResume += UIGameResume;
+        StaticEventReciver.GameOver += UIGameOver;
     }
 
     private void Update()
     {
+        //이벤트 추가로 업데이트에서 뽑기
         timer.text = string.Format("{0:D2} : {1:D2} ",(int)(GameManager.Inst.Timer/60f),(int)(GameManager.Inst.Timer % 60f));
     }
 
     private void OnDisable()
     {
-        EventReciver.ScoreModi -= UIScoreModi;
-        EventReciver.GamePause -= UIGamePause;
-        EventReciver.GameResume -= UIGameResume;
-        EventReciver.GameOver -= UIGameOver;
+        //delegate unchain
+        StaticEventReciver.ScoreModi -= UIScoreModi;
+        StaticEventReciver.GamePause -= UIGamePause;
+        StaticEventReciver.GameResume -= UIGameResume;
+        StaticEventReciver.GameOver -= UIGameOver;
     }
 
+    //=============================================UI Viewing Controll==================================
     void UIGamePause()
     {
         ShowUI(optionUI);
     }
-
     void UIGameResume()
     {
         ShowUI(inGameUI);
     }
-
     void UIGameOver()
     {
         ShowUI(gameOverUI);
     }
-
-    void SceneMove(string sceneName)
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(sceneName);
-    }
-
     void ShowUI(GameObject targetUIObj)
     {
         curUI.SetActive(false);
@@ -127,11 +119,11 @@ public class UIManager : MonoBehaviour
         curUI.SetActive(true);
     }
 
+    //=============================================UI Value Vontroll======================================
     void ToggleSlider(Slider target)
     {
         target.interactable = target.interactable == true ? false : true;
     }
-
     /// <summary>
     /// modify ui score text controll
     /// </summary>
@@ -139,5 +131,12 @@ public class UIManager : MonoBehaviour
     void UIScoreModi(int value)
     {
         score.text = GameManager.Inst.Score.ToString();
+    }
+
+    //================================================SceneMove============================================
+    void SceneMove(string sceneName)
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(sceneName);
     }
 }

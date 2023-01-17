@@ -1,10 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
-using UnityEngine.SceneManagement;
-using UnityEditorInternal;
 
 public class GameManager : MonoSingleTon<GameManager>
 {
@@ -29,9 +23,10 @@ public class GameManager : MonoSingleTon<GameManager>
         IsGameOver = false;
 
         //delegate chain
-        EventReciver.ScoreModi += ScoreAddSub;
-        EventReciver.GamePause += GamePasue;
-        EventReciver.GameResume += GameResume;
+        StaticEventReciver.ScoreModi += ScoreAddSub;
+        StaticEventReciver.GamePause += GamePasue;
+        StaticEventReciver.GameResume += GameResume;
+        StaticEventReciver.GameOver += GameOver;
     }
 
     private void Start()
@@ -47,9 +42,11 @@ public class GameManager : MonoSingleTon<GameManager>
 
     private void OnDisable()
     {
-        EventReciver.ScoreModi -= ScoreAddSub;
-        EventReciver.GamePause -= GamePasue;
-        EventReciver.GameResume -= GameResume;
+        //delegate unchain
+        StaticEventReciver.ScoreModi -= ScoreAddSub;
+        StaticEventReciver.GamePause -= GamePasue;
+        StaticEventReciver.GameResume -= GameResume;
+        StaticEventReciver.GameOver -= GameOver;
     }
 
     void TimeUpdate()
@@ -61,15 +58,13 @@ public class GameManager : MonoSingleTon<GameManager>
         if (SecCount <= 1f) return;
         
         Timer -= 1;
-        if (Timer == 0)
-        {
-            IsGameOver = true;
-            EventReciver.CallGameOver();
-            Time.timeScale = 0;
-        }
+        
+        if (Timer == 0) StaticEventReciver.CallGameOver();
+
         SecCount = 0f;
     }
 
+    //=====================================Score Controll=========================================
     void ScoreAddSub(int value)
     {
         GameManager.Inst.Score += value;
@@ -77,15 +72,22 @@ public class GameManager : MonoSingleTon<GameManager>
         if (Score < 0) Score = 0;
     }
 
+    //===================================Game Life Controll=======================================
     void GamePasue()
     {
         GameManager.Inst.IsPause = true;
         Time.timeScale = 0;
     }
-
     void GameResume()
     {
         GameManager.Inst.IsPause = false;
         Time.timeScale = 1f;   
+    }
+    void GameOver()
+    {
+        IsGameOver = true;
+        SoundManager.Inst.SetBGM("StageClear");
+        SoundManager.Inst.PlayBGM();
+        Time.timeScale = 0f;
     }
 }

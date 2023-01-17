@@ -1,32 +1,16 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
+[RequireComponent(typeof(BoxCollider2D))]
 public class BeltZone : MonoBehaviour
 {
-    public List<Ingredient> BeltIngred = new(); 
+    public List<GameObject> BeltIngred = new(); 
     public int Counting = 0;
     public float beltSpeed = 1f;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.CompareTag(nameof(Ingredient)))
-        {
-            BeltIngred.Add(collision.GetComponent<Ingredient>());
-            BeltIngred.ForEach(ingrd => { ingrd.Rigidbody2D.velocity = Vector2.up; });
-            Counting++;
-        }
-    }
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag(nameof(Ingredient)))
-        {
-            Ingredient ingred = collision.GetComponent<Ingredient>();
-            ingred.Rigidbody2D.velocity = Vector2.zero;
-            BeltIngred.Remove(ingred);
-            Counting--;
-        }
+        collision.transform.position += Vector3.up * Time.deltaTime;
     }
 
     #region Editor
@@ -34,7 +18,7 @@ public class BeltZone : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = new(0f, 1f, 0f, 0.4f);
-        Gizmos.DrawCube(this.transform.position, this.transform.localScale);
+        Gizmos.DrawCube(this.transform.position, this.transform.GetComponent<BoxCollider2D>().size *  this.transform.lossyScale);
     }
 #endif
     #endregion

@@ -43,7 +43,7 @@ public class CookTable : MonoBehaviour
         this.transform.tag = "Table";
 
         //delegate chain
-        EventReciver.NewCostomer += BringRecipe;
+        StaticEventReciver.NewCostomer += BringRecipe;
 
         //init inner variables 
         Initailizing();
@@ -51,7 +51,7 @@ public class CookTable : MonoBehaviour
     private void OnDisable()
     {
         //delegate unchain
-        EventReciver.NewCostomer -= BringRecipe;
+        StaticEventReciver.NewCostomer -= BringRecipe;
     }
 
     //=================================Initializing=====================================

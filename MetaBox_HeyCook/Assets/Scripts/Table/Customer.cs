@@ -55,6 +55,8 @@ public class Customer : MonoBehaviour
     {
         if (collision.CompareTag(nameof(Ingredient)))
         {
+            if (tempIngred == null) return;
+
             if (!tempIngred.IsCliked)
             {
                 StartCoroutine(nameof(TargetMove));
@@ -106,12 +108,12 @@ public class Customer : MonoBehaviour
             if (tempIngred.RecipeData == requireRecipe)
             {
                 Debug.Log("¸ÀÀÖ´Ù!");
-                EventReciver.CallScoreModi(100);
+                StaticEventReciver.CallScoreModi(100);
             }
             else
             {
                 Debug.Log("¸À¾ø´Ù!");
-                EventReciver.CallScoreModi(-10);
+                StaticEventReciver.CallScoreModi(-10);
             }
         }
         else
@@ -119,12 +121,12 @@ public class Customer : MonoBehaviour
             if (tempIngred.IsTrimed)
             {
                 Debug.Log("¾È ÀÍ¾ú´Ù!");
-                EventReciver.CallScoreModi(-30);
+                StaticEventReciver.CallScoreModi(-30);
             }
             else
             {
                 Debug.Log("Æ¡!");
-                EventReciver.CallScoreModi(-50);
+                StaticEventReciver.CallScoreModi(-50);
             }
         }
         PoolCp.Inst.DestoryObjectCp(tempIngred.gameObject);
@@ -138,6 +140,6 @@ public class Customer : MonoBehaviour
         requireRecipe = RecipeList[index];
         spriteRenderer.sprite = requireRecipe.cooked;
 
-        EventReciver.CallNewComstomer();
+        StaticEventReciver.CallNewComstomer();
     }
 }

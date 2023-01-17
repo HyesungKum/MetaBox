@@ -8,7 +8,7 @@ public delegate void GamePause();
 public delegate void GameResume();
 public delegate void GameOver();
 
-static public class EventReciver
+static public class StaticEventReciver
 {
     static public NewCostomer NewCostomer = null;
     static public ScoreModi ScoreModi = null;
