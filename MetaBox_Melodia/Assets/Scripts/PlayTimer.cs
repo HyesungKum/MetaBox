@@ -57,7 +57,7 @@ public class PlayTimer : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        GameManager.Inst.UpdateGameStatus(GameStatus.StartGame);
+        GameManager.Inst.UpdateGameStatus(GameStatus.Ready);
         isStarted = true;
     }
 

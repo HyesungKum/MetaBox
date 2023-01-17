@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
+using System.Collections;
+using UnityEngine.UIElements;
 
 public enum PitchName
 {
@@ -59,17 +61,14 @@ public class SoundManager : MonoBehaviour
     [Header("Audio Sources")]
     [SerializeField] AudioSource myNoteAudioSource;
     [SerializeField] AudioSource myBGMAudioSource;
+    [SerializeField] AudioClip tempClip;
+
+
 
 
     [Header("Audio Volume Control")]
     [SerializeField] AudioMixer myAudioMixer;
     public AudioMixer MyAudioMixer { get { return myAudioMixer; } }
-
-    // replay related 
-    [SerializeField] Button myButtonReplay;
-    float easyModeCoolTime = 15;
-
-
 
 
 
@@ -85,7 +84,7 @@ public class SoundManager : MonoBehaviour
         DontDestroyOnLoad(instance.gameObject);
         //==============================================
 
-        //myButtonReplay.interactable = true;
+        myBGMAudioSource.clip = tempClip;
 
         SceneModeController.myDelegateAudioControl = AudioVolumeControl;
         UiManager.myDelegateAudioControl = AudioVolumeControl;
@@ -127,7 +126,6 @@ public class SoundManager : MonoBehaviour
 
         // change audio clip as targeted pitch note 
 
-
         //myBGMAudioSource.clip = changeClip;
 
         myBGMAudioSource.Play();
@@ -138,11 +136,24 @@ public class SoundManager : MonoBehaviour
 
     public void ReplayMusic()
     {
-        Debug.Log("À½¾ÇÀ» ´Ù½Ã Æ²¾îÁà~");
+        myBGMAudioSource.Play();
     }
 
+    // play music before start game 
+    public void FirstPlay()
+    {
 
+        myBGMAudioSource.Play();
+        StartCoroutine(WaitForSecond());
+    }
 
+    // wait until music is finished  
+    public IEnumerator WaitForSecond()
+    {
+        yield return new WaitUntil(() => myBGMAudioSource.isPlaying == false);
+
+        GameManager.Inst.UpdateGameStatus(GameStatus.StartGame);
+    }
 
 
 }

@@ -8,6 +8,7 @@ public enum GameStatus
 {
     Idle,
     StartGame,
+    Ready,
     TimeOver,
     GetAllQNotes,
     NoMorePlayableNote
@@ -44,7 +45,7 @@ public class GameManager : MonoBehaviour
     GameStatus myGameStatus;
 
     bool isGameOver = false;
-    bool isGameStarted = false;
+
 
     [Header("Play Time")]
     [SerializeField] float myPlayableTime;
@@ -52,15 +53,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] float countDown;
 
 
-
-
-
     TouchManager myTouchManager;
     UiManager myUiManager;
 
+
     private void Awake()
     {
-
         myGameStatus = GameStatus.Idle;
 
         myUiManager = FindObjectOfType<UiManager>();
@@ -72,62 +70,71 @@ public class GameManager : MonoBehaviour
     }
 
 
-
-
-    // Update is called once per frame
-    void Update()
+    public void UpdateGameStatus(GameStatus targetStatus)
     {
-        // if game is not started! and 
-        if (!isGameStarted && myGameStatus == GameStatus.StartGame)
+
+        myGameStatus = targetStatus;
+
+        switch (myGameStatus)
         {
-            PlayTimer.DelegateTimer += timeCountDown;
+            case GameStatus.Ready:
+                {
+                    Debug.Log("준비!");
 
-            // set play time and cool time 
-            myUiManager.MyPlayableTime = myPlayableTime;
-            myUiManager.ReplayCoolTime = myCoolTime;
+                    PlayTimer.DelegateTimer += timeCountDown;
 
-            myTouchManager.enabled = true;
-            isGameStarted = true;
+                    // set play time and cool time 
+                    myUiManager.MyPlayableTime = myPlayableTime;
+                    myUiManager.ReplayCoolTime = myCoolTime;
+
+                    Time.timeScale = 0;
+
+                    SoundManager.Inst.FirstPlay();
+                }
+                break;
+
+            case GameStatus.StartGame:
+                {
+                    Debug.Log("시작!!");
+
+                    Time.timeScale = 1;
+
+                    myTouchManager.enabled = true;
+                }
+                break;
+
+
+            case GameStatus.TimeOver:
+                {
+                    Debug.Log("Time is over!");
+                    myUiManager.GameResult("시간이 없어요");
+                    isGameOver = true;
+                }
+                break;
+
+            case GameStatus.GetAllQNotes:
+                {
+                    Debug.Log("Great sucess!");
+                    myUiManager.GameResult("다 맞췄어요!");
+                    isGameOver = true;
+                }
+                break;
+
+            case GameStatus.NoMorePlayableNote:
+                {
+                    Debug.Log("Too bad, so sad!");
+                    myUiManager.GameResult("음표가 더이상 없어요");
+                    isGameOver = true;
+                }
+                break;
         }
 
 
-        if (isGameOver)
-        {
-            switch (myGameStatus)
-            {
+        if (!isGameOver)
+            return;
 
-                case GameStatus.TimeOver:
-                    {
-                        Debug.Log("Time is over!");
-                        myUiManager.GameResult("시간이 없어요");
-                        isGameOver = false;
-                    }
-                    break;
 
-                case GameStatus.GetAllQNotes:
-                    {
-                        Debug.Log("Great sucess!");
-                        myUiManager.GameResult("다 맞췄어요!");
-                        isGameOver = false;
-                    }
-                    break;
-
-                case GameStatus.NoMorePlayableNote:
-                    {
-                        Debug.Log("Too bad, so sad!");
-                        myUiManager.GameResult("음표가 더이상 없어요");
-                        isGameOver = false;
-                    }
-                    break;
-
-                default:
-                    return;
-            }
-
-            myDelegateIsGameOver(true);
-
-        }
-
+        myDelegateIsGameOver(true);
     }
 
 
@@ -172,7 +179,6 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("무슨 모드? " + SceneModeController.MySceneMode);
 
-
     }
 
 
@@ -187,14 +193,6 @@ public class GameManager : MonoBehaviour
         }
 
     }
-
-
-    public void UpdateGameStatus(GameStatus myStatus)
-    {
-        myGameStatus = myStatus;
-        isGameOver = true;
-    }
-
 
 
     public void OnClickQuitGame()
