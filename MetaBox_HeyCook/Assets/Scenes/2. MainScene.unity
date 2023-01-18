@@ -175,8 +175,8 @@ MonoBehaviour:
   SpawnTable:
   - {fileID: 7169018881002374798, guid: 9338a759ba7025e47a33ab1306076800, type: 3}
   - {fileID: 7692650572320046625, guid: dcd90080bd000cd4cb530b0110e410e8, type: 3}
+  TempTable: []
   BeltZone: {fileID: 217774003}
-  maxSpawn: 3
   spawnTime: 3
   spawnCount: 0
 --- !u!1 &27808029
@@ -1050,7 +1050,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BeltIngred: []
-  Counting: 0
   beltSpeed: 1
 --- !u!212 &217774004
 SpriteRenderer:
@@ -2683,7 +2682,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BeltIngred: []
-  Counting: 0
   beltSpeed: 1
 --- !u!212 &471473230
 SpriteRenderer:
@@ -4638,6 +4636,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f0391e506a3be94e8fb40f7698bb7f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UICanvas: {fileID: 1831846538}
+  correctVfx: {fileID: 836487283751420175, guid: 151e1b2c533d081478bb625efce227cd, type: 3}
+  wrongVfx: {fileID: 1080471233519062714, guid: 15ddb7474a5ea5d4490511e48787230a, type: 3}
   curUI: {fileID: 966744538}
   inGameUI: {fileID: 966744538}
   timer: {fileID: 447919547}
@@ -4765,9 +4766,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2d12a03285821e945826f774aca768ea, type: 2}
   - {fileID: 11400000, guid: de3f684af287f9c429562946e74c1b30, type: 2}
   - {fileID: 11400000, guid: 52301800851e0b843857d32937825dcf, type: 2}
-  SpawnTable: []
+  SpawnTable:
+  - {fileID: 0}
+  TempTable: []
   BeltZone: {fileID: 471473229}
-  maxSpawn: 3
   spawnTime: 3
   spawnCount: 4
 --- !u!4 &1350599527
@@ -6105,7 +6107,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1684007015}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.7123396, y: -1.2063556, z: 1}
+  m_LocalPosition: {x: -3.22, y: -1.15, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

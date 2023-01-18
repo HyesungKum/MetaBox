@@ -30,6 +30,8 @@ public class SoundManager : MonoSingleTon<SoundManager>
         soundData.clips.TryGetValue(sourceName, out AudioClip clip);
         BGMAudio.clip = clip;
     }
+    public void SetBGMLoop() => BGMAudio.loop = true;
+    public void SetBGMUnLoop() => BGMAudio.loop = false;
     public void PlayBGM() => BGMAudio.Play();
     public void StopBGM() => BGMAudio.Stop();
 

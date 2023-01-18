@@ -7,6 +7,8 @@ public class IngredData : ScriptableObject
 {
     public string ingredName;
 
+    public float lifeTime;
+
     public Sprite ingredientImage;
     public Sprite trimedImage;
 

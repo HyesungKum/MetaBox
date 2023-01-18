@@ -1,6 +1,8 @@
 using ObjectPoolCP;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class IngredientSpawner : MonoBehaviour
@@ -11,12 +13,12 @@ public class IngredientSpawner : MonoBehaviour
 
     [Header("Current Spawn Table")]
     public List<GameObject> SpawnTable = new();
+    public List<GameObject> TempTable = new();
 
     //================moving belt=======================
     [Header("Ref Up Belt Scroll")]
     [SerializeField] BeltZone BeltZone;
 
-    public int maxSpawn = 3;
     public float spawnTime = 1f;
 
     //===============init spawn=========================
@@ -41,9 +43,11 @@ public class IngredientSpawner : MonoBehaviour
                 break;
         }
 
+        //Init Table
+        TempTable = SpawnTable.ToArray().ToList();
+
         //Init Spawn
         List<GameObject> list = new List<GameObject>();
-
         for (int i = 0; i < spawnCount; i++)
         {
             for (int j = 0; j < SpawnTable.Count; j++)
@@ -52,10 +56,14 @@ public class IngredientSpawner : MonoBehaviour
             }
         }
 
+        //Init Pool
         for (int i = 0; i < list.Count; i++)
         {
             PoolCp.Inst.DestoryObjectCp(list[i]);
         }
+
+        //Init Time
+        timer = spawnTime;
     }
 
     private void Update()
@@ -68,15 +76,25 @@ public class IngredientSpawner : MonoBehaviour
     {
         timer += Time.deltaTime;
 
-        if (BeltZone.BeltIngred.Count < maxSpawn && timer > spawnTime)
+        if (timer > spawnTime)
         {
-            Spawn(Random.Range(0, SpawnTable.Count));
+            //random index
+            int index = UnityEngine.Random.Range(0, TempTable.Count);
+            
+            //spawn gameobj
+            Spawn(index);
+
+            //spawn table controll
+            TempTable.RemoveAt(index);
+            if (TempTable.Count == 0) TempTable = SpawnTable.ToArray().ToList();
+
+            //timer reset
             timer = 0f;
         }
     }
     private GameObject Spawn(int index)
     {
-        GameObject instObj = PoolCp.Inst.BringObjectCp(SpawnTable[index]);
+        GameObject instObj = PoolCp.Inst.BringObjectCp(TempTable[index]);
         instObj.transform.SetPositionAndRotation(this.transform.position, Quaternion.identity);
         return instObj;
     }

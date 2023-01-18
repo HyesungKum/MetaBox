@@ -32,6 +32,7 @@ public class GameManager : MonoSingleTon<GameManager>
     private void Start()
     {
         SoundManager.Inst.SetBGM("MainBGM");
+        SoundManager.Inst.SetBGMLoop();
         SoundManager.Inst.PlayBGM();
     }
 
@@ -87,6 +88,7 @@ public class GameManager : MonoSingleTon<GameManager>
     {
         IsGameOver = true;
         SoundManager.Inst.SetBGM("StageClear");
+        SoundManager.Inst.SetBGMUnLoop();
         SoundManager.Inst.PlayBGM();
         Time.timeScale = 0f;
     }

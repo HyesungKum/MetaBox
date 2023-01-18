@@ -2,9 +2,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using ObjectPoolCP;
 
 public class UIManager : MonoBehaviour
 {
+    //==============master canvas==================
+    [Header("Master UI")]
+    [SerializeField] GameObject UICanvas;
+    [Header("Vfx")]
+    [SerializeField] GameObject correctVfx;
+    [SerializeField] GameObject wrongVfx;
+
+    //current activation UI Object
     [Header("[Current Active UI]")]
     [SerializeField] GameObject curUI;
 
@@ -79,9 +88,17 @@ public class UIManager : MonoBehaviour
 
         //delegate chain
         StaticEventReciver.ScoreModi += UIScoreModi;
+        StaticEventReciver.CorrectIngred += UICorrectIngred;
+        StaticEventReciver.WrongIngred += UIWrongIngred;
         StaticEventReciver.GamePause += UIGamePause;
         StaticEventReciver.GameResume += UIGameResume;
         StaticEventReciver.GameOver += UIGameOver;
+
+        //Init pool
+        GameObject _correctVfx = Instantiate(correctVfx);
+        PoolCp.Inst.DestoryObjectCp(_correctVfx);
+        GameObject _wrongVfx = Instantiate(wrongVfx);
+        PoolCp.Inst.DestoryObjectCp(_wrongVfx);
     }
 
     private void Update()
@@ -94,9 +111,25 @@ public class UIManager : MonoBehaviour
     {
         //delegate unchain
         StaticEventReciver.ScoreModi -= UIScoreModi;
+        StaticEventReciver.CorrectIngred -= UICorrectIngred;
+        StaticEventReciver.WrongIngred -= UIWrongIngred;
         StaticEventReciver.GamePause -= UIGamePause;
         StaticEventReciver.GameResume -= UIGameResume;
         StaticEventReciver.GameOver -= UIGameOver;
+    }
+
+    //=============================================In Game Production===================================
+    void UICorrectIngred(Vector3 pos)
+    {
+         GameObject instText = PoolCp.Inst.BringObjectCp(correctVfx);
+         instText.transform.SetParent(UICanvas.transform, false);
+         instText.transform.position = pos;
+    }
+    void UIWrongIngred(Vector3 pos)
+    {
+        GameObject instText = PoolCp.Inst.BringObjectCp(wrongVfx);
+        instText.transform.SetParent(UICanvas.transform, false);
+        instText.transform.position = pos;
     }
 
     //=============================================UI Viewing Controll==================================

@@ -1,3 +1,5 @@
+using ObjectPoolCP;
+using System.Collections;
 using UnityEngine;
 
 //Different Cook and Trimable Ways Enum
@@ -16,8 +18,9 @@ public enum CookType
     Max
 }
 
-[RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class Ingredient : MonoBehaviour
 {
     //============================Data=====================================
@@ -27,23 +30,24 @@ public class Ingredient : MonoBehaviour
 
     //============================Component================================
     [Header("Component")]
-    public Rigidbody2D Rigidbody2D = null;
-    public BoxCollider2D BoxCollider2D = null;
-    public SpriteRenderer SpriteRenderer = null;
+    [SerializeField] private Rigidbody2D Rigidbody2D = null;
+    [SerializeField] private BoxCollider2D BoxCollider2D = null;
+    [SerializeField] private SpriteRenderer SpriteRenderer = null;
 
     //============================Flag=====================================
     [Header("Flag")]
+    [SerializeField] private float Lifetimer = 0;
+    [Space]
     public bool IsCliked;
-
+    [Space]
     public bool TrimReady;
     public bool IsTrimed;
-
+    [Space]
     public bool IsCooked;
     public bool IsCookReady;
 
     //============================trimControll=============================
     [Header("TrimControll")]
-
     public float needTask;
     public float curTask = 0;
     public TrimType TrimType;
@@ -92,6 +96,10 @@ public class Ingredient : MonoBehaviour
 
         IsCookReady = false;
         IsCooked = false;
+
+        Lifetimer = 0;
+
+        StartCoroutine(nameof(LifeCycle));
     }
 
     //=====================================Trim & Cook Task Controll=========================================
@@ -133,6 +141,27 @@ public class Ingredient : MonoBehaviour
             BoxCollider2D.enabled = true;
             IsCooked = true;
             curTask = 0;
+        }
+    }
+
+    IEnumerator LifeCycle()
+    {
+        while (this.gameObject != null)
+        {
+            if (IsTrimed) yield break;
+
+            if (IsCliked) { Lifetimer = 0; }
+            else { Lifetimer += Time.deltaTime; }
+
+            if (IngredData != null)
+            {
+                if (Lifetimer > IngredData.lifeTime)
+                {
+                    PoolCp.Inst.DestoryObjectCp(this.gameObject);
+                }
+            }
+
+            yield return null;
         }
     }
 }

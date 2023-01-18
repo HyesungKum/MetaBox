@@ -35,7 +35,7 @@ public class Vfx : MonoBehaviour
     /// </summary>
     IEnumerator Repeat()
     {
-        while(true)
+        while(timer < duration)
         {
             timer += Time.unscaledDeltaTime;
             frameTimer += Time.unscaledDeltaTime;
@@ -47,15 +47,10 @@ public class Vfx : MonoBehaviour
                 frameTimer = 0f;
             }
 
-            //image vfx disable
-            if (timer > duration)
-            {
-                PoolCp.Inst.DestoryObjectCp(this.gameObject);
-                yield break;
-            }
-
             yield return null;
         }
+
+        PoolCp.Inst.DestoryObjectCp(this.gameObject);
     }
     /// <summary>
     /// sprite change next index

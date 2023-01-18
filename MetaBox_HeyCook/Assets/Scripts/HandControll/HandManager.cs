@@ -92,7 +92,6 @@ public class HandManager : MonoBehaviour
         if (!hit || !hit.transform.CompareTag(nameof(Ingredient))) return;
 
         Ingredient ingred = hit.transform.GetComponent<Ingredient>();
-        ingred.Rigidbody2D.velocity = Vector3.zero;
 
         touchedIngred[index] = ingred;
         touchedIngred[index].IsCliked = true;

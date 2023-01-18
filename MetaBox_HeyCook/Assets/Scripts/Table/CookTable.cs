@@ -34,6 +34,8 @@ public class CookTable : MonoBehaviour
 
     [SerializeField] bool nowCooking = false;
 
+    float timeCache;
+
     private void Awake()
     {
         //Reference componet
@@ -48,6 +50,7 @@ public class CookTable : MonoBehaviour
         //init inner variables 
         Initailizing();
     }
+
     private void OnDisable()
     {
         //delegate unchain
@@ -69,6 +72,9 @@ public class CookTable : MonoBehaviour
         cookSliderObj.SetActive(false);
 
         nowCooking = false;
+
+        //timer cache
+        timeCache = Time.deltaTime;
     }
 
     //=================================Cooking Task=====================================
@@ -128,7 +134,7 @@ public class CookTable : MonoBehaviour
             tempIngred = contactIngred;
         }
     }
-    void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         if (tempIngred == null) return;
 
@@ -159,10 +165,13 @@ public class CookTable : MonoBehaviour
     //=============================target obj production================================
     IEnumerator TargetMove()
     {
+        float timer = 0f;
         Transform targetTr = tempIngred.transform;
 
         while (true)
         {
+            timer += timeCache;//exception handling
+            
             if (tempIngred == null) yield break;
 
             float fixedX = Mathf.Round(targetTr.position.x * 10f) / 10f;
@@ -170,7 +179,7 @@ public class CookTable : MonoBehaviour
 
             targetTr.position = Vector3.Lerp(targetTr.position, targetPos, Time.deltaTime * 10f);
 
-            if (tableRoundX == fixedX && tableRoundY == fixedY)
+            if ((tableRoundX == fixedX && tableRoundY == fixedY) || timer > 0.5f)
             {
                 targetTr.position = targetPos;
 
@@ -186,48 +195,54 @@ public class CookTable : MonoBehaviour
     //================================Recipe Controll===================================
     void RecipeCheck()
     {
+        bool correct = false;
+        int index = 0;
+
+        //judge recipe ingredient
         for (int i = 0; i < curNeedIngred.Count; i++)
         {
             if (tempIngred != null && curNeedIngred[i] == tempIngred.IngredData)
             {
-                Debug.Log("옳은 재료!");
-
-                //확인할 재료 지우기
-                curNeedIngred.RemoveAt(i);
-
-                if (curNeedIngred.Count == 0)
-                {
-                    Debug.Log("요리 준비");
-
-                    //food setting
-                    Ingredient cookingIngred = tempIngred;
-                    tempIngred = null;
-
-                    cookingIngred.RecipeData = requireRecipe;
-                    cookingIngred.IngredData = null;
-                    cookingIngred.Initializing();
-
-                    //rawfood setting
-                    rawFood = cookingIngred;
-                    rawFood.gameObject.transform.position = targetPos + (Vector3.back);
-                    rawFood.IsCookReady = true;
-                    rawFood.gameObject.name = rawFood.RecipeData.recipeName;
-                    rawFood.OnCook();
-
-                    tempIngred = null;
-
-                    //cook table setting
-                    nowCooking = true;
-                    cookSliderObj.SetActive(true);
-                    cookSliderObj.transform.position = targetPos + Vector3.up * 3f;
-                    cookSlider.value = 0;
-
-                    return;
-                }
+                correct = true;
+                index = i;
             }
-            else
+        }
+
+        //call vfx 
+        if(correct) StaticEventReciver.CallCorrectIngred(targetPos);
+        else StaticEventReciver.CallWrongIngred(targetPos);
+
+        //judge make food
+        if (correct)
+        {
+            curNeedIngred.RemoveAt(index);
+
+            if (curNeedIngred.Count == 0)
             {
-                Debug.Log("틀린 재료!");
+                //food setting
+                Ingredient cookingIngred = tempIngred;
+                tempIngred = null;
+
+                cookingIngred.RecipeData = requireRecipe;
+                cookingIngred.IngredData = null;
+                cookingIngred.Initializing();
+
+                //rawfood setting
+                rawFood = cookingIngred;
+                rawFood.gameObject.transform.position = targetPos + (Vector3.back);
+                rawFood.IsCookReady = true;
+                rawFood.gameObject.name = rawFood.RecipeData.recipeName;
+                rawFood.OnCook();
+
+                tempIngred = null;
+
+                //cook table setting
+                nowCooking = true;
+                cookSliderObj.SetActive(true);
+                cookSliderObj.transform.position = targetPos + Vector3.up * 3f;
+                cookSlider.value = 0;
+
+                return;
             }
         }
 

@@ -110,6 +110,7 @@ public class StartManager : MonoBehaviour
     private void Start()
     {
         SoundManager.Inst.SetBGM("StartBGM");
+        SoundManager.Inst.SetBGMLoop();
         SoundManager.Inst.PlayBGM();
     }
 
