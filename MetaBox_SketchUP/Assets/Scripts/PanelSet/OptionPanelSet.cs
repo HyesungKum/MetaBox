@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class OptionPanelSet : MonoBehaviour
 {
     [SerializeField] Button backStartPanelBut = null;
-    [SerializeField] GameObject startPanel = null;
 
     [Header("[Audio Slider]")]
     [SerializeField] Slider bgmSlider = null;
@@ -21,7 +20,6 @@ public class OptionPanelSet : MonoBehaviour
 
     void OnClickBakcButton()
     {
-        startPanel.gameObject.SetActive(true);
         this.gameObject.SetActive(false);
     }
 }

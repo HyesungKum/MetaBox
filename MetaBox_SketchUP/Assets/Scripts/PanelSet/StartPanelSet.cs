@@ -12,9 +12,6 @@ public class StartPanelSet : MonoBehaviour
     [SerializeField] string mainPackName = "com.MetaBox.MetaBox_Main";
     [SerializeField] Button ExitBut = null;
 
-    [SerializeField] GameObject nextPanel = null;
-    [SerializeField] GameObject optionPanel = null;
-
     void Awake()
     {
         gameStartBut.onClick.AddListener(() => OnClickStartBut());
@@ -25,13 +22,13 @@ public class StartPanelSet : MonoBehaviour
 
     public void OnClickStartBut()
     {
-        nextPanel.gameObject.SetActive(true);
+        PanelSettingMgr.Inst.LevelPanelSet(true);
         this.gameObject.SetActive(false);
     }
 
     void OnClickOption()
     {
-        optionPanel.gameObject.SetActive(true);
+        PanelSettingMgr.Inst.OptionPanelSet(true);
         this.gameObject.SetActive(false);
     }
 
