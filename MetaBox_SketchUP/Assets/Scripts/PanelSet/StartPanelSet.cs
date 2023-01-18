@@ -9,15 +9,17 @@ public class StartPanelSet : MonoBehaviour
     [SerializeField] Button gameStartBut = null;
     [SerializeField] Button optionBut = null;
     [SerializeField] Button gotoTownBut = null;
+    [SerializeField] Button exitBut = null;
+    [SerializeField] Button tutorial = null;
+
     [SerializeField] string mainPackName = "com.MetaBox.MetaBox_Main";
-    [SerializeField] Button ExitBut = null;
 
     void Awake()
     {
         gameStartBut.onClick.AddListener(() => OnClickStartBut());
         gotoTownBut.onClick.AddListener(() => MoveTown(mainPackName));
         optionBut.onClick.AddListener(() => OnClickOption());
-        ExitBut.onClick.AddListener(() => AppQuit());
+        exitBut.onClick.AddListener(() => AppQuit());
     }
 
     public void OnClickStartBut()

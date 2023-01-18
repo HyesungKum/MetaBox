@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class DrawLine : MonoBehaviour
 {
-
     //===================== referance object ====================
     [SerializeField] Camera mainCam = null;
     [SerializeField] GameObject linePrefab = null;
@@ -17,29 +16,27 @@ public class DrawLine : MonoBehaviour
     [SerializeField] GameObject objTwo = null;
     [SerializeField] GameObject objThree = null;
 
-    //==================== inner variables========================
+    //==================== inner variables=======================
     GameObject instLine = null;
     GameObject parentObj = null;
 
+    // ==== private 변경 꼭 하기 !!!!!
+    private Vertex startVertex = null;
+    private Vertex collisionVertex = null;
+    private Vertex endVertex = null;
+
+    // ==== Stack ====
+    Stack<GameObject> lineBackStack = null;
+    Stack<Vertex> checkVertex = null;
+
     Touch myTouch;
     private Vector3 startPos;
-    // ==== private 변경 꼭 하기 !!!!!
-    public Vertex startVertex = null;
-    public Vertex tempVertex = null;
-    public Vertex collisionVertex = null;
-    public Vertex endVertex = null;
-
-    Stack<GameObject> lineBackStack = null;
-    Stack<GameObject> ObjTwoBackStack = null;
-    Stack<GameObject> ObjThreeBackStack = null;
-
-    Stack<Vertex> checkVertex = null;
 
     private int verticesCount = 0;
     bool isMoveEnd = false;
-
+   
+    // ==== private 변경 꼭 하기 !!!!!
     public int checkClearImgCount = 3;
-    public int checklineStackCount = 0;
 
     private void Awake()
     {
@@ -107,11 +104,10 @@ public class DrawLine : MonoBehaviour
                     startVertex = collisionVertex;
 
                     endVertex = collisionVertex;
-                    tempVertex = startVertex;
 
                     startVertex.StartPointColor();
                     checkVertex.Push(startVertex);
-                    Debug.Log("checkVertex.Count (## (첫 터치 ) Push )) : " + checkVertex.Count);
+                    //Debug.Log("checkVertex.Count (## (첫 터치 ) Push )) : " + checkVertex.Count);
 
                     parentObj = startVertex.transform.parent.gameObject;
                     //Debug.Log("collisionVertex.GetNodeName() :" + collisionVertex.GetNodeName());
@@ -141,20 +137,15 @@ public class DrawLine : MonoBehaviour
                     {
                         if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNextNodeName(i)) == 0)
                         {
-                            // ===========
                             collisionVertex.ColorChange(); // Color Changed 
                             checkVertex.Push(collisionVertex);
-                            Debug.Log("checkVertex.Cout (Move) :" + checkVertex.Count);
+                            //Debug.Log("checkVertex.Cout (Move) :" + checkVertex.Count);
 
                             InstLine();
                             StrethchLine(instLine);
 
                             startVertex = collisionVertex;
-                            //Debug.Log("(MoveLineInHit) startVertex.NAME : " + startVertex.name);
-
                             endVertex = collisionVertex;
-                            //tempVertex = startVertex;
-
                             isMoveEnd = true;
                             break;
                         }
@@ -172,7 +163,6 @@ public class DrawLine : MonoBehaviour
     void LineMoveEnd(out Vertex collisionVertex)
     {
         collisionVertex = null;
-
         RaycastHit2D hitInfo = RayCheck(myTouch);
 
         if (hitInfo)
@@ -216,16 +206,14 @@ public class DrawLine : MonoBehaviour
         for (int i = 0; i < Childcount; i++)
         {
             DestroyLineObj();
-            Debug.Log("Childcount :" + Childcount);
         }
 
         lineBackStack.Clear();
-        Debug.Log("스택 클리어 ??" + lineBackStack.Count);
         checkVertex.Clear();
+        //Debug.Log("스택 클리어 ??" + lineBackStack.Count);
 
         startVertex = null;
         endVertex = null;
-        tempVertex = null;
 
         StartCoroutine(delayTime());
     }
@@ -235,21 +223,19 @@ public class DrawLine : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         InGamePanelSet.Inst.ClearPanelSet(false);
-        InGamePanelSet.Inst.SelectPanelSet(true);
+        InGamePanelSet.Inst.SelectPanelSetting(true);
     }
 
     void ClearImg()
     {
         if (instLine != null)
         {
-            // ==========================
-            // 카운트 해당 카운트 되자 마자 ~~ 활성화 됨
-            // 버그 수정
+            // ==== 좀더 정확한 클리어 판정 ====
             if (parentObj.name == objOne.name)
             {
                 if (lineBackStack.Count == 3)
                 {
-                    Debug.Log("## 1 ) 완료");
+                    //Debug.Log("## 1 ) 완료");
                     checkClearImgCount -= 1;
                     objOne.gameObject.SetActive(false);
                     SetPlayAgain(true, false, false);
@@ -258,12 +244,11 @@ public class DrawLine : MonoBehaviour
                     AllClear();
                 }
             }
-
             if (parentObj.name == objTwo.name)
             {
                 if (lineBackStack.Count == 10)
                 {
-                    Debug.Log("두번째 완료");
+                    //Debug.Log("두번째 완료");
                     checkClearImgCount -= 1;
 
                     objTwo.gameObject.SetActive(false);
@@ -276,7 +261,7 @@ public class DrawLine : MonoBehaviour
 
             if (lineBackStack.Count == 8)
             {
-                Debug.Log("세번째 완료");
+                //Debug.Log("세번째 완료");
                 checkClearImgCount -= 1;
 
                 objThree.gameObject.SetActive(false);
@@ -284,17 +269,15 @@ public class DrawLine : MonoBehaviour
                 StartCoroutine(delayTime());
 
                 AllClear();
-
             }
         }
     }
-
 
     void AllClear()
     {
         if (checkClearImgCount == 0)
         {
-            Debug.Log("## All Clear) lineBackStack.Count :" + checkClearImgCount);
+            //Debug.Log("## All Clear) lineBackStack.Count :" + checkClearImgCount);
 
             objOne.gameObject.SetActive(false);
             objTwo.gameObject.SetActive(false);
@@ -313,7 +296,7 @@ public class DrawLine : MonoBehaviour
         instLine.transform.SetParent(instLineTransform);
 
         lineBackStack.Push(instLine);
-        Debug.Log("lineBackStack.Count (## Push )) : " + lineBackStack.Count);
+        //Debug.Log("lineBackStack.Count (## Push )) : " + lineBackStack.Count);
 
         startPos = myTouch.position;
         instLine.transform.position = startPos;
@@ -324,7 +307,7 @@ public class DrawLine : MonoBehaviour
         if (lineBackStack.Count == 0) return;
 
         instLine = lineBackStack.Pop();
-        Debug.Log("lineBackStack.Count (## Pop )) : " + lineBackStack.Count);
+        //Debug.Log("lineBackStack.Count (## Pop )) : " + lineBackStack.Count);
 
         ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(instLine);
         collisionVertex = null;
@@ -336,7 +319,6 @@ public class DrawLine : MonoBehaviour
         {
             startVertex = null;
             endVertex = null;
-            tempVertex = null;
             return;
         }
         else
@@ -345,11 +327,10 @@ public class DrawLine : MonoBehaviour
 
             startVertex = checkVertex.Pop();
             startVertex.BackOriginalColor();
-            Debug.Log(" checkVertex.Pop() : " + checkVertex.Count);
+            //Debug.Log(" checkVertex.Pop() : " + checkVertex.Count);
         }
     }
 
-    // Line Transform Resetting
     public void LineTransformReset(GameObject line)
     {
         if (line != null)

@@ -10,8 +10,7 @@ public class LevelPanelSet : MonoBehaviour
     [SerializeField] Button leveltwo = null;
     [SerializeField] Button levelthree = null;
     [SerializeField] Button levelfour = null;
-
-    [SerializeField] GameObject nextPanel = null;
+    [SerializeField] Button closeBut = null;
 
     void Awake()
     {
@@ -19,11 +18,20 @@ public class LevelPanelSet : MonoBehaviour
         //leveltwo.onClick.AddListener(() => );
         //levelthree.onClick.AddListener(() => );
         //levelfour.onClick.AddListener(() => );
+
+        // === close button set ===
+        closeBut.onClick.AddListener(() => OnClickCloseBut());
     }
 
     public void OnClickLevelBut()
     {
-        nextPanel.gameObject.SetActive(true);
+        PanelSettingMgr.Inst.InGamePanelSet(true);
         this.gameObject.SetActive(false);
+    }
+
+    public void OnClickCloseBut()
+    {
+        this.gameObject.SetActive(false);
+        PanelSettingMgr.Inst.StartPanelSet(true);
     }
 }

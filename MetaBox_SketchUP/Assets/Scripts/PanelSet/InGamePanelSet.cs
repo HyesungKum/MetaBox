@@ -48,9 +48,16 @@ public class InGamePanelSet : MonoBehaviour
     [SerializeField] Button optionBut = null;
     [SerializeField] Button inGameOptionCloseBut = null;
 
+
+    [Header("[Option Button Setting]")]
+    [SerializeField] Button stopBut = null;
+    [SerializeField] Button reStartbut = null;
+
     [Header("[Timer Text]")]
     [SerializeField] TextMeshProUGUI playTimeText = null;
     [SerializeField] TextMeshProUGUI startWaitTime = null;
+
+    [SerializeField] RectTransform lineCloneTransform = null;
     #endregion
 
     // === wait 3 seconds ===
@@ -77,7 +84,7 @@ public class InGamePanelSet : MonoBehaviour
         // === changed (false) ===
         FirstSetting(false);
 
-        OneBrushSet(false);
+        OneBrushPlayPanelSet(false);
         ClearPanelSet(false);
 
         // === button event Set ===
@@ -130,7 +137,6 @@ public class InGamePanelSet : MonoBehaviour
         curTime = playTime;
 
         playTimeText.text = $" Time : {Mathf.Round(playTime).ToString()}";
-        //Debug.Log("## time : " + playTime);
 
         if (Mathf.Round(playTime) <= 0)
         {
@@ -142,20 +148,20 @@ public class InGamePanelSet : MonoBehaviour
         else if (playTimeText.gameObject.active == false)
         {
             playTime = 0;
-            Debug.Log("Timer ºñÈ°¼ºÈ­  µÊ ? :" + playTime);
+            //Debug.Log("Timer ºñÈ°¼ºÈ­  µÊ ? :" + playTime);
         }
     }
 
     void FirstSetting(bool selectPanel)
     {
         inGameCanvas.gameObject.SetActive(true);
-        SelectPanelSet(selectPanel);
+        SelectPanelSetting(selectPanel);
         InGameSet(false);
         InGameOptionSet(false);
         LosePanelSet(false);
     }
 
-    public void SelectPanelSet(bool active)
+    public void SelectPanelSetting(bool active)
     {
         selectPanel.gameObject.SetActive(active);
     }
@@ -170,7 +176,7 @@ public class InGamePanelSet : MonoBehaviour
         optionPanel.gameObject.SetActive(active);
     }
 
-    public void OneBrushSet(bool active)
+    public void OneBrushPlayPanelSet(bool active)
     {
         onBushObj.gameObject.SetActive(active);
     }
@@ -184,6 +190,7 @@ public class InGamePanelSet : MonoBehaviour
     {
         clearImgPanel.gameObject.SetActive(active);
     }
+
     public void ClearImgSet(bool oneSet, bool twoSet, bool threeSet)
     {
         ImgOne.gameObject.SetActive(oneSet);
@@ -196,11 +203,13 @@ public class InGamePanelSet : MonoBehaviour
         winPanel.gameObject.SetActive(active);
     }
 
-    void OnClickOptionBut()
+    public void OnClickOptionBut()
     {
         if (isOptionPanelOpen == false)
         {
             InGameOptionSet(true);
+            stopBut.gameObject.SetActive(true);
+            reStartbut.gameObject.SetActive(true);
             isOptionPanelOpen = true;
         }
         else if (isOptionPanelOpen == true)
@@ -210,14 +219,18 @@ public class InGamePanelSet : MonoBehaviour
         }
 
     }
-
-    void InGameOptionCloseBut()
+    public void LineCloneTransform(bool active)
     {
-        optionPanel.gameObject.SetActive(false);
+        lineCloneTransform.gameObject.SetActive(active);
     }
 
     void OnClickReStartPanel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    void InGameOptionCloseBut()
+    {
+        optionPanel.gameObject.SetActive(false);
     }
 }
