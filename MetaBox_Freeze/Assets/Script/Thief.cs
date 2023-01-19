@@ -15,6 +15,7 @@ public class Thief : MonoBehaviour
     WaitUntil runnigTime = null;
     WaitUntil GameStart = null;
     WaitForSeconds waitMoveTime = null;
+    WaitForSeconds waitArrestTime = null;
     
     int id;
     float speed;
@@ -64,6 +65,7 @@ public class Thief : MonoBehaviour
         this.speed = movespeed * 0.4f;
         this.wantedThief = wantedThief;
         waitMoveTime = new WaitForSeconds(movetime);
+        waitArrestTime = new WaitForSeconds(3f);
     }
 
     IEnumerator RandomDir()
@@ -96,7 +98,8 @@ public class Thief : MonoBehaviour
 
     IEnumerator Destroy()
     {
-        yield return waitMoveTime;
+        UIManager.Instance.Catch(id);
+        yield return waitArrestTime;
         if (callbackArrest != null) callbackArrest(this);
         callbackArrest = null;
 
@@ -116,7 +119,7 @@ public class Thief : MonoBehaviour
     }
     private void OnCollisionStay2D(Collision2D collision) //벽 충돌시 방향변경
     {
-        if(collision.rigidbody == false)
+        if(collision.rigidbody == false && arrest == false)
         {
             dir.x = -collision.contacts[0].point.x;
             dir.y = -collision.contacts[0].point.y;
@@ -156,7 +159,11 @@ public class Thief : MonoBehaviour
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if(collision.tag != "Prison")
+        if(collision.tag == "Prison")
+        {
+            if(arrest == false) dir.y = 1f;
+        }
+        else
         {
             dir = (this.transform.position - collision.transform.position).normalized;
         }

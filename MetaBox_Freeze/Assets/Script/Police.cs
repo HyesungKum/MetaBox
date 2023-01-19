@@ -5,7 +5,7 @@ using UnityEngine;
 public class Police : MonoBehaviour
 {
     [SerializeField] CircleCollider2D circleArea = null;
-    [SerializeField] Sprite playerImg;
+    [SerializeField] Sprite playerImg; //PC 모델링은 미니게임 마을에서 유저가 커스터마이징한 이미지로 사용
     [SerializeField] float playerSpeed;
     [SerializeField] float playerArea;
 
@@ -19,7 +19,7 @@ public class Police : MonoBehaviour
 
     void Start()
     {
-        this.transform.position = new Vector3(Random.Range(-2f, 5f), Random.Range(-3f, 2f), 0);
+        this.transform.position = new Vector3(Random.Range(-2f, 5f), Random.Range(-3f, 2f), 0); //단 모든 캐릭터는 겹치지 않게 배치
     }
 
     void DataSetting()
@@ -29,18 +29,10 @@ public class Police : MonoBehaviour
         circleArea.radius *= playerArea;
     }
 
-    void Update()
+    public void Move(Vector3 movepoint)
     {
-        if (GameManager.Instance.IsGaming == false || Time.timeScale == 0) return;
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector3 movePoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            movePoint.z = 0;
-            if (movePoint.y < -3.2) movePoint.y = -3.2f;
-            isMoving = false;
-            StartCoroutine(_Move(movePoint));
-        }
+        isMoving = false;
+        StartCoroutine(_Move(movepoint));
     }
 
     IEnumerator _Move(Vector3 movepoint)

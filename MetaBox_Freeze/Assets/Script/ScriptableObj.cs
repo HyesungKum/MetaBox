@@ -6,4 +6,5 @@ using UnityEngine;
 public class ScriptableObj : ScriptableObject
 {
     public Sprite[] Thief;
+    public Sprite[] CountDown;
 }

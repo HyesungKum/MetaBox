@@ -64,7 +64,6 @@ public abstract class ObjectPool<T> : MonoBehaviour where T : MonoBehaviour
         {
             tObj.gameObject.SetActive(false);
             pool.Enqueue(tObj);
-            Debug.Log(pool.Count);
         }
     }
 
