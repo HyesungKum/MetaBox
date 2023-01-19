@@ -3,23 +3,37 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Profiling.Memory.Experimental;
 using UnityEngine.UI;
+
+enum TablePos
+{
+    Right,
+    Left
+}
 
 public class CookTable : MonoBehaviour
 {
     //================================Reference Customer=====================================
     [Header("Reference Customer")]
-    [SerializeField] Customer customer = null;
+    [SerializeField] Submission submission = null;
+    [SerializeField] TablePos CurTablePos;
 
     //==================================ObjectReferance======================================
     [Header("Require Recipe data")]
-    [SerializeField] RecipeData requireRecipe = null;
+    [SerializeField] SpriteRenderer BillboradRenderer;
+    [SerializeField] SetData setOrder = null;
     [SerializeField] List<IngredData> curNeedIngred = new();
 
     //================================Current Ingredient in Pot==============================
     [Header("current ingred in pot")]
+    [SerializeField] Ingredient curIngred = null;
     [SerializeField] Ingredient tempIngred = null;
-    [SerializeField] Ingredient rawFood = null;
+    [SerializeField] Ingredient rawSet = null;
+
+    //===================================Table Setting=======================================
+    [Header("Table Value")]
+    [SerializeField] float ingredMoveSpeed;
 
     //=======================================Slider==========================================
     [Header("Slider Obj")]
@@ -29,12 +43,15 @@ public class CookTable : MonoBehaviour
     //===================================Inner Variables=====================================
     Vector3 targetPos = Vector3.zero;
 
-    float tableRoundX;
-    float tableRoundY;
+    private float tableRoundX;
+    private float tableRoundY;
 
-    [SerializeField] bool nowCooking = false;
+    private float subRoundX;
+    private float subRoundY;
 
-    float timeCache;
+    private float timeCache;
+
+    private bool nowCooking = false;
 
     private void Awake()
     {
@@ -45,7 +62,7 @@ public class CookTable : MonoBehaviour
         this.transform.tag = "Table";
 
         //delegate chain
-        StaticEventReciver.NewCostomer += BringRecipe;
+        EventReciver.NewOrder += NewCustomerOrder;
 
         //init inner variables 
         Initailizing();
@@ -54,15 +71,19 @@ public class CookTable : MonoBehaviour
     private void OnDisable()
     {
         //delegate unchain
-        StaticEventReciver.NewCostomer -= BringRecipe;
+        EventReciver.NewOrder -= NewCustomerOrder;
     }
 
     //=================================Initializing=====================================
     private void Initailizing()
     {
-        //TablePosition Raound
-        tableRoundX = Mathf.Round(this.transform.position.x * 10f) / 10f;
-        tableRoundY = Mathf.Round(this.transform.position.y * 10f) / 10f;
+        //TablePosition Round
+        tableRoundX = Mathf.Round(this.transform.position.x);
+        tableRoundY = Mathf.Round(this.transform.position.y);
+
+        //submission Position Round
+        subRoundX = Mathf.Round(submission.transform.position.x);
+        subRoundY = Mathf.Round(submission.transform.position.y);
 
         //Ingredient Position setting
         targetPos = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z);
@@ -80,8 +101,8 @@ public class CookTable : MonoBehaviour
     //=================================Cooking Task=====================================
     public void Pressing()
     {
-        if (!nowCooking || rawFood == null) return;
-        if (!(rawFood.IsCookReady && rawFood.CookType == CookType.Pressing)) return;
+        if (!nowCooking || rawSet == null) return;
+        if (!(rawSet.IsCookReady && rawSet.CookType == CookType.Pressing)) return;
 
         //누르기 이펙트
 
@@ -89,8 +110,8 @@ public class CookTable : MonoBehaviour
     }
     public void Touching()
     {
-        if (!nowCooking || rawFood == null) return;
-        if (!(rawFood.IsCookReady && rawFood.CookType == CookType.Touching)) return;
+        if (!nowCooking || rawSet == null) return;
+        if (!(rawSet.IsCookReady && rawSet.CookType == CookType.Touching)) return;
 
         //만지기 이펙트
 
@@ -98,8 +119,8 @@ public class CookTable : MonoBehaviour
     }
     public void Slicing()
     {
-        if (!nowCooking || rawFood == null) return;
-        if (!(rawFood.IsCookReady && rawFood.CookType == CookType.Slicing)) return;
+        if (!nowCooking || rawSet == null) return;
+        if (!(rawSet.IsCookReady && rawSet.CookType == CookType.Slicing)) return;
 
         //자르기 이펙트
 
@@ -107,15 +128,19 @@ public class CookTable : MonoBehaviour
     }
     private void TaskContoll()
     {
-        rawFood.curTask++;
-        cookSlider.value = rawFood.curTask / rawFood.needTask;
+        rawSet.curTask++;
+        cookSlider.value = rawSet.curTask / rawSet.needTask;
 
         if (cookSlider.value == 1)
         {
             cookSliderObj.SetActive(false);
             nowCooking = false;
-            rawFood.OnCook();
-            rawFood = null;
+
+            GameObject instObj = PoolCp.Inst.BringObjectCp(setOrder.particle);
+            instObj.transform.position = this.transform.position;
+            StartCoroutine(nameof(ParticleMove), instObj);
+
+            PoolCp.Inst.DestoryObjectCp(rawSet.gameObject);
         }
     }
     
@@ -128,19 +153,16 @@ public class CookTable : MonoBehaviour
         {
             Ingredient contactIngred = collision.transform.GetComponent<Ingredient>();
 
-            if (!contactIngred.IsTrimed) return;
-            if (contactIngred.IsCooked) return;
-
-            tempIngred = contactIngred;
+            curIngred = contactIngred;
         }
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (tempIngred == null) return;
+        if (curIngred == null) return;
 
-        if (collision.gameObject == tempIngred.gameObject)
+        if (collision.gameObject == curIngred.gameObject)
         {
-            if (!tempIngred.IsCliked)
+            if (!curIngred.IsCliked)
             {
                 StartCoroutine(nameof(TargetMove));
             }
@@ -148,15 +170,15 @@ public class CookTable : MonoBehaviour
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (tempIngred == null) return;
+        if (curIngred == null) return;
 
         if (collision.CompareTag(nameof(Ingredient)))
         {
-            if (collision.transform.gameObject == tempIngred.gameObject)
+            if (collision.transform.gameObject == curIngred.gameObject)
             {
-                if (tempIngred.IsCliked)
+                if (curIngred.IsCliked)
                 {
-                    tempIngred = null;
+                    curIngred = null;
                 }
             }
         }
@@ -165,25 +187,22 @@ public class CookTable : MonoBehaviour
     //=============================target obj production================================
     IEnumerator TargetMove()
     {
-        float timer = 0f;
-        Transform targetTr = tempIngred.transform;
+        Transform targetTr = curIngred.transform;
 
         while (true)
         {
-            timer += timeCache;//exception handling
-            
-            if (tempIngred == null) yield break;
+            if (curIngred == null) yield break;
 
-            float fixedX = Mathf.Round(targetTr.position.x * 10f) / 10f;
-            float fixedY = Mathf.Round(targetTr.position.y * 10f) / 10f;
+            float fixedX = Mathf.Round(targetTr.position.x);
+            float fixedY = Mathf.Round(targetTr.position.y);
 
-            targetTr.position = Vector3.Lerp(targetTr.position, targetPos, Time.deltaTime * 10f);
+            targetTr.position = Vector3.Lerp(targetTr.position, targetPos, Time.deltaTime * ingredMoveSpeed);
 
-            if ((tableRoundX == fixedX && tableRoundY == fixedY) || timer > 0.5f)
+            if (tableRoundX == fixedX && tableRoundY == fixedY)
             {
                 targetTr.position = targetPos;
 
-                tempIngred.IsCookReady = true;
+                curIngred.IsCookReady = true;
 
                 RecipeCheck();
             }
@@ -201,40 +220,30 @@ public class CookTable : MonoBehaviour
         //judge recipe ingredient
         for (int i = 0; i < curNeedIngred.Count; i++)
         {
-            if (tempIngred != null && curNeedIngred[i] == tempIngred.IngredData)
+            if (curIngred != null && curNeedIngred[i] == curIngred.IngredData)
             {
                 correct = true;
                 index = i;
             }
         }
 
-        //call vfx 
-        if(correct) StaticEventReciver.CallCorrectIngred(targetPos);
-        else StaticEventReciver.CallWrongIngred(targetPos);
-
         //judge make food
         if (correct)
         {
+            if (tempIngred != null) PoolCp.Inst.DestoryObjectCp(tempIngred.gameObject);
+            tempIngred = curIngred;
+            tempIngred.ReadyCook();
+
             curNeedIngred.RemoveAt(index);
 
             if (curNeedIngred.Count == 0)
             {
-                //food setting
-                Ingredient cookingIngred = tempIngred;
-                tempIngred = null;
-
-                cookingIngred.RecipeData = requireRecipe;
-                cookingIngred.IngredData = null;
-                cookingIngred.Initializing();
-
                 //rawfood setting
-                rawFood = cookingIngred;
-                rawFood.gameObject.transform.position = targetPos + (Vector3.back);
-                rawFood.IsCookReady = true;
-                rawFood.gameObject.name = rawFood.RecipeData.recipeName;
-                rawFood.OnCook();
+                rawSet = curIngred;
+                rawSet.setData = setOrder;
 
                 tempIngred = null;
+                curIngred = null;
 
                 //cook table setting
                 nowCooking = true;
@@ -242,29 +251,84 @@ public class CookTable : MonoBehaviour
                 cookSliderObj.transform.position = targetPos + Vector3.up * 3f;
                 cookSlider.value = 0;
 
+                //call correct vfx
+                EventReciver.CallCorrectIngred(targetPos);
                 return;
             }
+            //call correct vfx
+            EventReciver.CallCorrectIngred(targetPos);
+        }
+        else
+        {
+            //call wrong vfx
+            EventReciver.CallWrongIngred(targetPos);
         }
 
-        PoolCp.Inst.DestoryObjectCp(tempIngred.gameObject);
-        tempIngred = null;
+        curIngred = null;
     }
     /// <summary>
     /// bringing recipe by ref customer
     /// check ingredients about target recipe
     /// </summary>
-    void BringRecipe()
+    void NewCustomerOrder()
     {
-        requireRecipe = customer.requireRecipe;
+        //split recipe right and left
+        switch (CurTablePos)
+        {
+            case TablePos.Left: setOrder = submission.SetDataL; break;
+            case TablePos.Right: setOrder = submission.SetDataR; break;
+        }
 
+        //apply need combine list Image
+        BillboradRenderer.sprite = setOrder.CombineImage;
+
+        //recipe data clean
         if (curNeedIngred.Count >= 0)
         {
             curNeedIngred.Clear();
         }
 
-        for (int i = 0; i < requireRecipe.needIngred.Length; i++)
+        //apply new order
+        for (int i = 0; i < setOrder.needIngred.Length; i++)
         {
-            curNeedIngred.Add(requireRecipe.needIngred[i]);
+            curNeedIngred.Add(setOrder.needIngred[i]);
+        }
+    }
+
+    //=========================================Production=====================================
+    /// <summary>
+    /// particle move to submission position and tranfer
+    /// </summary>
+    /// <param name="target">target Object</param>
+    /// <returns> null </returns>
+    IEnumerator ParticleMove(GameObject target)
+    {
+        while (target.activeSelf)
+        {
+            if (target == null) yield break;
+
+            float fixedX = Mathf.Round(target.transform.position.x);
+            float fixedY = Mathf.Round(target.transform.position.y);
+
+            target.transform.position = Vector3.Lerp(target.transform.position, submission.transform.position, timeCache *2f);
+
+            if (subRoundX == fixedX && subRoundY == fixedY)
+            {
+                target.transform.position = submission.transform.position;
+                EventReciver.CallScoreModi(setOrder.Score);
+
+                switch (CurTablePos)
+                {
+                    case TablePos.Left: submission.particleR = target; break;
+                    case TablePos.Right: submission.particleL = target; break;
+                }
+
+                EventReciver.CallDoSubmission();
+
+                yield break;
+            }
+
+            yield return null;
         }
     }
 }

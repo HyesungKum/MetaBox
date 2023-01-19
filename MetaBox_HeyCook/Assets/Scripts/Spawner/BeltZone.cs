@@ -5,11 +5,11 @@ using UnityEngine;
 public class BeltZone : MonoBehaviour
 {
     public List<GameObject> BeltIngred = new(); 
-    public float beltSpeed = 1f;
+    public float beltSpeed;
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        collision.transform.position += Vector3.up * Time.deltaTime;
+        collision.transform.position += Vector3.up * Time.deltaTime * beltSpeed;
     }
 
     #region Editor

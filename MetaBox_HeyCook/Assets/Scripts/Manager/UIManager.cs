@@ -54,7 +54,7 @@ public class UIManager : MonoBehaviour
     private void Awake()
     {
         //===============in game button listener=======================================
-        optionButton.onClick.AddListener(() => StaticEventReciver.CallGamePause());
+        optionButton.onClick.AddListener(() => EventReciver.CallGamePause());
         optionButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
 
         //===============option button listener========================================
@@ -73,7 +73,7 @@ public class UIManager : MonoBehaviour
         sfxSoundButton.onClick.AddListener(() => ToggleSlider(sfxSlider));
         sfxSlider.onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("SFX", call));
 
-        opResumeButton.onClick.AddListener(() => StaticEventReciver.CallGameResume());
+        opResumeButton.onClick.AddListener(() => EventReciver.CallGameResume());
         opResumeButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
 
         opExitButton.onClick.AddListener(() => SceneMove(SceneName.Start));
@@ -87,12 +87,14 @@ public class UIManager : MonoBehaviour
         restartButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
 
         //delegate chain
-        StaticEventReciver.ScoreModi += UIScoreModi;
-        StaticEventReciver.CorrectIngred += UICorrectIngred;
-        StaticEventReciver.WrongIngred += UIWrongIngred;
-        StaticEventReciver.GamePause += UIGamePause;
-        StaticEventReciver.GameResume += UIGameResume;
-        StaticEventReciver.GameOver += UIGameOver;
+        EventReciver.ScoreModi += UIScoreModi;
+        EventReciver.CorrectIngred += UICorrectIngred;
+        EventReciver.WrongIngred += UIWrongIngred;
+
+        EventReciver.TickCount += UITcikCount;
+        EventReciver.GamePause += UIGamePause;
+        EventReciver.GameResume += UIGameResume;
+        EventReciver.GameOver += UIGameOver;
 
         //Init pool
         GameObject _correctVfx = Instantiate(correctVfx);
@@ -101,21 +103,17 @@ public class UIManager : MonoBehaviour
         PoolCp.Inst.DestoryObjectCp(_wrongVfx);
     }
 
-    private void Update()
-    {
-        //이벤트 추가로 업데이트에서 뽑기
-        timer.text = string.Format("{0:D2} : {1:D2} ",(int)(GameManager.Inst.Timer/60f),(int)(GameManager.Inst.Timer % 60f));
-    }
-
     private void OnDisable()
     {
         //delegate unchain
-        StaticEventReciver.ScoreModi -= UIScoreModi;
-        StaticEventReciver.CorrectIngred -= UICorrectIngred;
-        StaticEventReciver.WrongIngred -= UIWrongIngred;
-        StaticEventReciver.GamePause -= UIGamePause;
-        StaticEventReciver.GameResume -= UIGameResume;
-        StaticEventReciver.GameOver -= UIGameOver;
+        EventReciver.ScoreModi -= UIScoreModi;
+        EventReciver.CorrectIngred -= UICorrectIngred;
+        EventReciver.WrongIngred -= UIWrongIngred;
+
+        EventReciver.TickCount -= UITcikCount;
+        EventReciver.GamePause -= UIGamePause;
+        EventReciver.GameResume -= UIGameResume;
+        EventReciver.GameOver -= UIGameOver;
     }
 
     //=============================================In Game Production===================================
@@ -152,7 +150,7 @@ public class UIManager : MonoBehaviour
         curUI.SetActive(true);
     }
 
-    //=============================================UI Value Vontroll======================================
+    //=============================================UI Value Controll======================================
     void ToggleSlider(Slider target)
     {
         target.interactable = target.interactable == true ? false : true;
@@ -164,6 +162,10 @@ public class UIManager : MonoBehaviour
     void UIScoreModi(int value)
     {
         score.text = GameManager.Inst.Score.ToString();
+    }
+    void UITcikCount()
+    {
+        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.Timer / 60f), (int)(GameManager.Inst.Timer % 60f));
     }
 
     //================================================SceneMove============================================

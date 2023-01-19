@@ -17,6 +17,7 @@ public class DynamicObj : MonoBehaviour
 
     //===========================components==============================
     private TextMeshProUGUI textMesh;
+    private SpriteRenderer renderer;
 
     //===================Position Production Controll====================
     public bool editXpos;
@@ -90,7 +91,8 @@ public class DynamicObj : MonoBehaviour
     private void Initializing()
     {
         //textMeshProUGUI
-        textMesh = this.GetComponent<TextMeshProUGUI>();
+        TryGetComponent<TextMeshProUGUI>(out textMesh);
+        TryGetComponent<SpriteRenderer>(out renderer);
 
         //position
         tempVec = fixedPos = this.transform.position;
@@ -99,7 +101,8 @@ public class DynamicObj : MonoBehaviour
         tempScale = fixedScale = this.transform.localScale;
 
         //color
-        fixedCol = textMesh.color;
+        if (textMesh != null) fixedCol = textMesh.color;
+        if (renderer != null) fixedCol = renderer.color;
         lerpCal = 0f;
 
         //timer
@@ -117,7 +120,9 @@ public class DynamicObj : MonoBehaviour
 
             this.transform.localPosition = fixedPos;
             this.transform.localScale = fixedScale;
-            textMesh.color = fixedCol;
+
+            if (textMesh != null) textMesh.color = fixedCol;
+            if (renderer != null) renderer.color = fixedCol;
 
             yield return null;
         }

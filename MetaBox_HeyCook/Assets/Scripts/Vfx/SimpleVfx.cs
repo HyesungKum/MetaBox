@@ -7,9 +7,11 @@ using UnityEngine;
 public class SimpleVfx : MonoBehaviour
 {
     [SerializeField] float duration;
+    [SerializeField] bool loop;
 
     private void OnEnable()
     {
+        if (loop) duration = float.MaxValue; 
         StartCoroutine(nameof(LifeCycle));
     }
 
@@ -17,7 +19,7 @@ public class SimpleVfx : MonoBehaviour
     {
         float timer = 0f;
 
-        while (timer < duration)
+        while (this.gameObject.activeSelf && timer < duration)
         {
             timer += Time.deltaTime;
             yield return null;

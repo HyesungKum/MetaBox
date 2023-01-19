@@ -25,7 +25,8 @@ public class Ingredient : MonoBehaviour
 {
     //============================Data=====================================
     [Header("Data")]
-    public RecipeData RecipeData = null;
+    public FoodData FoodData = null;
+    public SetData setData = null;
     public IngredData IngredData = null;
 
     //============================Component================================
@@ -75,18 +76,16 @@ public class Ingredient : MonoBehaviour
     public void Initializing()
     {
         //sprite and collider
-        if (IngredData != null)
-        {
-            SpriteRenderer.sprite = IngredData.ingredientImage;
-            BoxCollider2D.size = SpriteRenderer.sprite.bounds.size;
-        }
-        else if (RecipeData != null)
-        {
-            SpriteRenderer.sprite = RecipeData.raw;
-            BoxCollider2D.size = SpriteRenderer.sprite.bounds.size;
-        }
+        SpriteRenderer.sprite = IngredData.ingredientImage;
+        SpriteRenderer.sortingOrder = 4;
+
+        BoxCollider2D.size = SpriteRenderer.sprite.bounds.size;
+        BoxCollider2D.enabled = true;
+
+        curTask = 0;
+
         //tagging
-        this.transform.tag = "Ingredient";
+        if (this.gameObject.tag == "Untagged") this.transform.tag = "Ingredient";
 
         //flag
         IsCliked = false;
@@ -102,53 +101,45 @@ public class Ingredient : MonoBehaviour
         StartCoroutine(nameof(LifeCycle));
     }
 
-    //=====================================Trim & Cook Task Controll=========================================
+    //============================================Ingredient Controll=========================================
+    #region Legacy
     /// <summary>
     /// check this ingredient can trimable and do right intrecting
     /// </summary>
-    public void OnTrim()
-    {
-        if (IsTrimed || IngredData == null) return;
+    //public void OnTrim()
+    //{
+    //    if (IsTrimed || IngredData == null) return;
 
-        if (TrimReady)
-        {
-            BoxCollider2D.enabled = false;
-        }
+    //    if (TrimReady)
+    //    {
+    //        BoxCollider2D.enabled = false;
+    //    }
 
-        if (curTask >= needTask)
-        {
-            SpriteRenderer.sprite = IngredData.trimedImage;
-            BoxCollider2D.enabled = true;
-            IsTrimed = true;
-            curTask = 0;
-        }
-    }
+    //    if (curTask >= needTask)
+    //    {
+    //        SpriteRenderer.sprite = IngredData.trimedImage;
+    //        BoxCollider2D.enabled = true;
+    //        IsTrimed = true;
+    //        curTask = 0;
+    //    }
+    //}
+    #endregion
+
     /// <summary>
-    /// check this ingredient can cookable and do right intrecting
+    /// Call when Ingredient Ready to cook
     /// </summary>
-    public void OnCook()
+    public void ReadyCook()
     {
-        if (IsCooked || RecipeData == null) return;
-
-        if (IsCookReady)
-        {
-            BoxCollider2D.enabled = false;
-        }
-
-        if (curTask >= needTask)
-        {
-            SpriteRenderer.sprite = RecipeData.cooked;
-            BoxCollider2D.enabled = true;
-            IsCooked = true;
-            curTask = 0;
-        }
+        SpriteRenderer.sortingOrder = 3;
+        BoxCollider2D.enabled = false;
     }
 
+    //===========================================Ingredient LifeCycle=========================================
     IEnumerator LifeCycle()
     {
         while (this.gameObject != null)
         {
-            if (IsTrimed) yield break;
+            if (IsCookReady) yield break;
 
             if (IsCliked) { Lifetimer = 0; }
             else { Lifetimer += Time.deltaTime; }

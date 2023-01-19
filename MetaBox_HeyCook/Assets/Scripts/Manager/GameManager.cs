@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Threading;
 using UnityEngine;
 
 public class GameManager : MonoSingleTon<GameManager>
@@ -6,12 +8,17 @@ public class GameManager : MonoSingleTon<GameManager>
     public int Score = 0;
     public int Timer = 10;
 
+    public bool IsStart = false;
     public bool IsPause = false;
     public bool IsGameOver = false;
 
     public int Level = 1;
 
     //======================timer====================
+    Coroutine GameRoutine;
+
+    private readonly WaitForSeconds wait = new(1f);
+
     float SecCount = 0f;
 
     private void Awake()
@@ -19,14 +26,15 @@ public class GameManager : MonoSingleTon<GameManager>
         Application.targetFrameRate = 60;
 
         //initializing
+        IsStart = false;
         IsPause = false;
         IsGameOver = false;
 
         //delegate chain
-        StaticEventReciver.ScoreModi += ScoreAddSub;
-        StaticEventReciver.GamePause += GamePasue;
-        StaticEventReciver.GameResume += GameResume;
-        StaticEventReciver.GameOver += GameOver;
+        EventReciver.ScoreModi += ScoreAddSub;
+        EventReciver.GamePause += GamePasue;
+        EventReciver.GameResume += GameResume;
+        EventReciver.GameOver += GameOver;
     }
 
     private void Start()
@@ -34,35 +42,29 @@ public class GameManager : MonoSingleTon<GameManager>
         SoundManager.Inst.SetBGM("MainBGM");
         SoundManager.Inst.SetBGMLoop();
         SoundManager.Inst.PlayBGM();
-    }
 
-    private void Update()
-    {
-        TimeUpdate();
+        GameRoutine = StartCoroutine(nameof(TimeUpdate));
     }
 
     private void OnDisable()
     {
         //delegate unchain
-        StaticEventReciver.ScoreModi -= ScoreAddSub;
-        StaticEventReciver.GamePause -= GamePasue;
-        StaticEventReciver.GameResume -= GameResume;
-        StaticEventReciver.GameOver -= GameOver;
+        EventReciver.ScoreModi -= ScoreAddSub;
+        EventReciver.GamePause -= GamePasue;
+        EventReciver.GameResume -= GameResume;
+        EventReciver.GameOver -= GameOver;
     }
 
-    void TimeUpdate()
+    IEnumerator TimeUpdate()
     {
-        if (IsGameOver) return;
+        while (!IsGameOver)
+        {
+            yield return wait;
 
-        SecCount += Time.deltaTime;
-
-        if (SecCount <= 1f) return;
-        
-        Timer -= 1;
-        
-        if (Timer == 0) StaticEventReciver.CallGameOver();
-
-        SecCount = 0f;
+            Timer -= 1;
+            EventReciver.CallTickCount();
+            if (Timer == 0) EventReciver.CallGameOver();
+        }
     }
 
     //=====================================Score Controll=========================================
@@ -76,16 +78,19 @@ public class GameManager : MonoSingleTon<GameManager>
     //===================================Game Life Controll=======================================
     void GamePasue()
     {
+        StopCoroutine(GameRoutine);
         GameManager.Inst.IsPause = true;
         Time.timeScale = 0;
     }
     void GameResume()
     {
+        GameRoutine = StartCoroutine(nameof(TimeUpdate));
         GameManager.Inst.IsPause = false;
         Time.timeScale = 1f;   
     }
     void GameOver()
     {
+        StopCoroutine(GameRoutine);
         IsGameOver = true;
         SoundManager.Inst.SetBGM("StageClear");
         SoundManager.Inst.SetBGMUnLoop();

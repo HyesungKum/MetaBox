@@ -15,6 +15,7 @@ public class Vfx : MonoBehaviour
 
     [Header("Play Duration")]
     [SerializeField] float duration;
+    [SerializeField] bool loop;
 
     //====================inner varables=================
     private float timer = 0f;
@@ -35,7 +36,9 @@ public class Vfx : MonoBehaviour
     /// </summary>
     IEnumerator Repeat()
     {
-        while(timer < duration)
+        if (loop) duration = float.MaxValue;
+
+        while(this.gameObject.activeSelf && timer < duration)
         {
             timer += Time.unscaledDeltaTime;
             frameTimer += Time.unscaledDeltaTime;
