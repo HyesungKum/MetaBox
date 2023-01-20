@@ -3,29 +3,95 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
+using ObjectPoolCP;
 
 public class Inventory : MonoBehaviour
 {
     [SerializeField] List<GameObject> playableNoteList = new List<GameObject>();
+    [SerializeField] List<GameObject> usedNoteList = new List<GameObject>();
+    [SerializeField] GameObject playableNote;
 
 
-    private void Awake()
+    int PlayableNoteCount = 5;
+
+
+    private void Start()
     {
-        bringAllNotes();
+        // observe game status 
+        GameManager.myDelegateGameStatus += curGameStatus;
+
     }
 
 
-    void bringAllNotes()
+    void curGameStatus(GameStatus curStatus)
     {
-        // get all child 
-        foreach (Transform note in this.transform.GetComponentInChildren<Transform>())
+        switch (curStatus)
         {
-            if (note.name == "PlayableNote")
-            {
-                playableNoteList.Add(note.gameObject);
+            case GameStatus.Idle:
+                {
+                    ReadyGame();
+                }
+                break;
+        }
+    }
 
-                note.GetComponent<Collider2D>().enabled = true;
+
+
+
+    public void ReadyGame()
+    {
+
+        if (playableNoteList.Count > 0)
+        {
+            for (int i = 0; i < playableNoteList.Count; ++i)
+            {
+                PoolCp.Inst.DestoryObjectCp(playableNoteList[i]);
             }
+
+            playableNoteList.Clear();
+        }
+
+
+        if (usedNoteList.Count > 0)
+        {
+            for (int i = 0; i < usedNoteList.Count; ++i)
+            {
+                PoolCp.Inst.DestoryObjectCp(usedNoteList[i]);
+            }
+
+            usedNoteList.Clear();
+        }
+
+        GeneratePlayableNote();
+    }
+
+
+    private void OnDisable()
+    {
+        playableNoteList.Clear();
+        usedNoteList.Clear();
+
+    }
+
+
+    void GeneratePlayableNote()
+    {
+        float xPos = (-1.5f * PlayableNoteCount) / 2;
+
+
+        for (int i = 0; i < PlayableNoteCount; ++i)
+        {
+            GameObject newNote = PoolCp.Inst.BringObjectCp(playableNote);
+
+            newNote.transform.position = new Vector2(xPos, this.transform.position.y - 0.2f);
+
+            newNote.transform.SetParent(this.transform);
+
+            newNote.GetComponent<Collider2D>().enabled = true;
+
+            playableNoteList.Add(newNote);
+
+            xPos += 1.5f;
         }
     }
 
@@ -35,7 +101,7 @@ public class Inventory : MonoBehaviour
         if (playableNoteList.Count <= 0)
         {
             UiManager.myDelegateUiManager("끝났어");
-            GameManager.Inst.UpdateGameStatus(GameStatus.NoMorePlayableNote);
+            GameManager.myDelegateGameStatus(GameStatus.NoMorePlayableNote);
         }
     }
 
@@ -43,10 +109,10 @@ public class Inventory : MonoBehaviour
     public void DestoyedPlayableNote(GameObject note)
     {
         playableNoteList.Remove(note);
+        usedNoteList.Add(note);
 
-        ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(note);
-       
-        UiManager.myDelegateUiManager("다시 생각해봐요");
+        PoolCp.Inst.DestoryObjectCp(note);
+
 
         CheckHowManyNotes();
         note.transform.SetParent(null);
@@ -55,16 +121,15 @@ public class Inventory : MonoBehaviour
     public void UseNote(GameObject note)
     {
         playableNoteList.Remove(note);
+        usedNoteList.Add(note);
 
-        UiManager.myDelegateUiManager("잘했어요!");
+
 
         CheckHowManyNotes();
     }
 
 
-    private void OnDisable()
-    {
-        playableNoteList.Clear();
-    }
+
+
 
 }

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4804030032088005346}
   - component: {fileID: 4804030032088005347}
-  - component: {fileID: 4804030032088005340}
   - component: {fileID: 4804030032088005341}
   m_Layer: 7
   m_Name: QNote
@@ -27,9 +26,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4804030032088005342}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6, y: -0.46, z: 0}
-  m_LocalScale: {x: 0.19999999, y: 0.20000002, z: 0}
-  m_ConstrainProportionsScale: 1
+  m_LocalPosition: {x: -5.8987, y: -0.5905, z: 0}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -75,7 +74,7 @@ SpriteRenderer:
   m_SortingLayerID: 1291907233
   m_SortingLayer: 2
   m_SortingOrder: -1
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
   m_Color: {r: 0.9150943, g: 0.7221852, b: 0.4963955, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -86,22 +85,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!58 &4804030032088005340
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4804030032088005342}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.5
 --- !u!114 &4804030032088005341
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,4 +97,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44904d24ab9e3214091f9f427b3a49f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myPitchName: 2
+  myPitchNum: 0

@@ -1,6 +1,7 @@
 
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
@@ -16,12 +17,13 @@ public class UiManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI myTextCountdown;    // play time countdown
     [SerializeField] TextMeshProUGUI myTextTimer;       // ready time countdown
     [SerializeField] TextMeshProUGUI myTextCorrectedNote;    // text whether get correct answer or not
-    [SerializeField] TextMeshProUGUI myTextResult;       // Result panel
+    [SerializeField] TextMeshProUGUI myTextResult;       // GameResult panel
 
     [Header("Panel")]
     [SerializeField] GameObject myPaneUntouchable;
     [SerializeField] GameObject myPanelPause;
     [SerializeField] GameObject myPanelGameResult;
+    [SerializeField] GameObject myPanelStageClear;
 
 
     [Header("Audio Volume Control")]
@@ -32,40 +34,64 @@ public class UiManager : MonoBehaviour
 
     [Header("Buttons")]
     [SerializeField] Button myButtonReplay;
+    [SerializeField] Button myButtonQuitGame;
+    [SerializeField] Button myButtonResult;
+
+
+
+
     [SerializeField] float replayCoolTime;
     public float ReplayCoolTime { set { replayCoolTime = value; } }
 
+
+
     float curTime;
     bool isPaused = false;
-
-    float myPlayableTime;
-    public float MyPlayableTime { set { myPlayableTime = value; } }
 
 
 
     private void Start()
     {
+        // observe game status 
+        GameManager.myDelegateGameStatus += curGameStatus;
+    }
+
+    public void StartGame()
+    {
+        Debug.Log("시작해_유아이");
+
         // delegate chain
         myDelegateUiManager = correctedNote;
-        PlayTimer.DelegateTimer = playTimer;
 
-        // Game result panel 
-        myPanelGameResult.SetActive(false);
+        PlayTimer.DelegateTimer = playTimer;
 
         // text whether get correct answer or not
         myTextCorrectedNote.enabled = false;
 
+        // text for time countdown
+        myTextCountdown.text = "";
+        myTextCountdown.enabled = false;
+
         // text for time count 
         myTextTimer.enabled = true;
 
-        // to disable touch interaction 
-        myPaneUntouchable.SetActive(true);
+        // text for ready 
+        myTextTimer.text = "Ready";
 
+        // to disable touch interaction 
+        Touchable(false);
+
+
+        // all panel off
         // no show pause panel
         myPanelPause.SetActive(false);
 
-        // text for ready 
-        myTextTimer.text = "Ready";
+        // Game result panel 
+        myPanelGameResult.SetActive(false);
+
+        // stage clear panel
+        myPanelStageClear.SetActive(false);
+
     }
 
 
@@ -88,17 +114,23 @@ public class UiManager : MonoBehaviour
     // time count down for play time 
     public void playCountDown(float t)
     {
-        curTime = myPlayableTime - t;
-
         if (myTextTimer.isActiveAndEnabled == true)
         {
             myTextTimer.enabled = false;
 
-            myPaneUntouchable.SetActive(false);
+            myTextCountdown.enabled = true;
         }
 
-        myTextCountdown.text = Mathf.Round(curTime).ToString();
+        myTextCountdown.text = Mathf.Round(t).ToString();
     }
+
+
+    public void Touchable(bool status)
+    {
+        // touchable == panel off 
+        myPaneUntouchable.SetActive(!status);
+    }
+
 
 
     // text whether get correct answer or not
@@ -154,11 +186,78 @@ public class UiManager : MonoBehaviour
     }
 
 
-    public void GameResult(string text)
+    public void GameOver(string text)
     {
         myPanelGameResult.SetActive(true);
+        //myButtonResult.onClick.AddListener(OnClickRestart);
+        myButtonResult.GetComponentInChildren<TextMeshProUGUI>().text = "다시 할래";
         myTextResult.text = text;
     }
+
+
+    public void NextStage(string text)
+    {
+        myPanelGameResult.SetActive(true);
+        myButtonResult.GetComponentInChildren<TextMeshProUGUI>().text = "다음으로";
+        myTextResult.text = text;
+    }
+
+    public void StageClear(string text)
+    {
+        myPanelStageClear.SetActive(true);
+        myButtonResult.GetComponentInChildren<TextMeshProUGUI>().text = "또 할래";
+        myTextResult.text = text;
+    }
+
+
+    void curGameStatus(GameStatus curStatus)
+    {
+        switch (curStatus)
+        {
+            case GameStatus.Idle:
+                {
+                    StartGame();
+                }
+                break;
+
+            case GameStatus.Ready:
+                {
+                    ReplayCoolTime = GameManager.Inst.MyCoolTime;
+                }
+                break;
+
+            case GameStatus.StartGame:
+                {
+                    Touchable(true);
+                }
+                break;
+
+            case GameStatus.TimeOver:
+                {
+                    GameOver("시간이 없어요");
+                }
+                break;
+
+            case GameStatus.GetAllQNotes:
+                {
+                    NextStage("다 맞췄어요!");
+                    Debug.Log("다 맞췄대!");
+                }
+                break;
+            case GameStatus.NoMorePlayableNote:
+                {
+                    GameOver("음표가 더이상 없어요");
+                }
+                break;
+
+            case GameStatus.ClearStage:
+                {
+                    StageClear("와! 성공했어요!");
+                }
+                break;
+        }
+    }
+
 
 
 
@@ -238,6 +337,59 @@ public class UiManager : MonoBehaviour
         myAudioSliderBGM.value = bGMVolume;
         myAudioSliderSFX.value = sFXVolume;
     }
+
+
+    public void OnClickQuitGame()
+    {
+        SoundManager.Inst.StopMusic();
+        Debug.Log("멈춰!");
+
+
+        SceneManager.LoadScene("MelodiaLobby");
+        Time.timeScale = 1;
+
+        // back to start scene
+        SceneModeController.MySceneMode = SceneModeController.SceneMode.StartScene;      // turn start panel on, turn lobby panel off
+
+
+    }
+
+
+    // fucntion for test, reload scene 
+    public void OnClickExitStage()
+    {
+        SoundManager.Inst.StopMusic();
+        Debug.Log("멈춰!");
+
+        Time.timeScale = 1;
+        SceneManager.LoadScene("MelodiaLobby");
+
+        // re-select mode 
+        SceneModeController.MySceneMode = SceneModeController.SceneMode.LobbyScene;      // turn start panel on, turn lobby panel off
+
+    }
+
     // Option panel ==========================================================
+
+
+    // GameOver panel ==========================================================
+    public void OnClickRestart()
+    {
+        Time.timeScale = 0;
+
+        PlayTimer.DelegateTimer -= playCountDown;
+
+        readyReplay();
+        Debug.Log("다시해_유아이!");
+
+        GameManager.myDelegateGameStatus(GameStatus.Idle);
+    }
+    // GameOver panel ==========================================================
+
+
+
+
+
+
 
 }

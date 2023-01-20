@@ -8,4 +8,7 @@ public class SoundLine : MonoBehaviour
     public PitchName MyPitchName { get { return myPitchName; } set { myPitchName = value; } }
 
 
+    [SerializeField] protected int myPitchNum;
+    public int MyPitchNum { get { return myPitchNum; } set { myPitchNum = value; } }
+
 }

@@ -91,7 +91,8 @@ public class TouchManager : MonoBehaviour
     // is drag stared? 
     void startDragging()
     {
-        myNoteOriginPos = myNote.transform.position;
+        //myNoteOriginPos = myNote.transform.position;
+        myNote.StartToMove();
         isDragging = true;
     }
 

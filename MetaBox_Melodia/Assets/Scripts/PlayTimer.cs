@@ -12,12 +12,48 @@ public class PlayTimer : MonoBehaviour
     bool isStarted = false;
     bool isGameOver = false;
 
-    [SerializeField] float timer = 3f;
-    [SerializeField] float curTime = 0f;
+    [SerializeField] float timer;
+    [SerializeField] float playTime;
+    [SerializeField] float myPlayableTime;
 
-    private void Start()
+    private void Awake()
     {
-        GameManager.myDelegateIsGameOver += gameIsOver;
+        // observe game status 
+        GameManager.myDelegateGameStatus += curGameStatus;
+
+    }
+
+
+    void curGameStatus(GameStatus curStatus)
+    {
+        Debug.Log("타이머!" + curStatus.ToString());
+
+        switch (curStatus)
+        {
+            case GameStatus.Idle:
+                {
+                    Debug.Log("타이머 idle");
+
+                    StartGame();
+                }
+                break;
+        }
+    }
+
+
+
+
+    void StartGame()
+    {
+        isStarted = false;
+        isGameOver = false;
+
+        Time.timeScale = 1;
+
+        timer = 3f;
+        playTime = 0f;
+
+        GameManager.myDelegateIsGameOver = gameIsOver;
         StartCoroutine(startTimer());
     }
 
@@ -36,9 +72,11 @@ public class PlayTimer : MonoBehaviour
 
     void timeCountDown()
     {
-        curTime += Time.deltaTime;
+        playTime += Time.deltaTime;
 
-        DelegateTimer(curTime);
+        float remainTime = myPlayableTime - playTime;
+
+        DelegateTimer(remainTime);
     }
 
 
@@ -57,7 +95,9 @@ public class PlayTimer : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        GameManager.Inst.UpdateGameStatus(GameStatus.Ready);
+        GameManager.myDelegateGameStatus(GameStatus.Ready);
+
+        myPlayableTime = GameManager.Inst.MyPlayableTime;
         isStarted = true;
     }
 

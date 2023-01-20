@@ -1,27 +1,164 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using ObjectPoolCP;
-using UnityEditor.Experimental.GraphView;
+
 
 public class MusicSheet : MonoBehaviour
 {
     [SerializeField] List<GameObject> qNoteList = new List<GameObject>();
-    [SerializeField] List<GameObject> mySoundLines = new List<GameObject>();
+    [SerializeField] List<GameObject> noteList = new List<GameObject>();
+    [SerializeField] List<Transform> mySoundLines = new List<Transform>();
+
+    [SerializeField] GameObject QnotePrefab;
+    [SerializeField] GameObject NormalnotePrefab;
+
+    static Dictionary<int, List<int>> myStageData = new();
+    public Dictionary<int, List<int>> MyStageData { get { return myStageData; } set { myStageData = value; } }
 
 
-    void Awake()
+
+    private void Start()
     {
-        // get all child 
-        foreach (Transform note in this.transform.GetComponentInChildren<Transform>())
+        // observe game status 
+        GameManager.myDelegateGameStatus += curGameStatus;
+
+    }
+
+
+    void curGameStatus(GameStatus curStatus)
+    {
+        switch (curStatus)
         {
-            if (note.name == "QNote")
-            {
-                qNoteList.Add(note.gameObject);
-            }
+            case GameStatus.Idle:
+                {
+                    ReadyGame();
+                }
+                break;
+
+            case GameStatus.Ready:
+                {
+                    // ask game manager for current stage number
+                    int curStage = GameManager.Inst.CurState;
+                    BuildStage(curStage);
+
+                    SoundManager.Inst.FirstPlay(MyStageData[curStage]);
+
+                }
+                break;
+
         }
     }
+
+
+
+    public void GetStageData()
+    {
+        MyStageData = GameManager.Inst.CurStageInfo();
+    }
+
+
+    public void ReadyGame()
+    {
+
+        if (noteList.Count > 0)
+        {
+            for (int i = 0; i < noteList.Count; ++i)
+            {
+                PoolCp.Inst.DestoryObjectCp(noteList[i]);
+            }
+        }
+
+        noteList.Clear();
+
+        if (qNoteList.Count > 0)
+        {
+            for (int i = 0; i < qNoteList.Count; ++i)
+            {
+                if (qNoteList.Count > 0)
+                {
+                    PoolCp.Inst.DestoryObjectCp(qNoteList[i]);
+                }
+            }
+        }
+
+        qNoteList.Clear();
+
+    }
+
+
+    private void OnDisable()
+    {
+        noteList.Clear();
+        qNoteList.Clear();
+    }
+
+
+    public void BuildStage(int stage)
+    {
+        GetStageData();
+
+
+
+        int noteIdx = myStageData[stage].Count;
+        int emptyNote = stage / 3 + 2;
+
+        float xPos = (-0.7f * noteIdx) / 2;
+        xPos = (noteIdx % 2 == 0) ? xPos += 0.35f : xPos;
+
+
+        List<int> emptyNoteIdx = new();
+
+        for (int i = 0; i < emptyNote; ++i)
+        {
+            int temp;
+
+            do
+            {
+                temp = Random.Range(1, noteIdx);
+
+            } while (emptyNoteIdx.Contains(temp));
+
+            emptyNoteIdx.Add(temp);
+        }
+
+        for (int idx = 0; idx < noteIdx; ++idx)
+        {
+            GameObject newNote;
+            GameObject prefab = NormalnotePrefab;
+
+            if (emptyNoteIdx.Contains(idx))
+            {
+                prefab = QnotePrefab;
+            }
+
+
+            int note = myStageData[stage][idx] % 100;
+
+            newNote = PoolCp.Inst.BringObjectCp(prefab);
+
+            newNote.transform.position = new Vector2(xPos, mySoundLines[note].position.y);
+
+            // set note info
+            newNote.GetComponent<QNote>().MyPitchNum = myStageData[stage][idx];
+
+            newNote.transform.SetParent(this.transform);
+
+            if (emptyNoteIdx.Contains(idx))
+            {
+                qNoteList.Add(newNote);
+            }
+
+            else
+            {
+                noteList.Add(newNote);
+            }
+
+
+            xPos += 0.7f;
+        }
+
+    }
+
 
 
     // check if playable note is match with Qnote
@@ -37,30 +174,38 @@ public class MusicSheet : MonoBehaviour
         foreach (GameObject note in qNoteList)
         {
             // check position and compare with QNote position 
-            if (Vector2.Distance(note.transform.position, target.transform.position) < 0.1f)
+            if (Vector2.Distance(note.transform.position, target.transform.position) < 0.15f)
             {
                 // move playable note torwards to Qnote
                 myPlayableNote.MoveNote(note.transform.position, 3f);
 
                 // remove Qnote from list
                 qNoteList.Remove(note);
+                noteList.Add(note);
+
+                Debug.Log("Qnote 음게는 ! " + note.GetComponent<QNote>().MyPitchNum);
+
+                UiManager.myDelegateUiManager("잘했어요!");
+                SoundManager.Inst.PlayNote(note.GetComponent<QNote>().MyPitchNum , 1);
 
                 // check how many Qnotes are left
                 if (qNoteList.Count == 0)
                 {
-                    gameIsOver();
+                    Invoke("gameIsOver", 1f);
                     return;
                 }
 
                 // if Qnote remains more than 0
                 myPlayableNote.UseNote();
 
-                SoundManager.Inst.PlayNote(note.GetComponent<QNote>().MyPitchName);
+
 
                 return;
             }
         }
 
+
+        UiManager.myDelegateUiManager("다시 생각해봐요");
 
         // no this is not an answer note 
         // check if toucched soundline
@@ -72,20 +217,17 @@ public class MusicSheet : MonoBehaviour
     }
 
 
-
-
     void isThisTouchedSoundLine(GameObject target)
     {
         float closestDistance = float.MaxValue;
-        GameObject closestSoundLine = null;
+        Transform closestSoundLine = null;
 
-        foreach (GameObject line in mySoundLines)
+        foreach (Transform line in mySoundLines)
         {
             float tempDistance = Mathf.Abs(line.transform.position.y - target.transform.position.y);
 
             if (tempDistance < 0.2f)
             {
-
 
                 if (tempDistance < closestDistance)
                 {
@@ -99,22 +241,16 @@ public class MusicSheet : MonoBehaviour
         { return; }
 
         Debug.Log($"나는 {closestSoundLine.GetComponent<SoundLine>().MyPitchName} 야");
-        SoundManager.Inst.PlayNote(closestSoundLine.GetComponent<SoundLine>().MyPitchName);
+        SoundManager.Inst.PlayNote(closestSoundLine.GetComponent<SoundLine>().MyPitchNum , 1);
     }
 
 
 
     void gameIsOver()
     {
-        GameManager.Inst.UpdateGameStatus(GameStatus.GetAllQNotes);
+        GameManager.Inst.CheckStage();
+
         Debug.Log("Success!");
     }
-
-
-    private void OnDisable()
-    {
-        qNoteList.Clear();
-    }
-
 
 }

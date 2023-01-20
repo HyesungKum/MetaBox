@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using UnityEngine.Audio;
+
 
 public class SceneModeController : MonoBehaviour
 {
@@ -19,13 +17,10 @@ public class SceneModeController : MonoBehaviour
         NormalMode,
         DifficultMode,
         ExtremeMode,
-
     }
 
     static SceneMode mySceneMode;
     static public SceneMode MySceneMode { get { return mySceneMode; } set { mySceneMode = value; } }
-
-
 
 
     [Header("For Test")]
@@ -64,6 +59,8 @@ public class SceneModeController : MonoBehaviour
 
     }
 
+
+    // keep volume values as scene changes
     void CurrentVolume()
     {
         float masterVolume;

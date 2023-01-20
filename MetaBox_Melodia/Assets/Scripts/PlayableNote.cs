@@ -19,9 +19,8 @@ public class PlayableNote : MonoBehaviour
     Inventory myInventory;
 
 
-    private void Awake()
+    private void Start()
     {
-        originPos = transform.position;
         myInventory = this.GetComponentInParent<Inventory>();
     }
 
@@ -32,12 +31,21 @@ public class PlayableNote : MonoBehaviour
         {
             this.transform.position = Vector2.MoveTowards(this.transform.position, targetPos, Time.deltaTime * movingSpeed);
 
-            if (Vector2.Distance(this.transform.position, targetPos) <= 0f)
+
+            if (Vector2.Distance(this.transform.position, targetPos) <= 0.05f)
             {
+
                 isMoving = false;
             }
         }
     }
+
+
+    public void StartToMove()
+    {
+        originPos = this.transform.position;
+    }
+
 
 
     public void MoveNote(Vector3 target, float speed)

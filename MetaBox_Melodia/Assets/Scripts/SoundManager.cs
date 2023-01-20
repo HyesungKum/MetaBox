@@ -1,9 +1,7 @@
-
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Audio;
 using System.Collections;
-using UnityEngine.UIElements;
+using System.Collections.Generic;
 
 public enum PitchName
 {
@@ -54,8 +52,11 @@ public class SoundManager : MonoBehaviour
 
     [Header("Note Sound ScriptableObject")]
     [SerializeField]
-    private NoteSound myNoteSound;
-    public NoteSound MyNoteSound { set { myNoteSound = value; } }
+    private NoteSoundIndex myNoteSound;
+    public NoteSoundIndex MyNoteSound { set { myNoteSound = value; } }
+
+
+
 
 
     [Header("Audio Sources")]
@@ -70,6 +71,14 @@ public class SoundManager : MonoBehaviour
     [SerializeField] AudioMixer myAudioMixer;
     public AudioMixer MyAudioMixer { get { return myAudioMixer; } }
 
+
+    [SerializeField] bool isStopped;
+    public bool IsStopped { get { return isStopped; } set { isStopped = value; } }
+
+    Coroutine curCoroutine;
+    public Coroutine CurCoroutine { get { return curCoroutine; } set { curCoroutine = value; } }
+
+    List<int> clipList = new();
 
 
     private void Awake()
@@ -103,21 +112,19 @@ public class SoundManager : MonoBehaviour
     }
 
 
-
-
-    public void PlayNote(PitchName targetPitch)
+    public void PlayNote(int targetPitch, float pitch)
     {
         AudioClip changeClip;
 
         // change audio clip as targeted pitch note 
         changeClip = myNoteSound.MyPitchClips.myDictionary[targetPitch];
 
+        myNoteAudioSource.pitch = pitch;
 
         myNoteAudioSource.clip = changeClip;
 
         myNoteAudioSource.Play();
     }
-
 
 
     public void PlayBGM(string target)
@@ -140,20 +147,61 @@ public class SoundManager : MonoBehaviour
     }
 
     // play music before start game 
-    public void FirstPlay()
+    public void FirstPlay(List<int> TargetNotes)
     {
+        isStopped = false;
 
-        myBGMAudioSource.Play();
-        StartCoroutine(WaitForSecond());
+
+        clipList = TargetNotes;
+
+        CurCoroutine = StartCoroutine("playMusic");
     }
 
-    // wait until music is finished  
-    public IEnumerator WaitForSecond()
+    IEnumerator playMusic()
     {
-        yield return new WaitUntil(() => myBGMAudioSource.isPlaying == false);
+        foreach (int targetNote in clipList)
+        {
+            if (isStopped)
+                break;
 
-        GameManager.Inst.UpdateGameStatus(GameStatus.StartGame);
+
+            PlayNote(targetNote, 1);
+
+            Debug.Log("≥Î∑° ∆≤æÓ! " + targetNote);
+            Debug.Log("∏ÿ√„? " + isStopped);
+
+            yield return new WaitUntil(() => myNoteAudioSource.isPlaying == false);
+        }
+
+
+        Debug.Log("∏ÿ√Á" + isStopped);
+
+
+        // for test =============================================================
+
+        //PlayNote(clipList[0], 1);
+
+        //Debug.Log("≥Î∑° ∆≤æÓ! " + clipList[0]);
+
+        //yield return new WaitUntil(() => myNoteAudioSource.isPlaying == false);
+
+        //if (!IsStopped)
+        //{
+        //    GameManager.myDelegateGameStatus(GameStatus.StartGame);
+        //}
+
+        // for test =============================================================
     }
 
+
+
+    public void StopMusic()
+    {
+        Debug.Log("∏ÿ√Á!");
+
+        if (CurCoroutine != null)
+            StopCoroutine(CurCoroutine);
+
+    }
 
 }
