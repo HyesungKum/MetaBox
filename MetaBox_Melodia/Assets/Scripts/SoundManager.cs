@@ -141,21 +141,22 @@ public class SoundManager : MonoBehaviour
     }
 
 
-    public void ReplayMusic()
-    {
-        myBGMAudioSource.Play();
-    }
-
     // play music before start game 
     public void FirstPlay(List<int> TargetNotes)
     {
         isStopped = false;
-
-
         clipList = TargetNotes;
 
-        CurCoroutine = StartCoroutine("playMusic");
+        PlayStageMusic();
     }
+
+
+    public void PlayStageMusic()
+    {
+        CurCoroutine = StartCoroutine("playMusic");
+
+    }
+
 
     IEnumerator playMusic()
     {
@@ -176,6 +177,10 @@ public class SoundManager : MonoBehaviour
 
         Debug.Log("¸ØÃç" + isStopped);
 
+        if (!IsStopped)
+        {
+            GameManager.myDelegateGameStatus(GameStatus.StartGame);
+        }
 
         // for test =============================================================
 
@@ -185,10 +190,6 @@ public class SoundManager : MonoBehaviour
 
         //yield return new WaitUntil(() => myNoteAudioSource.isPlaying == false);
 
-        //if (!IsStopped)
-        //{
-        //    GameManager.myDelegateGameStatus(GameStatus.StartGame);
-        //}
 
         // for test =============================================================
     }

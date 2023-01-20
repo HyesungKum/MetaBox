@@ -263,7 +263,7 @@ public class UiManager : MonoBehaviour
 
     public void OnClickReplay()
     {
-        SoundManager.Inst.ReplayMusic();
+        SoundManager.Inst.PlayStageMusic();
 
         myButtonReplay.interactable = false;
 
