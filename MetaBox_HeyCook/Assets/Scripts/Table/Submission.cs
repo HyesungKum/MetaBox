@@ -79,14 +79,14 @@ public class Submission : MonoBehaviour
         float timer = 0f;
         while (true)
         {
+            Vector3 fixedPos = tempPos + Vector3.left * moveCurve.Evaluate(timer);
+            customer.transform.position = fixedPos;
+
             if (timer > moveCurve.keys[^1].time)
             {
                 PickRecipe();
                 yield break;
             }
-
-            Vector3 fixedPos = tempPos + Vector3.left * moveCurve.Evaluate(timer);
-            customer.transform.position = fixedPos;
 
             timer += Time.deltaTime;
             yield return null;

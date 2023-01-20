@@ -6,9 +6,12 @@ using ObjectPoolCP;
 
 public class UIManager : MonoBehaviour
 {
+    [Header("GameManager Reference")]
+    [SerializeField] GameManager gameManager;
     //==============master canvas==================
     [Header("Master UI")]
     [SerializeField] GameObject UICanvas;
+    
     [Header("Vfx")]
     [SerializeField] GameObject correctVfx;
     [SerializeField] GameObject wrongVfx;
@@ -54,66 +57,78 @@ public class UIManager : MonoBehaviour
     private void Awake()
     {
         //===============in game button listener=======================================
-        optionButton.onClick.AddListener(() => EventReciver.CallGamePause());
-        optionButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        optionButton.onClick        .AddListener(() => EventReciver.CallGamePause());
+        optionButton.onClick        .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         //===============option button listener========================================
-        opRestartButton.onClick.AddListener(() => SceneMove(SceneName.Main));
-        opRestartButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        opRestartButton.onClick    .AddListener(() => SceneMove(SceneName.Main));
+        opRestartButton.onClick    .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
-        masterSoundButton.onClick.AddListener(() => SoundManager.Inst.ToggleControll("Master", masterSlider.value));
-        masterSoundButton.onClick.AddListener(() => ToggleSlider(masterSlider));
+        masterSoundButton.onClick  .AddListener(() => SoundManager.Inst.ToggleControll("Master", masterSlider.value));
+        masterSoundButton.onClick  .AddListener(() => ToggleSlider(masterSlider));
         masterSlider.onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("Master", call));
 
-        bgmSoundButton.onClick.AddListener(() => SoundManager.Inst.ToggleControll("BGM", bgmSlider.value));
-        bgmSoundButton.onClick.AddListener(() => ToggleSlider(bgmSlider));
-        bgmSlider.onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("BGM", call));
+        bgmSoundButton.onClick     .AddListener(() => SoundManager.Inst.ToggleControll("BGM", bgmSlider.value));
+        bgmSoundButton.onClick     .AddListener(() => ToggleSlider(bgmSlider));
+        bgmSlider.onValueChanged   .AddListener((call) => SoundManager.Inst.VolumeControll("BGM", call));
 
-        sfxSoundButton.onClick.AddListener(() => SoundManager.Inst.ToggleControll("SFX", sfxSlider.value));
-        sfxSoundButton.onClick.AddListener(() => ToggleSlider(sfxSlider));
-        sfxSlider.onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("SFX", call));
+        sfxSoundButton.onClick     .AddListener(() => SoundManager.Inst.ToggleControll("SFX", sfxSlider.value));
+        sfxSoundButton.onClick     .AddListener(() => ToggleSlider(sfxSlider));
+        sfxSlider.onValueChanged   .AddListener((call) => SoundManager.Inst.VolumeControll("SFX", call));
 
-        opResumeButton.onClick.AddListener(() => EventReciver.CallGameResume());
-        opResumeButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        opResumeButton.onClick     .AddListener(() => EventReciver.CallGameResume());
+        opResumeButton.onClick     .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
-        opExitButton.onClick.AddListener(() => SceneMove(SceneName.Start));
-        opExitButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        opExitButton.onClick       .AddListener(() => SceneMove(SceneName.Start));
+        opExitButton.onClick       .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         //===============game end button listener======================================
-        endExitButton.onClick.AddListener(() => SceneMove(SceneName.Start));
-        endExitButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        endExitButton.onClick      .AddListener(() => SceneMove(SceneName.Start));
+        endExitButton.onClick      .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
-        restartButton.onClick.AddListener(() => SceneMove(SceneName.Main));
-        restartButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        restartButton.onClick      .AddListener(() => SceneMove(SceneName.Main));
+        restartButton.onClick      .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         //delegate chain
-        EventReciver.ScoreModi += UIScoreModi;
+        EventReciver.ScoreModi     += UIScoreModi;
         EventReciver.CorrectIngred += UICorrectIngred;
-        EventReciver.WrongIngred += UIWrongIngred;
+        EventReciver.WrongIngred   += UIWrongIngred;
 
-        EventReciver.TickCount += UITcikCount;
-        EventReciver.GamePause += UIGamePause;
+        EventReciver.TickCount  += UITcikCount;
+        EventReciver.GameStart  += UIGameStart;
+        EventReciver.GamePause  += UIGamePause;
         EventReciver.GameResume += UIGameResume;
-        EventReciver.GameOver += UIGameOver;
-
+        EventReciver.GameOver   += UIGameOver;
+    }
+    private void Start()
+    {
         //Init pool
         GameObject _correctVfx = Instantiate(correctVfx);
         PoolCp.Inst.DestoryObjectCp(_correctVfx);
         GameObject _wrongVfx = Instantiate(wrongVfx);
         PoolCp.Inst.DestoryObjectCp(_wrongVfx);
+
+        //Init UI
+        UIInitializing();
     }
 
     private void OnDisable()
     {
         //delegate unchain
-        EventReciver.ScoreModi -= UIScoreModi;
+        EventReciver.ScoreModi     -= UIScoreModi;
         EventReciver.CorrectIngred -= UICorrectIngred;
-        EventReciver.WrongIngred -= UIWrongIngred;
+        EventReciver.WrongIngred   -= UIWrongIngred;
 
-        EventReciver.TickCount -= UITcikCount;
-        EventReciver.GamePause -= UIGamePause;
+        EventReciver.TickCount  -= UITcikCount;
+        EventReciver.GameStart  -= UIGameStart;
+        EventReciver.GamePause  -= UIGamePause;
         EventReciver.GameResume -= UIGameResume;
-        EventReciver.GameOver -= UIGameOver;
+        EventReciver.GameOver   -= UIGameOver;
+    }
+    //============================================Initializing UI=======================================
+    void UIInitializing()
+    {
+        optionButton.interactable = false;
     }
 
     //=============================================In Game Production===================================
@@ -131,6 +146,10 @@ public class UIManager : MonoBehaviour
     }
 
     //=============================================UI Viewing Controll==================================
+    void UIGameStart()
+    {
+        optionButton.interactable = true;
+    }
     void UIGamePause()
     {
         ShowUI(optionUI);
@@ -161,11 +180,11 @@ public class UIManager : MonoBehaviour
     /// <param name="value">target time value</param>
     void UIScoreModi(int value)
     {
-        score.text = GameManager.Inst.Score.ToString();
+        score.text = gameManager.Score.ToString();
     }
     void UITcikCount()
     {
-        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.Timer / 60f), (int)(GameManager.Inst.Timer % 60f));
+        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(gameManager.Timer / 60f), (int)(gameManager.Timer % 60f));
     }
 
     //================================================SceneMove============================================

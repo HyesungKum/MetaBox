@@ -63,32 +63,32 @@ public class StartManager : MonoBehaviour
 
         //=================apply first button listener===================
         startButton  .onClick.AddListener(() => ShowUI(difficultyUIGroup));
-        startButton  .onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        startButton  .onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         optionButton .onClick.AddListener(() => ShowUI(optionUIGroup));
-        optionButton .onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        optionButton .onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         villageButton.onClick.AddListener(() => AppTrans.MoveScene(mainPackName));
-        villageButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        villageButton.onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         exitButton   .onClick.AddListener(() => Application.Quit());
-        exitButton   .onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        exitButton   .onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         //==============apply Difficulty Button listener=========================
         easyButton   .onClick.AddListener(() => SceneMove(1));
-        easyButton   .onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        easyButton   .onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         normalButton .onClick.AddListener(() => SceneMove(2));
-        normalButton .onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        normalButton .onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         hardButton   .onClick.AddListener(() => SceneMove(3));
-        hardButton   .onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        hardButton   .onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         extremeButton.onClick.AddListener(() => SceneMove(4));
-        extremeButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        extremeButton.onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         difficultyExitButton.onClick.AddListener(() => ShowUI(mainUIGroup));
-        difficultyExitButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        difficultyExitButton.onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         //============apply option button listener==========================
         masterSoundButton.onClick.AddListener(() => SoundManager.Inst.ToggleControll("Master", masterSlider.value));
@@ -104,7 +104,7 @@ public class StartManager : MonoBehaviour
         sfxSlider        .onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("SFX", call));
 
         optionExitButton.onClick.AddListener(() => ShowUI(mainUIGroup));
-        optionExitButton.onClick.AddListener(() => SoundManager.Inst.CallSound("ButtonClick"));
+        optionExitButton.onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
     }
 
     private void Start()
@@ -116,16 +116,16 @@ public class StartManager : MonoBehaviour
 
     void SceneMove(int level)
     {
+        // = level;
+        //로딩씬으로 교체하기
         SceneManager.LoadScene(SceneName.Main);
     }
-
     void ShowUI(GameObject targetUIObj)
     {
         curUI.SetActive(false);
         curUI = targetUIObj;
         curUI.SetActive(true);
     }
-
     void ToggleSlider(Slider target)
     {
         target.interactable = target.interactable == true ? false : true;

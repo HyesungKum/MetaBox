@@ -260,6 +260,7 @@ public class CookTable : MonoBehaviour
         }
         else
         {
+            PoolCp.Inst.DestoryObjectCp(curIngred.gameObject);
             //call wrong vfx
             EventReciver.CallWrongIngred(targetPos);
         }

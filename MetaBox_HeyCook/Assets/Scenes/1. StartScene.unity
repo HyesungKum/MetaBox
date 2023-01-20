@@ -4698,9 +4698,10 @@ MonoBehaviour:
   soundData: {fileID: 11400000, guid: a0ce1201669e9b94488b257ec24919d1, type: 2}
   audioMixer: {fileID: 24100000, guid: 3a3dac7acecc0a249a73c4e379e051b7, type: 2}
   BGMAudio: {fileID: 1816509322}
-  SFX1: {fileID: 1816509326}
-  SFX2: {fileID: 1816509325}
-  SFX3: {fileID: 1816509324}
+  SFXAudio:
+  - {fileID: 1816509326}
+  - {fileID: 1816509325}
+  - {fileID: 1816509324}
 --- !u!82 &1816509322
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4805,7 +4806,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1816509320}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.622898, y: 2.613031, z: -1.7000122}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

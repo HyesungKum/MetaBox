@@ -1,4 +1,6 @@
 using UnityEngine;
+using Kum;
+using System.Collections;
 
 public delegate void TouchDelegate(int id, Vector3 pos);
 
@@ -28,11 +30,11 @@ public class TouchEventGenerator : MonoSingleTon<TouchEventGenerator>
             Vector3 pos = touches[i].position;
             TouchPhase phase = touches[i].phase;
 
-            if      (phase == TouchPhase.Began     ) touchBegan[i]     ?.Invoke(i, pos);
+            if (phase == TouchPhase.Began) touchBegan[i]?.Invoke(i, pos);
             else if (phase == TouchPhase.Stationary) touchStationary[i]?.Invoke(i, pos);
-            else if (phase == TouchPhase.Moved     ) touchMoved[i]     ?.Invoke(i, pos);
-            else if (phase == TouchPhase.Ended     ) touchEnded[i]     ?.Invoke(i, pos);
-            else if (phase == TouchPhase.Canceled  ) touchCancled[i]   ?.Invoke(i, pos);
+            else if (phase == TouchPhase.Moved) touchMoved[i]?.Invoke(i, pos);
+            else if (phase == TouchPhase.Ended) touchEnded[i]?.Invoke(i, pos);
+            else if (phase == TouchPhase.Canceled) touchCancled[i]?.Invoke(i, pos);
         }
     }
 }

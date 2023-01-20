@@ -11,4 +11,6 @@ public class IngredData : ScriptableObject
     public float lifeTime;
 
     public Sprite ingredientImage;
+
+    public GameObject delVfx;
 }

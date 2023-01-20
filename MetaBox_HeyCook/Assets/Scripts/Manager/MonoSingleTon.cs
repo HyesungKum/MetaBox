@@ -2,47 +2,52 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MonoSingleTon<T> : MonoBehaviour where T : MonoBehaviour
+namespace Kum
 {
-    static private T instance = null;
-    static private object _lock = new object();
-    static private bool applicationQuitting = false;
-
-    static public T Inst
+    public class MonoSingleTon<T> : MonoBehaviour where T : MonoBehaviour
     {
-        get
-        {
-            if (applicationQuitting)
-            {
-                return null;
-            }
+        static private T instance = null;
+        static private object _lock = new();
+        static private bool applicationQuitting = false;
 
-            if (instance == null)
+        static public T Inst
+        {
+            get
             {
-                instance = FindObjectOfType<T>(typeof(T) as T) ;
+                if (applicationQuitting)
+                {
+                    return null;
+                }
 
                 if (instance == null)
                 {
-                    lock (_lock)
+                    instance = FindObjectOfType<T>(typeof(T) as T);
+
+                    if (instance == null)
                     {
-                        GameObject instObj = new(typeof(T).ToString(), typeof(T));
-                        instance = instObj.GetComponent<T>();
+                        lock (_lock)
+                        {
+                            GameObject instObj = new(typeof(T).ToString(), typeof(T));
+                            instance = instObj.GetComponent<T>();
+                        }
                     }
                 }
+
+                return instance;
             }
-
-            return instance;
         }
-    }
 
-    private void Awake()
-    {
-        if (FindObjectOfType<T>(typeof(T) as T).gameObject != this.gameObject) Destroy(this.gameObject);
-        DontDestroyOnLoad(this.gameObject);
-    }
+        protected void Awake()
+        {
+            if (FindObjectOfType<T>(typeof(T) as T).gameObject != this.gameObject) Destroy(this.gameObject);
+            {
+                DontDestroyOnLoad(this.gameObject);
+            }
+        }
 
-    private void OnApplicationQuit()
-    {
-        applicationQuitting = true;
+        private void OnApplicationQuit()
+        {
+            applicationQuitting = true;
+        }
     }
 }

@@ -3,23 +3,26 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class IngredientSpawner : MonoBehaviour
 {
+    [SerializeField] GameManager gameManager;
+
     //===============table data========================
     [Header("Spawn Data Table")]
     public SpawnTableData[] TableData;
 
     [Header("Current Spawn Table")]
-    public List<GameObject> SpawnTable = new();
-    public List<GameObject> TempTable = new();
+    public List<GameObject> SpawnTable;
+    public List<GameObject> TempTable;
 
     //================moving belt=======================
     [Header("Ref Up Belt Scroll")]
     [SerializeField] BeltZone BeltZone;
 
-    public float spawnTime = 1f;
+    public float spawnTime;
 
     //===============init spawn=========================
     [Header("Init Spawn")]
@@ -31,7 +34,7 @@ public class IngredientSpawner : MonoBehaviour
     private void Awake()
     {
         //apply Level
-        switch (GameManager.Inst.Level)
+        switch (gameManager.Level)
         {
             case 1: SpawnTable = TableData[0].SpawnTable;
                 break;
@@ -64,32 +67,45 @@ public class IngredientSpawner : MonoBehaviour
 
         //Init Time
         timer = spawnTime;
+
+        //delegate chain
+        EventReciver.GameStart += SpawnStart;
     }
 
-    private void Update()
+    private void OnDisable()
     {
-        TimingSpawn();
+        //delegate unchain
+        EventReciver.GameStart -= SpawnStart;
     }
 
     //=====================================Spawn Reference Object using ObjPool===================================
-    private void TimingSpawn()
+    void SpawnStart()
     {
-        timer += Time.deltaTime;
-
-        if (timer > spawnTime)
+        StartCoroutine(nameof(TimingSpawn));
+    }
+    IEnumerator TimingSpawn()
+    {
+        while (this.gameObject.activeSelf)
         {
-            //random index
-            int index = UnityEngine.Random.Range(0, TempTable.Count);
-            
-            //spawn gameobj
-            Spawn(index);
+            timer += Time.deltaTime;
 
-            //spawn table controll
-            TempTable.RemoveAt(index);
-            if (TempTable.Count == 0) TempTable = SpawnTable.ToArray().ToList();
+            if (timer > spawnTime)
+            {
+                //random index
+                int index = UnityEngine.Random.Range(0, TempTable.Count);
 
-            //timer reset
-            timer = 0f;
+                //spawn gameobj
+                Spawn(index);
+
+                //spawn table controll
+                TempTable.RemoveAt(index);
+                if (TempTable.Count == 0) TempTable = SpawnTable.ToArray().ToList();
+
+                //timer reset
+                timer = 0f;
+            }
+
+            yield return null;
         }
     }
     private GameObject Spawn(int index)

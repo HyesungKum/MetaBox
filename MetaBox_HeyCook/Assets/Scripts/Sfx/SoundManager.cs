@@ -1,28 +1,25 @@
-using System.Collections.Generic;
 using UnityEngine;
-using System;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine.Audio;
-using static UnityEngine.GraphicsBuffer;
+using Kum;
 
 public class SoundManager : MonoSingleTon<SoundManager>
 {
-    //=========================================clip data=========================================
+    //=========================================clip data========================================
     [Header("Reference Data")]
     [SerializeField] private SoundData soundData;
 
-    //========================================audio mixer========================================
+    //========================================audio mixer=======================================
     [Header("Master Mixer")]
     [SerializeField] private AudioMixer audioMixer;
 
-    //=========================================audio source======================================
+    //=========================================audio source=====================================
     [Header("Audio Out")]
     [SerializeField] private AudioSource BGMAudio;
     
-    [SerializeField] private AudioSource SFX1;
-    [SerializeField] private AudioSource SFX2;
-    [SerializeField] private AudioSource SFX3;
+    [SerializeField] private AudioSource[] SFXAudio = new AudioSource[3];
+
+    //======================================inner variables=====================================
+    private int audioCursor = 0;
 
     //========================BGM Controll================================
     public void SetBGM(string sourceName)
@@ -32,34 +29,19 @@ public class SoundManager : MonoSingleTon<SoundManager>
     }
     public void SetBGMLoop() => BGMAudio.loop = true;
     public void SetBGMUnLoop() => BGMAudio.loop = false;
+    public void SetBGMSpeed(float speed) => BGMAudio.pitch = speed;
     public void PlayBGM() => BGMAudio.Play();
     public void StopBGM() => BGMAudio.Stop();
 
     //=======================SFX Controll=================================
-    public void CallSound(string sourceName)
+    public void CallSfx(string sourceName)
     {
         soundData.clips.TryGetValue(sourceName, out AudioClip clip);
 
-        if (!SFX1.isPlaying)
-        {
-            SFX1.clip = clip;
-            SFX1.Play();
-        }
-        else if (!SFX2.isPlaying)
-        {
-            SFX1.clip = clip;
-            SFX1.Play();
-        }
-        else if (!SFX3.isPlaying)
-        {
-            SFX1.clip = clip;
-            SFX1.Play();
-        }
-        else
-        {
-            SFX1.clip = clip;
-            SFX1.Play();
-        }
+        SFXAudio[audioCursor].clip = clip; 
+        SFXAudio[audioCursor].Play();
+
+        audioCursor = (audioCursor + 1) % SFXAudio.Length;
     }
 
     //=======================Volume Controll==============================

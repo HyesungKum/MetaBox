@@ -1,5 +1,6 @@
 using ObjectPoolCP;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 //Different Cook and Trimable Ways Enum
@@ -31,9 +32,9 @@ public class Ingredient : MonoBehaviour
 
     //============================Component================================
     [Header("Component")]
-    [SerializeField] private Rigidbody2D Rigidbody2D = null;
-    [SerializeField] private BoxCollider2D BoxCollider2D = null;
-    [SerializeField] private SpriteRenderer SpriteRenderer = null;
+    [SerializeField] private Rigidbody2D Rigidbody = null;
+    [SerializeField] private BoxCollider2D Collider = null;
+    [SerializeField] private SpriteRenderer Renderer = null;
 
     //============================Flag=====================================
     [Header("Flag")]
@@ -41,11 +42,11 @@ public class Ingredient : MonoBehaviour
     [Space]
     public bool IsCliked;
     [Space]
-    public bool TrimReady;
-    public bool IsTrimed;
-    [Space]
     public bool IsCooked;
     public bool IsCookReady;
+
+    [SerializeField] private bool IsSpawned;
+    [SerializeField] private bool IsLifeOver;
 
     //============================trimControll=============================
     [Header("TrimControll")]
@@ -59,79 +60,67 @@ public class Ingredient : MonoBehaviour
     private void Awake()
     {
         //bring component
-        Rigidbody2D = GetComponent<Rigidbody2D>();
-        BoxCollider2D = GetComponent<BoxCollider2D>();
-        SpriteRenderer = GetComponent<SpriteRenderer>();
+        TryGetComponent<Rigidbody2D>(out Rigidbody);
+        TryGetComponent<BoxCollider2D>(out Collider);
+        TryGetComponent<SpriteRenderer>(out Renderer);
+
+        //Init when this object awake
+        InitAwake();
     }
 
     private void OnEnable()
     {
-        Initializing();
+        InitSpawn();
     }
 
     //===================================Initailizing component and inner variables==========================
     /// <summary>
-    /// sprite and collider, tag, flag initializing
+    /// Call this function for GameObject First Initailizing
+    /// this function just onetime called because Ingredient Object Naver Destory before scene closed
     /// </summary>
-    public void Initializing()
+    public void InitAwake()
     {
-        //sprite and collider
-        SpriteRenderer.sprite = IngredData.ingredientImage;
-        SpriteRenderer.sortingOrder = 4;
-
-        BoxCollider2D.size = SpriteRenderer.sprite.bounds.size;
-        BoxCollider2D.enabled = true;
-
-        curTask = 0;
+        Renderer.sortingOrder = 4;
 
         //tagging
         if (this.gameObject.tag == "Untagged") this.transform.tag = "Ingredient";
+    }
+
+    /// <summary>
+    /// sprite and collider, tag, flag and value initializing
+    /// called when this object enabled
+    /// </summary>
+    public void InitSpawn()
+    {
+        //sprite and collider
+        Renderer.sprite = IngredData.ingredientImage;
+        Renderer.color = Color.white;
+
+        Collider.size = Renderer.sprite.bounds.size;
+        Collider.enabled = true;
+
+        curTask = 0;
 
         //flag
         IsCliked = false;
 
-        TrimReady = false;
-        IsTrimed = false;
-
         IsCookReady = false;
         IsCooked = false;
 
+        IsLifeOver = false;
         Lifetimer = 0;
 
         StartCoroutine(nameof(LifeCycle));
     }
 
     //============================================Ingredient Controll=========================================
-    #region Legacy
-    /// <summary>
-    /// check this ingredient can trimable and do right intrecting
-    /// </summary>
-    //public void OnTrim()
-    //{
-    //    if (IsTrimed || IngredData == null) return;
-
-    //    if (TrimReady)
-    //    {
-    //        BoxCollider2D.enabled = false;
-    //    }
-
-    //    if (curTask >= needTask)
-    //    {
-    //        SpriteRenderer.sprite = IngredData.trimedImage;
-    //        BoxCollider2D.enabled = true;
-    //        IsTrimed = true;
-    //        curTask = 0;
-    //    }
-    //}
-    #endregion
-
     /// <summary>
     /// Call when Ingredient Ready to cook
     /// </summary>
     public void ReadyCook()
     {
-        SpriteRenderer.sortingOrder = 3;
-        BoxCollider2D.enabled = false;
+        Renderer.sortingOrder = 3;
+        Collider.enabled = false;
     }
 
     //===========================================Ingredient LifeCycle=========================================
@@ -148,11 +137,27 @@ public class Ingredient : MonoBehaviour
             {
                 if (Lifetimer > IngredData.lifeTime)
                 {
-                    PoolCp.Inst.DestoryObjectCp(this.gameObject);
+                    yield return FadeOut();
                 }
             }
 
             yield return null;
         }
+    }
+    IEnumerator FadeOut()
+    { 
+        float timer = 0f;
+        Collider.enabled = false;
+
+        while (Renderer.color.a != 0)
+        {
+            timer += Time.deltaTime;
+            Renderer.color = Color.Lerp(Renderer.color, Color.clear, timer);
+
+            yield return null;
+        }
+
+        IsLifeOver = true;
+        PoolCp.Inst.DestoryObjectCp(this.gameObject);
     }
 }

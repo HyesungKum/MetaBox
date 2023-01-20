@@ -14,6 +14,11 @@ public delegate void CorrectFood();
 public delegate void WrongFood(int wrongLevel);
 
 public delegate void TickCount();
+
+public delegate void GameSceneStart();
+public delegate void GameSceneEnded();
+
+public delegate void GameStart();
 public delegate void GamePause();
 public delegate void GameResume();
 public delegate void GameOver();
@@ -31,6 +36,11 @@ static public class EventReciver
     static public WrongFood WrongFood = null;
 
     static public TickCount TickCount = null;
+
+    static public GameSceneStart GameSceneStart = null;
+    static public GameSceneEnded GameSceneEnded = null;
+
+    static public GameStart GameStart = null;
     static public GamePause GamePause = null;
     public static GameResume GameResume = null;
     static public GameOver GameOver = null;
@@ -46,6 +56,11 @@ static public class EventReciver
     static public void CallWrongFood(int wrongLevel) => WrongFood?.Invoke(wrongLevel);
 
     static public void CallTickCount() => TickCount?.Invoke();
+
+    static public void CallGameSceneStart() => GameSceneStart?.Invoke();
+    static public void CallGameSceneEnded() => GameSceneEnded?.Invoke();
+
+    static public void CallGameStart() => GameStart?.Invoke();
     static public void CallGamePause() => GamePause?.Invoke();
     static public void CallGameResume() => GameResume?.Invoke();
     static public void CallGameOver() => GameOver?.Invoke();

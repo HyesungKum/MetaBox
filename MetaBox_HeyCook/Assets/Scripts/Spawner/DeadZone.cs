@@ -20,7 +20,9 @@ public class DeadZone: MonoBehaviour
     {
         if (collision.collider.CompareTag(nameof(Ingredient)))
         {
-            //Instantiate(vfx, collision.contacts[0].point, Quaternion.LookRotation(collision.contacts[0].normal));
+            collision.collider.TryGetComponent<Ingredient>(out Ingredient ingred);
+            GameObject instVfx = ingred.IngredData.delVfx;
+            PoolCp.Inst.BringObjectCp(instVfx).transform.position = collision.contacts[0].point;
             PoolCp.Inst.DestoryObjectCp(collision.gameObject);
         }
     }

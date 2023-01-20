@@ -95,7 +95,7 @@ public class DynamicObj : MonoBehaviour
         TryGetComponent<SpriteRenderer>(out renderer);
 
         //position
-        tempVec = fixedPos = this.transform.position;
+        tempVec = fixedPos = this.transform.localPosition;
 
         //scale
         tempScale = fixedScale = this.transform.localScale;
@@ -116,10 +116,10 @@ public class DynamicObj : MonoBehaviour
         {
             timer += Time.deltaTime;
 
-            doDynamic?.Invoke();
-
             this.transform.localPosition = fixedPos;
             this.transform.localScale = fixedScale;
+
+            doDynamic?.Invoke();
 
             if (textMesh != null) textMesh.color = fixedCol;
             if (renderer != null) renderer.color = fixedCol;
