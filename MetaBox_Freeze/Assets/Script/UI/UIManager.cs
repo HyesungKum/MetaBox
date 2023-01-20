@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -24,8 +25,6 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    [SerializeField] GameObject startPanel = null;
-    [SerializeField] GameObject levelPanel = null;
     [SerializeField] GameObject optionPanel = null;
 
     [SerializeField] TextMeshProUGUI gameClear = null;
@@ -50,7 +49,7 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        reStart.onClick.AddListener(() => startPanel.SetActive(true));
+        reStart.onClick.AddListener(() => SceneManager.LoadScene(0));
         option.onClick.AddListener(OnClick_Option);
         exit.onClick.AddListener(delegate { OnClick_Exit(); });
         
@@ -58,8 +57,6 @@ public class UIManager : MonoBehaviour
         waitHalf = new WaitForSeconds(0.5f);
         wait1 = new WaitForSeconds(1f);
 
-        startPanel.SetActive(true);
-        levelPanel.SetActive(true);
         optionPanel.SetActive(false);
 
         reStart.gameObject.SetActive(false);

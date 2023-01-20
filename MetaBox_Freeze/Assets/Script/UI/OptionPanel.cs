@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class OptionPanel : MonoBehaviour
 {
-    [SerializeField] Button back = null;
+    [SerializeField] Button backGround = null;
     [SerializeField] Button quit = null;
     [SerializeField] Button restart = null;
     [SerializeField] Button exitOption = null;
@@ -17,7 +17,7 @@ public class OptionPanel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        back.onClick.AddListener(OnClick_ReStart);
+        backGround.onClick.AddListener(OnClick_ReStart);
         quit.onClick.AddListener(OnClick_Quit);
         restart.onClick.AddListener(OnClick_ReStart);
         exitOption.onClick.AddListener(OnClick_ReStart);

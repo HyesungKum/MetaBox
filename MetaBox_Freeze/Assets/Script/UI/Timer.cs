@@ -17,6 +17,11 @@ public class Timer : MonoBehaviour
     Vector3 alarmOriPos;
     Vector3 alarmCurPos;
 
+    private void Awake()
+    {
+        GameManager.Instance.PlayTimerEvent += PlayTimer;
+        GameManager.Instance.PenaltyEvent += Penalty;
+    }
     private void Start()
     {
         alarm.SetActive(false);

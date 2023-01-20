@@ -3,90 +3,58 @@ using MongoDB.Driver;
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class UserData : MonoBehaviour
 {
-    static private UserData instance;
-    static public UserData Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                instance = FindObjectOfType<UserData>();
-                if (instance == null)
-                {
-                    instance = new GameObject(nameof(UserData), typeof(UserData)).GetComponent<UserData>();
-                }
-            }
-            return instance;
-        }
-    }
-
     MongoClient clientData = new MongoClient("mongodb+srv://metabox:metabox@metabox.4ur23zq.mongodb.net/?retryWrites=true&w=majority");
     IMongoDatabase dataBase = null;
     IMongoCollection<BsonDocument> collection = null;
 
-    [SerializeField] TMP_InputField inputUserID = null;
-    [SerializeField] Button signInButton = null;
-
+    bool user = false;
     string userID = null;
-    public bool User { get; private set; } = false;
-    public int GameGroup { get; set; }
-    public int Level { get; set; }
+    int gameGroup;
+    int level;
 
     private void Awake()
-    {
-        DontDestroyOnLoad(this);
-    }
-    
-    void Start()
     {
         // MongoDB database name
         dataBase = clientData.GetDatabase("RankingDB");
         // MongoDB collection name
         collection = dataBase.GetCollection<BsonDocument>("RankingCollection");
 
-        //signInButton.onClick.AddListener(delegate { OnClick_SignIn(); });
+        GameManager.Instance.GameClearEvent += Record;
     }
-
-    void OnClick_SignIn()
+    
+    void Start()
     {
-        if (inputUserID.text.Length < 4) return;
-
-        string fileName = "UserData";
-        string path = $"{Application.dataPath}/{fileName}.txt";
-
-        File.WriteAllText(path, inputUserID.text);
-        SceneManager.LoadScene(1);
-
+        InGame();
     }
-    public void InGame()
+
+    void InGame()
     {
         string fileName = "UserData";
         string path = $"{Application.dataPath}/{fileName}.txt";
         if (File.Exists(path))
         {
-            User = true;
+            user = true;
             userID = File.ReadAllText(path);
+            gameGroup = GameManager.Instance.FreezeData.gameGroup;
+            level = GameManager.Instance.FreezeData.level;
         }
     }
 
-    public void Record(int playtime)
+    void Record()
     {
-        if (User == false || userID == null) return;
-        DataProcess(playtime);
+        if (user == false || userID == null) return;
+        DataProcess(GameManager.Instance.FreezeData.playTime - GameManager.Instance.PlayTime);
     }
 
     void DataProcess(int playtime)
     {
-        BsonDocument filter = new BsonDocument { { "id", userID }, { "gameGroup", GameGroup }, { "gameLevel", Level } };
+        BsonDocument filter = new BsonDocument { { "id", userID }, { "gameGroup", gameGroup }, { "gameLevel", level } };
         BsonDocument targetData = collection.Find(filter).FirstOrDefault();
+
         string nowDate = DateTime.Now.ToString("yyyyMMddHHmm");
         long time = long.Parse(nowDate);
 
@@ -116,7 +84,7 @@ public class UserData : MonoBehaviour
     // New User Data Save in DB
     public async void SaveScoreToDataBase(int playtime, long date)
     {
-        var document = new BsonDocument { { "id", userID }, { "gameGroup", GameGroup }, { "gameLevel", Level }, { "playtime", playtime }, { "date", date } };
+        var document = new BsonDocument { { "id", userID }, { "gameGroup", gameGroup }, { "gameLevel", level }, { "playtime", playtime }, { "date", date } };
         await collection.InsertOneAsync(document);
     }
 }

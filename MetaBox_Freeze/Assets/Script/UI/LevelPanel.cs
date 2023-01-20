@@ -1,42 +1,44 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class LevelPanel : MonoBehaviour
 {
+    [SerializeField] Loading loadingObject = null;
     [SerializeField] Button easy = null;
     [SerializeField] Button normal = null;
     [SerializeField] Button hard = null;
     [SerializeField] Button extreme = null;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        easy.onClick.AddListener(delegate { OnClick_Easy(); });
-        normal.onClick.AddListener(delegate { OnClick_Normal(); });
-        hard.onClick.AddListener(delegate { OnClick_Hard(); });
-        extreme.onClick.AddListener(delegate { OnClick_Extreme(); });
+        easy.onClick.AddListener(OnClick_Easy);
+        normal.onClick.AddListener(OnClick_Normal);
+        hard.onClick.AddListener(OnClick_Hard);
+        extreme.onClick.AddListener(OnClick_Extreme);
     }
 
     void OnClick_Easy()
     {
-        GameManager.Instance.LevelSetting(1);
+        PlayerPrefs.SetInt("level", 1);
         this.gameObject.SetActive(false);
+        loadingObject.gameObject.SetActive(true);
     }
     void OnClick_Normal()
     {
-        GameManager.Instance.LevelSetting(2);
+        PlayerPrefs.SetInt("level", 2);
         this.gameObject.SetActive(false);
+        loadingObject.gameObject.SetActive(true);
     }
     void OnClick_Hard()
     {
-        GameManager.Instance.LevelSetting(3);
+        PlayerPrefs.SetInt("level", 3);
         this.gameObject.SetActive(false);
+        loadingObject.gameObject.SetActive(true);
     }
     void OnClick_Extreme()
     {
-        GameManager.Instance.LevelSetting(4);
+        PlayerPrefs.SetInt("level", 4);
         this.gameObject.SetActive(false);
+        loadingObject.gameObject.SetActive(true);
     }
 }
