@@ -4758,12 +4758,12 @@ GameObject:
   - component: {fileID: 977914275}
   - component: {fileID: 977914274}
   m_Layer: 5
-  m_Name: CountThree
+  m_Name: CountThreeImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &977914273
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4777,7 +4777,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1566262861}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -5165,6 +5165,11 @@ MonoBehaviour:
   correctVfx: {fileID: 836487283751420175, guid: 151e1b2c533d081478bb625efce227cd, type: 3}
   wrongVfx: {fileID: 1080471233519062714, guid: 15ddb7474a5ea5d4490511e48787230a, type: 3}
   curUI: {fileID: 966744538}
+  CountDownUI: {fileID: 1566262860}
+  CountThreeImage: {fileID: 977914272}
+  CountTwoImage: {fileID: 1338190516}
+  CountOneImage: {fileID: 1904872826}
+  CountStartImage: {fileID: 1861763263}
   inGameUI: {fileID: 966744538}
   timer: {fileID: 447919547}
   score: {fileID: 116973897}
@@ -5405,12 +5410,12 @@ GameObject:
   - component: {fileID: 1338190519}
   - component: {fileID: 1338190518}
   m_Layer: 5
-  m_Name: CountTwo
+  m_Name: CountTwoImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1338190517
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6396,7 +6401,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1566262861}
   m_Layer: 0
-  m_Name: CountDown
+  m_Name: CountDownUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6414,9 +6419,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1904872827}
-  - {fileID: 1338190517}
   - {fileID: 977914273}
+  - {fileID: 1338190517}
+  - {fileID: 1904872827}
   - {fileID: 1861763264}
   m_Father: {fileID: 1831846543}
   m_RootOrder: 0
@@ -7345,12 +7350,12 @@ GameObject:
   - component: {fileID: 1861763266}
   - component: {fileID: 1861763265}
   m_Layer: 5
-  m_Name: CountStart
+  m_Name: CountStartImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1861763264
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7657,12 +7662,12 @@ GameObject:
   - component: {fileID: 1904872829}
   - component: {fileID: 1904872828}
   m_Layer: 5
-  m_Name: CountOne
+  m_Name: CountOneImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1904872827
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7676,7 +7681,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1566262861}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}

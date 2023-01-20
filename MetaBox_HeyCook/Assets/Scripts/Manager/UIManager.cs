@@ -6,8 +6,10 @@ using ObjectPoolCP;
 
 public class UIManager : MonoBehaviour
 {
+    //==================game manager====================
     [Header("GameManager Reference")]
     [SerializeField] GameManager gameManager;
+
     //==============master canvas==================
     [Header("Master UI")]
     [SerializeField] GameObject UICanvas;
@@ -19,6 +21,15 @@ public class UIManager : MonoBehaviour
     //current activation UI Object
     [Header("[Current Active UI]")]
     [SerializeField] GameObject curUI;
+
+    //================IngameProduction===============================
+    [Header("Start Production")]
+    [SerializeField] GameObject CountDownUI;
+    [Space]
+    [SerializeField] GameObject CountThreeImage;
+    [SerializeField] GameObject CountTwoImage;
+    [SerializeField] GameObject CountOneImage;
+    [SerializeField] GameObject CountStartImage;
 
     //================in game ui===================
     [Header("[In Game UI]")]

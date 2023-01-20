@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour
     {
         SoundManager.Inst.StopBGM();
 
-        while (timer <= 3f)
+        while (timer <= 4f)
         {
             timer += Time.deltaTime;
 
