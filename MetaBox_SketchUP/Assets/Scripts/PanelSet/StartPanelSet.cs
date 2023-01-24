@@ -16,10 +16,13 @@ public class StartPanelSet : MonoBehaviour
 
     void Awake()
     {
-        gameStartBut.onClick.AddListener(() => OnClickStartBut());
-        gotoTownBut.onClick.AddListener(() => MoveTown(mainPackName));
-        optionBut.onClick.AddListener(() => OnClickOption());
-        exitBut.onClick.AddListener(() => AppQuit());
+        //gameStartBut.onClick.AddListener(() => OnClickStartBut());
+        //gameStartBut.onClick.AddListener(() => OptionPanelSet.Inst.SFXSet());
+        gameStartBut.onClick.AddListener(delegate { OnClickStartBut(); AudioManager.Inst.SFXSet();});
+        optionBut.onClick.AddListener(delegate { OnClickOption(); AudioManager.Inst.SFXSet();});
+        tutorial.onClick.AddListener(delegate { OnClickTutorial(); AudioManager.Inst.SFXSet();});
+        gotoTownBut.onClick.AddListener(delegate { MoveTown(mainPackName); AudioManager.Inst.SFXSet();});
+        exitBut.onClick.AddListener(delegate{ AppQuit(); AudioManager.Inst.SFXSet(); });
     }
 
     public void OnClickStartBut()
@@ -31,6 +34,12 @@ public class StartPanelSet : MonoBehaviour
     void OnClickOption()
     {
         PanelSettingMgr.Inst.OptionPanelSet(true);
+        this.gameObject.SetActive(false);
+    }
+
+    void OnClickTutorial()
+    {
+        PanelSettingMgr.Inst.TutorialPanelSet(true);
         this.gameObject.SetActive(false);
     }
 

@@ -48,10 +48,10 @@ public class InGamePanelSet : MonoBehaviour
     [SerializeField] Button optionBut = null;
     [SerializeField] Button inGameOptionCloseBut = null;
 
-
     [Header("[Option Button Setting]")]
     [SerializeField] Button stopBut = null;
-    [SerializeField] Button reStartbut = null;
+    [SerializeField] Button reStartBut = null;
+    [SerializeField] Button closeBut = null;
 
     [Header("[Timer Text]")]
     [SerializeField] TextMeshProUGUI playTimeText = null;
@@ -209,7 +209,8 @@ public class InGamePanelSet : MonoBehaviour
         {
             InGameOptionSet(true);
             stopBut.gameObject.SetActive(true);
-            reStartbut.gameObject.SetActive(true);
+            reStartBut.gameObject.SetActive(true);
+            closeBut.gameObject.SetActive(false);
             isOptionPanelOpen = true;
         }
         else if (isOptionPanelOpen == true)
@@ -217,8 +218,8 @@ public class InGamePanelSet : MonoBehaviour
             InGameOptionSet(false);
             isOptionPanelOpen = false;
         }
-
     }
+
     public void LineCloneTransform(bool active)
     {
         lineCloneTransform.gameObject.SetActive(active);

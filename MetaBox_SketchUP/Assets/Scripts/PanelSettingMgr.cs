@@ -25,6 +25,7 @@ public class PanelSettingMgr : MonoBehaviour
     [SerializeField] GameObject optionPanel = null;
     [SerializeField] GameObject levelPanel = null;
     [SerializeField] GameObject inGamePanel = null;
+    [SerializeField] GameObject tutorialPanel = null;
 
     void Awake()
     {
@@ -37,6 +38,7 @@ public class PanelSettingMgr : MonoBehaviour
         OptionPanelSet(false);
         LevelPanelSet(false);
         InGamePanelSet(false);
+        TutorialPanelSet(false);
     }
 
     public void StartPanelSet(bool active)
@@ -57,5 +59,10 @@ public class PanelSettingMgr : MonoBehaviour
     public void InGamePanelSet(bool active)
     {
         inGamePanel.gameObject.SetActive(active);
+    }
+
+    public void TutorialPanelSet(bool active)
+    {
+        tutorialPanel.gameObject.SetActive(active);
     }
 }

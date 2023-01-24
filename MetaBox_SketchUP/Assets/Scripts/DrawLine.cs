@@ -235,7 +235,7 @@ public class DrawLine : MonoBehaviour
             {
                 if (lineBackStack.Count == 3)
                 {
-                    //Debug.Log("## 1 ) 완료");
+                    Debug.Log("## 1 ) 완료");
                     checkClearImgCount -= 1;
                     objOne.gameObject.SetActive(false);
                     SetPlayAgain(true, false, false);
@@ -248,7 +248,7 @@ public class DrawLine : MonoBehaviour
             {
                 if (lineBackStack.Count == 10)
                 {
-                    //Debug.Log("두번째 완료");
+                    Debug.Log("두번째 완료");
                     checkClearImgCount -= 1;
 
                     objTwo.gameObject.SetActive(false);
@@ -261,7 +261,7 @@ public class DrawLine : MonoBehaviour
 
             if (lineBackStack.Count == 8)
             {
-                //Debug.Log("세번째 완료");
+                Debug.Log("세번째 완료");
                 checkClearImgCount -= 1;
 
                 objThree.gameObject.SetActive(false);

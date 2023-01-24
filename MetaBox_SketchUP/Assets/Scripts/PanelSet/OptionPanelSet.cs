@@ -10,9 +10,6 @@ public class OptionPanelSet : MonoBehaviour
     [SerializeField] Slider bgmSlider = null;
     [SerializeField] Slider sfxSlider = null;
 
-    [Header("Audio Source")]
-    [SerializeField] AudioSource bgmSource = null;
-    [SerializeField] AudioSource sfxSource = null;
 
     // === variable ===
     bool isInGameOptionPanel = false;
@@ -20,6 +17,7 @@ public class OptionPanelSet : MonoBehaviour
 
     void Awake()
     {
+
         bgmSlider.value = 1;
         sfxSlider.value = 1;
 
@@ -31,35 +29,26 @@ public class OptionPanelSet : MonoBehaviour
 
     void SetBGMVolume(float value)
     {
-        sfxSource.Stop();
-        bgmSource.Play();
+        AudioManager.Inst.sfxSource.Stop();
+        AudioManager.Inst.bgmSource.Play();
 
         value = bgmSlider.value;
-        bgmSource.volume = value;
+        AudioManager.Inst.bgmSource.volume = value;
     }
 
     void SetSFXVolume(float value)
     {
-        bgmSource.Stop();
-        sfxSource.Play();
+        AudioManager.Inst.bgmSource.Stop();
+        AudioManager.Inst.sfxSource.Play();
 
         value = sfxSlider.value;
-        sfxSource.volume = value;
+        AudioManager.Inst.sfxSource.volume = value;
     }
 
     void OnClickBakcButton()
     {
         this.gameObject.SetActive(false);
-        if (isInGameOptionPanel == false)
-        {
-            PanelSettingMgr.Inst.StartPanelSet(true);
-            isInGameOptionPanel = true;
-        }
-        else if(isInGameOptionPanel == true)
-        {
-            InGamePanelSet.Inst.OnClickOptionBut();
-            isInGameOptionPanel = false;
-        }
+        PanelSettingMgr.Inst.StartPanelSet(true);
+        isInGameOptionPanel = true;
     }
-
 }
