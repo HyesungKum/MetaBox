@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using ToolKum;
 
 public class StartPanel : MonoBehaviour
 {
@@ -27,7 +28,7 @@ public class StartPanel : MonoBehaviour
     }
     void OnClick_Town()
     {
-
+        ToolKum.AppTransition.AppTrans.MoveScene("com.MetaBox.MetaBox_Main");
     }
     void OnClick_Exit()
     {
