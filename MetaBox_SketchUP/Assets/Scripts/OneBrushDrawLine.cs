@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +20,7 @@ public class OneBrushDrawLine : MonoBehaviour
     // ==== private 변경 꼭 하기 !!!!!
     [Header("[Vertex Check]")]
     public Vertex startVertex = null;
+    public Vertex tempVertex = null;
     public Vertex collisionVertex = null;
 
     // ==== Stack ====
@@ -50,8 +52,7 @@ public class OneBrushDrawLine : MonoBehaviour
             #region Began
             case TouchPhase.Began:
                 {
-                    //isMovedEnd = false;
-                    TouchBeganCheck(out collisionVertex);
+                    TouchBeganCheck();
                 }
                 break;
             #endregion
@@ -59,8 +60,7 @@ public class OneBrushDrawLine : MonoBehaviour
             #region Move
             case TouchPhase.Moved:
                 {
-                    //isMovedEnd = false;
-                    MoveLineInHit(out collisionVertex);
+                    MoveLineInHit();
                 }
                 break;
             #endregion
@@ -68,52 +68,59 @@ public class OneBrushDrawLine : MonoBehaviour
             #region Ended
             case TouchPhase.Ended:
                 {
-                    LineMoveEnd(out collisionVertex);
+                    LineMoveEnd();
                 }
                 break;
                 #endregion
         }
     }
 
-    void TouchBeganCheck(out Vertex collisionVertex)
+    void TouchBeganCheck()
     {
-        collisionVertex = null;
         RaycastHit2D hitInfo = RayCheck(myTouch);
 
         if (hitInfo)
         {
-            InstLine();
-            LineTransformReset(instLine);
-
             if (hitInfo.transform.TryGetComponent<Vertex>(out collisionVertex) == true)
             {
+                InstLine();
+                LineTransformReset(instLine);
+
                 if (startVertex == null)
                 {
                     startVertex = collisionVertex;
+                    tempVertex = startVertex;
+
+                    //tempVertex.ColorChange();
+
+                    checkVertex.Push(collisionVertex);
+                    tempVertex.ColorChange();
+                    collisionVertex.ColorChange();
+                    Debug.Log("checkVertex.Count (## Push )) : " + checkVertex.Count);
+
                 }
                 else if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNodeName()) != 0)
                 {
+                    Debug.Log("startVertex.GetNodeName() : " + startVertex.GetNodeName());
+                    Debug.Log("collisionVertex.GetNodeName() : " + collisionVertex.GetNodeName());
                     DestroyLineObj();
                 }
+                //else if()
+                //{
+
+                //}
             }
             isMovedEnd = false;
-            Debug.Log("TouchBegan : (isMovedEnd) " + isMovedEnd);
         }
         else
         {
-            if (instLine == null)
-            {
-                isMovedEnd = false;
-                Debug.Log("나 그냥 삭제 됨 ??");
-                return;
-            }
+            isMovedEnd = false;
+            return;
         }
     }
 
-    void MoveLineInHit(out Vertex collisionVertex)
+    void MoveLineInHit()
     {
-        collisionVertex = null;
-
         RaycastHit2D hitInfo = RayCheck(myTouch);
 
         if (hitInfo)
@@ -126,34 +133,30 @@ public class OneBrushDrawLine : MonoBehaviour
                     {
                         if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNextNodeName(i)) == 0)
                         {
-                            //collisionVertex.ColorChange(); // Color Changed 
-                            //checkVertex.Push(collisionVertex);
-                            //Debug.Log("checkVertex.Cout (Move) :" + checkVertex.Count);
-
                             InstLine();
                             StrethchLine(instLine);
 
-                            isMovedEnd = true;
-                            Debug.Log("Move hit : (isMovedEnd) " + isMovedEnd);
-
                             startVertex = collisionVertex;
+
+                            checkVertex.Push(collisionVertex);
+                            collisionVertex.ColorChange();
+                            Debug.Log("checkVertex.Count (## Push )) : " + checkVertex.Count);
+
                             break;
                         }
                     }
                 }
             }
+            isMovedEnd = true;
         }
         else
         {
             StrethchLine(instLine);
-            isMovedEnd = false;
-            Debug.Log("Move [Else] : (isMovedEnd) " + isMovedEnd);
         }
     }
 
-    void LineMoveEnd(out Vertex collisionVertex)
+    void LineMoveEnd()
     {
-        collisionVertex = null;
         RaycastHit2D hitInfo = RayCheck(myTouch);
 
         if (hitInfo)
@@ -176,16 +179,15 @@ public class OneBrushDrawLine : MonoBehaviour
                 }
             }
         }
-        //else if (isMovedEnd == true)
-        else
+        else if (isMovedEnd)
         {
-            Debug.Log("MoveEnd :  " + isMovedEnd);
 
             if (instLine != null)
             {
                 DestroyLineObj();
-                Debug.Log("나 (true)여서 삭제 됨 ??? ");
             }
+
+            isMovedEnd = false;
         }
     }
 
@@ -197,25 +199,16 @@ public class OneBrushDrawLine : MonoBehaviour
         lineBackStack.Push(instLine);
         //Debug.Log("lineBackStack.Count (## Push )) : " + lineBackStack.Count);
 
-        checkVertex.Push(startVertex);
-        //startVertex.ColorChange();
-        //Debug.Log("checkVertex.Count (## Push )) : " + checkVertex.Count);
-
         startPos = myTouch.position;
         instLine.transform.position = startPos;
     }
 
     void DestroyLineObj()
     {
-        if (lineBackStack.Count == 0 && checkVertex.Count == 0) return;
+        if (lineBackStack.Count == 0) return;
         else
             instLine = lineBackStack.Pop();
         //Debug.Log("lineBackStack.Count (## Pop )) : " + lineBackStack.Count);
-
-        checkVertex.Pop();
-        //startVertex.BackOriginalColor();
-
-        //Debug.Log("checkVertex.Count (## Pop )) : " + checkVertex.Count);
 
         ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(instLine);
         collisionVertex = null;
@@ -225,16 +218,28 @@ public class OneBrushDrawLine : MonoBehaviour
     {
         if (lineBackStack.Count == 0 && checkVertex.Count == 0)
         {
-            //startVertex = null;
             return;
         }
         else
         {
             DestroyLineObj();
 
-            ///checkVertex.Pop();
-            ///startVertex.BackOriginalColor();
-            //Debug.Log(" checkVertex.Pop() : " + checkVertex.Count);
+            Vertex check = checkVertex.Pop();
+            Debug.Log("## 1) check.Count (## Pop )) : " + checkVertex.Count);
+            check.BackOriginalColor();
+
+            if (checkVertex.Count == 1)
+            {
+                check = checkVertex.Pop();
+                Debug.Log("## 2) check.Count (## Pop )) : " + checkVertex.Count);
+                tempVertex.BackOriginalColor();
+
+                if (checkVertex.Count == 0)
+                {
+                    return;
+                }
+            }
+
         }
     }
 
