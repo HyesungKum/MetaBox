@@ -233,7 +233,7 @@ public class MusicSheet : MonoBehaviour
         {
             float tempDistance = Mathf.Abs(line.transform.position.y - target.transform.position.y);
 
-            if (tempDistance < 0.2f)
+            if (tempDistance < 0.5f)
             {
 
                 if (tempDistance < closestDistance)

@@ -10,7 +10,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] GameObject playableNote;
 
 
-    int PlayableNoteCount = 5;
+    int PlayableNoteCount = 10;
 
 
     private void Start()
