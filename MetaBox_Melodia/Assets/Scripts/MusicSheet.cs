@@ -184,8 +184,6 @@ public class MusicSheet : MonoBehaviour
 
 
 
-
-
                     // move playable note torwards to Qnote
                     myPlayableNote.MoveNote(note.transform.position, 3f);
 

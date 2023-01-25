@@ -157,24 +157,24 @@ public class SoundManager : MonoBehaviour
 
     IEnumerator playMusic()
     {
-        //foreach (int targetNote in clipList)
-        //{
-        //    if (isStopped)
-        //        break;
+        foreach (int targetNote in clipList)
+        {
+            if (isStopped)
+                break;
 
 
-        //    PlayNote(targetNote, 1);
+            PlayNote(targetNote, 1);
 
-        //    yield return new WaitUntil(() => myNoteAudioSource.isPlaying == false);
-        //}
+            yield return new WaitUntil(() => myNoteAudioSource.isPlaying == false);
+        }
 
 
 
         // for test =============================================================
 
-        PlayNote(clipList[0], 1);
+        //PlayNote(clipList[0], 1);
 
-        yield return new WaitUntil(() => myNoteAudioSource.isPlaying == false);
+        //yield return new WaitUntil(() => myNoteAudioSource.isPlaying == false);
 
 
         // for test =============================================================
