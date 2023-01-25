@@ -135,8 +135,6 @@ public class SoundManager : MonoBehaviour
         //myBGMAudioSource.clip = changeClip;
 
         myBGMAudioSource.Play();
-
-        Debug.Log($"³ª´Â {target} ¾ß~! ");
     }
 
 
@@ -181,8 +179,6 @@ public class SoundManager : MonoBehaviour
 
         // for test =============================================================
 
-        Debug.Log("¸ØÃç" + isStopped);
-
         if (!IsStopped)
         {
             GameManager.myDelegateGameStatus(GameStatus.StartGame);
@@ -194,8 +190,6 @@ public class SoundManager : MonoBehaviour
 
     public void StopMusic()
     {
-        Debug.Log("¸ØÃç!");
-
         if (CurCoroutine != null)
             StopCoroutine(CurCoroutine);
 

@@ -193,8 +193,6 @@ public class MusicSheet : MonoBehaviour
                     qNoteList.Remove(note);
                     noteList.Add(note);
 
-                    Debug.Log("Qnote 음게는 ! " + note.GetComponent<QNote>().MyPitchNum);
-
                     UiManager.myDelegateUiManager("잘했어요!");
                     SoundManager.Inst.PlayNote(note.GetComponent<QNote>().MyPitchNum, 1);
 
@@ -249,7 +247,6 @@ public class MusicSheet : MonoBehaviour
         if (closestSoundLine == null)
         { return; }
 
-        Debug.Log($"나는 {closestSoundLine.GetComponent<SoundLine>().MyPitchName} 야");
         SoundManager.Inst.PlayNote(closestSoundLine.GetComponent<SoundLine>().MyPitchNum, 1);
     }
 
@@ -258,8 +255,6 @@ public class MusicSheet : MonoBehaviour
     void gameIsOver()
     {
         GameManager.Inst.CheckStage();
-
-        Debug.Log("Success!");
     }
 
 }

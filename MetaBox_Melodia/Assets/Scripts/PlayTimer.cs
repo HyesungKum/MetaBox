@@ -25,14 +25,10 @@ public class PlayTimer : MonoBehaviour
 
     void curGameStatus(GameStatus curStatus)
     {
-        Debug.Log("타이머!" + curStatus.ToString());
-
         switch (curStatus)
         {
             case GameStatus.Idle:
                 {
-                    Debug.Log("타이머 idle");
-
                     StartGame();
                 }
                 break;

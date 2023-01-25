@@ -53,8 +53,6 @@ public class SceneModeController : MonoBehaviour
                 break;
         }
 
-        Debug.Log(MySceneMode);
-
         myPanelOption.SetActive(false);
 
     }

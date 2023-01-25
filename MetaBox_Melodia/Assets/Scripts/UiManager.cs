@@ -58,7 +58,6 @@ public class UiManager : MonoBehaviour
 
     public void StartGame()
     {
-        Debug.Log("Ω√¿€«ÿ_¿Øæ∆¿Ã");
 
         // delegate chain
         myDelegateUiManager = correctedNote;
@@ -241,7 +240,6 @@ public class UiManager : MonoBehaviour
             case GameStatus.GetAllQNotes:
                 {
                     NextStage("¥Ÿ ∏¬√ËæÓø‰!");
-                    Debug.Log("¥Ÿ ∏¬√Ë¥Î!");
                 }
                 break;
             case GameStatus.NoMorePlayableNote:
@@ -342,8 +340,6 @@ public class UiManager : MonoBehaviour
     public void OnClickQuitGame()
     {
         SoundManager.Inst.StopMusic();
-        Debug.Log("∏ÿ√Á!");
-
 
         SceneManager.LoadScene("MelodiaLobby");
         Time.timeScale = 1;
@@ -359,7 +355,6 @@ public class UiManager : MonoBehaviour
     public void OnClickExitStage()
     {
         SoundManager.Inst.StopMusic();
-        Debug.Log("∏ÿ√Á!");
 
         Time.timeScale = 1;
         SceneManager.LoadScene("MelodiaLobby");
@@ -380,7 +375,6 @@ public class UiManager : MonoBehaviour
         PlayTimer.DelegateTimer -= playCountDown;
 
         readyReplay();
-        Debug.Log("¥ŸΩ√«ÿ_¿Øæ∆¿Ã!");
 
         GameManager.myDelegateGameStatus(GameStatus.Idle);
     }

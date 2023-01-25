@@ -111,22 +111,18 @@ public class GameManager : DataLoader
                 {
                     isGameOver = false;
 
-                    Debug.Log("Idle_GM");
-
                     checkStageLevel();
                 }
                 break;
 
             case GameStatus.Ready:
                 {
-                    Debug.Log("준비_GM");
                     startStage();
                 }
                 break;
 
             case GameStatus.StartGame:
                 {
-                    Debug.Log("시작!!_GM");
                     Time.timeScale = 1;
                 }
                 break;
@@ -134,16 +130,12 @@ public class GameManager : DataLoader
 
             case GameStatus.TimeOver:
                 {
-                    Debug.Log("Time is over!_GM");
                     isGameOver = true;
                 }
                 break;
 
             case GameStatus.GetAllQNotes:       // go to next round
                 {
-                    Debug.Log("Great sucess!_GM");
-
-                    Debug.Log($"현재 {curStage}스테이지 성공 {MyStageData.Keys.Count} 스테이지!");
 
                     curStage++;
 
@@ -153,14 +145,12 @@ public class GameManager : DataLoader
 
             case GameStatus.NoMorePlayableNote:
                 {
-                    Debug.Log("Too bad, so sad!_GM");
                     isGameOver = true;
                 }
                 break;
 
             case GameStatus.ClearStage:
                 {
-                    Debug.Log("스테이지 클리어!");
                     curStage = 1;
                     isGameOver = true;
                 }
@@ -184,16 +174,12 @@ public class GameManager : DataLoader
         PlayTimer.DelegateTimer += timeCountDown;
 
         Time.timeScale = 0;
-
-        Debug.Log("쿨타임!" + myCoolTime);
     }
 
 
 
     void checkStageLevel()
     {
-        Debug.Log("무슨 모드?");
-
 
 
 
@@ -201,13 +187,12 @@ public class GameManager : DataLoader
         {
             case SceneModeController.SceneMode.EasyMode:
                 {
-                    Debug.Log("쉬운 모드!");
+
                     myPlayableTime = 180f;
                     myCoolTime = 15;
 
                     if (MyStageData.Count == 0)
                     {
-                        Debug.Log("데이터 불러와!");
                         GetStageInfo("EasyMode");
                     }
                 }
@@ -237,8 +222,6 @@ public class GameManager : DataLoader
                 break;
         }
 
-        Debug.Log("무슨 모드? " + SceneModeController.MySceneMode);
-
     }
 
 
@@ -248,7 +231,6 @@ public class GameManager : DataLoader
         if (t <= 0)
         {
             myDelegateGameStatus(GameStatus.TimeOver);
-            Debug.Log("시간이 없어요");
         }
     }
 
