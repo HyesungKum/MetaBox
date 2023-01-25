@@ -3,7 +3,7 @@ using System.Threading;
 using UnityEngine;
 using Kum;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoSingleTon<GameManager>
 {
     //=====================var=======================
     [Header("Currnet Score")]
@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
 
     private float SecCount = 0f;
 
-    private void Awake()
+    private new void Awake()
     {
         //delegate chain
         EventReciver.ScoreModi += ScoreAddSub;

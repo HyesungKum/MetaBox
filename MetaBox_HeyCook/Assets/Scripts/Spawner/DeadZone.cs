@@ -16,14 +16,18 @@ public class DeadZone: MonoBehaviour
 #endif
     #endregion
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.collider.CompareTag(nameof(Ingredient)))
+        if (collision.CompareTag(nameof(Ingredient)))
         {
-            collision.collider.TryGetComponent<Ingredient>(out Ingredient ingred);
-            GameObject instVfx = ingred.IngredData.delVfx;
-            PoolCp.Inst.BringObjectCp(instVfx).transform.position = collision.contacts[0].point;
-            PoolCp.Inst.DestoryObjectCp(collision.gameObject);
+            collision.TryGetComponent<Ingredient>(out Ingredient ingred);
+
+            if (!ingred.IsCliked)
+            {
+                GameObject instVfx = ingred.IngredData.delVfx;
+                PoolCp.Inst.BringObjectCp(instVfx).transform.position = collision.transform.position;
+                PoolCp.Inst.DestoryObjectCp(ingred.gameObject);
+            }
         }
     }
 }

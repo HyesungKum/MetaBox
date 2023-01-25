@@ -8,8 +8,6 @@ using UnityEngine;
 
 public class IngredientSpawner : MonoBehaviour
 {
-    [SerializeField] GameManager gameManager;
-
     //===============table data========================
     [Header("Spawn Data Table")]
     public SpawnTableData[] TableData;
@@ -34,7 +32,7 @@ public class IngredientSpawner : MonoBehaviour
     private void Awake()
     {
         //apply Level
-        switch (gameManager.Level)
+        switch (GameManager.Inst.Level)
         {
             case 1: SpawnTable = TableData[0].SpawnTable;
                 break;

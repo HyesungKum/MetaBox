@@ -6,10 +6,6 @@ using ObjectPoolCP;
 
 public class UIManager : MonoBehaviour
 {
-    //==================game manager====================
-    [Header("GameManager Reference")]
-    [SerializeField] GameManager gameManager;
-
     //==============master canvas==================
     [Header("Master UI")]
     [SerializeField] GameObject UICanvas;
@@ -143,6 +139,8 @@ public class UIManager : MonoBehaviour
     }
 
     //=============================================In Game Production===================================
+
+
     void UICorrectIngred(Vector3 pos)
     {
          GameObject instText = PoolCp.Inst.BringObjectCp(correctVfx);
@@ -191,11 +189,11 @@ public class UIManager : MonoBehaviour
     /// <param name="value">target time value</param>
     void UIScoreModi(int value)
     {
-        score.text = gameManager.Score.ToString();
+        score.text = GameManager.Inst.Score.ToString();
     }
     void UITcikCount()
     {
-        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(gameManager.Timer / 60f), (int)(gameManager.Timer % 60f));
+        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.Timer / 60f), (int)(GameManager.Inst.Timer % 60f));
     }
 
     //================================================SceneMove============================================
