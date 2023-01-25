@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public delegate void Notice();
@@ -89,7 +88,7 @@ public class GameManager : MonoBehaviour
         penalty = StageDatas[stage].penaltyPoint;
         catchNumber = 0;
         UIManager.Instance.DataSetting(StageDatas[stage].wantedCount, StageDatas[stage].startCountdown);
-        
+        if(stage != 0) UIManager.Instance.WaveStart();
         stage++;
     }
 
@@ -166,7 +165,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator NextWave()
     {
-        WaveClearEvent();
+        WaveClearEvent?.Invoke(); //스테이지클리어 연출
         yield return waitNextWave;
         WaveSetting();
     }

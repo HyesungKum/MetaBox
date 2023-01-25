@@ -19,7 +19,6 @@ public class SoundManager : MonoBehaviour
                 {
                     instance = new GameObject(nameof(SoundManager), typeof(SoundManager)).GetComponent<SoundManager>();
                 }
-                //DontDestroyOnLoad(instance.gameObject);
             }
             return instance;
         }
@@ -60,10 +59,7 @@ public class SoundManager : MonoBehaviour
         Scene curscene = SceneManager.GetActiveScene();
         return curscene.GetRootGameObjects();
     }
-    public void UISound_HighLighted()
-    {
-        Audio.PlayOneShot(buttonList[0], 1);
-    }
+
     public void UISound_OnClick()
     {
         Audio.PlayOneShot(buttonList[1], 1);

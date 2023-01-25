@@ -3,7 +3,9 @@ using UnityEngine.UI;
 
 public class LevelPanel : MonoBehaviour
 {
+    [SerializeField] GameObject startPanel = null;
     [SerializeField] Loading loadingObject = null;
+    [SerializeField] Button back = null;
     [SerializeField] Button easy = null;
     [SerializeField] Button normal = null;
     [SerializeField] Button hard = null;
@@ -11,6 +13,7 @@ public class LevelPanel : MonoBehaviour
 
     void Awake()
     {
+        back.onClick.AddListener(() => startPanel.SetActive(true));
         easy.onClick.AddListener(OnClick_Easy);
         normal.onClick.AddListener(OnClick_Normal);
         hard.onClick.AddListener(OnClick_Hard);

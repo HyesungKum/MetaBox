@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using ToolKum;
 
 public class StartPanel : MonoBehaviour
 {
@@ -12,26 +11,9 @@ public class StartPanel : MonoBehaviour
 
     void Awake()
     {
-        start.onClick.AddListener(OnClick_Start);
-        option.onClick.AddListener(OnClick_Option);
-        town.onClick.AddListener(OnClick_Town);
-        exit.onClick.AddListener(OnClick_Exit);
-    }
-
-    void OnClick_Start()
-    {
-        this.gameObject.SetActive(false);
-    }
-    void OnClick_Option()
-    {
-        optionPanel.gameObject.SetActive(true);
-    }
-    void OnClick_Town()
-    {
-        ToolKum.AppTransition.AppTrans.MoveScene("com.MetaBox.MetaBox_Main");
-    }
-    void OnClick_Exit()
-    {
-        Application.Quit();
+        start.onClick.AddListener(() => this.gameObject.SetActive(false));
+        option.onClick.AddListener(() => optionPanel.gameObject.SetActive(true));
+        town.onClick.AddListener(() => ToolKum.AppTransition.AppTrans.MoveScene("com.MetaBox.MetaBox_Main"));
+        exit.onClick.AddListener(() => Application.Quit());
     }
 }

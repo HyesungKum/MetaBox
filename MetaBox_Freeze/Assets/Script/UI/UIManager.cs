@@ -35,7 +35,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] Wanted wantedListImage = null;
     
     [SerializeField] Button option = null;
-    [SerializeField] Button exit = null;
     
 
     WaitForSeconds waitHalf = null;
@@ -49,9 +48,7 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         option.onClick.AddListener(OnClick_Option);
-        exit.onClick.AddListener(delegate { OnClick_Exit(); });
         
-
         waitHalf = new WaitForSeconds(0.5f);
         wait1 = new WaitForSeconds(1f);
 
@@ -145,8 +142,4 @@ public class UIManager : MonoBehaviour
         optionPanel.SetActive(true);
     }
 
-    void OnClick_Exit()
-    {
-        Application.Quit();
-    }
 }
