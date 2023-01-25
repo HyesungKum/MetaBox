@@ -102,8 +102,8 @@ public class MusicSheet : MonoBehaviour
         int noteIdx = myStageData[stage].Count;
         int emptyNote = stage / 3 + 2;
 
-        float xPos = (-0.7f * noteIdx) / 2;
-        xPos = (noteIdx % 2 == 0) ? xPos += 0.35f : xPos;
+        float xPos = (noteIdx / 2) * -1.5f;
+        //xPos = (noteIdx % 2 == 0) ? xPos += 1f : xPos;
 
 
         List<int> emptyNoteIdx = new();
@@ -154,7 +154,7 @@ public class MusicSheet : MonoBehaviour
             }
 
 
-            xPos += 0.7f;
+            xPos += 1.5f;
         }
 
     }
@@ -174,33 +174,42 @@ public class MusicSheet : MonoBehaviour
         foreach (GameObject note in qNoteList)
         {
             // check position and compare with QNote position 
-            if (Vector2.Distance(note.transform.position, target.transform.position) < 0.15f)
+            //if (Vector2.Distance(note.transform.position, target.transform.position) < 0.15f)
+
+
+            if (Mathf.Abs(note.transform.position.x - target.transform.position.x) < 1f)
             {
-                // move playable note torwards to Qnote
-                myPlayableNote.MoveNote(note.transform.position, 3f);
-
-                // remove Qnote from list
-                qNoteList.Remove(note);
-                noteList.Add(note);
-
-                Debug.Log("Qnote 음게는 ! " + note.GetComponent<QNote>().MyPitchNum);
-
-                UiManager.myDelegateUiManager("잘했어요!");
-                SoundManager.Inst.PlayNote(note.GetComponent<QNote>().MyPitchNum , 1);
-
-                // check how many Qnotes are left
-                if (qNoteList.Count == 0)
+                if (Mathf.Abs(note.transform.position.y - target.transform.position.y) < 0.3f)
                 {
-                    Invoke("gameIsOver", 1f);
+
+
+
+
+
+                    // move playable note torwards to Qnote
+                    myPlayableNote.MoveNote(note.transform.position, 3f);
+
+                    // remove Qnote from list
+                    qNoteList.Remove(note);
+                    noteList.Add(note);
+
+                    Debug.Log("Qnote 음게는 ! " + note.GetComponent<QNote>().MyPitchNum);
+
+                    UiManager.myDelegateUiManager("잘했어요!");
+                    SoundManager.Inst.PlayNote(note.GetComponent<QNote>().MyPitchNum, 1);
+
+                    // check how many Qnotes are left
+                    if (qNoteList.Count == 0)
+                    {
+                        Invoke("gameIsOver", 1f);
+                        return;
+                    }
+
+                    // if Qnote remains more than 0
+                    myPlayableNote.UseNote();
+
                     return;
                 }
-
-                // if Qnote remains more than 0
-                myPlayableNote.UseNote();
-
-
-
-                return;
             }
         }
 
@@ -241,7 +250,7 @@ public class MusicSheet : MonoBehaviour
         { return; }
 
         Debug.Log($"나는 {closestSoundLine.GetComponent<SoundLine>().MyPitchName} 야");
-        SoundManager.Inst.PlayNote(closestSoundLine.GetComponent<SoundLine>().MyPitchNum , 1);
+        SoundManager.Inst.PlayNote(closestSoundLine.GetComponent<SoundLine>().MyPitchNum, 1);
     }
 
 

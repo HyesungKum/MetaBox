@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+#if UNITY_EDITOR
 [CreateAssetMenu(fileName = "NoteAudioClips", menuName = "Scriptable Object/NoteAudio", order = int.MaxValue)]
+#endif
 public class NoteSound : ScriptableObject
 {
 
@@ -11,4 +12,3 @@ public class NoteSound : ScriptableObject
     public CustomDictionary<PitchName, AudioClip> MyPitchClips { get { return myPitchClips; } }
 
 }
-

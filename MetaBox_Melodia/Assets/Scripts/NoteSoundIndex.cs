@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+#if UNITY_EDITOR
 [CreateAssetMenu(fileName = "NoteAudioClips", menuName = "Scriptable Object/NoteClips", order = int.MaxValue)]
+#endif
 public class NoteSoundIndex : ScriptableObject
 {
 

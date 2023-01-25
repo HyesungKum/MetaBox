@@ -5,8 +5,10 @@ using UnityEngine;
 
 
 
+#if UNITY_EDITOR
 
-[CustomPropertyDrawer(typeof(EditingGenericClass), true)]
+    [CustomPropertyDrawer(typeof(EditingGenericClass), true)]
+
 class CustomDictionaryEditor : PropertyDrawer
 {
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -44,11 +46,12 @@ class CustomDictionaryEditor : PropertyDrawer
 
 }
 
+#endif
 
 public abstract class EditingGenericClass { }
 
 [Serializable]
-public class DictionaryView<Tkey, Tvalue> :  EditingGenericClass
+public class DictionaryView<Tkey, Tvalue> : EditingGenericClass
 {
     public List<Tkey> keys = new();
     public List<Tvalue> values = new();
@@ -156,3 +159,4 @@ public class CustomDictionary<Tkey, Tvalue> : ISerializationCallbackReceiver
 
 
 }
+

@@ -49,7 +49,6 @@ public class SoundManager : MonoBehaviour
     }
     #endregion
 
-
     [Header("Note Sound ScriptableObject")]
     [SerializeField]
     private NoteSoundIndex myNoteSound;
@@ -160,20 +159,27 @@ public class SoundManager : MonoBehaviour
 
     IEnumerator playMusic()
     {
-        foreach (int targetNote in clipList)
-        {
-            if (isStopped)
-                break;
+        //foreach (int targetNote in clipList)
+        //{
+        //    if (isStopped)
+        //        break;
 
 
-            PlayNote(targetNote, 1);
+        //    PlayNote(targetNote, 1);
 
-            Debug.Log("³ë·¡ Æ²¾î! " + targetNote);
-            Debug.Log("¸ØÃã? " + isStopped);
+        //    yield return new WaitUntil(() => myNoteAudioSource.isPlaying == false);
+        //}
 
-            yield return new WaitUntil(() => myNoteAudioSource.isPlaying == false);
-        }
 
+
+        // for test =============================================================
+
+        PlayNote(clipList[0], 1);
+
+        yield return new WaitUntil(() => myNoteAudioSource.isPlaying == false);
+
+
+        // for test =============================================================
 
         Debug.Log("¸ØÃç" + isStopped);
 
@@ -182,16 +188,6 @@ public class SoundManager : MonoBehaviour
             GameManager.myDelegateGameStatus(GameStatus.StartGame);
         }
 
-        // for test =============================================================
-
-        //PlayNote(clipList[0], 1);
-
-        //Debug.Log("³ë·¡ Æ²¾î! " + clipList[0]);
-
-        //yield return new WaitUntil(() => myNoteAudioSource.isPlaying == false);
-
-
-        // for test =============================================================
     }
 
 

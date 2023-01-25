@@ -75,11 +75,11 @@ public class TouchManager : MonoBehaviour
     void isMyNote(RaycastHit2D hitPoint)
     {
         // if ray hits playablenote 
-        PlayableNote isMyNote = hitPoint.transform.gameObject.GetComponent<PlayableNote>();
+        hitPoint.transform.gameObject.TryGetComponent(out PlayableNote target);
 
-        if (isMyNote != null)
+        if (target != null)
         {
-            myNote = isMyNote;
+            myNote = target;
 
             // disable collider 
             hitPoint2D.collider.enabled = false;
