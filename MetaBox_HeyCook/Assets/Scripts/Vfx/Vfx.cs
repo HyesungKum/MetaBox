@@ -5,7 +5,7 @@ using ObjectPoolCP;
 [RequireComponent(typeof(SpriteRenderer))]
 public class Vfx : MonoBehaviour
 {
-    //====================ref components==============
+    //====================ref components================
     [Header("ref componetns")]
     [SerializeField] SpriteRenderer spriteRenderer;
 
@@ -15,18 +15,19 @@ public class Vfx : MonoBehaviour
 
     [Header("Play Duration")]
     [SerializeField] float duration;
+    [SerializeField] bool loop;
 
-    //====================inner varables===============
-    float timer = 0f;
-    float frameTimer = 0f;
-    private int frameIndex;
+    //====================inner varables=================
+    private float timer = 0f;
+    private float frameTimer = 0f;
+    private int frameIndex = 0;
 
     private void OnEnable()
     {
         timer = 0f;
         frameTimer = 0f;
+        frameIndex = 0;
 
-        NextFrame();
         StartCoroutine(nameof(Repeat));
     }
 
@@ -35,10 +36,12 @@ public class Vfx : MonoBehaviour
     /// </summary>
     IEnumerator Repeat()
     {
-        while(true)
+        if (loop) duration = float.MaxValue;
+
+        while(this.gameObject.activeSelf && timer < duration)
         {
-            timer += Time.deltaTime;
-            frameTimer += Time.deltaTime;
+            timer += Time.unscaledDeltaTime;
+            frameTimer += Time.unscaledDeltaTime;
 
             //image changing
             if ((1f / fps) < frameTimer)
@@ -47,15 +50,10 @@ public class Vfx : MonoBehaviour
                 frameTimer = 0f;
             }
 
-            //image vfx disable
-            if (timer > duration)
-            {
-                PoolCp.Inst.DestoryObjectCp(this.gameObject);
-                yield break;
-            }
-
             yield return null;
         }
+
+        PoolCp.Inst.DestoryObjectCp(this.gameObject);
     }
     /// <summary>
     /// sprite change next index

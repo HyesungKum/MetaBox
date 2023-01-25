@@ -2,26 +2,52 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MonoSingleTon<T> : MonoBehaviour where T : MonoBehaviour
+namespace Kum
 {
-    static private T instance = null;
-
-    static public T Inst
+    public class MonoSingleTon<T> : MonoBehaviour where T : MonoBehaviour
     {
-        get
+        static private T instance = null;
+        static private object _lock = new();
+        static private bool applicationQuitting = false;
+
+        static public T Inst
         {
-            if (instance == null)
+            get
             {
-                instance = FindObjectOfType<T>(typeof(T) as T) ;
+                if (applicationQuitting)
+                {
+                    return null;
+                }
 
                 if (instance == null)
                 {
-                    GameObject instObj = new(typeof(T).ToString(), typeof(T));
-                    instance = instObj.GetComponent<T>();
-                }
-            }
+                    instance = FindObjectOfType<T>(typeof(T) as T);
 
-            return instance;
+                    if (instance == null)
+                    {
+                        lock (_lock)
+                        {
+                            GameObject instObj = new(typeof(T).ToString(), typeof(T));
+                            instance = instObj.GetComponent<T>();
+                        }
+                    }
+                }
+
+                return instance;
+            }
+        }
+
+        protected void Awake()
+        {
+            if (FindObjectOfType<T>(typeof(T) as T).gameObject != this.gameObject) Destroy(this.gameObject);
+            {
+                DontDestroyOnLoad(this.gameObject);
+            }
+        }
+
+        private void OnApplicationQuit()
+        {
+            applicationQuitting = true;
         }
     }
 }

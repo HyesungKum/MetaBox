@@ -1,18 +1,34 @@
-using NODE;
 using UnityEngine;
 
 public class Vertex : MonoBehaviour
 {
     [SerializeField] private Vertex[] vertexes = null;
-    Node node = null;
-    [SerializeField] private string nodeName = "";
+    [SerializeField] private string vertexName = "";
 
-    public string GetNodeName() => nodeName;
+    public Vertex MoveVertex(int index) => vertexes[index];
+    public string GetNodeName() => vertexName;
     public int GetNodeLength() => vertexes.Length;
     public string GetNextNodeName(int index) => vertexes[index].GetNodeName();
 
-    void Start()
+    SpriteRenderer sprite = null;
+    Color originalColor;
+
+    void Awake()
     {
-        node = new Node(vertexes);
+        sprite = gameObject.GetComponent<SpriteRenderer>();
+        originalColor = sprite.color;
+    }
+
+    public void StartPointColor()
+    {
+        sprite.color = Color.blue;
+    }
+    public void ColorChange()
+    {
+        sprite.color = Color.green;
+    }
+    public void BackOriginalColor()
+    {
+        sprite.color = originalColor;
     }
 }

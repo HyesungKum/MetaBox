@@ -1,8 +1,9 @@
+using ObjectPoolCP;
 using System.Collections;
-using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+//Different Cook and Trimable Ways Enum
 public enum TrimType
 {
     Pressing,
@@ -18,124 +19,145 @@ public enum CookType
     Max
 }
 
-[RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class Ingredient : MonoBehaviour
 {
-    //===============data=====================================
+    //============================Data=====================================
     [Header("Data")]
-    public RecipeData RecipeData = null;
+    public FoodData FoodData = null;
+    public SetData setData = null;
     public IngredData IngredData = null;
 
-    //===============component================================
+    //============================Component================================
     [Header("Component")]
-    public Rigidbody2D Rigidbody2D = null;
-    public BoxCollider2D BoxCollider2D = null;
-    public SpriteRenderer SpriteRenderer = null;
+    [SerializeField] private Rigidbody2D Rigidbody = null;
+    [SerializeField] private BoxCollider2D Collider = null;
+    [SerializeField] private SpriteRenderer Renderer = null;
 
-    //===============flag=====================================
+    //============================Flag=====================================
     [Header("Flag")]
+    [SerializeField] private float Lifetimer = 0;
+    [Space]
     public bool IsCliked;
-
-    public bool TrimReady;
-    public bool IsTrimed;
-
+    [Space]
     public bool IsCooked;
     public bool IsCookReady;
 
-    //===============trimControll=============================
-    [Header("TrimControll")]
+    [SerializeField] private bool IsSpawned;
+    [SerializeField] private bool IsLifeOver;
 
+    //============================trimControll=============================
+    [Header("TrimControll")]
     public float needTask;
     public float curTask = 0;
     public TrimType TrimType;
 
-    //=====================cookControll========================
+    //==================================cookControll========================
     public CookType CookType;
 
     private void Awake()
     {
         //bring component
-        Rigidbody2D = GetComponent<Rigidbody2D>();
-        BoxCollider2D = GetComponent<BoxCollider2D>();
-        SpriteRenderer = GetComponent<SpriteRenderer>();
+        TryGetComponent<Rigidbody2D>(out Rigidbody);
+        TryGetComponent<BoxCollider2D>(out Collider);
+        TryGetComponent<SpriteRenderer>(out Renderer);
 
-        Initializing();
+        //Init when this object awake
+        InitAwake();
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        TrimCollCtl();
-        CookCollCtl();
+        InitSpawn();
+    }
+
+    //===================================Initailizing component and inner variables==========================
+    /// <summary>
+    /// Call this function for GameObject First Initailizing
+    /// this function just onetime called because Ingredient Object Naver Destory before scene closed
+    /// </summary>
+    public void InitAwake()
+    {
+        Renderer.sortingOrder = 4;
+
+        //tagging
+        if (this.gameObject.tag == "Untagged") this.transform.tag = "Ingredient";
     }
 
     /// <summary>
-    /// sprite and collider, tag, flag initializing
+    /// sprite and collider, tag, flag and value initializing
+    /// called when this object enabled
     /// </summary>
-    public void Initializing()
+    public void InitSpawn()
     {
         //sprite and collider
-        if (IngredData != null)
-        {
-            SpriteRenderer.sprite = IngredData.ingredientImage;
-            BoxCollider2D.size = SpriteRenderer.sprite.bounds.size;
-        }
-        else if (RecipeData != null)
-        {
-            SpriteRenderer.sprite = RecipeData.raw;
-            BoxCollider2D.size = SpriteRenderer.sprite.bounds.size;
-        }
-        //tagging
-        this.transform.tag = "Ingredient";
+        Renderer.sprite = IngredData.ingredientImage;
+        Renderer.color = Color.white;
+
+        Collider.size = Renderer.sprite.bounds.size;
+        Collider.enabled = true;
+
+        curTask = 0;
 
         //flag
         IsCliked = false;
 
-        TrimReady = false;
-        IsTrimed = false;
-
         IsCookReady = false;
         IsCooked = false;
+
+        IsLifeOver = false;
+        Lifetimer = 0;
+
+        StartCoroutine(nameof(LifeCycle));
     }
 
+    //============================================Ingredient Controll=========================================
     /// <summary>
-    /// movable collider controll when triming
+    /// Call when Ingredient Ready to cook
     /// </summary>
-    void TrimCollCtl()
+    public void ReadyCook()
     {
-        if (IsTrimed || IngredData == null) return;
+        Renderer.sortingOrder = 3;
+        Collider.enabled = false;
+    }
 
-        if (TrimReady)
+    //===========================================Ingredient LifeCycle=========================================
+    IEnumerator LifeCycle()
+    {
+        while (this.gameObject != null)
         {
-            BoxCollider2D.enabled = false;
-        }
+            if (IsCookReady) yield break;
 
-        if (curTask >= needTask)
-        {
-            SpriteRenderer.sprite = IngredData.trimedImage;
-            BoxCollider2D.enabled = true;
-            IsTrimed = true;
-            curTask = 0;
+            if (IsCliked) { Lifetimer = 0; }
+            else { Lifetimer += Time.deltaTime; }
+
+            if (IngredData != null)
+            {
+                if (Lifetimer > IngredData.lifeTime)
+                {
+                    yield return FadeOut();
+                }
+            }
+
+            yield return null;
         }
     }
-    /// <summary>
-    /// movable collider controll when Cooking
-    /// </summary>
-    void CookCollCtl()
-    {
-        if (IsCooked || RecipeData == null) return;
+    IEnumerator FadeOut()
+    { 
+        float timer = 0f;
+        Collider.enabled = false;
 
-        if (IsCookReady)
+        while (Renderer.color.a != 0)
         {
-            BoxCollider2D.enabled = false;
+            timer += Time.deltaTime;
+            Renderer.color = Color.Lerp(Renderer.color, Color.clear, timer);
+
+            yield return null;
         }
 
-        if (curTask >= needTask)
-        {
-            SpriteRenderer.sprite = RecipeData.cooked;
-            BoxCollider2D.enabled = true;
-            IsCooked = true;
-            curTask = 0;
-        }
+        IsLifeOver = true;
+        PoolCp.Inst.DestoryObjectCp(this.gameObject);
     }
 }

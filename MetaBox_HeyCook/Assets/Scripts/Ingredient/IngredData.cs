@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,10 +8,9 @@ public class IngredData : ScriptableObject
 {
     public string ingredName;
 
-    public Sprite trimedImage;
+    public float lifeTime;
+
     public Sprite ingredientImage;
 
-    public int taskCount;
-
-    public int trimedLevel;
+    public GameObject delVfx;
 }

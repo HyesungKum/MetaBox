@@ -1,54 +1,67 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using Kum;
 
-
-[System.Serializable]
-public struct Dic<Tkey,Tvalue>
+public class SoundManager : MonoSingleTon<SoundManager>
 {
-    [SerializeField] Tkey key;
-    [SerializeField] Tvalue value;
+    //=========================================clip data========================================
+    [Header("Reference Data")]
+    [SerializeField] private SoundData soundData;
+
+    //========================================audio mixer=======================================
+    [Header("Master Mixer")]
+    [SerializeField] private AudioMixer audioMixer;
+
+    //=========================================audio source=====================================
+    [Header("Audio Out")]
+    [SerializeField] private AudioSource BGMAudio;
+    
+    [SerializeField] private AudioSource[] SFXAudio = new AudioSource[3];
+
+    //======================================inner variables=====================================
+    private int audioCursor = 0;
+
+    //========================BGM Controll================================
+    public void SetBGM(string sourceName)
+    {
+        soundData.clips.TryGetValue(sourceName, out AudioClip clip);
+        BGMAudio.clip = clip;
+    }
+    public void SetBGMLoop() => BGMAudio.loop = true;
+    public void SetBGMUnLoop() => BGMAudio.loop = false;
+    public void SetBGMSpeed(float speed) => BGMAudio.pitch = speed;
+    public void PlayBGM() => BGMAudio.Play();
+    public void StopBGM() => BGMAudio.Stop();
+
+    //=======================SFX Controll=================================
+    public void CallSfx(string sourceName)
+    {
+        soundData.clips.TryGetValue(sourceName, out AudioClip clip);
+
+        SFXAudio[audioCursor].clip = clip; 
+        SFXAudio[audioCursor].Play();
+
+        audioCursor = (audioCursor + 1) % SFXAudio.Length;
+    }
+
+    //=======================Volume Controll==============================
+    public void VolumeControll(string target ,float volume)
+    {
+
+        audioMixer.SetFloat(target, volume);
+    }
+
+    /// <summary>
+    /// toggle sound (on - off)
+    /// </summary>
+    /// <param name="target">target audio mixer parameter</param>
+    /// <param name="volume">setting value -40 ~ 0 </param>
+    public void ToggleControll(string target, float value)
+    {
+        audioMixer.GetFloat(target, out float volume);
+
+        volume = volume == -80? value : -80;
+
+        audioMixer.SetFloat(target, volume);   
+    }
 }
-
-public class CD<Tkey,Tvalue>
-{
-    public Dictionary<Tkey, Tvalue> dictionary;
-
-    public Dic<Tkey,Tvalue>[] dic;
-}
-
-
-[CreateAssetMenu(menuName = "ScriptableObj/SoundData", fileName = "SoundData")]
-public class SoundData : ScriptableObject
-{
-    public Dic<string, AudioClip>[] dic;
-}
-
-//[CustomEditor(typeof(SoundData))]
-//public class SoundDataEditor : Editor
-//{
-//    private Dictionary<string, AudioClip> clips;
-
-//    private void OnEnable()
-//    {
-//        dictionary = (CustomDictionary)target;
-//    }
-
-//    public override void OnInspectorGUI()
-//    {
-//        base.OnInspectorGUI();
-
-//        if (dictionary.keys.Count > 0)
-//        {
-//            for (int i = 0; i < dictionary.keys.Count; i++)
-//            {
-//                EditorGUILayout.BeginHorizontal();
-
-//                EditorGUILayout.TextField(dictionary.keys[0]);
-//                EditorGUILayout.IntField(dictionary.values[0]);
-
-//                EditorGUILayout.EndHorizontal();
-//            }
-//        }
-//    }
-//}
