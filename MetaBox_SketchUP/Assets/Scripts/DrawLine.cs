@@ -1,135 +1,362 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DrawLine : MonoBehaviour
 {
+    //===================== referance object ====================
+    [SerializeField] Camera mainCam = null;
     [SerializeField] GameObject linePrefab = null;
-    [SerializeField] GameObject clearImg = null;
+    [SerializeField] RectTransform instLineTransform = null;
+    [SerializeField] Button revertButton = null;
+
+    //===================== referance questions obj =============
+    [SerializeField] GameObject objOne = null;
+    [SerializeField] GameObject objTwo = null;
+    [SerializeField] GameObject objThree = null;
+
+    //==================== inner variables=======================
+    GameObject instLine = null;
+    GameObject parentObj = null;
+
+    // ==== private 변경 꼭 하기 !!!!!
+    private Vertex startVertex = null;
+    private Vertex collisionVertex = null;
+    private Vertex endVertex = null;
+
+    // ==== Stack ====
+    Stack<GameObject> lineBackStack = null;
+    Stack<Vertex> checkVertex = null;
 
     Touch myTouch;
     private Vector3 startPos;
-    private Vector3 firstPos;
-    private Vector3 endPos;
-    private Vertex startVertex = null;
-    private Transform startPosCheck;
-    private Transform endPosCheck;
 
+    private int verticesCount = 0;
+    bool isMoveEnd = false;
+   
+    // ==== private 변경 꼭 하기 !!!!!
+    public int checkClearImgCount = 3;
 
-    GameObject instLine = null;
-    Clear clearImgs = null;
+    private void Awake()
+    {
+        lineBackStack = new Stack<GameObject>();
+        checkVertex = new Stack<Vertex>();
+
+        // Revert Button Event
+        revertButton.onClick.AddListener(() => OnClickRevertButton());
+    }
 
     void Start()
     {
-        clearImgs=  gameObject.GetComponent<Clear>();
+        verticesCount = FindObjectsOfType<Vertex>().Length;
     }
 
     void Update()
     {
-        if (Input.touchCount <= 0) return; // 입력이 없으면 return
-
+        if (Input.touchCount <= 0) return;
         myTouch = Input.GetTouch(0);
-        Vector3 TouchPos = Camera.main.ScreenToWorldPoint(new Vector3(myTouch.position.x, myTouch.position.y, Camera.main.nearClipPlane));
 
-        RaycastHit2D objCheck = RayCheck(TouchPos);
-
-        if (objCheck)
+        switch (myTouch.phase)
         {
-            if (Input.GetTouch(0).phase == TouchPhase.Began)  // Have Touch
-            {
-                //Debug.Log("닿은 이름이 뭐니 ?? :" + objCheck.collider.name);
-                if (objCheck.collider.name.Equals("DrowPoint"))
+            #region Began
+            case TouchPhase.Began:
                 {
-                    startPosCheck = objCheck.collider.transform.GetChild(0);
-                    instLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, startPosCheck);
-                    startPos = Input.GetTouch(0).position;
-                    Debug.Log("startPos : " + startPos);
-                    firstPos = startPos;
-                    Debug.Log("# 1 FirstPos" + firstPos);
+                    isMoveEnd = false;
+                    TouchBeganCheck(out collisionVertex);
+                }
+                break;
+            #endregion
 
-                    instLine.transform.position = startPos;
-                    Vertex collisionVertex = null;
+            #region Move
+            case TouchPhase.Moved:
+                {
+                    isMoveEnd = false;
+                    MoveLineInHit(out collisionVertex);
+                }
+                break;
+            #endregion
 
-                    if(objCheck.transform.TryGetComponent<Vertex>(out collisionVertex) == true)
-                    {
-                        if (startVertex == null)
-                        {
-                            startVertex = collisionVertex;
-                        }
-                    }
+            #region Ended
+            case TouchPhase.Ended:
+                {
+                    LineMoveEnd(out collisionVertex);
+                }
+                break;
+                #endregion
+        }
+    }
+
+    void TouchBeganCheck(out Vertex collisionVertex)
+    {
+        collisionVertex = null;
+        RaycastHit2D hitInfo = RayCheck(myTouch);
+
+        if (hitInfo)
+        {
+            InstLine();
+            LineTransformReset(instLine);
+
+            if (hitInfo.transform.TryGetComponent<Vertex>(out collisionVertex) == true)
+            {
+                if (startVertex == null)
+                {
+                    startVertex = collisionVertex;
+
+                    endVertex = collisionVertex;
+
+                    startVertex.StartPointColor();
+                    checkVertex.Push(startVertex);
+                    //Debug.Log("checkVertex.Count (## (첫 터치 ) Push )) : " + checkVertex.Count);
+
+                    parentObj = startVertex.transform.parent.gameObject;
+                    //Debug.Log("collisionVertex.GetNodeName() :" + collisionVertex.GetNodeName());
+                    //Debug.Log("startVertex.GetNodeName() :" + startVertex.GetNodeName());
+                }
+                else if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNodeName()) != 0)
+                {
+                    DestroyLineObj();
                 }
             }
-            else if (objCheck.collider.name.Equals("DrowPoint"))
+        }
+    }
+
+    void MoveLineInHit(out Vertex collisionVertex)
+    {
+        collisionVertex = null;
+
+        RaycastHit2D hitInfo = RayCheck(myTouch);
+
+        if (hitInfo)
+        {
+            if (hitInfo.transform.gameObject.TryGetComponent<Vertex>(out collisionVertex))
             {
-                if (objCheck && Input.GetTouch(0).phase == TouchPhase.Ended)
+                if (instLine != null)
                 {
-                    startPosCheck = objCheck.transform.GetChild(0);
-                    //Debug.Log("## 터치 땟을 때 : " + testStartPos);
-                    endPos = objCheck.transform.GetChild(0).position;
-                    Debug.Log("endPos :" + endPos);
-                    endPosCheck = objCheck.transform.GetChild(0);
-                    Debug.Log("endPoscheck : " + endPosCheck);
-
-                    if(firstPos == endPos)
+                    for (int i = 0; i < startVertex.GetNodeLength(); i++)
                     {
-                        clearImgs.ClearImgOne();
-                    }
-                }
-                else if (Input.GetTouch(0).phase == TouchPhase.Moved)
-                {
-                    Vertex collisionVertex = null;
-                    if (objCheck.transform.gameObject.TryGetComponent<Vertex>(out collisionVertex))
-                    {
-                        //Debug.Log(startVertex.GetNodeLength());
-
-                        for (int i = 0; i < startVertex.GetNodeLength(); i++)
+                        if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNextNodeName(i)) == 0)
                         {
-                            //Debug.Log("name");
-                            //Debug.Log(startVertex.GetNextNodeName(0));
-                            //Debug.Log(startVertex.GetNextNodeName(1));
+                            collisionVertex.ColorChange(); // Color Changed 
+                            checkVertex.Push(collisionVertex);
+                            //Debug.Log("checkVertex.Cout (Move) :" + checkVertex.Count);
 
-                            if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNextNodeName(i)) == 0)
-                            {
-                                startPosCheck = objCheck.collider.transform.GetChild(0);
-                                instLine = Instantiate(linePrefab, Vector3.zero, Quaternion.identity, startPosCheck);
-                                startPos = Input.GetTouch(0).position;
-                                instLine.transform.position = startPos;
-                                startVertex = collisionVertex;
-                                break;
-                            }
+                            InstLine();
+                            StrethchLine(instLine);
+
+                            startVertex = collisionVertex;
+                            endVertex = collisionVertex;
+                            isMoveEnd = true;
+                            break;
                         }
-                    }
-                    else
-                    {
-                        Destroy(instLine);
                     }
                 }
             }
         }
-
-        else if (Input.GetTouch(0).phase == TouchPhase.Moved)  // Touch Move
+        else
         {
-            Vector3 myPos = Input.GetTouch(0).position;
+            StrethchLine(instLine);
+            isMoveEnd = true;
+        }
+    }
 
+    void LineMoveEnd(out Vertex collisionVertex)
+    {
+        collisionVertex = null;
+        RaycastHit2D hitInfo = RayCheck(myTouch);
+
+        if (hitInfo)
+        {
+            if (startVertex != null)
+            {
+                if (hitInfo.transform.gameObject.TryGetComponent<Vertex>(out collisionVertex))
+                {
+                    for (int i = 0; i < startVertex.GetNodeLength(); i++)
+                    {
+                        if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNextNodeName(i)) == 0)
+                        {
+                            return;
+                        }
+
+                        else if (i == startVertex.GetNodeLength() - 1)
+                        {
+                            DestroyLineObj();
+                        }
+                    }
+                }
+            }
+            ClearImg();
+        }
+        else if (isMoveEnd == true)
+        {
             if (instLine != null)
             {
-                instLine.transform.localScale = new Vector2(Vector3.Distance(myPos, startPos), 1);
-                instLine.transform.localRotation = Quaternion.Euler(0, 0, AngleInDeg(startPos, myPos));
+                DestroyLineObj();
             }
         }
     }
 
-    void CleserOne()
+    void SetPlayAgain(bool clearImgOneSet, bool clearImgTwoSet, bool clearImgThreeSet)
     {
-        clearImgs.ClearImgOne();
+        InGamePanelSet.Inst.ClearPanelSet(true);
+        InGamePanelSet.Inst.ClearImgSet(clearImgOneSet, clearImgTwoSet, clearImgThreeSet);
 
+        int Childcount = instLineTransform.childCount;
+
+        for (int i = 0; i < Childcount; i++)
+        {
+            DestroyLineObj();
+        }
+
+        lineBackStack.Clear();
+        checkVertex.Clear();
+        //Debug.Log("스택 클리어 ??" + lineBackStack.Count);
+
+        startVertex = null;
+        endVertex = null;
+
+        StartCoroutine(delayTime());
     }
 
-    // RaycastHit
-    RaycastHit2D RayCheck(Vector3 touchPos)
+    IEnumerator delayTime()
     {
+        yield return new WaitForSeconds(2f);
+
+        InGamePanelSet.Inst.ClearPanelSet(false);
+        InGamePanelSet.Inst.SelectPanelSetting(true);
+    }
+
+    void ClearImg()
+    {
+        if (instLine != null)
+        {
+            // ==== 좀더 정확한 클리어 판정 ====
+            if (parentObj.name == objOne.name)
+            {
+                if (lineBackStack.Count == 3)
+                {
+                    Debug.Log("## 1 ) 완료");
+                    checkClearImgCount -= 1;
+                    objOne.gameObject.SetActive(false);
+                    SetPlayAgain(true, false, false);
+                    StartCoroutine(delayTime());
+
+                    AllClear();
+                }
+            }
+            if (parentObj.name == objTwo.name)
+            {
+                if (lineBackStack.Count == 10)
+                {
+                    Debug.Log("두번째 완료");
+                    checkClearImgCount -= 1;
+
+                    objTwo.gameObject.SetActive(false);
+                    SetPlayAgain(false, true, false);
+                    StartCoroutine(delayTime());
+
+                    AllClear();
+                }
+            }
+
+            if (lineBackStack.Count == 8)
+            {
+                Debug.Log("세번째 완료");
+                checkClearImgCount -= 1;
+
+                objThree.gameObject.SetActive(false);
+                SetPlayAgain(false, false, true);
+                StartCoroutine(delayTime());
+
+                AllClear();
+            }
+        }
+    }
+
+    void AllClear()
+    {
+        if (checkClearImgCount == 0)
+        {
+            //Debug.Log("## All Clear) lineBackStack.Count :" + checkClearImgCount);
+
+            objOne.gameObject.SetActive(false);
+            objTwo.gameObject.SetActive(false);
+            objThree.gameObject.SetActive(false);
+
+            InGamePanelSet.Inst.ClearPanelSet(true);
+            InGamePanelSet.Inst.ClearImgSet(true, true, true);
+
+            InGamePanelSet.Inst.WinPanelSet(true);
+        }
+    }
+
+    void InstLine()
+    {
+        instLine = ObjectPoolCP.PoolCp.Inst.BringObjectCp(linePrefab);
+        instLine.transform.SetParent(instLineTransform);
+
+        lineBackStack.Push(instLine);
+        //Debug.Log("lineBackStack.Count (## Push )) : " + lineBackStack.Count);
+
+        startPos = myTouch.position;
+        instLine.transform.position = startPos;
+    }
+
+    void DestroyLineObj()
+    {
+        if (lineBackStack.Count == 0) return;
+
+        instLine = lineBackStack.Pop();
+        //Debug.Log("lineBackStack.Count (## Pop )) : " + lineBackStack.Count);
+
+        ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(instLine);
+        collisionVertex = null;
+    }
+
+    public void OnClickRevertButton()
+    {
+        if (lineBackStack.Count == 0 && checkVertex.Count == 0)
+        {
+            startVertex = null;
+            endVertex = null;
+            return;
+        }
+        else
+        {
+            DestroyLineObj();
+
+            startVertex = checkVertex.Pop();
+            startVertex.BackOriginalColor();
+            //Debug.Log(" checkVertex.Pop() : " + checkVertex.Count);
+        }
+    }
+
+    public void LineTransformReset(GameObject line)
+    {
+        if (line != null)
+        {
+            line.transform.localScale = new Vector3(1f, 1f, 0f);
+            line.transform.localRotation = Quaternion.identity;
+        }
+    }
+
+    public void StrethchLine(GameObject line)
+    {
+        if (line != null)
+        {
+            line.transform.localScale = new Vector2(Vector3.Distance(myTouch.position, startPos), 1);
+            line.transform.localRotation = Quaternion.Euler(0, 0, AngleInDeg(startPos, myTouch.position));
+        }
+    }
+
+    RaycastHit2D RayCheck(Touch myTouch)
+    {
+        Vector3 touchPos = mainCam.ScreenToWorldPoint(new Vector3(myTouch.position.x, myTouch.position.y, Camera.main.nearClipPlane));
+
         Ray2D ray = new Ray2D(touchPos, Vector2.zero);
-        RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, 5f);
-        return hit;
+        RaycastHit2D hitInfo = Physics2D.Raycast(ray.origin, ray.direction, 5f);
+
+        return hitInfo;
     }
 
     public static float AngleInRad(Vector3 vec1, Vector3 vec2)
