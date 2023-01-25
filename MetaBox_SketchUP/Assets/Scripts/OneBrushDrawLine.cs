@@ -1,29 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DrawLine : MonoBehaviour
+public class OneBrushDrawLine : MonoBehaviour
 {
     //===================== referance object ====================
     [SerializeField] Camera mainCam = null;
     [SerializeField] GameObject linePrefab = null;
     [SerializeField] RectTransform instLineTransform = null;
-    [SerializeField] Button revertButton = null;
-
-    //===================== referance questions obj =============
-    [SerializeField] GameObject objOne = null;
-    [SerializeField] GameObject objTwo = null;
-    [SerializeField] GameObject objThree = null;
+    [Header("[Button]")]
+    [SerializeField] Button revertBut = null;
 
     //==================== inner variables=======================
     GameObject instLine = null;
-    GameObject parentObj = null;
 
     // ==== private 변경 꼭 하기 !!!!!
-    private Vertex startVertex = null;
-    private Vertex collisionVertex = null;
-    private Vertex endVertex = null;
+    [Header("[Vertex Check]")]
+    public Vertex startVertex = null;
+    public Vertex collisionVertex = null;
 
     // ==== Stack ====
     Stack<GameObject> lineBackStack = null;
@@ -33,23 +29,15 @@ public class DrawLine : MonoBehaviour
     private Vector3 startPos;
 
     private int verticesCount = 0;
-    bool isMoveEnd = false;
-   
-    // ==== private 변경 꼭 하기 !!!!!
-    public int checkClearImgCount = 3;
+    bool isMovedEnd = false;
 
-    private void Awake()
+    void Awake()
     {
         lineBackStack = new Stack<GameObject>();
         checkVertex = new Stack<Vertex>();
 
         // Revert Button Event
-        revertButton.onClick.AddListener(() => OnClickRevertButton());
-    }
-
-    void Start()
-    {
-        verticesCount = FindObjectsOfType<Vertex>().Length;
+        revertBut.onClick.AddListener(() => OnClickRevertButton());
     }
 
     void Update()
@@ -62,7 +50,7 @@ public class DrawLine : MonoBehaviour
             #region Began
             case TouchPhase.Began:
                 {
-                    isMoveEnd = false;
+                    //isMovedEnd = false;
                     TouchBeganCheck(out collisionVertex);
                 }
                 break;
@@ -71,7 +59,7 @@ public class DrawLine : MonoBehaviour
             #region Move
             case TouchPhase.Moved:
                 {
-                    isMoveEnd = false;
+                    //isMovedEnd = false;
                     MoveLineInHit(out collisionVertex);
                 }
                 break;
@@ -102,29 +90,22 @@ public class DrawLine : MonoBehaviour
                 if (startVertex == null)
                 {
                     startVertex = collisionVertex;
-
-                    endVertex = collisionVertex;
-
-                    startVertex.StartPointColor();
-                    checkVertex.Push(startVertex);
-                    //Debug.Log("checkVertex.Count (## (첫 터치 ) Push )) : " + checkVertex.Count);
-
-                    parentObj = startVertex.transform.parent.gameObject;
-                    //Debug.Log("collisionVertex.GetNodeName() :" + collisionVertex.GetNodeName());
-                    //Debug.Log("startVertex.GetNodeName() :" + startVertex.GetNodeName());
                 }
                 else if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNodeName()) != 0)
                 {
                     DestroyLineObj();
                 }
             }
+            isMovedEnd = false;
+            Debug.Log("TouchBegan : (isMovedEnd) " + isMovedEnd);
         }
         else
         {
-            if(startVertex == null)
+            if (instLine == null)
             {
+                isMovedEnd = false;
+                Debug.Log("나 그냥 삭제 됨 ??");
                 return;
-                Debug.Log("startVertex == null");
             }
         }
     }
@@ -145,16 +126,17 @@ public class DrawLine : MonoBehaviour
                     {
                         if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNextNodeName(i)) == 0)
                         {
-                            collisionVertex.ColorChange(); // Color Changed 
-                            checkVertex.Push(collisionVertex);
+                            //collisionVertex.ColorChange(); // Color Changed 
+                            //checkVertex.Push(collisionVertex);
                             //Debug.Log("checkVertex.Cout (Move) :" + checkVertex.Count);
 
                             InstLine();
                             StrethchLine(instLine);
 
+                            isMovedEnd = true;
+                            Debug.Log("Move hit : (isMovedEnd) " + isMovedEnd);
+
                             startVertex = collisionVertex;
-                            endVertex = collisionVertex;
-                            isMoveEnd = true;
                             break;
                         }
                     }
@@ -164,7 +146,8 @@ public class DrawLine : MonoBehaviour
         else
         {
             StrethchLine(instLine);
-            isMoveEnd = true;
+            isMovedEnd = false;
+            Debug.Log("Move [Else] : (isMovedEnd) " + isMovedEnd);
         }
     }
 
@@ -185,7 +168,6 @@ public class DrawLine : MonoBehaviour
                         {
                             return;
                         }
-
                         else if (i == startVertex.GetNodeLength() - 1)
                         {
                             DestroyLineObj();
@@ -193,108 +175,17 @@ public class DrawLine : MonoBehaviour
                     }
                 }
             }
-            ClearImg();
         }
-        else if (isMoveEnd == true)
+        //else if (isMovedEnd == true)
+        else
         {
+            Debug.Log("MoveEnd :  " + isMovedEnd);
+
             if (instLine != null)
             {
                 DestroyLineObj();
+                Debug.Log("나 (true)여서 삭제 됨 ??? ");
             }
-        }
-    }
-
-    void SetPlayAgain(bool clearImgOneSet, bool clearImgTwoSet, bool clearImgThreeSet)
-    {
-        InGamePanelSet.Inst.ClearPanelSet(true);
-        InGamePanelSet.Inst.ClearImgSet(clearImgOneSet, clearImgTwoSet, clearImgThreeSet);
-
-        int Childcount = instLineTransform.childCount;
-
-        for (int i = 0; i < Childcount; i++)
-        {
-            DestroyLineObj();
-        }
-
-        lineBackStack.Clear();
-        checkVertex.Clear();
-        //Debug.Log("스택 클리어 ??" + lineBackStack.Count);
-
-        startVertex = null;
-        endVertex = null;
-
-        StartCoroutine(delayTime());
-    }
-
-    IEnumerator delayTime()
-    {
-        yield return new WaitForSeconds(2f);
-
-        InGamePanelSet.Inst.ClearPanelSet(false);
-        InGamePanelSet.Inst.SelectPanelSetting(true);
-    }
-
-    void ClearImg()
-    {
-        if (instLine != null)
-        {
-            // ==== 좀더 정확한 클리어 판정 ====
-            if (parentObj.name == objOne.name)
-            {
-                if (lineBackStack.Count == 3)
-                {
-                    Debug.Log("## 1 ) 완료");
-                    checkClearImgCount -= 1;
-                    objOne.gameObject.SetActive(false);
-                    SetPlayAgain(true, false, false);
-                    StartCoroutine(delayTime());
-
-                    AllClear();
-                }
-            }
-            if (parentObj.name == objTwo.name)
-            {
-                if (lineBackStack.Count == 10)
-                {
-                    Debug.Log("두번째 완료");
-                    checkClearImgCount -= 1;
-
-                    objTwo.gameObject.SetActive(false);
-                    SetPlayAgain(false, true, false);
-                    StartCoroutine(delayTime());
-
-                    AllClear();
-                }
-            }
-
-            if (lineBackStack.Count == 8)
-            {
-                Debug.Log("세번째 완료");
-                checkClearImgCount -= 1;
-
-                objThree.gameObject.SetActive(false);
-                SetPlayAgain(false, false, true);
-                StartCoroutine(delayTime());
-
-                AllClear();
-            }
-        }
-    }
-
-    void AllClear()
-    {
-        if (checkClearImgCount == 0)
-        {
-            //Debug.Log("## All Clear) lineBackStack.Count :" + checkClearImgCount);
-
-            objOne.gameObject.SetActive(false);
-            objTwo.gameObject.SetActive(false);
-            objThree.gameObject.SetActive(false);
-
-            InGamePanelSet.Inst.ClearPanelSet(true);
-            InGamePanelSet.Inst.ClearImgSet(true, true, true);
-
-            InGamePanelSet.Inst.WinPanelSet(true);
         }
     }
 
@@ -306,16 +197,25 @@ public class DrawLine : MonoBehaviour
         lineBackStack.Push(instLine);
         //Debug.Log("lineBackStack.Count (## Push )) : " + lineBackStack.Count);
 
+        checkVertex.Push(startVertex);
+        //startVertex.ColorChange();
+        //Debug.Log("checkVertex.Count (## Push )) : " + checkVertex.Count);
+
         startPos = myTouch.position;
         instLine.transform.position = startPos;
     }
 
     void DestroyLineObj()
     {
-        if (lineBackStack.Count == 0) return;
-
-        instLine = lineBackStack.Pop();
+        if (lineBackStack.Count == 0 && checkVertex.Count == 0) return;
+        else
+            instLine = lineBackStack.Pop();
         //Debug.Log("lineBackStack.Count (## Pop )) : " + lineBackStack.Count);
+
+        checkVertex.Pop();
+        //startVertex.BackOriginalColor();
+
+        //Debug.Log("checkVertex.Count (## Pop )) : " + checkVertex.Count);
 
         ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(instLine);
         collisionVertex = null;
@@ -325,16 +225,15 @@ public class DrawLine : MonoBehaviour
     {
         if (lineBackStack.Count == 0 && checkVertex.Count == 0)
         {
-            startVertex = null;
-            endVertex = null;
+            //startVertex = null;
             return;
         }
         else
         {
             DestroyLineObj();
 
-            startVertex = checkVertex.Pop();
-            startVertex.BackOriginalColor();
+            ///checkVertex.Pop();
+            ///startVertex.BackOriginalColor();
             //Debug.Log(" checkVertex.Pop() : " + checkVertex.Count);
         }
     }
