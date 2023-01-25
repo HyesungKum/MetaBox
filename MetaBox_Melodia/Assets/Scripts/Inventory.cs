@@ -74,7 +74,7 @@ public class Inventory : MonoBehaviour
 
     void GeneratePlayableNote()
     {
-        float xPos = (-1.5f * PlayableNoteCount) / 2;
+        float xPos = -2f * (PlayableNoteCount / 2);
 
 
         for (int i = 0; i < PlayableNoteCount; ++i)
@@ -89,7 +89,7 @@ public class Inventory : MonoBehaviour
 
             playableNoteList.Add(newNote);
 
-            xPos += 1.5f;
+            xPos += 2f;
         }
     }
 

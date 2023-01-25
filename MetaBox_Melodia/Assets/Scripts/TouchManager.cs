@@ -74,8 +74,10 @@ public class TouchManager : MonoBehaviour
 
     void isMyNote(RaycastHit2D hitPoint)
     {
+        PlayableNote target = null;
+
         // if ray hits playablenote 
-        hitPoint.transform.gameObject.TryGetComponent(out PlayableNote target);
+        hitPoint.transform.gameObject.TryGetComponent(out target);
 
         if (target != null)
         {
