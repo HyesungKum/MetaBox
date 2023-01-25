@@ -134,6 +134,8 @@ public class CookTable : MonoBehaviour
 
         if (cookSlider.value == 1)
         {
+            EventReciver.CallScoreModi(setOrder.Score);
+
             cookSliderObj.SetActive(false);
             nowCooking = false;
 
@@ -317,7 +319,6 @@ public class CookTable : MonoBehaviour
             if (subRoundX == fixedX && subRoundY == fixedY)
             {
                 target.transform.position = submission.transform.position;
-                EventReciver.CallScoreModi(setOrder.Score);
 
                 switch (CurTablePos)
                 {

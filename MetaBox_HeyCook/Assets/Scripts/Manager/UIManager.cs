@@ -19,18 +19,6 @@ public class UIManager : MonoBehaviour
     [Header("[Current Active UI]")]
     [SerializeField] GameObject curUI;
 
-    //================IngameProduction===============================
-    [Header("[Start Production]")]
-    [SerializeField] GameObject CountDownUI;
-    [Space]
-    [SerializeField] GameObject CountThreeImage;
-    [SerializeField] GameObject CountTwoImage;
-    [SerializeField] GameObject CountOneImage;
-    [SerializeField] GameObject CountStartImage;
-    [Space]
-    [SerializeField] GameObject production;
-    [SerializeField] GameObject viewHall;
-
     //================in game ui===================
     [Header("[In Game UI]")]
     [SerializeField] GameObject inGameUI;
@@ -62,8 +50,27 @@ public class UIManager : MonoBehaviour
     [Header("[Game Over UI]")]
     [SerializeField] GameObject gameOverUI;
     [Space]
-    [SerializeField] Button restartButton;
+    [SerializeField] TextMeshProUGUI scoreResultText;
+    [Space]
+    [SerializeField] Button endRestartButton;
     [SerializeField] Button endExitButton;
+
+    //================IngameProduction===============================
+    [Header("[Production]")]
+    [SerializeField] GameObject CountDownUI;
+    [Space]
+    [SerializeField] GameObject CountThreeImage;
+    [SerializeField] GameObject CountTwoImage;
+    [SerializeField] GameObject CountOneImage;
+    [SerializeField] GameObject CountStartImage;
+    [Space]
+    [SerializeField] GameObject production;
+    [SerializeField] GameObject viewHall;
+
+    //=================caching========================================
+    [Header("Score Production Value")]
+    [SerializeField] float ScoreDelay;
+    private WaitForSecondsRealtime waitSec;
 
     private void Awake()
     {
@@ -97,8 +104,11 @@ public class UIManager : MonoBehaviour
         endExitButton.onClick      .AddListener(() => SceneMove(SceneName.Start));
         endExitButton.onClick      .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
-        restartButton.onClick      .AddListener(() => SceneMove(SceneName.Main));
-        restartButton.onClick      .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
+        endRestartButton.onClick      .AddListener(() => SceneMove(SceneName.Main));
+        endRestartButton.onClick      .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
+
+        //========================Caching==============================================
+        waitSec = new WaitForSecondsRealtime(ScoreDelay);
 
         //delegate chain
         EventReciver.ScoreModi     += UIScoreModi;
@@ -180,12 +190,22 @@ public class UIManager : MonoBehaviour
     void UIGameOver()
     {
         ShowUI(gameOverUI);
+        StartCoroutine(nameof(GameOverProd));
     }
-    void ShowUI(GameObject targetUIObj)
+    IEnumerator GameOverProd()
     {
-        curUI.SetActive(false);
-        curUI = targetUIObj;
-        curUI.SetActive(true);
+        int tempScore = 0;
+
+        while (tempScore < GameManager.Inst.Score)
+        {
+            tempScore++;
+            scoreResultText.text = tempScore.ToString();
+
+            yield return waitSec;
+        }
+        
+        endExitButton.gameObject.SetActive(true);
+        endRestartButton.gameObject.SetActive(true);
     }
 
     //=============================================UI Value Controll======================================
@@ -199,14 +219,22 @@ public class UIManager : MonoBehaviour
     /// <param name="value">target time value</param>
     void UIScoreModi(int value)
     {
-        score.text = GameManager.Inst.Score.ToString();
+        score.text = (GameManager.Inst.Score + value).ToString();
     }
     void UITcikCount()
     {
         timer.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.Timer / 60f), (int)(GameManager.Inst.Timer % 60f));
     }
 
-    //================================================SceneMove============================================
+    //===============================================UI Transition========================================
+    void ShowUI(GameObject targetUIObj)
+    {
+        curUI.SetActive(false);
+        curUI = targetUIObj;
+        curUI.SetActive(true);
+    }
+
+    //================================================SceneMove===========================================
     void SceneMove(string sceneName)
     {
         StartCoroutine(nameof(ViewHallShrink), sceneName);
@@ -229,7 +257,7 @@ public class UIManager : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene(sceneName);
     }
-    //======================================SceneProduction====================================
+    //=============================================SceneProduction========================================
     void SceneStartProd()
     {
         StartCoroutine(nameof(CountDown));

@@ -46,6 +46,7 @@ public class GameManager : MonoSingleTon<GameManager>
         IsPause = false;
         IsGameOver = false;
 
+        Score = 0;
         timer = 0f;
 
         StartCoroutine(nameof(BeforeStart));

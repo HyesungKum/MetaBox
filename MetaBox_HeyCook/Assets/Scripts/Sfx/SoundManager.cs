@@ -48,12 +48,14 @@ public class SoundManager : MonoSingleTon<SoundManager>
     //=======================Volume Controll==============================
     public void VolumeControll(string target ,float volume)
     {
-        audioMixer.SetFloat(target, volume);
+        if (volume == -40) audioMixer.SetFloat(target, -80);
+        else audioMixer.SetFloat(target, volume);
     }
     public float GetVolume(string target)
     {
         audioMixer.GetFloat(target, out float value);
-        return value;
+        if (value == -80) return -40;
+        else return value;
     }
 
     /// <summary>

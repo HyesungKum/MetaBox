@@ -82,7 +82,6 @@ public class Ingredient : MonoBehaviour
         //tagging
         if (this.gameObject.tag == "Untagged") this.transform.tag = "Ingredient";
     }
-
     /// <summary>
     /// sprite and collider, tag, flag and value initializing
     /// called when this object enabled
