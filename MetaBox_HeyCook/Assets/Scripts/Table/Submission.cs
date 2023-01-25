@@ -33,8 +33,15 @@ public class Submission : MonoBehaviour
     //====================================inner variables======================================
     [SerializeField] int count;
 
+    //=======================================caching===========================================
+    [SerializeField] float waitCallSec;
+    private WaitForSeconds waitSec;
+
     private void Awake()
     {
+        //caching
+        waitSec = new WaitForSeconds(waitCallSec);
+
         //Table Copy
         TempTable = FoodList.ToArray().ToList();
 
@@ -60,12 +67,18 @@ public class Submission : MonoBehaviour
         if (count == 2)
         {
             count = 0;
-            PoolCp.Inst.DestoryObjectCp(particleR);
-            PoolCp.Inst.DestoryObjectCp(particleL);
-
-            EventReciver.CallScoreModi(requireFood.Score);
-            EventReciver.CallNewComstomer();
+            StartCoroutine(nameof(FoodReset));
         }
+    }
+    IEnumerator FoodReset()
+    {
+        yield return waitSec;
+
+        PoolCp.Inst.DestoryObjectCp(particleR);
+        PoolCp.Inst.DestoryObjectCp(particleL);
+
+        EventReciver.CallScoreModi(requireFood.Score);
+        EventReciver.CallNewComstomer();
     }
 
     //==============================Customer Move Production===================================

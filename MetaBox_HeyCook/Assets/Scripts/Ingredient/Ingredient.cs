@@ -46,7 +46,6 @@ public class Ingredient : MonoBehaviour
     public bool IsCookReady;
 
     [SerializeField] private bool IsSpawned;
-    [SerializeField] private bool IsLifeOver;
 
     //============================trimControll=============================
     [Header("TrimControll")]
@@ -80,8 +79,6 @@ public class Ingredient : MonoBehaviour
     /// </summary>
     public void InitAwake()
     {
-        Renderer.sortingOrder = 4;
-
         //tagging
         if (this.gameObject.tag == "Untagged") this.transform.tag = "Ingredient";
     }
@@ -95,6 +92,7 @@ public class Ingredient : MonoBehaviour
         //sprite and collider
         Renderer.sprite = IngredData.ingredientImage;
         Renderer.color = Color.white;
+        Renderer.sortingOrder = 4;
 
         Collider.size = Renderer.sprite.bounds.size;
         Collider.enabled = true;
@@ -106,8 +104,7 @@ public class Ingredient : MonoBehaviour
 
         IsCookReady = false;
         IsCooked = false;
-
-        IsLifeOver = false;
+        
         Lifetimer = 0;
 
         StartCoroutine(nameof(LifeCycle));
@@ -157,7 +154,6 @@ public class Ingredient : MonoBehaviour
             yield return null;
         }
 
-        IsLifeOver = true;
         PoolCp.Inst.DestoryObjectCp(this.gameObject);
     }
 }

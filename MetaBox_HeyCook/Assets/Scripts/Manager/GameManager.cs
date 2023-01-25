@@ -31,8 +31,6 @@ public class GameManager : MonoSingleTon<GameManager>
 
     private readonly WaitForSeconds wait = new(1f);
 
-    private float SecCount = 0f;
-
     private new void Awake()
     {
         //delegate chain
@@ -94,15 +92,18 @@ public class GameManager : MonoSingleTon<GameManager>
         Time.timeScale = 0f;
     }
 
-    //============================================Timer Controll==========================================
+    //============================================Timer Controll==========================================//씬 시작 연출 수정
+    public int count = 0;
+
     IEnumerator BeforeStart()
     {
         SoundManager.Inst.StopBGM();
+        EventReciver.CallSceneStart();
 
-        while (timer <= 4f)
+        while (timer <= 6f)
         {
-            timer += Time.deltaTime;
-
+            timer += Time.fixedDeltaTime;
+            count = (int)timer;
             yield return null;
         }
 

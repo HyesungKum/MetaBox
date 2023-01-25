@@ -25,6 +25,7 @@ public class SoundManager : MonoSingleTon<SoundManager>
     public void SetBGM(string sourceName)
     {
         soundData.clips.TryGetValue(sourceName, out AudioClip clip);
+        BGMAudio.pitch = 1f;
         BGMAudio.clip = clip;
     }
     public void SetBGMLoop() => BGMAudio.loop = true;
@@ -47,8 +48,12 @@ public class SoundManager : MonoSingleTon<SoundManager>
     //=======================Volume Controll==============================
     public void VolumeControll(string target ,float volume)
     {
-
         audioMixer.SetFloat(target, volume);
+    }
+    public float GetVolume(string target)
+    {
+        audioMixer.GetFloat(target, out float value);
+        return value;
     }
 
     /// <summary>

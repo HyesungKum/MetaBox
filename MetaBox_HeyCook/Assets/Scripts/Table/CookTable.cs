@@ -33,6 +33,7 @@ public class CookTable : MonoBehaviour
 
     //===================================Table Setting=======================================
     [Header("Table Value")]
+    [SerializeField] float servingSpeed;
     [SerializeField] float ingredMoveSpeed;
 
     //=======================================Slider==========================================
@@ -311,7 +312,7 @@ public class CookTable : MonoBehaviour
             float fixedX = Mathf.Round(target.transform.position.x);
             float fixedY = Mathf.Round(target.transform.position.y);
 
-            target.transform.position = Vector3.Lerp(target.transform.position, submission.transform.position, timeCache *2f);
+            target.transform.position = Vector3.Lerp(target.transform.position, submission.transform.position, timeCache * servingSpeed);
 
             if (subRoundX == fixedX && subRoundY == fixedY)
             {
