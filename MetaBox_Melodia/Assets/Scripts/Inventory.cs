@@ -1,109 +1,133 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
+using ObjectPoolCP;
 
 public class Inventory : MonoBehaviour
 {
-
-    bool isGameOver = false;
-
-    bool isMoving = false;
-    bool isInventoryOpened = false;
-
-    [SerializeField] Vector2 openPos = new Vector2(7, 0.5f);
-    [SerializeField] float movingSpeed = 10f;
     [SerializeField] List<GameObject> playableNoteList = new List<GameObject>();
-
-    Vector2 originPos;
-    Vector2 targetPos;
-
+    [SerializeField] List<GameObject> usedNoteList = new List<GameObject>();
+    [SerializeField] GameObject playableNote;
 
 
+    int PlayableNoteCount = 5;
 
-
-    private void Awake()
-    {
-        originPos = transform.position;
-    }
 
     private void Start()
     {
-        checkQNote();
+        // observe game status 
+        GameManager.myDelegateGameStatus += curGameStatus;
+
+    }
+
+
+    void curGameStatus(GameStatus curStatus)
+    {
+        switch (curStatus)
+        {
+            case GameStatus.Idle:
+                {
+                    ReadyGame();
+                }
+                break;
+        }
     }
 
 
 
-    private void Update()
+
+    public void ReadyGame()
     {
 
-        if (isGameOver)
-            return;
+        if (playableNoteList.Count > 0)
+        {
+            for (int i = 0; i < playableNoteList.Count; ++i)
+            {
+                PoolCp.Inst.DestoryObjectCp(playableNoteList[i]);
+            }
+
+            playableNoteList.Clear();
+        }
 
 
+        if (usedNoteList.Count > 0)
+        {
+            for (int i = 0; i < usedNoteList.Count; ++i)
+            {
+                PoolCp.Inst.DestoryObjectCp(usedNoteList[i]);
+            }
+
+            usedNoteList.Clear();
+        }
+
+        GeneratePlayableNote();
+    }
+
+
+    private void OnDisable()
+    {
+        playableNoteList.Clear();
+        usedNoteList.Clear();
+
+    }
+
+
+    void GeneratePlayableNote()
+    {
+        float xPos = (-1.5f * PlayableNoteCount) / 2;
+
+
+        for (int i = 0; i < PlayableNoteCount; ++i)
+        {
+            GameObject newNote = PoolCp.Inst.BringObjectCp(playableNote);
+
+            newNote.transform.position = new Vector2(xPos, this.transform.position.y - 0.2f);
+
+            newNote.transform.SetParent(this.transform);
+
+            newNote.GetComponent<Collider2D>().enabled = true;
+
+            playableNoteList.Add(newNote);
+
+            xPos += 1.5f;
+        }
+    }
+
+
+    public void CheckHowManyNotes()
+    {
         if (playableNoteList.Count <= 0)
         {
-            GameManager.Inst.UpdateGameStatus(GameStatus.NoMorePlayableNote);
-            isGameOver = true;
+            UiManager.myDelegateUiManager("³¡³µ¾î");
+            GameManager.myDelegateGameStatus(GameStatus.NoMorePlayableNote);
         }
-
-
-        if (isMoving)
-        {
-            this.transform.position = Vector2.MoveTowards(this.transform.position, targetPos, Time.deltaTime * movingSpeed);
-
-            if (Vector2.Distance(this.transform.position, targetPos) <= 0)
-            {
-                isMoving = false;
-            }
-        }
-
-
-
     }
 
 
-
-
-    void checkQNote()
+    public void DestoyedPlayableNote(GameObject note)
     {
-        // get all child 
-        foreach (Transform note in this.transform.GetComponentInChildren<Transform>())
-        {
-            if (note.name == "PlayableNote")
-            {
-                playableNoteList.Add(note.gameObject);
-            }
-        }
+        playableNoteList.Remove(note);
+        usedNoteList.Add(note);
+
+        PoolCp.Inst.DestoryObjectCp(note);
+
+
+        CheckHowManyNotes();
+        note.transform.SetParent(null);
     }
 
-
-
-    public void OnClickInventory()
+    public void UseNote(GameObject note)
     {
-        if (isInventoryOpened == false)
-        {
-            targetPos = openPos;
-            isMoving = true;
-            isInventoryOpened = true;
-        }
+        playableNoteList.Remove(note);
+        usedNoteList.Add(note);
 
-        else if (isInventoryOpened == true)
-        {
 
-            targetPos = originPos;
-            isMoving = true;
-            isInventoryOpened = false; ;
-        }
+
+        CheckHowManyNotes();
     }
 
-
-    public void DestoyedPlayableNote(GameObject Note)
-    {
-        playableNoteList.Remove(Note);
-        Note.transform.parent = null;
-        Debug.Log("Good bye!!");
-    }
 
 
 

@@ -1,28 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using Unity.Burst.CompilerServices;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 
 public class PlayableNote : MonoBehaviour
 {
-    [SerializeField] protected PitchName myPitchName;
-    public PitchName MyPitchName { get { return myPitchName; } set { myPitchName = value; } }
+    public delegate void DelegatePlayableNote(GameObject myPos);
+    public static DelegatePlayableNote myDelegatePlayableNote;
+
+
 
     bool isMoving = false;
     float movingSpeed;
 
-    Vector2 originPos;
     Vector2 targetPos;
+    Vector2 originPos;
 
     Inventory myInventory;
 
 
-
-    private void Awake()
+    private void Start()
     {
         myInventory = this.GetComponentInParent<Inventory>();
     }
@@ -34,93 +31,71 @@ public class PlayableNote : MonoBehaviour
         {
             this.transform.position = Vector2.MoveTowards(this.transform.position, targetPos, Time.deltaTime * movingSpeed);
 
-            if (Vector2.Distance(this.transform.position, targetPos) <= 0f)
-            {
-                Debug.Log("µµÂø!");
 
-                this.GetComponent<Collider2D>().enabled = false;
+            if (Vector2.Distance(this.transform.position, targetPos) <= 0.05f)
+            {
 
                 isMoving = false;
             }
         }
+    }
 
 
+    public void StartToMove()
+    {
+        originPos = this.transform.position;
     }
 
 
 
-
-
-    // raycast where touched 
-    Collider2D[] shootCircleRay(Vector3 targetT)
+    public void MoveNote(Vector3 target, float speed)
     {
-        Ray2D ray;
-        ray = new Ray2D(targetT, Vector2.zero);
-
-        Collider2D[] hits = Physics2D.OverlapCircleAll(targetT, 0.5f);
-
-        return hits;
-    }
-
-
-
-    public void Landed()
-    {
-        Collider2D[] hits = shootCircleRay(this.transform.position);
-
-
-        if (hits.Length > 0)
-        {
-            for (int i = 1; i < hits.Length; ++i)
-            {
-                Debug.Log("Touched somthing!!" + hits[i].name);
-
-
-                if (hits[i].name == "QNote")
-                {
-                    movingSpeed = 3f;
-                    targetPos = hits[i].transform.position;
-
-                    hits[i].gameObject.SetActive(false);
-
-                    this.transform.parent = null;
-
-                    isMoving = true;
-
-                    Debug.Log($"Touched QNote!");
-                    return;
-                }
-            }
-
-
-            for (int i = 1; i < hits.Length; ++i)
-            {
-                if (hits[i].name == "SheetMusic")
-                {
-                    Debug.Log("Touched SheetMusic!");
-                    Invoke("goodbye", 0.25f);
-                    return;
-                }
-            }
-        }
-
-        Debug.Log("touched nothing");
-
+        movingSpeed = speed;
         isMoving = true;
-        this.transform.position = originPos;
+        targetPos = target;
     }
 
 
-    void goodbye()
+    // destroy note! 
+    public void DestroyNote()
     {
         myInventory.DestoyedPlayableNote(this.gameObject);
-        ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(this.gameObject);
     }
 
-    public void SetOriginPos()
+    // use note!
+    public void UseNote()
     {
-        originPos = transform.position;
-    
+        myInventory.UseNote(this.gameObject);
+    }
+
+
+    public void Dropped()
+    {
+        RaycastHit2D hit = shootRay(this.transform.position);
+
+        if (!hit)
+        {
+            transform.position = originPos;
+            this.GetComponent<Collider2D>().enabled = true;
+        }
+
+        // layer 7 is MusicSheet
+        else if (hit.transform.gameObject.layer == 7)
+        {
+            hit.transform.GetComponent<MusicSheet>().CheckPlayableNotePos(this.gameObject);
+        }
+    }
+
+
+    RaycastHit2D shootRay(Vector2 targetT)
+    {
+        RaycastHit2D hit;
+        Ray2D ray;
+
+        ray = new Ray2D(targetT, Vector2.zero);
+        hit = Physics2D.Raycast(ray.origin, ray.direction);
+
+        return hit;
     }
 
 }

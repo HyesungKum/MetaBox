@@ -9,19 +9,51 @@ public class PlayTimer : MonoBehaviour
     // subject => timer
     static public Action<float> DelegateTimer;
 
-    ////// subject => time over
-    //public delegate void DelegatePlayerTimer(GameStatus myStatus);
-    //public static DelegatePlayerTimer myDelegatePlayerTimer;
-
-
     bool isStarted = false;
     bool isGameOver = false;
 
-    [SerializeField] float timer = 3f;
-    [SerializeField] float countDown = 60f;
+    [SerializeField] float timer;
+    [SerializeField] float playTime;
+    [SerializeField] float myPlayableTime;
 
-    private void Start()
+    private void Awake()
     {
+        // observe game status 
+        GameManager.myDelegateGameStatus += curGameStatus;
+
+    }
+
+
+    void curGameStatus(GameStatus curStatus)
+    {
+        Debug.Log("타이머!" + curStatus.ToString());
+
+        switch (curStatus)
+        {
+            case GameStatus.Idle:
+                {
+                    Debug.Log("타이머 idle");
+
+                    StartGame();
+                }
+                break;
+        }
+    }
+
+
+
+
+    void StartGame()
+    {
+        isStarted = false;
+        isGameOver = false;
+
+        Time.timeScale = 1;
+
+        timer = 3f;
+        playTime = 0f;
+
+        GameManager.myDelegateIsGameOver = gameIsOver;
         StartCoroutine(startTimer());
     }
 
@@ -31,28 +63,20 @@ public class PlayTimer : MonoBehaviour
         if (isGameOver)
             return;
 
-
         if (!isStarted)
             return;
 
-        
-        timeCountDown();    
+        timeCountDown();
     }
 
 
     void timeCountDown()
     {
+        playTime += Time.deltaTime;
 
-        countDown -= Time.deltaTime;
+        float remainTime = myPlayableTime - playTime;
 
-        if (countDown <= 0)
-        {
-            GameManager.Inst.UpdateGameStatus(GameStatus.TimeOver);
-            isGameOver = true;
-            return;
-        }
-
-        DelegateTimer(countDown);
+        DelegateTimer(remainTime);
     }
 
 
@@ -71,15 +95,16 @@ public class PlayTimer : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        GameManager.Inst.UpdateGameStatus(GameStatus.StartGame);
+        GameManager.myDelegateGameStatus(GameStatus.Ready);
 
+        myPlayableTime = GameManager.Inst.MyPlayableTime;
         isStarted = true;
     }
 
 
-    public void StopTimer()
+    void gameIsOver(bool isOver)
     {
-        isGameOver = true;
+        isGameOver = isOver;
     }
 
 }
