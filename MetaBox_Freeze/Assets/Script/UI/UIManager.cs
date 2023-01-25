@@ -34,7 +34,6 @@ public class UIManager : MonoBehaviour
     Dictionary<int, Wanted> wantedDic = new Dictionary<int, Wanted>();
     [SerializeField] Wanted wantedListImage = null;
     
-    [SerializeField] Button reStart = null;
     [SerializeField] Button option = null;
     [SerializeField] Button exit = null;
     
@@ -49,7 +48,6 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        reStart.onClick.AddListener(() => SceneManager.LoadScene(0));
         option.onClick.AddListener(OnClick_Option);
         exit.onClick.AddListener(delegate { OnClick_Exit(); });
         
@@ -59,7 +57,6 @@ public class UIManager : MonoBehaviour
 
         optionPanel.SetActive(false);
 
-        reStart.gameObject.SetActive(false);
         gameClear.gameObject.SetActive(false);
         countDown.gameObject.SetActive(false);
     }
@@ -109,7 +106,6 @@ public class UIManager : MonoBehaviour
     public void Win()
     {
         gameClear.gameObject.SetActive(true);
-        reStart.gameObject.SetActive(true);
         gameClear.text = "You Win" + Environment.NewLine + $"{PlayTime - GameManager.Instance.PlayTime}";
         //모든 스테이지 클리어하는데 걸린 시간이 짧은 유저가 상위에 랭크
         //플레이어 ID, 게임 분류 아이디(각 게임 테이블의 gameGroup), 게임 난이도(각 게임 테이블의 id), 플레이타임(초로 환산), 랭킹을 달성한 날짜와 시간 을 랭킹 DB에 저장
@@ -120,7 +116,6 @@ public class UIManager : MonoBehaviour
     public void Lose()
     {
         gameClear.gameObject.SetActive(true);
-        reStart.gameObject.SetActive(true);
         gameClear.text = "You Lose";
     }
 

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class OptionPanel : MonoBehaviour
@@ -18,7 +19,7 @@ public class OptionPanel : MonoBehaviour
     void Start()
     {
         backGround.onClick.AddListener(OnClick_ReStart);
-        quit.onClick.AddListener(OnClick_Quit);
+        quit.onClick.AddListener(() => SceneManager.LoadScene(0));
         restart.onClick.AddListener(OnClick_ReStart);
         exitOption.onClick.AddListener(OnClick_ReStart);
         soundSlider.onValueChanged.AddListener(delegate { OnValueChanged_Sound(); });
