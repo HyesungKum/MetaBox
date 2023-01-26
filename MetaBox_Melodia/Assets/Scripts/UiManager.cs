@@ -369,8 +369,6 @@ public class UiManager : MonoBehaviour
     // Restart stage from beginning =================================================
     public void OnClickReStart()
     {
-        Debug.Log("다시 시작");
-
         SoundManager.Inst.StopMusic();
 
         Time.timeScale = 0;

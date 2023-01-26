@@ -296,7 +296,6 @@ public class GameManager : DataLoader
             curStatus = GameStatus.ClearStage;
 
             isStageCleared = true;
-            Debug.Log("스테이지 클리어!");
 
             Time.timeScale = 0;
 
