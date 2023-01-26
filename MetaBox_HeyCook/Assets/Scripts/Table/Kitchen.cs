@@ -1,9 +1,7 @@
 using ObjectPoolCP;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Profiling.Memory.Experimental;
 using UnityEngine.UI;
 
 enum TablePos
@@ -12,7 +10,7 @@ enum TablePos
     Left
 }
 
-public class CookTable : MonoBehaviour
+public class Kitchen : MonoBehaviour
 {
     //================================Reference Customer=====================================
     [Header("Reference Customer")]

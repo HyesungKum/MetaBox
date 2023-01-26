@@ -2,12 +2,14 @@ using ObjectPoolCP;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class Submission : MonoBehaviour
 {
     //=====================================Reference Data======================================
     [Header("Reference Data")]
+    [SerializeField] public GuestGroup guestGroup;
     [SerializeField] List<FoodData> FoodList;
     [SerializeField] private List<FoodData> TempTable;
 
@@ -20,8 +22,12 @@ public class Submission : MonoBehaviour
 
     //=====================================Reference Obj=======================================
     [Header("Customer")]
-    [SerializeField] GameObject customer;
+    [SerializeField] Guest curGuest = null;
+    [SerializeField] GameObject guestObj;
+    [SerializeField] SpriteRenderer guestImage;//++
+    [SerializeField] SpriteRenderer talkBubble;//++
     [SerializeField] AnimationCurve moveCurve;
+    [SerializeField] TextMeshProUGUI guestText;
 
     [Header("SetMenu Particle")]
     [SerializeField] public GameObject particleR;
@@ -44,6 +50,9 @@ public class Submission : MonoBehaviour
 
         //Table Copy
         TempTable = FoodList.ToArray().ToList();
+
+        //cur guest data init
+        curGuest = null;
 
         //delegate chain
         EventReciver.NewCostomer += NewCostomerPord;
@@ -88,16 +97,36 @@ public class Submission : MonoBehaviour
     }
     IEnumerator CustomerMove()
     {
-        Vector3 tempPos = customer.transform.position;
+        Vector3 tempPos = guestObj.transform.position;
         float timer = 0f;
+        bool token = true;
+
+        //talk text out
+        if (curGuest != null)
+        {
+            guestText.gameObject.SetActive(true);
+            guestText.text = curGuest.textGroup.textData.texts[Random.Range(0, curGuest.textGroup.textData.texts.Length-1)];
+        }
+
         while (true)
         {
             Vector3 fixedPos = tempPos + Vector3.left * moveCurve.Evaluate(timer);
-            customer.transform.position = fixedPos;
+            guestObj.transform.position = fixedPos;
 
+            //customer image change
+            if (token && timer >= 0.5)
+            {
+                token = false;
+                curGuest = guestGroup.Guests[Random.Range(0,4)];
+                guestImage.sprite = curGuest.guestImage;
+                talkBubble.sprite = curGuest.talkBubbleImage;
+            }
+
+            //recipe pick
             if (timer > moveCurve.keys[^1].time)
             {
                 PickRecipe();
+                guestText.gameObject.SetActive(false);
                 yield break;
             }
 

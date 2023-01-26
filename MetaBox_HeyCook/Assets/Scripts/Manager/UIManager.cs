@@ -223,7 +223,7 @@ public class UIManager : MonoBehaviour
     }
     void UITcikCount()
     {
-        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.Timer / 60f), (int)(GameManager.Inst.Timer % 60f));
+        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.countDown / 60f), (int)(GameManager.Inst.countDown % 60f));
     }
 
     //===============================================UI Transition========================================

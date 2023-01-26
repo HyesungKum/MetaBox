@@ -5,13 +5,34 @@ using Kum;
 
 public class GameManager : MonoSingleTon<GameManager>
 {
+    //=====================Data Controll=======================
+    [SerializeField] public LevelData levelData;
+    [SerializeField] public LevelTable curLevelData;
+
+    [Header("Aquire Setting")]
+    [SerializeField] IngredientSpawner rightSpawner;
+    [SerializeField] IngredientSpawner leftSpawner;
+    [SerializeField] BeltZone beltZoneR;
+    [SerializeField] BeltZone beltZoneL;
+    [SerializeField] Submission submission;
+    [SerializeField] SpriteRenderer beltR;
+    [SerializeField] SpriteRenderer beltL;
+    [SerializeField] SpriteRenderer kitchenR;
+    [SerializeField] SpriteRenderer kitchenL;
+    [SerializeField] SpriteRenderer orderR;
+    [SerializeField] SpriteRenderer orderL;
+    [SerializeField] SpriteRenderer submissionImage;
+    [SerializeField] SpriteRenderer back;
+    [SerializeField] SpriteRenderer bottom;
+
     //=====================var=======================
     [Header("Currnet Score")]
     public int Score = 0;
     
     [Header("Limit Time")]
-    public int Timer = 180;
-    private float timer = 0f;
+    public int countDown = 180;
+    private float timer = 0f; 
+    [HideInInspector] public int count = 0;
 
     [Header("Imminent Time")]
     public int ImTime = 30;
@@ -41,6 +62,24 @@ public class GameManager : MonoSingleTon<GameManager>
         EventReciver.GameOver += GameOver;
 
         //initializing
+        Level = LevelTransfer.Inst.Level;
+        curLevelData = levelData.levelTables[Level];
+        countDown       = curLevelData.countDown;
+        //rightSpawner.spawnTime = curLevelDtat.spawnTime;
+        //leftSpawner.spawnTime = curLevelDtat.spawnTime;
+        beltZoneL.beltSpeed     = curLevelData.beltSpeed;
+        beltZoneR.beltSpeed     = curLevelData.beltSpeed;
+        submission.guestGroup  = curLevelData.guestGroup;
+        beltR.sprite           = curLevelData.conveyorBeltImage;
+        beltL.sprite           = curLevelData.conveyorBeltImage;
+        kitchenR.sprite        = curLevelData.kitchenImage;
+        kitchenL.sprite        = curLevelData.kitchenImage;
+        orderR.sprite          = curLevelData.orderImage;
+        orderL.sprite          = curLevelData.orderImage;
+        submissionImage.sprite = curLevelData.submissionImage;
+        //back.sprite            = curLevelDtat.backGroundImage1;
+        //bottom.sprite          = curLevelDtat.backGroundImage2;
+
         IsGameIn = true;
         IsStart = false;
         IsPause = false;
@@ -50,6 +89,9 @@ public class GameManager : MonoSingleTon<GameManager>
         timer = 0f;
 
         StartCoroutine(nameof(BeforeStart));
+
+        //Data divide
+
     }
 
     private void OnDisable()
@@ -94,8 +136,6 @@ public class GameManager : MonoSingleTon<GameManager>
     }
 
     //============================================Timer Controll==========================================//씬 시작 연출 수정
-    public int count = 0;
-
     IEnumerator BeforeStart()
     {
         SoundManager.Inst.StopBGM();
@@ -124,14 +164,14 @@ public class GameManager : MonoSingleTon<GameManager>
         {
             yield return wait;
 
-            Timer -= 1;
+            countDown -= 1;
             EventReciver.CallTickCount();
-            if (AudioToken && Timer == ImTime)
+            if (AudioToken && countDown == ImTime)
             {
                 AudioToken = false;
                 SoundManager.Inst.SetBGMSpeed(1.3f);
             }
-            if (Timer == 0) EventReciver.CallGameOver();
+            if (countDown == 0) EventReciver.CallGameOver();
         }
     }
 

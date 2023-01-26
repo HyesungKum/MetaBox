@@ -1,11 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
+using ToolKum.AppTransition;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using ToolKum.AppTransition;
-using System;
-using Unity.VisualScripting;
 
 public class StartManager : MonoBehaviour
 {
@@ -124,7 +121,8 @@ public class StartManager : MonoBehaviour
 
     void SceneMove(int level)
     {
-        StartCoroutine(nameof(ViewHallShrink), level);
+        LevelTransfer.Inst.Level = level;
+        StartCoroutine(nameof(ViewHallShrink));
     }
     void ShowUI(GameObject targetUIObj)
     {
