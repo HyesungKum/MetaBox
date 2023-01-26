@@ -38,10 +38,16 @@ public class MusicSheet : MonoBehaviour
             case GameStatus.Ready:
                 {
                     // ask game manager for current stage number
-                    int curStage = GameManager.Inst.CurState;
+                    int curStage = GameManager.Inst.CurStage;
                     BuildStage(curStage);
 
-                    SoundManager.Inst.FirstPlay(MyStageData[curStage]);
+                }
+                break;
+
+
+            case GameStatus.NoMorePlayableNote:
+                {
+                    // is has fail music, play it 
 
                 }
                 break;
@@ -197,7 +203,7 @@ public class MusicSheet : MonoBehaviour
                     // check how many Qnotes are left
                     if (qNoteList.Count == 0)
                     {
-                        Invoke("gameIsOver", 1f);
+                        Invoke("getAllQNotes", 1f);
                         return;
                     }
 
@@ -250,9 +256,10 @@ public class MusicSheet : MonoBehaviour
 
 
 
-    void gameIsOver()
+    void getAllQNotes()
     {
-        GameManager.Inst.CheckStage();
+
+        GameManager.Inst.UpdateCurProcess(GameStatus.GetAllQNotes);
     }
 
 }

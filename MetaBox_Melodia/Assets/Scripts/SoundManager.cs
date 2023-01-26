@@ -3,24 +3,6 @@ using UnityEngine.Audio;
 using System.Collections;
 using System.Collections.Generic;
 
-public enum PitchName
-{
-    LoDo,
-    LoRe,
-    LoMi,
-    LoFa,
-    LoSol,
-    LoRa,
-    LoSi,
-
-    HiDo,
-    HiRe,
-    HiMi,
-    HiFa,
-    HiSol,
-    HiRa,
-}
-
 
 public delegate void DelegateAudioControl(string target, float volume);
 
@@ -51,9 +33,10 @@ public class SoundManager : MonoBehaviour
 
     [Header("Note Sound ScriptableObject")]
     [SerializeField]
-    private NoteSoundIndex myNoteSound;
-    public NoteSoundIndex MyNoteSound { set { myNoteSound = value; } }
+    private MySoundIndex myNoteSound;
 
+    [SerializeField]
+    private MySoundIndex myMusicSound;
 
 
 
@@ -71,11 +54,11 @@ public class SoundManager : MonoBehaviour
     public AudioMixer MyAudioMixer { get { return myAudioMixer; } }
 
 
-    [SerializeField] bool isStopped;
-    public bool IsStopped { get { return isStopped; } set { isStopped = value; } }
+    bool isStopped = false;
+    bool isGameStart = false;
+    bool isCoroutineRunning = false;
 
-    Coroutine curCoroutine;
-    public Coroutine CurCoroutine { get { return curCoroutine; } set { curCoroutine = value; } }
+    IEnumerator curCoroutine = null;
 
     List<int> clipList = new();
 
@@ -100,7 +83,6 @@ public class SoundManager : MonoBehaviour
 
 
 
-
     void AudioVolumeControl(string target, float volume)
     {
         if (volume == -40f)
@@ -111,12 +93,14 @@ public class SoundManager : MonoBehaviour
     }
 
 
+    // play note sound 
     public void PlayNote(int targetPitch, float pitch)
     {
+
         AudioClip changeClip;
 
         // change audio clip as targeted pitch note 
-        changeClip = myNoteSound.MyPitchClips.myDictionary[targetPitch];
+        changeClip = myNoteSound.MyClipList.myDictionary[targetPitch];
 
         myNoteAudioSource.pitch = pitch;
 
@@ -126,73 +110,58 @@ public class SoundManager : MonoBehaviour
     }
 
 
-    public void PlayBGM(string target)
+    // play music 
+    public void SetStageMusic(int targetMusic, float pitch)
     {
-        //AudioClip changeClip;
+        AudioClip changeClip;
 
-        // change audio clip as targeted pitch note 
+        // change audio clip 
+        changeClip = myMusicSound.MyClipList.myDictionary[targetMusic];
 
-        //myBGMAudioSource.clip = changeClip;
+        myBGMAudioSource.pitch = pitch;
 
-        myBGMAudioSource.Play();
+        myBGMAudioSource.clip = changeClip;
+
     }
 
-
-    // play music before start game 
-    public void FirstPlay(List<int> TargetNotes)
-    {
-        isStopped = false;
-        clipList = TargetNotes;
-
-        PlayStageMusic();
-    }
 
 
     public void PlayStageMusic()
     {
-        CurCoroutine = StartCoroutine("playMusic");
+        GameManager.Inst.UpdateCurProcess(GameStatus.MusicPlaying);
 
+        curCoroutine = playMyMusic();
+
+        StartCoroutine(curCoroutine);
     }
 
 
-    IEnumerator playMusic()
+    IEnumerator playMyMusic()
     {
-        foreach (int targetNote in clipList)
-        {
-            if (isStopped)
-                break;
+        isCoroutineRunning = true;
 
-
-            PlayNote(targetNote, 1);
-
-            yield return new WaitUntil(() => myNoteAudioSource.isPlaying == false);
-        }
+        myBGMAudioSource.Play();
+        
+        
+        yield return new WaitUntil(() => myBGMAudioSource.isPlaying == false);
 
 
 
-        // for test =============================================================
-
-        //PlayNote(clipList[0], 1);
-
-        //yield return new WaitUntil(() => myNoteAudioSource.isPlaying == false);
-
-
-        // for test =============================================================
-
-        if (!IsStopped)
-        {
-            GameManager.myDelegateGameStatus(GameStatus.StartGame);
-        }
-
+        isCoroutineRunning = false;
+        GameManager.Inst.UpdateCurProcess(GameStatus.MusicStop);
     }
 
 
 
     public void StopMusic()
     {
-        if (CurCoroutine != null)
-            StopCoroutine(CurCoroutine);
+        if (isCoroutineRunning)
+        {
 
+            myBGMAudioSource.Stop();
+            StopCoroutine(curCoroutine);
+        }
+            myNoteAudioSource.Stop();
     }
 
 }

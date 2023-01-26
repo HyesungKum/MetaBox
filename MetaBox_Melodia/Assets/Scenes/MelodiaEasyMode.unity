@@ -464,7 +464,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uB2E4\uC2DC \uD560\uB798\uC694"
+  m_text: "\uB2E4\uB978\uAC70 \uD560\uB798\uC694"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 6a78406843da61e408cf8d738b5f3626, type: 2}
   m_sharedMaterial: {fileID: 5307519556564907042, guid: 6a78406843da61e408cf8d738b5f3626, type: 2}
@@ -1397,7 +1397,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &637382130
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2222,7 +2222,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1002292008
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2240,7 +2240,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 267}
+  m_AnchoredPosition: {x: 0, y: 322}
   m_SizeDelta: {x: 1000, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1002292009
@@ -3758,7 +3758,7 @@ GameObject:
   - component: {fileID: 1613005394}
   - component: {fileID: 1613005393}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Clock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4856,6 +4856,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcd17595e4b72a643b0566c0852b5c00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  curStage: 1
+  curStatus: 0
   myPlayableTime: 0
   myCoolTime: 0
   countDown: 0
@@ -6915,7 +6917,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.022748947, y: -0.025301695}
+  m_Offset: {x: -0.022748947, y: -0.055112362}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -6926,7 +6928,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 40.265324, y: 12.401436}
+  m_Size: {x: 40.265324, y: 10.672433}
   m_EdgeRadius: 0
 --- !u!1 &7722934036183613604
 GameObject:

@@ -99,7 +99,7 @@ public class Inventory : MonoBehaviour
         if (playableNoteList.Count <= 0)
         {
             UiManager.myDelegateUiManager("³¡³µ¾î");
-            GameManager.myDelegateGameStatus(GameStatus.NoMorePlayableNote);
+            GameManager.Inst.UpdateCurProcess(GameStatus.NoMorePlayableNote);
         }
     }
 

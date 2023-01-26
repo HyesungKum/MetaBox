@@ -73,17 +73,17 @@ public class PlayableNote : MonoBehaviour
     {
         RaycastHit2D hit = shootRay(this.transform.position);
 
-        if (!hit)
-        {
-            transform.position = originPos;
-            this.GetComponent<Collider2D>().enabled = true;
-        }
-
         // layer 7 is MusicSheet
-        else if (hit.transform.gameObject.layer == 7)
+       if (hit && hit.transform.gameObject.layer == 7)
         {
             hit.transform.GetComponent<MusicSheet>().CheckPlayableNotePos(this.gameObject);
+            return;
         }
+
+
+        transform.position = originPos;
+        this.GetComponent<Collider2D>().enabled = true;
+
     }
 
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using static GameManager;
 
 
 public class PlayTimer : MonoBehaviour
@@ -19,7 +20,9 @@ public class PlayTimer : MonoBehaviour
     {
         // observe game status 
         GameManager.myDelegateGameStatus += curGameStatus;
+        myDelegateIsGameOver += isGameCleared;
 
+        playTime = 0f;
     }
 
 
@@ -30,6 +33,13 @@ public class PlayTimer : MonoBehaviour
             case GameStatus.Idle:
                 {
                     StartGame();
+                }
+                break;
+
+
+            case GameStatus.GameOver:
+                {
+                    isGameOver = true;
                 }
                 break;
         }
@@ -46,9 +56,7 @@ public class PlayTimer : MonoBehaviour
         Time.timeScale = 1;
 
         timer = 3f;
-        playTime = 0f;
 
-        GameManager.myDelegateIsGameOver = gameIsOver;
         StartCoroutine(startTimer());
     }
 
@@ -67,11 +75,9 @@ public class PlayTimer : MonoBehaviour
 
     void timeCountDown()
     {
-        playTime += Time.deltaTime;
+        playTime -= Time.deltaTime;
 
-        float remainTime = myPlayableTime - playTime;
-
-        DelegateTimer(remainTime);
+        DelegateTimer(playTime);
     }
 
 
@@ -90,16 +96,22 @@ public class PlayTimer : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        GameManager.myDelegateGameStatus(GameStatus.Ready);
-
-        myPlayableTime = GameManager.Inst.MyPlayableTime;
         isStarted = true;
+
+
+        if (playTime == 0)
+        {
+            playTime = GameManager.Inst.MyPlayableTime;
+        }
+
+        GameManager.Inst.UpdateCurProcess(GameStatus.Ready);
     }
 
 
-    void gameIsOver(bool isOver)
+
+    void isGameCleared()
     {
-        isGameOver = isOver;
+        isGameOver = true;
     }
 
 }

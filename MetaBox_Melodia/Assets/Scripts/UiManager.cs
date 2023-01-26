@@ -54,14 +54,13 @@ public class UiManager : MonoBehaviour
     {
         // observe game status 
         GameManager.myDelegateGameStatus += curGameStatus;
+
+        // delegate chain
+        myDelegateUiManager = correctedNote;
     }
 
     public void StartGame()
     {
-
-        // delegate chain
-        myDelegateUiManager = correctedNote;
-
         PlayTimer.DelegateTimer = playTimer;
 
         // text whether get correct answer or not
@@ -113,6 +112,9 @@ public class UiManager : MonoBehaviour
     // time count down for play time 
     public void playCountDown(float t)
     {
+        curTime = t;
+
+
         if (myTextTimer.isActiveAndEnabled == true)
         {
             myTextTimer.enabled = false;
@@ -135,8 +137,11 @@ public class UiManager : MonoBehaviour
     // text whether get correct answer or not
     void correctedNote(string text)
     {
+        Debug.Log("¸ÂÃè³ª?");
+
         // show text 
-        myTextCorrectedNote.enabled = true;
+        correctedNote(true);
+
         myTextCorrectedNote.text = text;
 
         // change color
@@ -144,6 +149,8 @@ public class UiManager : MonoBehaviour
         {
             case "ÀßÇß¾î¿ä!":
                 {
+                    Debug.Log("¸ÂÃã");
+
                     myTextCorrectedNote.color = new Color(0, 1, 0.3f);
                 }
                 break;
@@ -151,15 +158,18 @@ public class UiManager : MonoBehaviour
 
             case "´Ù½Ã »ý°¢ÇØºÁ¿ä":
                 {
+                    Debug.Log("¸ø¸ÂÃã");
+
                     myTextCorrectedNote.color = new Color(1, 0, 0.8f);
                 }
                 break;
 
-            default:
-                {
-                    myTextCorrectedNote.enabled = false;
-                }
-                return;
+            //default:
+            //    {
+            //        myTextCorrectedNote.enabled = false;
+            //    }
+            //    break;
+                
         }
 
         calledTime = curTime;
@@ -169,19 +179,20 @@ public class UiManager : MonoBehaviour
 
     void correctedNote(bool onOff)
     {
+        Debug.Log("ÅØ½ºÆ® º¸¿©Áà");
         myTextCorrectedNote.enabled = onOff;
     }
 
     float calledTime;
     void hideText()
     {
-        if (calledTime - curTime <= 0.5f)
+        if (calledTime - curTime <= 0.4f)
         {
-            Invoke("hideText", 0.5f);
+            Invoke("hideText", 0.4f);
             return;
         }
 
-        myTextCorrectedNote.enabled = false;
+        correctedNote(false);
     }
 
 
@@ -259,6 +270,7 @@ public class UiManager : MonoBehaviour
 
 
 
+    // Replay Music ==========================================================
     public void OnClickReplay()
     {
         SoundManager.Inst.PlayStageMusic();
@@ -272,6 +284,7 @@ public class UiManager : MonoBehaviour
     {
         myButtonReplay.interactable = true;
     }
+    // Replay Music ==========================================================
 
 
 
@@ -285,17 +298,17 @@ public class UiManager : MonoBehaviour
 
         if (isPaused == false)
         {
-            Time.timeScale = 0f;
+            GameManager.Inst.UpdateCurProcess(GameStatus.Pause);
             myPanelPause.SetActive(true);
             isPaused = true;
 
             return;
         }
 
-        Time.timeScale = 1;
         myPanelPause.SetActive(false);
 
         isPaused = false;
+        GameManager.Inst.UpdateCurProcess(GameStatus.Pause);
     }
 
 
@@ -360,7 +373,7 @@ public class UiManager : MonoBehaviour
         SceneManager.LoadScene("MelodiaLobby");
 
         // re-select mode 
-        SceneModeController.MySceneMode = SceneModeController.SceneMode.LobbyScene;      // turn start panel on, turn lobby panel off
+        SceneModeController.MySceneMode = SceneModeController.SceneMode.LobbyScene;      // turn start panel off, turn lobby panel on
 
     }
 
@@ -370,13 +383,15 @@ public class UiManager : MonoBehaviour
     // GameOver panel ==========================================================
     public void OnClickRestart()
     {
+        SoundManager.Inst.StopMusic();
+
         Time.timeScale = 0;
 
         PlayTimer.DelegateTimer -= playCountDown;
 
         readyReplay();
 
-        GameManager.myDelegateGameStatus(GameStatus.Idle);
+        GameManager.Inst.UpdateCurProcess(GameStatus.Idle);
     }
     // GameOver panel ==========================================================
 
