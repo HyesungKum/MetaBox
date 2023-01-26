@@ -26,8 +26,10 @@ public class UIManager : MonoBehaviour
     }
 
     [SerializeField] GameObject optionPanel = null;
+    [SerializeField] GameObject clearPanel = null;
 
     [SerializeField] TextMeshProUGUI gameClear = null;
+    [SerializeField] TextMeshProUGUI clearPlayTime = null; 
     [SerializeField] CountDown countDown = null;
 
     [SerializeField] ScrollRect wantedList = null;
@@ -36,28 +38,37 @@ public class UIManager : MonoBehaviour
     
     [SerializeField] Button option = null;
     
-
     WaitForSeconds waitHalf = null;
     WaitForSeconds wait1 = null;
     public int PlayTime { get; set; }
     int wantedCount;
     int countdown;
-    
 
+    private void Awake()
+    {
+        GameManager.Instance.FreezeDataSetting += () => PlayTime = GameManager.Instance.FreezeData.playTime;
+    }
     // Start is called before the first frame update
     void Start()
     {
         option.onClick.AddListener(OnClick_Option);
-        
+        option.interactable = false;
         waitHalf = new WaitForSeconds(0.5f);
         wait1 = new WaitForSeconds(1f);
 
         optionPanel.SetActive(false);
-
+        clearPanel.SetActive(false);
         gameClear.gameObject.SetActive(false);
         countDown.gameObject.SetActive(false);
+        StartCoroutine(nameof(GameStart));
     }
 
+    IEnumerator GameStart()
+    {
+        yield return wait1;
+        GameManager.Instance.PlayTimerEvent();
+        WaveStart();
+    }
     public void DataSetting(int wantedCount, int startCountdown)
     {
         this.wantedCount = wantedCount;
@@ -89,6 +100,9 @@ public class UIManager : MonoBehaviour
 
     public void WaveStart()
     {
+        option.interactable = false;
+        this.countdown = 3;
+        GameManager.Instance.reStart = false;
         StartCoroutine(nameof(RunCountdown));
     }
 
@@ -102,12 +116,8 @@ public class UIManager : MonoBehaviour
 
     public void Win()
     {
-        gameClear.gameObject.SetActive(true);
-        gameClear.text = "You Win" + Environment.NewLine + $"{PlayTime - GameManager.Instance.PlayTime}";
-        //모든 스테이지 클리어하는데 걸린 시간이 짧은 유저가 상위에 랭크
-        //플레이어 ID, 게임 분류 아이디(각 게임 테이블의 gameGroup), 게임 난이도(각 게임 테이블의 id), 플레이타임(초로 환산), 랭킹을 달성한 날짜와 시간 을 랭킹 DB에 저장
-        //만약 랭킹 DB에 플레이어 id가 있을 경우 현재 결과와 이전 결과를 비교해서 현재 결과가 더 짧을 경우 현재 결과로 변경
-
+        clearPanel.SetActive(true);
+        clearPlayTime.text = (PlayTime - GameManager.Instance.PlayTime).ToString();
     }
 
     public void Lose()
@@ -122,16 +132,21 @@ public class UIManager : MonoBehaviour
 
         for(int i = countdown; i > 0; i--)
         {
+            if (GameManager.Instance.reStart) yield break;
             countDown.Show(countdown);
             countdown--;
             yield return wait1;
+            if(countDown.nomal == false) yield break;
         }
 
+        if (GameManager.Instance.reStart) yield break;
         countDown.gameObject.SetActive(false);
         gameClear.gameObject.SetActive(true);
         gameClear.text = "Game Start";
         yield return waitHalf;
+        if (GameManager.Instance.reStart) yield break;
         gameClear.gameObject.SetActive(false);
+        option.interactable = true;
         GameManager.Instance.WaveStart();
     }
 

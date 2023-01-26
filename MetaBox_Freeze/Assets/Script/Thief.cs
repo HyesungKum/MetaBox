@@ -132,20 +132,18 @@ public class Thief : MonoBehaviour
     {
         if (collision.tag == "Prison")
         {
-            Debug.Log("나는 함정에 빠졌다");
             if (runningAway)
             {
-                Debug.Log("나는 결국...");
                 arrest = true;
+                StopCoroutine(nameof(RunAwayMode));
                 dir = (collision.transform.position - this.transform.position).normalized;
                 if (dir.x > 0) transform.localScale = new Vector3(-1, 1);
-                speed *= 0.7f;
+                speed *= 0.8f;
                 GameManager.Instance.ShowImg();
                 StartCoroutine(nameof(Destroy));
             }
             else
             {
-                Debug.Log("나는 잘 튀었다");
                 dir.y = 1f;
                 dir.Normalize();
             }
@@ -161,7 +159,21 @@ public class Thief : MonoBehaviour
     {
         if(collision.tag == "Prison")
         {
-            if(arrest == false) dir.y = 1f;
+            if (arrest == false && runningAway)
+            {
+                arrest = true;
+                StopCoroutine(nameof(RunAwayMode));
+                dir = (collision.transform.position - this.transform.position).normalized;
+                if (dir.x > 0) transform.localScale = new Vector3(-1, 1);
+                speed *= 0.8f;
+                GameManager.Instance.ShowImg();
+                StartCoroutine(nameof(Destroy));
+            }
+            else if(arrest == false && runningAway == false)
+            {
+                dir.y = 1f;
+                dir.Normalize();
+            }
         }
         else
         {

@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,28 +6,31 @@ public class Loading : MonoBehaviour
 {
     AsyncOperation asyncLoad = null;
 
-    [SerializeField] SpriteRenderer fade = null;
+    [SerializeField] SpriteRenderer focus = null;
     [SerializeField] GameObject policeCar = null;
     [SerializeField] GameObject thief = null;
-    [SerializeField] AnimationCurve FadeCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(1.8f, 1f) });
+    
     [SerializeField] AnimationCurve PoliceCarCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(1.8f, 20f) });
+    [SerializeField] AnimationCurve FocusCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(1.8f, 1f) });
     [SerializeField] AnimationCurve ThiefCurve;
 
+    WaitForSeconds fadeShow = new WaitForSeconds(1f);
     WaitForSeconds wait = new WaitForSeconds(2f);
 
-    Color fadeColor = Color.black;
-    Vector3 policeCarOriPos;
+    Vector3 policeCarOriPos = new Vector3(-10f, -3.62f, 0f);
     Vector3 policeCarCurPos;
+    Color focusColor = new Color(0, 0, 0, 0);
 
-    // Start is called before the first frame update
     void Start()
     {
+        focus.color = focusColor;
+        policeCar.transform.position = policeCarOriPos;
         StartCoroutine(nameof(Loop));
     }
-    
+
     IEnumerator Loop()
     {
-        policeCarOriPos = policeCar.transform.position;
+        yield return fadeShow;
         policeCarCurPos = policeCar.transform.position;
         asyncLoad = SceneManager.LoadSceneAsync("Freeze");
         asyncLoad.allowSceneActivation = false;
@@ -36,7 +38,6 @@ public class Loading : MonoBehaviour
         {
             StartCoroutine(nameof(LoadingShow));
             yield return wait;
-            asyncLoad.allowSceneActivation = true;
         }
     }
     IEnumerator LoadingShow()
@@ -47,12 +48,13 @@ public class Loading : MonoBehaviour
             policeCarCurPos.x = policeCarOriPos.x + PoliceCarCurve.Evaluate(startTime);
             policeCar.transform.position = policeCarCurPos;
 
-            fadeColor.a = FadeCurve.Evaluate(startTime);
-            fade.color = fadeColor;
+            focusColor.a = FocusCurve.Evaluate(startTime);
+            focus.color = focusColor;
 
             startTime += Time.deltaTime;
             yield return null;
         }
+        asyncLoad.allowSceneActivation = true;
     }
 
 }

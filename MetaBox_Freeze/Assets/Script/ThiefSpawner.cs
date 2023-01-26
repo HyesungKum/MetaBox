@@ -34,7 +34,6 @@ public class ThiefSpawner : ObjectPool<Thief>
         RemoveThief = null;
 
         int wantedCount = stage.wantedCount;
-        Debug.Log($"{stage.wantedCount} // {stage.thiefCount}");
         bool wanted = true;
 
         for (int i = 0; i < stage.thiefCount; i++)

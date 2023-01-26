@@ -9,8 +9,10 @@ public class CountDown : MonoBehaviour
     [SerializeField] Image countDownImg = null;
     [SerializeField] AnimationCurve ScaleCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0.5f), new Keyframe(1f, 1.5f) });
 
+    public bool nomal { get; private set; } = true;
     public void Show(int number)
     {
+        nomal = true;
         countDownImg.sprite = countDownObj.CountDown[number-1];
         StartCoroutine(nameof(ShowCountDown));
     }
@@ -24,6 +26,11 @@ public class CountDown : MonoBehaviour
             transform.localScale = curScale;
 
             startTime += Time.deltaTime;
+            if (GameManager.Instance.reStart)
+            {
+                nomal = false;
+                yield break;
+            }
             yield return null;
         }
     }
