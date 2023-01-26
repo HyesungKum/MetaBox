@@ -115,8 +115,6 @@ public class LevelManager : MonoBehaviour
     void OnClickImageThree()
     {
         PanelSetting(false, false, false, true, true);
-        //SelectPanelSetting(true, true, false);
-        // Obj setting
         StartCoroutine(TimeDelayImgOne(ImgThreeObj, true));
     }
 

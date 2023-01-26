@@ -231,7 +231,7 @@ public class DrawLine : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         InGamePanelSet.Inst.ClearPanelSet(false);
-        InGamePanelSet.Inst.SelectPanelSetting(true);
+        InGamePanelSet.Inst.SelectPanelSet(true);
     }
 
     void ClearImg()

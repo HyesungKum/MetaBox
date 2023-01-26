@@ -42,6 +42,14 @@ public class OneBrushDrawLine : MonoBehaviour
         revertBut.onClick.AddListener(() => OnClickRevertButton());
     }
 
+    void OnDisable()
+    {
+        if (instLine == null)
+        {
+            LineTransformReset(instLine);
+        }
+    }
+
     void Update()
     {
         if (Input.touchCount <= 0) return;
@@ -88,33 +96,31 @@ public class OneBrushDrawLine : MonoBehaviour
 
                 if (startVertex == null)
                 {
+                    //Debug.Log("## 1)");
                     startVertex = collisionVertex;
                     tempVertex = startVertex;
-
                     //tempVertex.ColorChange();
 
                     checkVertex.Push(collisionVertex);
                     tempVertex.ColorChange();
                     collisionVertex.ColorChange();
-                    Debug.Log("checkVertex.Count (## Push )) : " + checkVertex.Count);
+                    //Debug.Log("checkVertex.Count (## Push )) : " + checkVertex.Count);
 
                 }
                 else if (collisionVertex.GetNodeName().CompareTo(startVertex.GetNodeName()) != 0)
                 {
-                    Debug.Log("startVertex.GetNodeName() : " + startVertex.GetNodeName());
-                    Debug.Log("collisionVertex.GetNodeName() : " + collisionVertex.GetNodeName());
+                    //Debug.Log("startVertex.GetNodeName() : " + startVertex.GetNodeName());
+                    //Debug.Log("collisionVertex.GetNodeName() : " + collisionVertex.GetNodeName());
+                    //Debug.Log("## 2)");
                     DestroyLineObj();
                 }
-                //else if()
-                //{
-
-                //}
             }
             isMovedEnd = false;
         }
         else
         {
             isMovedEnd = false;
+            //Debug.Log("## 3)");
             return;
         }
     }
@@ -140,8 +146,6 @@ public class OneBrushDrawLine : MonoBehaviour
 
                             checkVertex.Push(collisionVertex);
                             collisionVertex.ColorChange();
-                            Debug.Log("checkVertex.Count (## Push )) : " + checkVertex.Count);
-
                             break;
                         }
                     }
@@ -152,6 +156,7 @@ public class OneBrushDrawLine : MonoBehaviour
         else
         {
             StrethchLine(instLine);
+            //Debug.Log("## 5)");
         }
     }
 
@@ -176,6 +181,7 @@ public class OneBrushDrawLine : MonoBehaviour
                             DestroyLineObj();
                         }
                     }
+                    //Debug.Log("## 6)");
                 }
             }
         }
@@ -210,7 +216,9 @@ public class OneBrushDrawLine : MonoBehaviour
             instLine = lineBackStack.Pop();
         //Debug.Log("lineBackStack.Count (## Pop )) : " + lineBackStack.Count);
 
+        LineTransformReset(instLine);
         ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(instLine);
+
         collisionVertex = null;
     }
 
@@ -225,13 +233,13 @@ public class OneBrushDrawLine : MonoBehaviour
             DestroyLineObj();
 
             Vertex check = checkVertex.Pop();
-            Debug.Log("## 1) check.Count (## Pop )) : " + checkVertex.Count);
+            //Debug.Log("## 1) check.Count (## Pop )) : " + checkVertex.Count);
             check.BackOriginalColor();
 
             if (checkVertex.Count == 1)
             {
                 check = checkVertex.Pop();
-                Debug.Log("## 2) check.Count (## Pop )) : " + checkVertex.Count);
+                //Debug.Log("## 2) check.Count (## Pop )) : " + checkVertex.Count);
                 tempVertex.BackOriginalColor();
 
                 if (checkVertex.Count == 0)

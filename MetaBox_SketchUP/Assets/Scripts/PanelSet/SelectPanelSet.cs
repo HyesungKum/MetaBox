@@ -8,10 +8,9 @@ public class SelectPanelSet : MonoBehaviour
     [SerializeField] Button oneBrush = null;
     [SerializeField] Button twoBrush = null;
     [SerializeField] Button threeBrush = null;
-    [SerializeField] Button inGameGoSelectPanel = null;
+    [SerializeField] Button CloseSelectPanelBut = null;
 
     [Header("[InGame obj Set]")]
-    [SerializeField] GameObject oneBrushObj = null;
     [SerializeField] GameObject objOne = null;
     [SerializeField] GameObject objTwo = null;
     [SerializeField] GameObject objThree = null;
@@ -20,12 +19,11 @@ public class SelectPanelSet : MonoBehaviour
 
     void Awake()
     {
-        oneBrush.onClick.AddListener(() => OnClickOneBrush());
-        twoBrush.onClick.AddListener(() => OnClickTwoBrush());
-        threeBrush.onClick.AddListener(() => OnClickThreeBrush());
+        oneBrush.onClick.AddListener(delegate { OnClickOneBrush(); SoundManager.Inst.ButtonSFXPlay(); });
+        twoBrush.onClick.AddListener(delegate { OnClickTwoBrush(); SoundManager.Inst.ButtonSFXPlay(); });
+        threeBrush.onClick.AddListener(delegate { OnClickThreeBrush(); SoundManager.Inst.ButtonSFXPlay(); });
 
-        inGameGoSelectPanel.onClick.AddListener(() => OnClickInGameGoSelectPanel());
-
+        CloseSelectPanelBut.onClick.AddListener(delegate { OnClickInGameGoSelectPanel(); SoundManager.Inst.ButtonSFXPlay(); });
     }
 
     void OnClickOneBrush()
@@ -49,15 +47,13 @@ public class SelectPanelSet : MonoBehaviour
     public void PanelChangedSet(Button button, bool butSet)
     {
         this.gameObject.SetActive(false);
-        oneBrushObj.gameObject.SetActive(true);
+        InGamePanelSet.Inst.OneBrushPlayPanelSet(true);
         button.gameObject.SetActive(butSet);
     }
 
     public void PlayGameObjSet(bool objOneSet, bool objTwoSet, bool objThreeSet)
     {
         InGamePanelSet.Inst.InGameSet(true);
-        InGamePanelSet.Inst.LineCloneTransform(true);
-        // ===== 전에 선을 다시 보여주기
         stageName.gameObject.SetActive(false);
         objOne.gameObject.SetActive(objOneSet);
         objTwo.gameObject.SetActive(objTwoSet);
@@ -73,10 +69,9 @@ public class SelectPanelSet : MonoBehaviour
 
     void OnClickInGameGoSelectPanel()
     {
-        InGamePanelSet.Inst.LineCloneTransform(false);
+        InGamePanelSet.Inst.SelectPanelSet(true);
         InGamePanelSet.Inst.OneBrushPlayPanelSet(false);
-        InGamePanelSet.Inst.SelectPanelSetting(true);
-
+        InGamePanelSet.Inst.InGameSet(false);
         ButAllSet();
     }
 }

@@ -32,7 +32,7 @@ public class AudioManager : MonoBehaviour
 
     void Awake()
     {
-        bgmSource.playOnAwake = true;
+        //bgmSource.playOnAwake = true;
     }
 
     public void SFXSet()
