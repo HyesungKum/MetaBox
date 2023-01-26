@@ -203,7 +203,7 @@ public class MusicSheet : MonoBehaviour
                     // check how many Qnotes are left
                     if (qNoteList.Count == 0)
                     {
-                        Invoke("getAllQNotes", 1f);
+                        getAllQNotes();
                         return;
                     }
 
@@ -237,7 +237,7 @@ public class MusicSheet : MonoBehaviour
         {
             float tempDistance = Mathf.Abs(line.transform.position.y - target.transform.position.y);
 
-            if (tempDistance < 0.5f)
+            if (tempDistance < 0.8f)
             {
 
                 if (tempDistance < closestDistance)
@@ -258,7 +258,6 @@ public class MusicSheet : MonoBehaviour
 
     void getAllQNotes()
     {
-
         GameManager.Inst.UpdateCurProcess(GameStatus.GetAllQNotes);
     }
 

@@ -16,7 +16,7 @@ public enum GameStatus
     TimeOver,
     GetAllQNotes,
     NoMorePlayableNote,
-    GameOver,
+    GameResult,
     Restart,
     ClearStage,
 }
@@ -81,6 +81,11 @@ public class GameManager : DataLoader
     [SerializeField] float myPlayableTime;
     public float MyPlayableTime { get { return myPlayableTime; } }
 
+    [SerializeField] float stagePlayTime;
+
+
+
+
     [SerializeField] float myCoolTime;
     public float MyCoolTime { get { return myCoolTime; } }
 
@@ -117,12 +122,29 @@ public class GameManager : DataLoader
 
         switch (targetStatus)
         {
+            case GameStatus.Restart:
+                {
+
+                    CurStage = 1;
+                    myPlayableTime = stagePlayTime;
+
+                    myDelegateGameStatus(GameStatus.Restart);
+                    UpdateCurProcess(GameStatus.Idle);
+                }
+                break;
+
+
+
             case GameStatus.Idle:
                 {
+                    CurStatus = GameStatus.Idle;
+
                     isGameStart = false;
                     isGameOver = false;
 
                     checkStageLevel();
+
+                    myPlayableTime = stagePlayTime;
 
 
                     // let all know idle status 
@@ -135,6 +157,8 @@ public class GameManager : DataLoader
 
             case GameStatus.Ready:
                 {
+                    CurStatus = GameStatus.Ready;
+
                     stageTimeScale();
 
 
@@ -148,9 +172,12 @@ public class GameManager : DataLoader
 
             case GameStatus.Pause:
                 {
+                    CurStatus = GameStatus.Pause;
+
                     if (isPaused)
                     {
-                        if (curStatus == GameStatus.Ready)
+                        // at Ready or ClearStage status, stop countdown
+                        if (curStatus == GameStatus.Ready || curStatus == GameStatus.ClearStage)
                         {
                             Time.timeScale = 0;
                         }
@@ -247,38 +274,44 @@ public class GameManager : DataLoader
                     isGameCleared = true;
 
                     CurStatus = GameStatus.GetAllQNotes;
-
+                    myDelegateGameStatus(GameStatus.GameResult);
 
                     if (isGameOver)
                     {
-                        // is last stage cleared ? 
-                        if (curStage == MyStageData.Keys.Count)
-                        {
-                            isStageCleared = true;
-                            Debug.Log("스테이지 클리어!");
-
-                            Time.timeScale = 0;
-
-                            // play full music 
-                            SoundManager.Inst.SetStageMusic(5, 1);
-
-                            SoundManager.Inst.PlayStageMusic();
-                            break;
-                        }
-
-
-                        // play current stage music 
-                        SoundManager.Inst.PlayStageMusic();
+                        Invoke("ClearMusic", 1f);
                     }
 
                     curStage++;
-
-                    myDelegateGameStatus(GameStatus.GetAllQNotes);
                 }
                 break;
                 // sucess ============================================================
 
         }
+    }
+
+
+    void ClearMusic()
+    {
+        // is last stage cleared ? 
+        if (curStage == MyStageData.Keys.Count)
+        {
+            curStatus = GameStatus.ClearStage;
+
+            isStageCleared = true;
+            Debug.Log("스테이지 클리어!");
+
+            Time.timeScale = 0;
+
+            // play full music 
+            SoundManager.Inst.SetStageMusic(5, 1);
+
+            SoundManager.Inst.PlayStageMusic();
+            return ;
+        }
+
+
+        // play current stage music 
+        SoundManager.Inst.PlayStageMusic();
     }
 
 
@@ -291,20 +324,6 @@ public class GameManager : DataLoader
 
         switch (targetStatus)
         {
-            case GameStatus.Idle:
-                {
-                    CurStatus = GameStatus.Idle;
-                }
-                break;
-
-
-            case GameStatus.Ready:
-                {
-                    CurStatus = GameStatus.Ready;
-
-                }
-                break;
-
 
             case GameStatus.StartGame:
                 {
@@ -318,16 +337,6 @@ public class GameManager : DataLoader
                 break;
 
 
-            case GameStatus.Pause:
-                {
-
-                    CurStatus = GameStatus.Pause;
-
-                }
-                break;
-
-
-
             case GameStatus.TimeOver:
                 {
                     isGameOver = true;
@@ -337,15 +346,6 @@ public class GameManager : DataLoader
                 }
                 break;
 
-            case GameStatus.GetAllQNotes:       // go to next round
-                {
-
-                    CurStatus = GameStatus.GetAllQNotes;
-
-
-
-                }
-                break;
 
             case GameStatus.NoMorePlayableNote:
                 {
@@ -381,7 +381,9 @@ public class GameManager : DataLoader
     // time count ================================================================
     void timeCountDown(float t)
     {
-        if (t <= 0)
+        myPlayableTime = t;
+
+        if (MyPlayableTime <= 0)
         {
             UpdateCurProcess(GameStatus.TimeOver);
         }
@@ -419,7 +421,7 @@ public class GameManager : DataLoader
         {
             case SceneModeController.SceneMode.EasyMode:
                 {
-                    myPlayableTime = 180f;
+                    stagePlayTime = 180f;
                     myCoolTime = 15;
 
                     if (MyStageData.Count == 0)

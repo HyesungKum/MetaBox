@@ -141,8 +141,8 @@ public class SoundManager : MonoBehaviour
         isCoroutineRunning = true;
 
         myBGMAudioSource.Play();
-        
-        
+
+
         yield return new WaitUntil(() => myBGMAudioSource.isPlaying == false);
 
 
@@ -157,11 +157,10 @@ public class SoundManager : MonoBehaviour
     {
         if (isCoroutineRunning)
         {
-
             myBGMAudioSource.Stop();
             StopCoroutine(curCoroutine);
         }
-            myNoteAudioSource.Stop();
     }
+
 
 }

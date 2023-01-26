@@ -36,8 +36,14 @@ public class PlayTimer : MonoBehaviour
                 }
                 break;
 
+            case GameStatus.Restart:
+                {
+                    playTime = GameManager.Inst.MyPlayableTime;
+                }
+                break;
 
-            case GameStatus.GameOver:
+
+            case GameStatus.GameResult:
                 {
                     isGameOver = true;
                 }
