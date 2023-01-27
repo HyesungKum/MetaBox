@@ -91,7 +91,7 @@ public class InGamePanelSet : MonoBehaviour
         loseReStartBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.FailSFXPlay(); });
         winReStartBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.ClearSFXPlay(); });
         optionBut.onClick.AddListener(delegate { OnClickOptionBut(); SoundManager.Inst.ButtonSFXPlay(); });
-        resumeBut.onClick.AddListener(delegate { OptionResumeBut(); SoundManager.Inst.ButtonSFXPlay(); });
+        resumeBut.onClick.AddListener(delegate { OnClickOptionBut(); SoundManager.Inst.ButtonSFXPlay(); });
         quitBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.ButtonSFXPlay(); });
         #endregion
     }
@@ -158,6 +158,7 @@ public class InGamePanelSet : MonoBehaviour
         SelectPanelSet(selectPanel);
         InGameSet(false);
         InGameOptionSet(false);
+        WinPanelSet(false);
         LosePanelSet(false);
     }
 
@@ -234,10 +235,5 @@ public class InGamePanelSet : MonoBehaviour
     void OnClickGoStartPanel()
     {
         SceneManager.LoadScene(0);
-    }
-
-    void OptionResumeBut()
-    {
-        InGameOptionSet(false);
     }
 }
