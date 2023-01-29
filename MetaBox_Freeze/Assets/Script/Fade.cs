@@ -6,7 +6,7 @@ public class Fade : MonoBehaviour
 {
     [SerializeField] GameObject fade = null;
     [SerializeField] AnimationCurve FadeInCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(0.9f, 1f)});
-    [SerializeField] AnimationCurve FadeOutCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 1f), new Keyframe(0.6f, 0f)});
+    [SerializeField] AnimationCurve FadeOutCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 1f), new Keyframe(0.9f, 0f)});
 
     Vector3 fadeScale = new Vector3(25, 25, 1);
 

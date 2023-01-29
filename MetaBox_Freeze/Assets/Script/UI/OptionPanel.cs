@@ -8,9 +8,10 @@ using UnityEngine.UI;
 public class OptionPanel : MonoBehaviour
 {
     [SerializeField] Button backGround = null;
+    [SerializeField] Button exit = null;
     [SerializeField] Button quit = null;
     [SerializeField] Button restart = null;
-    [SerializeField] Button exit = null;
+    
 
     [SerializeField] Button sound = null; //bgm
     [SerializeField] Button music = null; //sfx

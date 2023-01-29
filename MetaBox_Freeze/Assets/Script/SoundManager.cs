@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -75,6 +73,7 @@ public class SoundManager : MonoBehaviour
         audioMixer.GetFloat(target, out float volume);
         return volume;
     }
+
     public void AudioMute(string target, float value)
     {
         audioMixer.GetFloat(target, out float volume);
