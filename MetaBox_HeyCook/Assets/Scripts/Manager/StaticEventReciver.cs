@@ -1,65 +1,51 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Xml.Serialization;
 using UnityEngine;
 
-public delegate void NewCostomer();
-public delegate void NewOrder();
-public delegate void ScoreModi(int value);
-public delegate void DoSubmission();
-
-public delegate void CorrectIngred(Vector3 pos);
-public delegate void WrongIngred(Vector3 pos);
-public delegate void CorrectFood();
-public delegate void WrongFood(int wrongLevel);
-
-public delegate void TickCount();
-
-public delegate void SceneStart();
-public delegate void SceneEnded();
-
-public delegate void GameStart();
-public delegate void GamePause();
-public delegate void GameResume();
-public delegate void GameOver();
+public delegate void BasicCallBack();
+public delegate void IntCallBack(int value);
+public delegate void VectorCallBack(Vector3 pos);
 
 static public class EventReciver
 {
-    static public NewCostomer NewCostomer = null;
-    static public NewOrder NewOrder = null;
-    static public ScoreModi ScoreModi = null;
-    static public DoSubmission DoSubmission = null;
+    static public BasicCallBack NewCostomer = null;
+    static public BasicCallBack NewOrder = null;
+    static public IntCallBack ScoreModi = null;
+    static public BasicCallBack DoSubmission = null;
 
-    static public CorrectIngred CorrectIngred = null;
-    static public WrongIngred WrongIngred = null;
-    static public CorrectFood CorrectFood = null;
-    static public WrongFood WrongFood = null;
+    static public VectorCallBack CorrectIngred = null;
+    static public VectorCallBack WrongIngred = null;
+    static public BasicCallBack CorrectFood = null;
+    static public IntCallBack WrongFood = null;
 
-    static public TickCount TickCount = null;
+    static public BasicCallBack TickCount = null;
 
-    static public SceneStart SceneStart = null;
-    static public SceneEnded SceneEnded = null;
+    static public BasicCallBack SceneStart = null;
 
-    static public GameStart GameStart = null;
-    static public GamePause GamePause = null;
-    public static GameResume GameResume = null;
-    static public GameOver GameOver = null;
+    static public BasicCallBack GameStart = null;
+    static public BasicCallBack GamePause = null;
+    public static BasicCallBack GameResume = null;
+    static public BasicCallBack GameOver = null;
 
+    //customer event
     static public void CallNewComstomer() => NewCostomer?.Invoke();
     static public void CallNewOrder() => NewOrder?.Invoke();
+
+    //score event
     static public void CallScoreModi(int value) => ScoreModi?.Invoke(value);
     static public void CallDoSubmission() => DoSubmission?.Invoke();
 
+    //ingred event
     static public void CallCorrectIngred(Vector3 pos) => CorrectIngred?.Invoke(pos);
     static public void CallWrongIngred(Vector3 pos) => WrongIngred?.Invoke(pos);
     static public void CallCorrectFood() => CorrectFood?.Invoke();
     static public void CallWrongFood(int wrongLevel) => WrongFood?.Invoke(wrongLevel);
 
+    //timer event
     static public void CallTickCount() => TickCount?.Invoke();
 
+    //scene event
     static public void CallSceneStart() => SceneStart?.Invoke();
-    static public void CallSceneEnded() => SceneEnded?.Invoke();
 
+    //game routine event
     static public void CallGameStart() => GameStart?.Invoke();
     static public void CallGamePause() => GamePause?.Invoke();
     static public void CallGameResume() => GameResume?.Invoke();

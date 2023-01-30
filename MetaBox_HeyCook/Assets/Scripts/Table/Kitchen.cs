@@ -55,7 +55,7 @@ public class Kitchen : MonoBehaviour
     private void Awake()
     {
         //Reference componet
-        cookSlider = cookSliderObj.GetComponent<Slider>();
+        cookSliderObj.TryGetComponent<Slider>(out cookSlider);
 
         //Tagging
         this.transform.tag = "Table";
@@ -152,7 +152,7 @@ public class Kitchen : MonoBehaviour
 
         if (collision.CompareTag(nameof(Ingredient)))
         {
-            Ingredient contactIngred = collision.transform.GetComponent<Ingredient>();
+            collision.transform.TryGetComponent(out Ingredient contactIngred);
 
             curIngred = contactIngred;
         }
@@ -188,6 +188,7 @@ public class Kitchen : MonoBehaviour
     //=============================target obj production================================
     IEnumerator TargetMove()
     {
+        curIngred.ReadyCook();
         Transform targetTr = curIngred.transform;
 
         while (true)
@@ -233,7 +234,6 @@ public class Kitchen : MonoBehaviour
         {
             if (tempIngred != null) PoolCp.Inst.DestoryObjectCp(tempIngred.gameObject);
             tempIngred = curIngred;
-            tempIngred.ReadyCook();
 
             curNeedIngred.RemoveAt(index);
 

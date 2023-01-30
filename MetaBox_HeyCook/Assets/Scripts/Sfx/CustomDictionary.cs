@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using System;
-using UnityEditor;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -50,7 +49,6 @@ public class CustomDictionary<Tkey, Tvalue> : ISerializationCallbackReceiver
             dictionaryView.values.Add(dicData.Value);
         }
     }
-
     public void OnAfterDeserialize()
     {
         dictionary = new Dictionary<Tkey, Tvalue>();

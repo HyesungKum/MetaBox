@@ -9,7 +9,7 @@ public class BeltZone : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        collision.transform.position += Vector3.up * Time.deltaTime * beltSpeed;
+        collision.transform.position += beltSpeed * Time.deltaTime * this.transform.up;
     }
 
     #region Editor
@@ -17,7 +17,8 @@ public class BeltZone : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = new(0f, 1f, 0f, 0.4f);
-        Gizmos.DrawCube(this.transform.position, this.transform.GetComponent<BoxCollider2D>().size *  this.transform.lossyScale);
+        Gizmos.matrix = this.transform.localToWorldMatrix;
+        Gizmos.DrawCube(Vector3.zero, this.transform.GetComponent<BoxCollider2D>().size);
     }
 #endif
     #endregion

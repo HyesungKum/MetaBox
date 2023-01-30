@@ -16,7 +16,6 @@ class CustomDictionaryEditor : PropertyDrawer
 
         return 50f + totalCount * 20f ;
     }
-
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
         label.text = null;

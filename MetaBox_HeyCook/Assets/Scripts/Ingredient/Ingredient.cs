@@ -1,6 +1,5 @@
 using ObjectPoolCP;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 //Different Cook and Trimable Ways Enum
@@ -115,6 +114,7 @@ public class Ingredient : MonoBehaviour
     /// </summary>
     public void ReadyCook()
     {
+        IsCookReady = true;
         Renderer.sortingOrder = 3;
         Collider.enabled = false;
     }

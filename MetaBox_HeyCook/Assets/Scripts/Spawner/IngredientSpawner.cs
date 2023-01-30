@@ -32,14 +32,10 @@ public class IngredientSpawner : MonoBehaviour
         //apply Level
         switch (GameManager.Inst.Level)
         {
-            case 1: SpawnTable = TableData[0].SpawnTable;
-                break;
-            case 2: SpawnTable = TableData[1].SpawnTable;
-                break;
-            case 3: SpawnTable = TableData[2].SpawnTable;
-                break;
-            case 4: SpawnTable = TableData[3].SpawnTable;
-                break;
+            case 1: SpawnTable = TableData[0].SpawnTable; break;
+            case 2: SpawnTable = TableData[1].SpawnTable; break;
+            case 3: SpawnTable = TableData[2].SpawnTable; break;
+            case 4: SpawnTable = TableData[3].SpawnTable; break;
         }
 
         //Init Table
@@ -111,12 +107,13 @@ public class IngredientSpawner : MonoBehaviour
         return instObj;
     }
 
-    #region Editor Gizmo
+    #region Editor
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         Gizmos.color = new(0f, 0f, 1f, 0.4f);
-        Gizmos.DrawCube(this.transform.position, this.transform.localScale);
+        Gizmos.matrix = this.transform.localToWorldMatrix;
+        Gizmos.DrawCube(Vector3.zero, this.transform.localScale);
     }
 #endif
     #endregion

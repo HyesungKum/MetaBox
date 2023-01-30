@@ -1,6 +1,6 @@
+using Kum;
 using UnityEngine;
 using UnityEngine.Audio;
-using Kum;
 
 public class SoundManager : MonoSingleTon<SoundManager>
 {
@@ -57,7 +57,6 @@ public class SoundManager : MonoSingleTon<SoundManager>
         if (value == -80) return -40;
         else return value;
     }
-
     /// <summary>
     /// toggle sound (on - off)
     /// </summary>

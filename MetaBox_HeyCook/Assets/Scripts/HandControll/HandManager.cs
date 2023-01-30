@@ -93,7 +93,7 @@ public class HandManager : MonoBehaviour
 
         if (!hit || !hit.transform.CompareTag(nameof(Ingredient))) return;
 
-        Ingredient ingred = hit.transform.GetComponent<Ingredient>();
+        hit.transform.TryGetComponent(out Ingredient ingred);
 
         touchedIngred[index] = ingred;
         touchedIngred[index].IsCliked = true;

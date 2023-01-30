@@ -89,9 +89,6 @@ public class GameManager : MonoSingleTon<GameManager>
         timer = 0f;
 
         StartCoroutine(nameof(BeforeStart));
-
-        //Data divide
-
     }
 
     private void OnDisable()
@@ -174,5 +171,4 @@ public class GameManager : MonoSingleTon<GameManager>
             if (countDown == 0) EventReciver.CallGameOver();
         }
     }
-
 }
