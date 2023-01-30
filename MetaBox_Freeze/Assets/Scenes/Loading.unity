@@ -253,15 +253,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c10e48b4ad6cbf4abd90021bc64db37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  focus: {fileID: 163232831}
   policeCar: {fileID: 2125065221}
-  thief: {fileID: 0}
+  focus: {fileID: 163232831}
   PoliceCarCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: -10
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -270,7 +269,7 @@ MonoBehaviour:
       outWeight: 0
     - serializedVersion: 3
       time: 1.8
-      value: 20
+      value: 10
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -301,12 +300,6 @@ MonoBehaviour:
       weightedMode: 0
       inWeight: 0
       outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  ThiefCurve:
-    serializedVersion: 2
-    m_Curve: []
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -504,7 +497,7 @@ Transform:
   m_GameObject: {fileID: 1089980156}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 10}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2145642224}
@@ -760,6 +753,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fade: {fileID: 1089980156}
+  loading: {fileID: 474995167}
   FadeInCurve:
     serializedVersion: 2
     m_Curve:

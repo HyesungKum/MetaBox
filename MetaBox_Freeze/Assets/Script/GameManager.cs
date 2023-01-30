@@ -1,17 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public delegate void Notice();
+public delegate void CallBackFunction();
+public delegate void CallBackSpawn(StageData stageData);
 
 public class GameManager : MonoBehaviour
 {
-    public Notice FreezeDataSetting = null;
-    public Notice GameClearRecord = null;
-    public Notice WaveClearEvent = null;
-    public Notice PlayTimerEvent = null;
-    public Notice PenaltyEvent = null;
+    public CallBackFunction FreezeDataSetting = null;
+    public CallBackFunction GameClearRecord = null;
+    public CallBackFunction WaveClearEvent = null;
+    public CallBackFunction PlayTimerEvent = null;
+    public CallBackFunction PenaltyEvent = null;
+
+    public CallBackSpawn spawnThief = null;
+    public CallBackFunction hideThief = null;
+    public CallBackFunction openThief = null;
+    public CallBackFunction removeThief = null;
+
 
     static private GameManager instance;
     static public GameManager Instance
@@ -30,7 +36,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    [SerializeField] ThiefSpawner thiefSpawner = null;
     [SerializeField] ParticleSystem waveClearEff = null;
     WaitForSeconds wait1 = null;
     WaitForSeconds waitNextWave = null;
@@ -39,10 +44,12 @@ public class GameManager : MonoBehaviour
     public List<StageData> StageDatas { get; set; }
     public bool IsGaming { get; set; } = false;
     public int PlayTime { get; set; }
+
     int stage;
     int penalty;
     int catchNumber;
     public bool reStart { get; set; }
+
     private void Awake()
     {
         DataManager.Instance.LoadGameData();
@@ -83,8 +90,11 @@ public class GameManager : MonoBehaviour
 
     public void WaveSetting()
     {
-        thiefSpawner.Spawn(StageDatas[stage]);
-        thiefSpawner.Open();
+        openThief = null;
+        hideThief = null;
+        removeThief = null;
+        spawnThief?.Invoke(StageDatas[stage]);
+        openThief?.Invoke();
         penalty = StageDatas[stage].penaltyPoint;
         catchNumber = 0;
         UIManager.Instance.DataSetting(StageDatas[stage].wantedCount, StageDatas[stage].startCountdown);
@@ -96,13 +106,13 @@ public class GameManager : MonoBehaviour
     {
         IsGaming = true; 
         StartCoroutine(nameof(PlayTimer));
-        thiefSpawner.Hide();
+        hideThief?.Invoke();
     }
 
     public void WaveClear()
     {
         IsGaming = false;
-        thiefSpawner.Remove();
+        removeThief?.Invoke();
         if (stage == StageDatas.Count) GameOver(true);
         else
         {
@@ -114,7 +124,7 @@ public class GameManager : MonoBehaviour
     {
         reStart = true;
         IsGaming = false;
-        thiefSpawner.Remove();
+        removeThief?.Invoke();
         UIManager.Instance.WaveClear();
         stage = 0;
         PlayTime = FreezeData.playTime;
@@ -133,12 +143,12 @@ public class GameManager : MonoBehaviour
 
     public void ShowImg()
     {
-        thiefSpawner.Open();
+        openThief?.Invoke();
     }
 
     public void Catch(int id)
     {
-        thiefSpawner.Hide();
+        hideThief?.Invoke();
         catchNumber++;
         UIManager.Instance.Arrest(id);
         if (catchNumber == StageDatas[stage-1].wantedCount)
@@ -149,7 +159,7 @@ public class GameManager : MonoBehaviour
 
     public void Penalty()
     {
-        thiefSpawner.Hide();
+        hideThief?.Invoke();
         PlayTime -= penalty;
         PenaltyEvent();
     }

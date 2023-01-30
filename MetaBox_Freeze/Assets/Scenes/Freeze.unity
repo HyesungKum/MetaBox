@@ -6223,9 +6223,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   backGround: {fileID: 1530278683}
+  exit: {fileID: 916778546}
   quit: {fileID: 1108395881}
   restart: {fileID: 877574691}
-  exit: {fileID: 916778546}
   sound: {fileID: 1440311647}
   music: {fileID: 14251419}
   soundSlider: {fileID: 832529420}
@@ -6392,6 +6392,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fade: {fileID: 311171357}
+  loading: {fileID: 0}
   FadeInCurve:
     serializedVersion: 2
     m_Curve:
@@ -6405,7 +6406,7 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.7
+      time: 0.9
       value: 1
       inSlope: 0
       outSlope: 0
@@ -6429,7 +6430,7 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.4
+      time: 0.9
       value: 0
       inSlope: 0
       outSlope: 0

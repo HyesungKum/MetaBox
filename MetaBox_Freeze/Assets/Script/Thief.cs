@@ -27,6 +27,9 @@ public class Thief : MonoBehaviour
 
     void OnEnable()
     {
+        GameManager.Instance.openThief += () => spriteRenderer.sprite = thiefImages.Thief[id];
+        GameManager.Instance.hideThief += () => spriteRenderer.sprite = thiefImages.Thief[0];
+        GameManager.Instance.removeThief += () => callbackArrest?.Invoke(this);
         runnigTime = new WaitUntil(() => (police.transform.position - this.transform.position).magnitude > 2f);
         GameStart = new WaitUntil(() => GameManager.Instance.IsGaming);
         runningAway = false;

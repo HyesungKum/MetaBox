@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 public class Fade : MonoBehaviour
 {
     [SerializeField] GameObject fade = null;
+    [SerializeField] Loading loading = null;
     [SerializeField] AnimationCurve FadeInCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(0.9f, 1f)});
     [SerializeField] AnimationCurve FadeOutCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 1f), new Keyframe(0.9f, 0f)});
 
@@ -32,6 +33,7 @@ public class Fade : MonoBehaviour
             startTime += Time.deltaTime;
             yield return null;
         }
+        loading?.StartLoading();
     }
 
     IEnumerator _FadeOut()

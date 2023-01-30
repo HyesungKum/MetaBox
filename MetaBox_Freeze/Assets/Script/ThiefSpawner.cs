@@ -1,17 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public delegate void ChangeThief();
-
 public class ThiefSpawner : ObjectPool<Thief>
 {
-    public ChangeThief OpenImage = null;
-    public ChangeThief HideImage = null;
-    public ChangeThief RemoveThief = null;
-
     [SerializeField] Thief thiefPref = null;
-    public List<ThiefData> ThiefDatas { get; private set; }
+
+    List<ThiefData> ThiefDatas = null;
     List<int> wantedlist = new List<int>();
 
     public override Thief CreatePool()
@@ -22,6 +16,7 @@ public class ThiefSpawner : ObjectPool<Thief>
 
     private void Awake()
     {
+        GameManager.Instance.spawnThief = Spawn;
         PoolInit();
     }
     
@@ -29,9 +24,6 @@ public class ThiefSpawner : ObjectPool<Thief>
     {
         ThiefDatas = DataManager.Instance.FindThiefDatasByThiefGroup(stage.thiefGroup);
         wantedlist.Clear();
-        OpenImage = null;
-        HideImage = null;
-        RemoveThief = null;
 
         int wantedCount = stage.wantedCount;
         bool wanted = true;
@@ -49,27 +41,9 @@ public class ThiefSpawner : ObjectPool<Thief>
                 wantedlist.Add(ThiefDatas[random].id);
             }
             thief.callbackArrest = Release;
-            OpenImage += thief.OpenImage;
-            HideImage += thief.HideImage;
-            RemoveThief += thief.Remove;
             ThiefDatas.RemoveAt(random);
             wantedCount--;
         }
         UIManager.Instance.WantedListSetting(wantedlist);
     }
-
-    public void Open()
-    {
-        if(OpenImage != null) OpenImage();
-    }
-    public void Hide()
-    {
-        if(HideImage != null) HideImage(); 
-    }
-    public void Remove()
-    {
-        if(RemoveThief != null) RemoveThief();
-    }
-
-    
 }

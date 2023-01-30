@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -12,29 +9,27 @@ public class OptionPanel : MonoBehaviour
     [SerializeField] Button quit = null;
     [SerializeField] Button restart = null;
     
-
     [SerializeField] Button sound = null; //bgm
     [SerializeField] Button music = null; //sfx
     [SerializeField] Slider soundSlider = null;
     [SerializeField] Slider musicSlider = null;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         backGround.onClick.AddListener(OnClick_Close);
-        quit.onClick.AddListener(OnClick_Quit);
-        if(restart != quit) restart.onClick.AddListener(OnClick_ReStart);
         exit.onClick.AddListener(OnClick_Close);
+        if (quit.gameObject.activeSelf) quit.onClick.AddListener(OnClick_Quit);
+        if (restart.gameObject.activeSelf) restart.onClick.AddListener(OnClick_ReStart);
 
-        sound.onClick.AddListener(delegate { OnClick_MuteBGM(); });
-        music.onClick.AddListener(delegate { OnClick_MuteSFX(); });
+        sound.onClick.AddListener(() => SoundManager.Instance.AudioMute("BGM", soundSlider.value));
+        music.onClick.AddListener(() => SoundManager.Instance.AudioMute("SFX", musicSlider.value));
         soundSlider.onValueChanged.AddListener(delegate { OnValueChanged_Sound(); });
         musicSlider.onValueChanged.AddListener(delegate { OnValueChanged_Music(); });
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
-        if(SoundManager.Instance.BGMMute == false) soundSlider.value = SoundManager.Instance.GetVolume("BGM");
+        if (SoundManager.Instance.BGMMute == false) soundSlider.value = SoundManager.Instance.GetVolume("BGM");
         if (SoundManager.Instance.SFXMute == false) musicSlider.value = SoundManager.Instance.GetVolume("SFX");
     }
 
@@ -53,20 +48,11 @@ public class OptionPanel : MonoBehaviour
         this.gameObject.SetActive(false);
     }
 
-    void OnClick_Quit() //종료하고 타이틀로
+    void OnClick_Quit() //스타트씬
     {
         Time.timeScale = 1f;
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
-        SceneManager.LoadScene(0);
-    }
-
-    void OnClick_MuteBGM()
-    {
-        SoundManager.Instance.AudioMute("BGM", soundSlider.value);
-    }
-    void OnClick_MuteSFX()
-    {
-        SoundManager.Instance.AudioMute("SFX", musicSlider.value);
+        SceneManager.LoadScene("Start");
     }
 
     void OnValueChanged_Sound() //bgm
@@ -78,5 +64,4 @@ public class OptionPanel : MonoBehaviour
     {
         SoundManager.Instance.AudioVolumeControl("SFX", musicSlider.value);
     }
-
 }
