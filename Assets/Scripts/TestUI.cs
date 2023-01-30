@@ -1,17 +1,10 @@
 #define Mobile
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using TMPro;
-using Unity.VisualScripting;
-using UnityEngine.UI;
-using UnityEditor;
-using KumTool;
 using KumTool.AppTransition;
 using KumTool.InputManager;
 using System;
-using UnityEngine.Android;
-using Unity.Notifications.Android;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class TestUI : MonoBehaviour
 {
@@ -92,7 +85,7 @@ public class TestUI : MonoBehaviour
             }
         }
 
-        BG.transform.position = Vector3.Lerp(BG.transform.position, new Vector3(BG.transform.position.x, yPos, 0f), Time.deltaTime * 2f);
+        //BG.transform.position = Vector3.Lerp(BG.transform.position, new Vector3(BG.transform.position.x, yPos, 0f), Time.deltaTime * 2f);
     }
 
     //=====================================================================list of DLLize=====================================================================
