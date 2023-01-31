@@ -82,7 +82,6 @@ public class InGamePanelSet : MonoBehaviour
 
         // === changed (false) ===
         FirstSet(false);
-
         OneBrushPlayPanelSet(false);
         ClearPanelSet(false);
 
@@ -162,35 +161,19 @@ public class InGamePanelSet : MonoBehaviour
         LosePanelSet(false);
     }
 
-    public void SelectPanelSet(bool active)
-    {
-        selectPanel.gameObject.SetActive(active);
-    }
+    public void SelectPanelSet(bool active) => selectPanel.gameObject.SetActive(active);
 
-    public void InGameSet(bool active)
-    {
-        closePlayOneBrush.gameObject.SetActive(active);
-    }
+    public void InGameSet(bool active) => closePlayOneBrush.gameObject.SetActive(active);
 
-    public void InGameOptionSet(bool active)
-    {
-        optionPanel.gameObject.SetActive(active);
-    }
+    public void InGameOptionSet(bool active) => optionPanel.gameObject.SetActive(active);
 
-    public void OneBrushPlayPanelSet(bool active)
-    {
-        onBushObj.gameObject.SetActive(active);
-    }
+    public void OneBrushPlayPanelSet(bool active) => onBushObj.gameObject.SetActive(active);
 
-    public void LosePanelSet(bool active)
-    {
-        losePanel.gameObject.SetActive(active);
-    }
+    public void LosePanelSet(bool active) => losePanel.gameObject.SetActive(active);
 
-    public void ClearPanelSet(bool active)
-    {
-        clearImgPanel.gameObject.SetActive(active);
-    }
+    public void ClearPanelSet(bool active) => clearImgPanel.gameObject.SetActive(active);
+
+    public void WinPanelSet(bool active) => winPanel.gameObject.SetActive(active);
 
     public void ClearImgSet(bool oneSet, bool twoSet, bool threeSet)
     {
@@ -199,10 +182,7 @@ public class InGamePanelSet : MonoBehaviour
         ImgThree.gameObject.SetActive(threeSet);
     }
 
-    public void WinPanelSet(bool active)
-    {
-        winPanel.gameObject.SetActive(active);
-    }
+    void OnClickGoStartPanel() => SceneManager.LoadScene(SceneName.StartScene);
 
     public void OnClickOptionBut()
     {
@@ -230,10 +210,5 @@ public class InGamePanelSet : MonoBehaviour
             Time.timeScale = 1;
             isOptionPanelOpen = false;
         }
-    }
-
-    void OnClickGoStartPanel()
-    {
-        SceneManager.LoadScene(0);
     }
 }

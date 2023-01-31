@@ -34,7 +34,6 @@ public class StartSceneManager : MonoBehaviour
     [Header("[Option Close Button]")]
     [SerializeField] Button optionBackBut = null;
 
-
     void Awake()
     {
         optionBackBut.onClick.AddListener(delegate { OnClickOptionClosebut(); SoundManager.Inst.ButtonSFXPlay(); });
@@ -49,34 +48,19 @@ public class StartSceneManager : MonoBehaviour
         QuitPanelSet(false);
     }
 
-    public void StartPanelSet(bool active)
-    {
-        startPanel.gameObject.SetActive(active);
-    }
+    public void StartPanelSet(bool active) => startPanel.gameObject.SetActive(active);
 
-    public void OptionPanelSet(bool active)
-    {
-        optionPanel.gameObject.SetActive(active);
-    }
+    public void OptionPanelSet(bool active) => optionPanel.gameObject.SetActive(active);
 
-    public void LevelPanelSet(bool active)
-    {
-        levelPanel.gameObject.SetActive(active);
-    }
+    public void LevelPanelSet(bool active) => levelPanel.gameObject.SetActive(active);
 
-    public void TutorialPanelSet(bool active)
-    {
-        tutorialPanel.gameObject.SetActive(active);
-    }
-    public void QuitPanelSet(bool active)
-    {
-        quitPanel.gameObject.SetActive(active);
-    }
+    public void TutorialPanelSet(bool active) => tutorialPanel.gameObject.SetActive(active);
+
+    public void QuitPanelSet(bool active) => quitPanel.gameObject.SetActive(active);
 
     public void OnClickOptionClosebut()
     {
         StartPanelSet(true);
         OptionPanelSet(false);
     }
-
 }

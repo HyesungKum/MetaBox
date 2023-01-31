@@ -15,7 +15,7 @@ public class Vertex : MonoBehaviour
 
     void Awake()
     {
-        sprite = gameObject.GetComponent<SpriteRenderer>();
+        TryGetComponent<SpriteRenderer>(out sprite);
         originalColor = sprite.color;
     }
 

@@ -34,7 +34,6 @@ public class SoundManager : MonoBehaviour
     [SerializeField] AudioMixer myAudioMixer = null;
     public AudioMixer MyAudioMixer { get { return myAudioMixer; } }
 
-
     private float bGMValue;
     public float BGMValue
     { get { return bGMValue; } set { bGMValue = value; } }
@@ -84,11 +83,6 @@ public class SoundManager : MonoBehaviour
         SFXSource.Play();
     }
 
-    public void ToggleAduioVolume()
-    {
-        AudioListener.volume = AudioListener.volume == 0 ? 1 : 0;
-    }
-
     public void ClearSFXPlay()
     {
         SFXSource.clip = clearSFXClip;
@@ -99,5 +93,10 @@ public class SoundManager : MonoBehaviour
     {
         SFXSource.clip = failSFXClip;
         SFXSource.Play();
+    }
+
+    public void ToggleAduioVolume()
+    {
+        AudioListener.volume = AudioListener.volume == 0 ? 1 : 0;
     }
 }

@@ -8,13 +8,13 @@ using UnityEngine.UI;
 public class OneBrushDrawLine : MonoBehaviour
 {
     //===================== referance object ====================
-    [SerializeField] Camera mainCam = null;
     [SerializeField] GameObject linePrefab = null;
     [SerializeField] RectTransform instLineTransform = null;
     [Header("[Button]")]
     [SerializeField] Button revertBut = null;
 
     //==================== inner variables=======================
+    private Camera mainCam = null;
     GameObject instLine = null;
 
     // ==== private 변경 꼭 하기 !!!!!
@@ -36,6 +36,7 @@ public class OneBrushDrawLine : MonoBehaviour
 
     void Awake()
     {
+        mainCam = Camera.main; 
         lineBackStack = new Stack<GameObject>();
         checkVertex = new Stack<Vertex>();
 

@@ -26,7 +26,7 @@ public class LevelPanelSet : MonoBehaviour
 
     public void OnClickLevelBut()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(SceneName.InGameScene);
         this.gameObject.SetActive(false);
     }
 

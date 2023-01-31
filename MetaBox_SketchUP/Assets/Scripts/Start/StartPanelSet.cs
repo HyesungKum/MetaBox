@@ -44,13 +44,9 @@ public class StartPanelSet : MonoBehaviour
     void MoveTown(string pakageName)
     {
         AndroidJavaClass jc = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-
         AndroidJavaObject jo = jc.GetStatic<AndroidJavaObject>("currentActivity");
-
         AndroidJavaObject pm = jo.Call<AndroidJavaObject>("getPackageManager");
-
         AndroidJavaObject intent = pm.Call<AndroidJavaObject>("getLaunchIntentForPackage", pakageName);
-
         jo.Call("startActivity", intent);
     }
 
@@ -59,6 +55,4 @@ public class StartPanelSet : MonoBehaviour
         StartSceneManager.Inst.QuitPanelSet(true);
         this.gameObject.SetActive(false);
     }
-
-
 }
