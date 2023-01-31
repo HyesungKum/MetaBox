@@ -20,7 +20,7 @@ public class PlayTimer : MonoBehaviour
     {
         // observe game status 
         GameManager.myDelegateGameStatus += curGameStatus;
-        myDelegateIsGameOver += isGameCleared;
+        myDelegateIsGameOver += isGameFinished;
 
         playTime = 0f;
     }
@@ -115,7 +115,7 @@ public class PlayTimer : MonoBehaviour
 
 
 
-    void isGameCleared()
+    void isGameFinished()
     {
         isGameOver = true;
     }

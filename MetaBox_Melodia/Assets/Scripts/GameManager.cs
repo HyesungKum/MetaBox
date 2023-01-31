@@ -21,8 +21,6 @@ public enum GameStatus
 
 
 
-
-
 public class GameManager : DataLoader
 {
     #region Singleton
@@ -62,8 +60,8 @@ public class GameManager : DataLoader
 
     bool isPaused = false;
 
-    
-    
+
+
     [Header("Game Status Info")]
     [SerializeField] int curStage = 1;
     public int CurStage { get { return curStage; } set { curStage = value; } }
@@ -93,11 +91,6 @@ public class GameManager : DataLoader
 
     static Dictionary<int, List<int>> myStageData = new();
     public Dictionary<int, List<int>> MyStageData { get { return myStageData; } }
-
-
-
-
-
 
 
 
@@ -157,7 +150,7 @@ public class GameManager : DataLoader
                 {
                     CurStatus = GameStatus.Ready;
 
-                    stageTimeScale();
+                    addDelegateChainStageTimer();
 
 
                     myDelegateGameStatus(GameStatus.Ready);
@@ -235,10 +228,9 @@ public class GameManager : DataLoader
                     }
                 }
                 break;
-
-
-
             // Game over ============================================================
+
+
 
             // failed ============================================================
             case GameStatus.TimeOver:
@@ -276,41 +268,15 @@ public class GameManager : DataLoader
 
                     if (isGameOver)
                     {
-                        Invoke("ClearMusic", 1f);
+                        Invoke(nameof(ClearMusic), 1f);
                     }
 
                     curStage++;
                 }
                 break;
                 // sucess ============================================================
-
         }
     }
-
-
-    void ClearMusic()
-    {
-        // is last stage cleared ? 
-        if (curStage == MyStageData.Keys.Count)
-        {
-            curStatus = GameStatus.ClearStage;
-
-            isStageCleared = true;
-
-            Time.timeScale = 0;
-
-            // play full music 
-            SoundManager.Inst.SetStageMusic(5, 1);
-
-            SoundManager.Inst.PlayStageMusic();
-            return ;
-        }
-
-
-        // play current stage music 
-        SoundManager.Inst.PlayStageMusic();
-    }
-
 
 
 
@@ -370,13 +336,31 @@ public class GameManager : DataLoader
     }
 
 
+    void ClearMusic()
+    {
+        // is last stage cleared ? 
+        if (curStage == MyStageData.Keys.Count)
+        {
+            curStatus = GameStatus.ClearStage;
 
+            isStageCleared = true;
+
+            Time.timeScale = 0;
+
+            // Set Audio Clip 
+            SoundManager.Inst.SetStageMusic(5, 1);
+        }
+
+
+        // play current stage music 
+        SoundManager.Inst.PlayStageMusic();
+    }
 
 
 
 
     // time count ================================================================
-    void timeCountDown(float t)
+    void timeCountdown(float t)
     {
         myPlayableTime = t;
 
@@ -403,9 +387,9 @@ public class GameManager : DataLoader
     }
 
 
-    void stageTimeScale()
+    void addDelegateChainStageTimer()
     {
-        PlayTimer.DelegateTimer += timeCountDown;
+        PlayTimer.DelegateTimer += timeCountdown;
 
         Time.timeScale = 0;
     }

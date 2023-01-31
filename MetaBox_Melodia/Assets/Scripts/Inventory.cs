@@ -36,7 +36,7 @@ public class Inventory : MonoBehaviour
 
 
 
-    public void ReadyGame()
+    void ReadyGame()
     {
 
         if (playableNoteList.Count > 0)
@@ -60,7 +60,7 @@ public class Inventory : MonoBehaviour
             usedNoteList.Clear();
         }
 
-        GeneratePlayableNote();
+        generatePlayableNote();
     }
 
 
@@ -72,7 +72,7 @@ public class Inventory : MonoBehaviour
     }
 
 
-    void GeneratePlayableNote()
+    void generatePlayableNote()
     {
         float xPos = -2f * (PlayableNoteCount / 2);
 
@@ -85,7 +85,8 @@ public class Inventory : MonoBehaviour
 
             newNote.transform.SetParent(this.transform);
 
-            newNote.GetComponent<Collider2D>().enabled = true;
+            newNote.TryGetComponent<Collider2D>(out Collider2D myCollider);
+            myCollider.enabled = true;
 
             playableNoteList.Add(newNote);
 
@@ -94,11 +95,10 @@ public class Inventory : MonoBehaviour
     }
 
 
-    public void CheckHowManyNotes()
+    void CheckHowManyNotes()
     {
         if (playableNoteList.Count <= 0)
         {
-            UiManager.myDelegateUiManager("³¡³µ¾î");
             GameManager.Inst.UpdateCurProcess(GameStatus.NoMorePlayableNote);
         }
     }

@@ -183,7 +183,7 @@ public class UiManager : MonoBehaviour
     {
         if (calledTime - curTime <= 0.4f)
         {
-            Invoke("hideText", 0.4f);
+            Invoke(nameof(hideText), 0.4f);
             return;
         }
 

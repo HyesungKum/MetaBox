@@ -5,14 +5,19 @@ using ObjectPoolCP;
 
 public class MusicSheet : MonoBehaviour
 {
-    [SerializeField] List<GameObject> qNoteList = new List<GameObject>();
-    [SerializeField] List<GameObject> noteList = new List<GameObject>();
-    [SerializeField] List<Transform> mySoundLines = new List<Transform>();
+    //  Quiz Note List 
+    [SerializeField] List<GameObject> qNoteList = new();
 
-    [SerializeField] GameObject QnotePrefab;
-    [SerializeField] GameObject NormalnotePrefab;
+    // Normal Note List 
+    [SerializeField] List<GameObject> noteList = new();
 
-    static Dictionary<int, List<int>> myStageData = new();
+    // Sound Line List 
+    [SerializeField] List<Transform> mySoundLines = new();
+
+    [SerializeField] GameObject qNotePrefab;
+    [SerializeField] GameObject normalNotePrefab;
+
+    Dictionary<int, List<int>> myStageData = new();
     public Dictionary<int, List<int>> MyStageData { get { return myStageData; } set { myStageData = value; } }
 
 
@@ -21,7 +26,6 @@ public class MusicSheet : MonoBehaviour
     {
         // observe game status 
         GameManager.myDelegateGameStatus += curGameStatus;
-
     }
 
 
@@ -31,6 +35,7 @@ public class MusicSheet : MonoBehaviour
         {
             case GameStatus.Idle:
                 {
+                    // clear lists 
                     ReadyGame();
                 }
                 break;
@@ -39,15 +44,12 @@ public class MusicSheet : MonoBehaviour
                 {
                     // ask game manager for current stage number
                     int curStage = GameManager.Inst.CurStage;
-                    BuildStage(curStage);
 
-                }
-                break;
+                    // get stage data from game manager 
+                    MyStageData = GameManager.Inst.CurStageInfo();
 
-
-            case GameStatus.NoMorePlayableNote:
-                {
-                    // is has fail music, play it 
+                    // generate notes 
+                    buildStage(curStage);
 
                 }
                 break;
@@ -56,11 +58,6 @@ public class MusicSheet : MonoBehaviour
     }
 
 
-
-    public void GetStageData()
-    {
-        MyStageData = GameManager.Inst.CurStageInfo();
-    }
 
 
     public void ReadyGame()
@@ -99,25 +96,31 @@ public class MusicSheet : MonoBehaviour
     }
 
 
-    public void BuildStage(int stage)
+    void buildStage(int stage)
     {
-        GetStageData();
+        // total length of music sheet == 27 (-12.5 ~ 15.5)
 
-
-
+        // A number of notes of current stage  
         int noteIdx = myStageData[stage].Count;
+
+        // how many empty note ? <= should get from data sheet 
         int emptyNote = stage / 3 + 2;
 
-        float xPos = (noteIdx / 2) * -1.5f;
-        //xPos = (noteIdx % 2 == 0) ? xPos += 1f : xPos;
+        // note generate from this position 
+        float xPos = -12.5f;
 
+        // get average distance between notes 
+        float distance = 27f / noteIdx;
 
         List<int> emptyNoteIdx = new();
 
+
+        // get random index of note to hide to use as quiz note 
         for (int i = 0; i < emptyNote; ++i)
         {
             int temp;
 
+            // prevent duplication 
             do
             {
                 temp = Random.Range(1, noteIdx);
@@ -127,16 +130,17 @@ public class MusicSheet : MonoBehaviour
             emptyNoteIdx.Add(temp);
         }
 
+        // generate notes 
         for (int idx = 0; idx < noteIdx; ++idx)
         {
             GameObject newNote;
-            GameObject prefab = NormalnotePrefab;
+            GameObject prefab = normalNotePrefab;
 
+            // if it's qnote index, change prefab 
             if (emptyNoteIdx.Contains(idx))
             {
-                prefab = QnotePrefab;
+                prefab = qNotePrefab;
             }
-
 
             int note = myStageData[stage][idx] % 100;
 
@@ -145,9 +149,16 @@ public class MusicSheet : MonoBehaviour
             newNote.transform.position = new Vector2(xPos, mySoundLines[note].position.y);
 
             // set note info
-            newNote.GetComponent<QNote>().MyPitchNum = myStageData[stage][idx];
+            newNote.TryGetComponent<QNote>(out QNote targetQNote);
+            targetQNote.MyPitchNum = myStageData[stage][idx];
+
+            // if code runs in unity editor, ===========================
+#if UNITY_EDITOR
 
             newNote.transform.SetParent(this.transform);
+#endif
+            // if code runs in unity editor, ===========================
+
 
             if (emptyNoteIdx.Contains(idx))
             {
@@ -160,7 +171,7 @@ public class MusicSheet : MonoBehaviour
             }
 
 
-            xPos += 1.5f;
+            xPos += distance;
         }
 
     }
@@ -168,27 +179,20 @@ public class MusicSheet : MonoBehaviour
 
 
     // check if playable note is match with Qnote
-    public void CheckPlayableNotePos(GameObject target)
+    public void CheckPlayableNotePos(Transform target)
     {
         //// get note's script
-
-        PlayableNote myPlayableNote;
-        myPlayableNote = target.GetComponent<PlayableNote>();
+        target.TryGetComponent<PlayableNote>(out PlayableNote myPlayableNote);
 
 
         // check if playable note touched Qnote
         foreach (GameObject note in qNoteList)
         {
             // check position and compare with QNote position 
-            //if (Vector2.Distance(note.transform.position, target.transform.position) < 0.15f)
-
-
             if (Mathf.Abs(note.transform.position.x - target.transform.position.x) < 1f)
             {
                 if (Mathf.Abs(note.transform.position.y - target.transform.position.y) < 0.3f)
                 {
-
-
 
                     // move playable note torwards to Qnote
                     myPlayableNote.MoveNote(note.transform.position, 3f);
@@ -198,7 +202,10 @@ public class MusicSheet : MonoBehaviour
                     noteList.Add(note);
 
                     UiManager.myDelegateUiManager("잘했어요!");
-                    SoundManager.Inst.PlayNote(note.GetComponent<QNote>().MyPitchNum, 1);
+
+                    note.TryGetComponent<QNote>(out QNote myQNote);
+
+                    SoundManager.Inst.PlayNote(myQNote.MyPitchNum, 1);
 
                     // check how many Qnotes are left
                     if (qNoteList.Count == 0)
@@ -228,7 +235,7 @@ public class MusicSheet : MonoBehaviour
     }
 
 
-    void isThisTouchedSoundLine(GameObject target)
+    void isThisTouchedSoundLine(Transform target)
     {
         float closestDistance = float.MaxValue;
         Transform closestSoundLine = null;
@@ -251,7 +258,9 @@ public class MusicSheet : MonoBehaviour
         if (closestSoundLine == null)
         { return; }
 
-        SoundManager.Inst.PlayNote(closestSoundLine.GetComponent<SoundLine>().MyPitchNum, 1);
+        closestSoundLine.TryGetComponent<SoundLine>(out SoundLine targetLine);
+
+        SoundManager.Inst.PlayNote(targetLine.MyPitchNum, 1);
     }
 
 
