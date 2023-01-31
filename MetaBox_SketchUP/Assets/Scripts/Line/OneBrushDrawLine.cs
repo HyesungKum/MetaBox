@@ -204,20 +204,6 @@ public class OneBrushDrawLine : MonoBehaviour
         instLine.transform.position = startPos;
     }
 
-    //void InstLine()
-    //{
-    //    instLine = ObjectPoolCP.PoolCp.Inst.BringObjectCp(linePrefab);
-    //    instLine.transform.SetParent(instLineTransform);
-
-    //    lineBackStack.Push(instLine);
-    //    //Debug.Log("lineBackStack.Count (## Push )) : " + lineBackStack.Count);
-
-    //    startPos = myTouch.position;
-    //    Debug.Log("startPos : " + startPos);
-    //    instLine.transform.position = startPos;
-    //    Debug.Log("instLineTransform : " + instLine.transform.position);
-    //}
-
     void DestroyLineObj()
     {
         if (lineBackStack.Count == 0) return;

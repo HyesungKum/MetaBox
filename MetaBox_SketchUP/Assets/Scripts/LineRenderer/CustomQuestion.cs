@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class CustomQuestion : MonoBehaviour
 {
     [SerializeField] Button addPointBut = null;
+    [SerializeField] Button RevertBut = null;
     [SerializeField] GameObject lineRenderPrefab = null;
     [SerializeField] GameObject circlePointPrefab = null;
 
@@ -19,12 +20,12 @@ public class CustomQuestion : MonoBehaviour
 
     [Header("[Circle Size Range]")]
     [SerializeField] bool ramdomCreate = false;
-    [SerializeField][Range(0f, 5f)] private float radius = 2f;
+    [SerializeField] [Range(0f, 5f)] private float radius = 2f;
 
     [Header("[Point Random Range]")]
     [SerializeField] bool circleCreate = false;
-    [SerializeField][Range(-5f, 0f)] private float ramdomMin = -4.5f;
-    [SerializeField][Range(0f, 5f)] private float ramdomMax = 4.5f;
+    [SerializeField] [Range(-5f, 0f)] private float ramdomMin = -4.5f;
+    [SerializeField] [Range(0f, 5f)] private float ramdomMax = 4.5f;
 
     [SerializeField] private Vector3 startPos;
     Vector3 endPos;
@@ -32,21 +33,27 @@ public class CustomQuestion : MonoBehaviour
     Touch myTouch;
     private Vector3 touchPos;
     private Camera mainCam = null;
-    bool isHaveNewNode = false;
 
     GameObject creatPrefab = null;
     List<GameObject> nodeList;
+    Stack<GameObject> nodeStack;
+
+    int linerenderPosCount;
+    LineRender linerender = null;
 
     void Awake()
     {
         mainCam = Camera.main;
         creatPrefab = new GameObject("CreatPrefab");
         nodeList = new List<GameObject>();
+        nodeStack = new Stack<GameObject>();
+
         nodeList.Clear();
         lineRenderPrefab.transform.GetChild(0).TryGetComponent<BoxCollider2D>(out collider);
+
+        RevertBut.onClick.AddListener(delegate { OnClickRevertBut(); });
         //addPointBut.onClick.AddListener(delegate { OnClickAddPoint(); });
     }
-
 
     void Update()
     {
@@ -60,25 +67,11 @@ public class CustomQuestion : MonoBehaviour
             #region Began
             case TouchPhase.Began:
                 {
-                    if (addPoint == null)
+                    RaycastHit2D hitInfo = RayCheck(myTouch);
+                    if (hitInfo)
                     {
-                        addPoint = TouchInstNode(touchPos);
-                        nodeList.Add(addPoint);
-                        startPos = addPoint.transform.position;
-                        line = ObjectPoolCP.PoolCp.Inst.BringObjectCp(lineRenderPrefab);
-                        line.transform.SetParent(creatPrefab.transform);
-                    }
-                    else
-                    {
-                        addPoint = TouchInstNode(touchPos);
-                        nodeList.Add(addPoint);
-                        startPos = addPoint.transform.position;
-
-                        LineRender linerender = null;
-                        line.TryGetComponent<LineRender>(out linerender);
-                        linerender.SetCurvePosition(startPos);
-
-                        Debug.Log("NodeList Count : " + nodeList.Count);
+                        //Debug.Log("collider name : " + hitInfo.collider.name);
+                        TouchBegan();
                     }
                 }
                 break;
@@ -103,12 +96,68 @@ public class CustomQuestion : MonoBehaviour
         }
     }
 
+
+    void TouchBegan()
+    {
+        if (addPoint == null)
+        {
+            TouchInstNode(touchPos);
+            //Debug.Log("nodeStack.Count (Push 1) :" + nodeStack.Count);
+
+            startPos = addPoint.transform.position;
+            line = ObjectPoolCP.PoolCp.Inst.BringObjectCp(lineRenderPrefab);
+            line.transform.SetParent(creatPrefab.transform);
+        }
+        else
+        {
+            TouchInstNode(touchPos);
+            //nodeStack.Push(addPoint);
+            //Debug.Log("nodeStack.Count (Push 2) :" + nodeStack.Count);
+            startPos = addPoint.transform.position;
+
+            line.TryGetComponent<LineRender>(out linerender);
+            linerender.SetCurvePosition(startPos);
+            linerenderPosCount = linerender.GetPositionCount();
+            //Debug.Log("linerenderPosCount : " + linerenderPosCount);
+        }
+    }
+
+    void OnClickRevertBut()
+    {
+        linerenderPosCount = linerender.SetPositionCountDown();
+        if (linerenderPosCount < 0) return;
+
+        DestroyNode();
+        //Debug.Log("nodeStack.Count (Pop) :" + nodeStack.Count);
+    }
+
+    void DestroyNode()
+    {
+        if (nodeStack.Count == 0) return;
+        else
+        {
+            addPoint = nodeStack.Pop();
+        }
+
+        ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(addPoint);
+    }
+
+    RaycastHit2D RayCheck(Touch myTouch)
+    {
+        touchPos = mainCam.ScreenToWorldPoint(new Vector3(myTouch.position.x, myTouch.position.y, Camera.main.nearClipPlane));
+
+        Ray2D ray = new Ray2D(touchPos, Vector2.zero);
+        RaycastHit2D hitInfo = Physics2D.Raycast(ray.origin, ray.direction, 5f);
+
+        return hitInfo;
+    }
+
     void OnClickAddPoint()
     {
         if (addPoint == null)
         {
-            //addPoint = InstRandomNode();
-            //line = ObjectPoolCP.PoolCp.Inst.BringObjectCp(lineRenderPrefab);
+            addPoint = InstRandomNode();
+            line = ObjectPoolCP.PoolCp.Inst.BringObjectCp(lineRenderPrefab);
         }
         else if (addPoint != null)
         {
@@ -117,26 +166,18 @@ public class CustomQuestion : MonoBehaviour
             endPos = addPoint.transform.position;
 
             InsetOneLine(endPos);
-
-            //InsetOneLine(endPos);
-
-            // === 콜라이도 사이즈 조절 ===
-            //collider.size = new Vector3(5f, 5f, Vector3.Distance(check, checkPos));
-            //Debug.Log(collider.size + " : collider.size");
-
         }
     }
 
-    GameObject TouchInstNode(Vector3 linePos)
+    void TouchInstNode(Vector3 linePos)
     {
-        GameObject instNode = null;
-        instNode = ObjectPoolCP.PoolCp.Inst.BringObjectCp(circlePointPrefab);
-        instNode.transform.SetParent(creatPrefab.transform);
+        addPoint = ObjectPoolCP.PoolCp.Inst.BringObjectCp(circlePointPrefab);
+        addPoint.transform.SetParent(creatPrefab.transform);
 
-        instNode.transform.position = linePos;
-        return instNode;
+        addPoint.transform.position = linePos;
+        //nodeList.Add(addPoint);
+        nodeStack.Push(addPoint);
     }
-
 
     void InstLineRender(Vector3 startPos, Vector3 endPos)
     {
@@ -154,13 +195,6 @@ public class CustomQuestion : MonoBehaviour
         line.TryGetComponent<LineRender>(out linerender);
         linerender.SetCurvePosition(endPos);
     }
-
-
-    void LineCollider()
-    {
-
-    }
-
 
     GameObject InstRandomNode()
     {

@@ -11,7 +11,6 @@ public class LineRender : MonoBehaviour
     void Awake()
     {
         TryGetComponent<LineRenderer>(out lineRender);
-        //lineRender.positionCount = 2;
     }
 
     public void SetPosition(int index, Vector3 pos)
@@ -23,11 +22,14 @@ public class LineRender : MonoBehaviour
 
     public Vector3 GetPosition(int index) => lineRender.GetPosition(index);
 
+    public int GetPositionCount() => lineRender.positionCount;
+
+    public int SetPositionCountDown() => lineRender.positionCount -= 1;
     public void SetCurvePosition(Vector3 pos)
     {
         if (!CanAppend(pos)) return;
         lineRender.positionCount += 1;
-        lineRender.SetPosition(lineRender.positionCount - 1, pos);
+        lineRender.SetPosition(lineRender.positionCount -1, pos);
     }
 
     private bool CanAppend(Vector3 pos)
