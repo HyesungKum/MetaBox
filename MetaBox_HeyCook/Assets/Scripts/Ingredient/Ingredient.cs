@@ -44,8 +44,6 @@ public class Ingredient : MonoBehaviour
     public bool IsCooked;
     public bool IsCookReady;
 
-    [SerializeField] private bool IsSpawned;
-
     //============================trimControll=============================
     [Header("TrimControll")]
     public float needTask;

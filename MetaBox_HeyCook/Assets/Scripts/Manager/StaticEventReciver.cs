@@ -6,6 +6,7 @@ public delegate void VectorCallBack(Vector3 pos);
 
 static public class EventReciver
 {
+    //===============================main game delegate==================================
     static public BasicCallBack NewCostomer = null;
     static public BasicCallBack NewOrder = null;
     static public IntCallBack ScoreModi = null;
@@ -22,8 +23,11 @@ static public class EventReciver
 
     static public BasicCallBack GameStart = null;
     static public BasicCallBack GamePause = null;
-    public static BasicCallBack GameResume = null;
+    static public BasicCallBack GameResume = null;
     static public BasicCallBack GameOver = null;
+
+    //=============================Loading delegate======================================
+    static public BasicCallBack ButtonClicked;
 
     //customer event
     static public void CallNewComstomer() => NewCostomer?.Invoke();
@@ -50,4 +54,7 @@ static public class EventReciver
     static public void CallGamePause() => GamePause?.Invoke();
     static public void CallGameResume() => GameResume?.Invoke();
     static public void CallGameOver() => GameOver?.Invoke();
+
+    //loading event
+    static public void CallButtonClicked() => ButtonClicked?.Invoke();
 }

@@ -110,6 +110,7 @@ public class UIManager : MonoBehaviour
         //========================Caching==============================================
         waitSec = new WaitForSecondsRealtime(ScoreDelay);
 
+
         //delegate chain
         EventReciver.ScoreModi     += UIScoreModi;
         EventReciver.CorrectIngred += UICorrectIngred;

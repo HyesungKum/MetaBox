@@ -64,10 +64,10 @@ public class StartManager : MonoBehaviour
         Screen.autorotateToLandscapeRight = true;
 
         //=================apply first button listener===================
-        startButton  .onClick.AddListener(() => ShowUI(difficultyUIGroup));
+        startButton.onClick.AddListener(() => ShowUI(difficultyUIGroup));
         startButton  .onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
-        optionButton .onClick.AddListener(() => ShowUI(optionUIGroup));
+        optionButton.onClick.AddListener(() => ShowUI(optionUIGroup));
         optionButton .onClick.AddListener(() => SoundCheck());
         optionButton .onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
@@ -167,7 +167,7 @@ public class StartManager : MonoBehaviour
 
         viewHall.transform.localScale = Vector3.zero;
 
-        SceneManager.LoadScene(SceneName.Main);
+        SceneManager.LoadScene(SceneName.Loading);
     }
 
     //==========================================Sound Slider Controll========================================

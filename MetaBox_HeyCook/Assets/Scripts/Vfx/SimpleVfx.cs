@@ -12,7 +12,6 @@ public class SimpleVfx : MonoBehaviour
         if (loop) duration = float.MaxValue; 
         StartCoroutine(nameof(LifeCycle));
     }
-
     IEnumerator LifeCycle()
     {
         float timer = 0f;

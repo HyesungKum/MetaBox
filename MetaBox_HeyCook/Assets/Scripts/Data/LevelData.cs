@@ -10,7 +10,7 @@ public class LevelTable
     [SerializeField] public int countDown;
     [SerializeField] public float beltSpeed;
     //[SerializeField] public FoodData foodData; 레벨별 다른 음식 데이터
-    //[SerializeField] public Ingredient ingred; 음식에 맞는 재료 데이터
+    //[SerializeField] public Ingredient ingred; 설정한 음식에 맞는 재료 데이터
 
     //guest table data
     [SerializeField] public GuestGroup guestGroup;
