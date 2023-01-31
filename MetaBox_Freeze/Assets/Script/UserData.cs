@@ -23,7 +23,7 @@ public class UserData : MonoBehaviour
         // MongoDB collection name
         collection = dataBase.GetCollection<BsonDocument>("RankingCollection");
 
-        GameManager.Instance.GameClearRecord += Record;
+        GameManager.Instance.gameClearRecord += Record;
     }
     
     void Start()

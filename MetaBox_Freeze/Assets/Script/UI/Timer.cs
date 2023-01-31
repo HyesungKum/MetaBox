@@ -1,8 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class Timer : MonoBehaviour
 {
@@ -19,8 +17,8 @@ public class Timer : MonoBehaviour
 
     private void Awake()
     {
-        GameManager.Instance.PlayTimerEvent += PlayTimer;
-        GameManager.Instance.PenaltyEvent += Penalty;
+        GameManager.Instance.playTimerEvent += PlayTimer;
+        GameManager.Instance.penaltyEvent += Penalty;
     }
     private void Start()
     {
@@ -53,7 +51,6 @@ public class Timer : MonoBehaviour
         {
             alarmrotation.z = AlarmRotCurve.Evaluate(startTime);
             alarm.transform.rotation = Quaternion.Euler(alarmrotation);
-            Debug.Log(alarmCurPos.y);
             alarmCurPos.y = alarmOriPos.y + AlarmPosCurve.Evaluate(startTime);
             alarm.transform.position = alarmCurPos;
 

@@ -1,10 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System;
-using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -28,53 +25,43 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject optionPanel = null;
     [SerializeField] GameObject clearPanel = null;
 
+    [SerializeField] Button option = null;
+    [SerializeField] TextMeshProUGUI catchNumber = null;
     [SerializeField] TextMeshProUGUI gameClear = null;
-    [SerializeField] TextMeshProUGUI clearPlayTime = null; 
     [SerializeField] CountDown countDown = null;
 
-    [SerializeField] ScrollRect wantedList = null;
-    Dictionary<int, Wanted> wantedDic = new Dictionary<int, Wanted>();
-    [SerializeField] Wanted wantedListImage = null;
-    
-    [SerializeField] Button option = null;
-    
+    //[SerializeField] ScrollRect wantedList = null;
+    //[SerializeField] Wanted wantedListImage = null;
+    //Dictionary<int, Wanted> wantedDic = new Dictionary<int, Wanted>();
+
     WaitForSeconds waitHalf = null;
     WaitForSeconds wait1 = null;
-    public int PlayTime { get; set; }
+
     int wantedCount;
     int countdown;
 
-    private void Awake()
-    {
-        GameManager.Instance.FreezeDataSetting += () => PlayTime = GameManager.Instance.FreezeData.playTime;
-    }
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         option.onClick.AddListener(OnClick_Option);
-        option.interactable = false;
         waitHalf = new WaitForSeconds(0.5f);
         wait1 = new WaitForSeconds(1f);
 
         optionPanel.SetActive(false);
         clearPanel.SetActive(false);
+        catchNumber.gameObject.SetActive(false);
         gameClear.gameObject.SetActive(false);
         countDown.gameObject.SetActive(false);
-        StartCoroutine(nameof(GameStart));
+    }
+    
+    public void DataSetting()
+    {
+        this.wantedCount = GameManager.Instance.StageDatas[GameManager.Instance.CurStage].wantedCount;
+        this.countdown = GameManager.Instance.StageDatas[GameManager.Instance.CurStage].startCountdown;
+        catchNumber.gameObject.SetActive(true);
+        catchNumber.text = $"{GameManager.Instance.CatchNumber} / {wantedCount}";
     }
 
-    IEnumerator GameStart()
-    {
-        yield return wait1;
-        GameManager.Instance.PlayTimerEvent();
-        WaveStart();
-    }
-    public void DataSetting(int wantedCount, int startCountdown)
-    {
-        this.wantedCount = wantedCount;
-        this.countdown = startCountdown;
-    }
-
+    /* [Obsolete]
     public void WantedListSetting(List<int> list)
     {
         wantedDic.Clear();
@@ -89,35 +76,48 @@ public class UIManager : MonoBehaviour
     }
     public void Catch(int id)
     {
-        Wanted value = null;
-        if (wantedDic.TryGetValue(id, out value)) value.Catch();
+        if (wantedDic.TryGetValue(id, out Wanted value)) value.Catch();
     }
-    public void Arrest(int id)
-    {
-        Wanted value = null;
-        if(wantedDic.TryGetValue(id, out value)) value.Arrest();
-    }
-
-    public void WaveStart()
-    {
-        option.interactable = false;
-        this.countdown = 3;
-        GameManager.Instance.reStart = false;
-        StartCoroutine(nameof(RunCountdown));
-    }
-
     public void WaveClear()
     {
-        for(int i = 0; i < wantedList.content.childCount; i++)
+        for (int i = 0; i < wantedList.content.childCount; i++)
         {
             Destroy(wantedList.content.GetChild(i).gameObject);
         }
     }
+    */
 
+    public void Countdown()
+    {
+        option.gameObject.SetActive(false);
+        StartCoroutine(nameof(RunCountdown));
+    }
+
+    IEnumerator RunCountdown()
+    {
+        countDown.gameObject.SetActive(true);
+
+        for (int i = countdown; i > 0; i--)
+        {
+            countDown.Show(i);
+            yield return wait1;
+        }
+
+        countDown.gameObject.SetActive(false);
+        gameClear.gameObject.SetActive(true);
+        gameClear.text = "Game Start";
+        yield return waitHalf;
+        gameClear.gameObject.SetActive(false);
+        option.gameObject.SetActive(true);
+    }
+
+    public void Catch()
+    {
+        catchNumber.text = $"{GameManager.Instance.CatchNumber} / {wantedCount}";
+    }
     public void Win()
     {
         clearPanel.SetActive(true);
-        clearPlayTime.text = (PlayTime - GameManager.Instance.PlayTime).ToString();
     }
 
     public void Lose()
@@ -126,35 +126,11 @@ public class UIManager : MonoBehaviour
         gameClear.text = "You Lose";
     }
 
-    IEnumerator RunCountdown()
-    {
-        countDown.gameObject.SetActive(true);
-
-        for(int i = countdown; i > 0; i--)
-        {
-            if (GameManager.Instance.reStart) yield break;
-            countDown.Show(countdown);
-            countdown--;
-            yield return wait1;
-            if(countDown.nomal == false) yield break;
-        }
-
-        if (GameManager.Instance.reStart) yield break;
-        countDown.gameObject.SetActive(false);
-        gameClear.gameObject.SetActive(true);
-        gameClear.text = "Game Start";
-        yield return waitHalf;
-        if (GameManager.Instance.reStart) yield break;
-        gameClear.gameObject.SetActive(false);
-        option.interactable = true;
-        GameManager.Instance.WaveStart();
-    }
-
     void OnClick_Option()
     {
         Time.timeScale = 0f;
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
+        gameClear.gameObject.SetActive(false);
         optionPanel.SetActive(true);
     }
-
 }

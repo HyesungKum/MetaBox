@@ -3,22 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public delegate void CallBackFunction();
-public delegate void CallBackSpawn(StageData stageData);
 
 public class GameManager : MonoBehaviour
 {
-    public CallBackFunction FreezeDataSetting = null;
-    public CallBackFunction GameClearRecord = null;
-    public CallBackFunction WaveClearEvent = null;
-    public CallBackFunction PlayTimerEvent = null;
-    public CallBackFunction PenaltyEvent = null;
-
-    public CallBackSpawn spawnThief = null;
-    public CallBackFunction hideThief = null;
-    public CallBackFunction openThief = null;
-    public CallBackFunction removeThief = null;
-
-
     static private GameManager instance;
     static public GameManager Instance
     {
@@ -27,7 +14,7 @@ public class GameManager : MonoBehaviour
             if (instance == null)
             {
                 instance = FindObjectOfType<GameManager>();
-                if(instance == null)
+                if (instance == null)
                 {
                     instance = new GameObject(nameof(GameManager), typeof(GameManager)).GetComponent<GameManager>();
                 }
@@ -36,31 +23,36 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public CallBackFunction freezeDataSetting = null;
+    public CallBackFunction gameClearRecord = null;
+    public CallBackFunction playTimerEvent = null;
+    public CallBackFunction penaltyEvent = null;
+
+    public CallBackFunction spawnThief = null;
+    public CallBackFunction openThief = null;
+    public CallBackFunction hideThief = null;
+    public CallBackFunction removeThief = null;
+
     [SerializeField] ParticleSystem waveClearEff = null;
+    public GameData FreezeData { get; private set; }
+    public List<StageData> StageDatas { get; private set; }
+    public bool IsGaming { get; private set; } = false;
+    public int CurStage { get; private set; } = -1;
+    public int PlayTime { get; private set; } = 0;
+    public int CatchNumber { get; private set; } = 0;
+
     WaitForSeconds wait1 = null;
     WaitForSeconds waitNextWave = null;
+    
+    bool imgShowTime = false;
 
-    public GameData FreezeData { get; set; }
-    public List<StageData> StageDatas { get; set; }
-    public bool IsGaming { get; set; } = false;
-    public int PlayTime { get; set; }
-
-    int stage;
-    int penalty;
-    int catchNumber;
-    public bool reStart { get; set; }
-
-    private void Awake()
+    void Awake()
     {
         DataManager.Instance.LoadGameData();
         SoundManager.Instance.AddButtonListener();
         LevelSetting(PlayerPrefs.GetInt("level"));
-    }
-
-    private void Start()
-    {
         wait1 = new WaitForSeconds(1f);
-        waitNextWave = new WaitForSeconds(3f);
+        waitNextWave = new WaitForSeconds(4f);
     }
 
     public void LevelSetting(int level)
@@ -68,12 +60,9 @@ public class GameManager : MonoBehaviour
         FreezeData = DataManager.Instance.FindGameDataByLevel(level);
         StageDatas = DataManager.Instance.FindStageDatasByStageGroup(FreezeData.stageGroup, FreezeData.stageCount);
         ShuffleList(StageDatas);
-        FreezeDataSetting?.Invoke();
-        stage = 0;
+        freezeDataSetting?.Invoke(); //police세팅
         PlayTime = FreezeData.playTime;
-        WaveSetting();
     }
-
     List<T> ShuffleList<T>(List<T> list)
     {
         for (int i = list.Count -1; i > 0; i--)
@@ -87,19 +76,28 @@ public class GameManager : MonoBehaviour
         return list;
     }
 
+    private void Start()
+    {
+        StartCoroutine(nameof(WaveReady));
+    }
+
+    IEnumerator WaveReady()
+    {
+        yield return wait1;
+        WaveSetting();
+        playTimerEvent?.Invoke();
+        yield return wait1;
+        UIManager.Instance.Countdown();
+        yield return waitNextWave;
+        WaveStart();
+    }
 
     public void WaveSetting()
     {
-        openThief = null;
-        hideThief = null;
-        removeThief = null;
-        spawnThief?.Invoke(StageDatas[stage]);
-        openThief?.Invoke();
-        penalty = StageDatas[stage].penaltyPoint;
-        catchNumber = 0;
-        UIManager.Instance.DataSetting(StageDatas[stage].wantedCount, StageDatas[stage].startCountdown);
-        if(stage != 0 || reStart) UIManager.Instance.WaveStart();
-        stage++;
+        CurStage++;
+        CatchNumber = 0;
+        spawnThief();
+        UIManager.Instance.DataSetting();
     }
 
     public void WaveStart()
@@ -113,55 +111,72 @@ public class GameManager : MonoBehaviour
     {
         IsGaming = false;
         removeThief?.Invoke();
-        if (stage == StageDatas.Count) GameOver(true);
+        openThief = null;
+        hideThief = null;
+        removeThief = null;
+        if (CurStage == StageDatas.Count-1) GameOver(true);
         else
         {
-            UIManager.Instance.WaveClear();
-            StartCoroutine(nameof(NextWave));
+            SoundManager.Instance.WaveClearSFX();
+            waveClearEff.Play();
+            //UIManager.Instance.WaveClear();
+            StartCoroutine(nameof(WaveReady));
         }
     }
+
     public void ReStart()
     {
-        reStart = true;
         IsGaming = false;
         removeThief?.Invoke();
-        UIManager.Instance.WaveClear();
-        stage = 0;
+        openThief = null;
+        hideThief = null;
+        removeThief = null;
         PlayTime = FreezeData.playTime;
-        PlayTimerEvent();
-        WaveSetting();
+        CurStage = -1;
+        StartCoroutine(nameof(WaveReady));
     }
+
     public void GameOver(bool win)
     {
         if (win)
         {
             UIManager.Instance.Win();
-            GameClearRecord();
+            gameClearRecord?.Invoke();
         }
         else UIManager.Instance.Lose();
     }
 
     public void ShowImg()
     {
-        openThief?.Invoke();
+        imgShowTime = false;
+        StartCoroutine(nameof(ImgShow));
     }
-
-    public void Catch(int id)
+    IEnumerator ImgShow()
     {
-        hideThief?.Invoke();
-        catchNumber++;
-        UIManager.Instance.Arrest(id);
-        if (catchNumber == StageDatas[stage-1].wantedCount)
+        yield return null;
+        openThief?.Invoke();
+        float showTime = StageDatas[CurStage].startCountdown;
+        imgShowTime = true;
+        while (showTime > 0f && imgShowTime)
         {
-            WaveClear();
+            showTime -= Time.deltaTime;
+            yield return null;
         }
+        if(imgShowTime) hideThief?.Invoke();
+    }
+    public void Catch()
+    {
+        CatchNumber++;
+        SoundManager.Instance.CatchSFX();
+        UIManager.Instance.Catch();
+        if (CatchNumber == StageDatas[CurStage].wantedCount) WaveClear();
     }
 
     public void Penalty()
     {
-        hideThief?.Invoke();
-        PlayTime -= penalty;
-        PenaltyEvent();
+        PlayTime -= StageDatas[CurStage].penaltyPoint;
+        SoundManager.Instance.PenaltySFX();
+        penaltyEvent?.Invoke();
     }
 
     IEnumerator PlayTimer()
@@ -169,24 +184,17 @@ public class GameManager : MonoBehaviour
         while (PlayTime > 0 && IsGaming)
         {
             PlayTime--;
-            PlayTimerEvent();
+            playTimerEvent();
             if (GameManager.Instance.PlayTime <= 0)
             {
-                if (catchNumber < StageDatas[stage - 1].wantedCount)
+                if (CatchNumber < StageDatas[CurStage].wantedCount)
                 {
                     IsGaming = false;
                     GameOver(false);
+                    SoundManager.Instance.WaveFailSFX();
                 }
             }
             yield return wait1;
         }
-    }
-
-    IEnumerator NextWave()
-    {
-        waveClearEff.Play();
-        WaveClearEvent?.Invoke(); //스테이지클리어 연출
-        yield return waitNextWave;
-        WaveSetting();
     }
 }

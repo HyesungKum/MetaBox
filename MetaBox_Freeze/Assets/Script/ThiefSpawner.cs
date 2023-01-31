@@ -20,21 +20,21 @@ public class ThiefSpawner : ObjectPool<Thief>
         PoolInit();
     }
     
-    public void Spawn(StageData stage)
+    public void Spawn()
     {
-        ThiefDatas = DataManager.Instance.FindThiefDatasByThiefGroup(stage.thiefGroup);
+        StageData CurStage = GameManager.Instance.StageDatas[GameManager.Instance.CurStage];
+        ThiefDatas = DataManager.Instance.FindThiefDatasByThiefGroup(CurStage.thiefGroup);
         wantedlist.Clear();
 
-        int wantedCount = stage.wantedCount;
+        int wantedCount = CurStage.wantedCount;
         bool wanted = true;
 
-        for (int i = 0; i < stage.thiefCount; i++)
+        for (int i = 0; i < CurStage.thiefCount; i++)
         {
             if (wantedCount <= 0) wanted = false; 
             int random = Random.Range(0, ThiefDatas.Count);
             Thief thief = Get();
-            thief.transform.position = new Vector3(Random.Range(-5f, 8f), Random.Range(-3f, 3f), 0);
-            if (thief.transform.parent == null) thief.transform.parent = this.transform;
+            thief.transform.position = new Vector3(Random.Range(-8f, 8f), Random.Range(-3.5f, 2.5f), 0);
             thief.Setting(wanted, ThiefDatas[random].id, ThiefDatas[random].moveSpeed, ThiefDatas[random].moveTime);
             if (wanted)
             {
@@ -44,6 +44,6 @@ public class ThiefSpawner : ObjectPool<Thief>
             ThiefDatas.RemoveAt(random);
             wantedCount--;
         }
-        UIManager.Instance.WantedListSetting(wantedlist);
+        //UIManager.Instance.WantedListSetting(wantedlist);
     }
 }

@@ -1,8 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
 
 public class Wanted : MonoBehaviour
 {
@@ -11,8 +9,7 @@ public class Wanted : MonoBehaviour
     [SerializeField] Image thief = null;
     [SerializeField] ScriptableObj wantedImages = null;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         if (arrest == null) arrest = this.transform.GetChild(1).gameObject;
         if (thief == null) thief = this.transform.GetChild(0).GetComponent<Image>();
@@ -41,10 +38,7 @@ public class Wanted : MonoBehaviour
             jail.localScale =  Vector3.Lerp(oriScaleY, Vector3.one, time / 2.5f);
             yield return null;
         }
-    }
-
-    public void Arrest()
-    {
         arrest.SetActive(true);
     }
+
 }

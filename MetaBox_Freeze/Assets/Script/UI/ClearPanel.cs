@@ -1,11 +1,12 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class ClearPanel : MonoBehaviour
 {
+    [SerializeField] TextMeshProUGUI clearPlayTime = null;
     [SerializeField] Button home = null;
 
     [SerializeField] AnimationCurve ScaleCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(4f, 1f) });
@@ -14,10 +15,15 @@ public class ClearPanel : MonoBehaviour
 
     Vector3 oriScale = new Vector3(1, 1, 1);
     Vector3 oriPos = new Vector3(0, 0, 0);
-    // Start is called before the first frame update
-    void Start()
+
+    void Awake()
     {
         home.onClick.AddListener(() => SceneManager.LoadScene("Start"));
+    }
+    
+    void Start()
+    {
+        clearPlayTime.text = (GameManager.Instance.FreezeData.playTime - GameManager.Instance.PlayTime).ToString();
         StartCoroutine(nameof(ClearPanelShow));
     }
     IEnumerator ClearPanelShow()

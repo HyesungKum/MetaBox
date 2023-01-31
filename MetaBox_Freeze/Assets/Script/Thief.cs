@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public delegate void CallbackArrest(Thief me);
@@ -24,42 +23,14 @@ public class Thief : MonoBehaviour
     bool arrest;
     Vector3 dir;
 
-
-    void OnEnable()
-    {
-        GameManager.Instance.openThief += () => spriteRenderer.sprite = thiefImages.Thief[id];
-        GameManager.Instance.hideThief += () => spriteRenderer.sprite = thiefImages.Thief[0];
-        GameManager.Instance.removeThief += () => callbackArrest?.Invoke(this);
-        runnigTime = new WaitUntil(() => (police.transform.position - this.transform.position).magnitude > 2f);
-        GameStart = new WaitUntil(() => GameManager.Instance.IsGaming);
-        runningAway = false;
-        arrest = false;
-        dir = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0).normalized;
-        StartCoroutine(nameof(RandomDir));
-        StartCoroutine(nameof(RandomMove));
-    }
-    
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         police = FindObjectOfType<Police>();
-        if (spriteRenderer == null) spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
-    }
+        if (spriteRenderer == null) this.gameObject.TryGetComponent<SpriteRenderer>(out spriteRenderer);
 
-    public void OpenImage()
-    {
-        spriteRenderer.sprite = thiefImages.Thief[id];
-    }
-
-    public void HideImage()
-    {
-        spriteRenderer.sprite = thiefImages.Thief[0];
-    }
-
-    public void Remove()
-    {
-        if (callbackArrest != null) callbackArrest(this);
-        callbackArrest = null;
+        runnigTime = new WaitUntil(() => (police.transform.position - this.transform.position).magnitude > 2f);
+        GameStart = new WaitUntil(() => GameManager.Instance.IsGaming);
+        waitArrestTime = new WaitForSeconds(1f);
     }
 
     public void Setting(bool wantedThief, int id, int movespeed, int movetime)
@@ -68,9 +39,26 @@ public class Thief : MonoBehaviour
         this.speed = movespeed * 0.4f;
         this.wantedThief = wantedThief;
         waitMoveTime = new WaitForSeconds(movetime);
-        waitArrestTime = new WaitForSeconds(3f);
+        if (wantedThief) spriteRenderer.sprite = thiefImages.Thief[2];
+        else spriteRenderer.sprite = thiefImages.Thief[0];
+
+        GameManager.Instance.openThief += ImgShow;
+        GameManager.Instance.hideThief += () => spriteRenderer.sprite = thiefImages.Thief[1];
+        GameManager.Instance.removeThief += () => callbackArrest?.Invoke(this);
+
+        runningAway = false;
+        arrest = false;
+        dir = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0).normalized;
+
+        StartCoroutine(nameof(RandomDir));
+        StartCoroutine(nameof(RandomMove));
     }
 
+    void ImgShow()
+    {
+        if (wantedThief) spriteRenderer.sprite = thiefImages.Thief[2];
+        else spriteRenderer.sprite = thiefImages.Thief[0];
+    }
     IEnumerator RandomDir()
     {
         yield return GameStart;
@@ -101,12 +89,12 @@ public class Thief : MonoBehaviour
 
     IEnumerator Destroy()
     {
-        UIManager.Instance.Catch(id);
+        //UIManager.Instance.Catch(id);
         yield return waitArrestTime;
-        if (callbackArrest != null) callbackArrest(this);
+        callbackArrest?.Invoke(this);
         callbackArrest = null;
 
-        if (wantedThief) GameManager.Instance.Catch(id);
+        if (wantedThief) GameManager.Instance.Catch();
         else GameManager.Instance.Penalty();
     }
 
@@ -180,6 +168,11 @@ public class Thief : MonoBehaviour
         }
         else
         {
+            if(runningAway == false)
+            {
+                runningAway = true;
+                StartCoroutine(nameof(RunAwayMode));
+            }
             dir = (this.transform.position - collision.transform.position).normalized;
         }
     }
