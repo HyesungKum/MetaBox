@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class LineRender : MonoBehaviour
 {
@@ -8,8 +10,11 @@ public class LineRender : MonoBehaviour
     [SerializeField] private BoxCollider2D collider = null;
     public const float resolutio = 0.1f;
 
+    public Stack<Vector3> posStack;
+
     void Awake()
     {
+        posStack = new Stack<Vector3>();
         TryGetComponent<LineRenderer>(out lineRender);
     }
 
@@ -25,6 +30,7 @@ public class LineRender : MonoBehaviour
     public int GetPositionCount() => lineRender.positionCount;
 
     public int SetPositionCountDown() => lineRender.positionCount -= 1;
+
     public void SetCurvePosition(Vector3 pos)
     {
         if (!CanAppend(pos)) return;
@@ -32,9 +38,16 @@ public class LineRender : MonoBehaviour
         lineRender.SetPosition(lineRender.positionCount -1, pos);
     }
 
+    public void GetPositions()
+    {
+        Vector3[] vector3s = new Vector3[lineRender.positionCount];
+        lineRender.GetPositions(vector3s);
+    }
+
     private bool CanAppend(Vector3 pos)
     {
         if (lineRender.positionCount == 0) return true;
         return Vector2.Distance(lineRender.GetPosition(lineRender.positionCount - 1), pos) > resolutio;
     }
+
 }

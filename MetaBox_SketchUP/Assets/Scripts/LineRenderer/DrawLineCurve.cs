@@ -5,18 +5,38 @@ using UnityEngine;
 public class DrawLineCurve : MonoBehaviour
 {
     [SerializeField] private GameObject linePrefab = null;
+    [SerializeField] GameObject checkObj = null;
 
     private Camera mainCam;
     private GameObject currentLine;
 
     Touch myTouch;
     private Vector3 touchPos;
+    LineRender linerender = null;
 
-    public const float resolutio = 0.1f;
+    public List<Vector3> nodePosList;
+    int linerenderPosCount;
 
     void Awake()
     {
         mainCam = Camera.main;
+        nodePosList = new List<Vector3>();
+
+        nodePosList.Clear();
+    }
+
+    void Start()
+    {
+        LineRenderer ObjLender = null;
+        checkObj.TryGetComponent<LineRenderer>(out ObjLender);
+        linerenderPosCount = ObjLender.positionCount;
+
+        Vector3 nodePos;
+        for (int i = 0; i < linerenderPosCount; i++)
+        {
+            nodePos = ObjLender.GetPosition(i);
+            nodePosList.Add(nodePos);
+        }
     }
 
     void Update()
@@ -31,12 +51,16 @@ public class DrawLineCurve : MonoBehaviour
             #region Began
             case TouchPhase.Began:
                 {
-                    //RaycastHit2D hitInfo = RayCheck();
-                    //if (hitInfo)
-                    //{
+                    RaycastHit2D hitInfo = RayCheck();
+                    if (hitInfo)
+                    {
                         currentLine = ObjectPoolCP.PoolCp.Inst.BringObjectCp(linePrefab);
-                        //currentLine.transform.SetParent(this.transform);
-                    //}
+                        // == ºôµå ÇÒ¶§ ²À »©ÀÚ
+                        currentLine.transform.SetParent(this.transform);
+
+
+
+                    }
                 }
                 break;
             #endregion
@@ -44,16 +68,19 @@ public class DrawLineCurve : MonoBehaviour
             #region Move
             case TouchPhase.Moved:
                 {
-                    //RaycastHit2D hitInfo = RayCheck();
-                    //if (hitInfo)
-                    //{
-
-                        currentLine.GetComponent<LineRender>().SetCurvePosition(touchPos);
-                    //}
-                    //else
-                    //{
-                    //    return;
-                    //}
+                    RaycastHit2D hitInfo = RayCheck();
+                    if (hitInfo)
+                    {
+                        currentLine.TryGetComponent<LineRender>(out linerender);
+                        //for(int i = 0; i < nodePosList.Count; ++ i)
+                        //linerender.SetPosition(0, );
+                        //linerender.SetPosition(1, );
+                        // linerender.SetCurvePosition(touchPos);
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
                 break;
             #endregion
@@ -61,6 +88,7 @@ public class DrawLineCurve : MonoBehaviour
             #region Ended
             case TouchPhase.Ended:
                 {
+
 
                 }
                 break;
