@@ -96,7 +96,10 @@ public class GameManager : MonoSingleTon<GameManager>
 
         Score = 0;
         timer = 0f;
+    }
 
+    private void Start()
+    {
         StartCoroutine(nameof(BeforeStart));
     }
 
