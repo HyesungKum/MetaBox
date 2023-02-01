@@ -12,17 +12,25 @@ public class DrawLineCurve : MonoBehaviour
 
     Touch myTouch;
     private Vector3 touchPos;
+    public Vector3 startPos;
     LineRender linerender = null;
 
     public List<Vector3> nodePosList;
+    public LinkedList<Vector3> nodePosLinkedList;
+    public LinkedList<Dictionary<int, Vector3>> nodePosLinkedListDictionary;
+
     int linerenderPosCount;
+    int nodePosCount;
 
     void Awake()
     {
         mainCam = Camera.main;
         nodePosList = new List<Vector3>();
+        nodePosLinkedList = new LinkedList<Vector3>();
+        nodePosLinkedListDictionary = new LinkedList<Dictionary<int, Vector3>>();
 
         nodePosList.Clear();
+        nodePosLinkedList.Clear();
     }
 
     void Start()
@@ -36,7 +44,10 @@ public class DrawLineCurve : MonoBehaviour
         {
             nodePos = ObjLender.GetPosition(i);
             nodePosList.Add(nodePos);
+            nodePosLinkedList.AddLast(nodePos);
         }
+
+        //Debug.Log(" nodePosLinkedList : " + nodePosLinkedList.Count);
     }
 
     void Update()
@@ -55,11 +66,16 @@ public class DrawLineCurve : MonoBehaviour
                     if (hitInfo)
                     {
                         currentLine = ObjectPoolCP.PoolCp.Inst.BringObjectCp(linePrefab);
-                        // == ºôµå ÇÒ¶§ ²À »©ÀÚ
+                        // == SetParent ºôµå ÇÒ¶§ ²À »©ÀÚ === 
                         currentLine.transform.SetParent(this.transform);
 
-
-
+                        startPos = hitInfo.transform.position;
+                        //Debug.Log("startPos : " +  startPos);
+                        nodePosLinkedList.Find(startPos);
+                        
+                        //Debug.Log("Find" + nodePosLinkedList.Find(startPos).Value.ToString());
+                        //int index = nodePosLinkedList.
+                        //Debug.Log("Count : " + startPosCount);
                     }
                 }
                 break;
@@ -71,11 +87,11 @@ public class DrawLineCurve : MonoBehaviour
                     RaycastHit2D hitInfo = RayCheck();
                     if (hitInfo)
                     {
+                        //startPos = currentLine.transform.position;
                         currentLine.TryGetComponent<LineRender>(out linerender);
-                        //for(int i = 0; i < nodePosList.Count; ++ i)
-                        //linerender.SetPosition(0, );
-                        //linerender.SetPosition(1, );
-                        // linerender.SetCurvePosition(touchPos);
+                        linerender.SetPosition(0, startPos);
+                        linerender.SetPosition(1, touchPos);
+
                     }
                     else
                     {

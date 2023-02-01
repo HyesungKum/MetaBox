@@ -24,7 +24,7 @@ public class CustomQuestion : MonoBehaviour
     private Camera mainCam = null;
 
     //GameObject creatPrefab = null;
-    public List<GameObject> nodeList;
+    //public List<GameObject> nodeList;
     Stack<GameObject> nodeStack;
 
     int linerenderPosCount;
@@ -34,10 +34,10 @@ public class CustomQuestion : MonoBehaviour
     {
         mainCam = Camera.main;
         //creatPrefab = new GameObject("CreatPrefab");
-        nodeList = new List<GameObject>();
+        //nodeList = new List<GameObject>();
         nodeStack = new Stack<GameObject>();
 
-        nodeList.Clear();
+        //nodeList.Clear();
         lineRenderPrefab.transform.GetChild(0).TryGetComponent<BoxCollider2D>(out collider);
 
         RevertBut.onClick.AddListener(delegate { OnClickRevertBut(); });
@@ -103,10 +103,10 @@ public class CustomQuestion : MonoBehaviour
             line.TryGetComponent<LineRender>(out linerender);
             linerender.SetCurvePosition(startPos);
             linerenderPosCount = linerender.GetPositionCount();
-            nodeList.Add(addPoint);
+            //nodeList.Add(addPoint);
         }
 
-        Debug.Log("nodeList Count : " + nodeList.Count);
+        //Debug.Log("nodeList Count : " + nodeList.Count);
     }
 
     void OnClickRevertBut()
@@ -126,7 +126,7 @@ public class CustomQuestion : MonoBehaviour
         }
 
         ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(addPoint);
-        nodeList.RemoveAt(nodeList.Count - 1);
+        //nodeList.RemoveAt(nodeList.Count - 1);
     }
 
     void TouchInstNode(Vector3 linePos)
