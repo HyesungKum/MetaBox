@@ -118,6 +118,7 @@ public class GuestTable : MonoBehaviour
         Vector3 tempPos = guestObj.transform.position;
         float timer = 0f;
         bool token = true;
+        talkBubble.gameObject.SetActive(false);
 
         //talk text out
         if (curGuest != null)
@@ -137,13 +138,14 @@ public class GuestTable : MonoBehaviour
                 token = false;
                 curGuest = guestGroup.Guests[Random.Range(0,4)];
                 guestImage.sprite = curGuest.guestImage;
-                talkBubble.sprite = curGuest.talkBubbleImage;
             }
 
             //recipe pick
             if (timer > moveCurve.keys[^1].time)
             {
                 PickRecipe();
+                talkBubble.gameObject.SetActive(true);
+                talkBubble.sprite = curGuest.talkBubbleImage;
                 guestText.gameObject.SetActive(false);
                 yield break;
             }
