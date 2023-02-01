@@ -2,6 +2,7 @@ using System.Collections;
 using System.Threading;
 using UnityEngine;
 using Kum;
+using System.Linq;
 
 public class GameManager : MonoSingleTon<GameManager>
 {
@@ -63,13 +64,23 @@ public class GameManager : MonoSingleTon<GameManager>
         //initializing
         Level = LevelTransfer.Inst.Level;
         curLevelData = levelData.levelTables[Level];
+
+        //divide each data
         countDown       = curLevelData.countDown;
+
+        rightSpawner.SpawnTable = curLevelData.ingredGroup.ingredObjs.ToList();
+        leftSpawner.SpawnTable = curLevelData.ingredGroup.ingredObjs.ToList();
+
         //rightSpawner.spawnTime = curLevelDtat.spawnTime;
         //leftSpawner.spawnTime = curLevelDtat.spawnTime;
         beltZoneL.beltSpeed    = curLevelData.beltSpeed;
         beltZoneR.beltSpeed    = curLevelData.beltSpeed;
         guestTableR.guestGroup = curLevelData.guestGroup;
         guestTableL.guestGroup = curLevelData.guestGroup;
+
+        guestTableR.FoodList = curLevelData.foodDataGroup.foodDatas.ToList();
+        guestTableL.FoodList = curLevelData.foodDataGroup.foodDatas.ToList();
+
         beltR.sprite           = curLevelData.conveyorBeltImage;
         beltL.sprite           = curLevelData.conveyorBeltImage;
         kitchenR.sprite        = curLevelData.kitchenImage;

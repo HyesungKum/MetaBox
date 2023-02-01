@@ -16,7 +16,7 @@ public class GuestTable : MonoBehaviour
     //=====================================Reference Data======================================
     [Header("Reference Data")]
     public GuestGroup guestGroup;
-    [SerializeField] private List<FoodData> FoodList;
+    public List<FoodData> FoodList;
     private List<FoodData> TempTable;
 
     [Header("Current Recipe")]
@@ -46,11 +46,20 @@ public class GuestTable : MonoBehaviour
     //=======================================caching===========================================
     [SerializeField] float waitCallSec;
     private WaitForSeconds waitSec;
+    private WaitUntil waitGetData;
 
     private void Awake()
     {
         //caching
         waitSec = new WaitForSeconds(waitCallSec);
+        waitGetData = new WaitUntil(() => FoodList != null);
+
+        StartCoroutine(nameof(GettingData));
+    }
+
+    IEnumerator GettingData()
+    {
+        yield return waitGetData;
 
         //Table Copy
         TempTable = FoodList.ToArray().ToList();
@@ -69,9 +78,7 @@ public class GuestTable : MonoBehaviour
             EventReciver.NewCostomerL += NewCostomerPord;
             EventReciver.DoSubmissionL += DoSubmission;
         }
-    }
-    private void Start()
-    {
+
         if (side == Side.Right) EventReciver.CallNewComstomerR();
         else EventReciver.CallNewComstomerL();
     }

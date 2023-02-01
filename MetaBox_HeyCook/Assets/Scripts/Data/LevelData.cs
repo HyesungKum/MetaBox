@@ -9,8 +9,8 @@ public class LevelTable
     [SerializeField] public int level;
     [SerializeField] public int countDown;
     [SerializeField] public float beltSpeed;
-    [SerializeField] public FoodGorup foodData;
-    [SerializeField] public IngredGroup ingred;
+    [SerializeField] public FoodGroup foodDataGroup;
+    [SerializeField] public IngredGroup ingredGroup;
 
     //guest table data
     [SerializeField] public GuestGroup guestGroup;

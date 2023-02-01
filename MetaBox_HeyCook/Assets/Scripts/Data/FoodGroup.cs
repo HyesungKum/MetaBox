@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "ScriptableObj/FoodGorup", fileName = "FoodGorup")]
-public class FoodGorup : ScriptableObject
+public class FoodGroup : ScriptableObject
 {
     public FoodData[] foodDatas;
 }

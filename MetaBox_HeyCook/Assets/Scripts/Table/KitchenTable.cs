@@ -123,7 +123,7 @@ public class KitchenTable : MonoBehaviour
     private void TaskContoll()
     {
         rawFood.curTask++;
-        cookSlider.value = rawFood.curTask / rawFood.needTask;
+        cookSlider.value = rawFood.curTask / rawFood.FoodData.needTask;
 
         if (cookSlider.value == 1)
         {

@@ -72,8 +72,6 @@ public class LoadingManager : MonoSingleTon<LoadingManager>
         viewHall.transform.localScale = Vector3.one * 45f;
         production.SetActive(false);
 
-        ShowUI(ProgressingUI);
-
         //start async loading
         operation = SceneManager.LoadSceneAsync(SceneName.Main);
         operation.allowSceneActivation = false;

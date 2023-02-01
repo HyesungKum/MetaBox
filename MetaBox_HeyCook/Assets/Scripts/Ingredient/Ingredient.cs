@@ -26,7 +26,6 @@ public class Ingredient : MonoBehaviour
     //============================Data=====================================
     [Header("Data")]
     public FoodData FoodData = null;
-    public SetData setData = null;
     public IngredData IngredData = null;
 
     //============================Component================================
@@ -45,8 +44,7 @@ public class Ingredient : MonoBehaviour
     public bool IsCookReady;
 
     //============================trimControll=============================
-    [Header("TrimControll")]
-    public float needTask;
+    [Header("[CookControll]")]
     public float curTask = 0;
     public TrimType TrimType;
 

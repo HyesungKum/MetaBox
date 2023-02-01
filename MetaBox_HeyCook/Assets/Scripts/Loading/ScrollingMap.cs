@@ -14,7 +14,7 @@ public class ScrollingMap : MonoBehaviour
 
     [Header("[Rock Setting]")]
     [SerializeField] SpriteRenderer rockRenderer;
-    [SerializeField] Transform Rock;
+    [SerializeField] Transform[] Rock;
     [SerializeField] Transform[] RockSpawnTr;
     [SerializeField] float rockSpeed;
 
@@ -51,9 +51,12 @@ public class ScrollingMap : MonoBehaviour
             }
 
             //rock scrolling
-            Rock.Translate(rockSpeed * Time.deltaTime * Vector3.left);
-            if (Rock.position.x < -11f) Rock.position = newRockPos[Random.Range(0,2)];
-
+            for(int i =0; i< Rock.Length; i++)
+            {
+                Rock[i].Translate(rockSpeed * Time.deltaTime * Vector3.left);
+                if (Rock[i].position.x < -11f) Rock[i].position = newRockPos[Random.Range(0, 2)];
+            }
+            
             yield return null;
         }
     }

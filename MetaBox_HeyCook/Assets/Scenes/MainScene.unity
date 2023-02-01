@@ -167,14 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf0da42905c184a4e82683f8a94e56ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TableData:
-  - {fileID: 11400000, guid: 2d3288fe6bee7574ab6141f87ae025cf, type: 2}
-  - {fileID: 11400000, guid: 2d12a03285821e945826f774aca768ea, type: 2}
-  - {fileID: 11400000, guid: de3f684af287f9c429562946e74c1b30, type: 2}
-  - {fileID: 11400000, guid: 52301800851e0b843857d32937825dcf, type: 2}
-  SpawnTable:
-  - {fileID: 7169018881002374798, guid: 9338a759ba7025e47a33ab1306076800, type: 3}
-  - {fileID: 7692650572320046625, guid: dcd90080bd000cd4cb530b0110e410e8, type: 3}
+  SpawnTable: []
   TempTable: []
   BeltZone: {fileID: 217774003}
   spawnTime: 1.5
@@ -2607,9 +2600,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guestGroup: {fileID: 0}
-  FoodList:
-  - {fileID: 11400000, guid: 63968d6eaea67c04a8df1548f309ceab, type: 2}
-  - {fileID: 11400000, guid: e7c990c1431850741a231a79eaea7abd, type: 2}
+  FoodList: []
   requireFood: {fileID: 0}
   requireIngreds: []
   side: 0
@@ -2707,7 +2698,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 1492cbdd5b7c0bd478383f7a9ed34a79, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -3200,12 +3191,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: 21300000, guid: 3cd429598a2d3a146b9365c8bf1e3ebc, type: 3}
+  m_Sprite: {fileID: 21300000, guid: aaa59982377ccd74e8060473620d93af, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 5.12, y: 5.12}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -4159,9 +4150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guestGroup: {fileID: 0}
-  FoodList:
-  - {fileID: 11400000, guid: eefa9d33951b2bc428429887532bc574, type: 2}
-  - {fileID: 11400000, guid: ff32550161f4f974cb52f97f5be340da, type: 2}
+  FoodList: []
   requireFood: {fileID: 0}
   requireIngreds: []
   side: 1
@@ -4259,7 +4248,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 1492cbdd5b7c0bd478383f7a9ed34a79, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -5717,8 +5706,8 @@ MonoBehaviour:
     level: 0
     countDown: 0
     beltSpeed: 0
-    foodData: {fileID: 0}
-    ingred: {fileID: 0}
+    foodDataGroup: {fileID: 0}
+    ingredGroup: {fileID: 0}
     guestGroup: {fileID: 0}
     conveyorBeltImage: {fileID: 0}
     submissionImage: {fileID: 0}
@@ -6282,13 +6271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf0da42905c184a4e82683f8a94e56ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TableData:
-  - {fileID: 11400000, guid: 2d3288fe6bee7574ab6141f87ae025cf, type: 2}
-  - {fileID: 11400000, guid: 2d12a03285821e945826f774aca768ea, type: 2}
-  - {fileID: 11400000, guid: de3f684af287f9c429562946e74c1b30, type: 2}
-  - {fileID: 11400000, guid: 52301800851e0b843857d32937825dcf, type: 2}
-  SpawnTable:
-  - {fileID: 0}
+  SpawnTable: []
   TempTable: []
   BeltZone: {fileID: 471473229}
   spawnTime: 1.5

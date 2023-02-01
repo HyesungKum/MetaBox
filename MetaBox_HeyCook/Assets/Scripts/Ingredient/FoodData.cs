@@ -8,6 +8,7 @@ public class FoodData : ScriptableObject
     public Sprite foodImage;
     public Sprite combineImage;
     public CookType cookType;
+    public int needTask;
     public int Score;
 
     [Header("[Vfx]")]

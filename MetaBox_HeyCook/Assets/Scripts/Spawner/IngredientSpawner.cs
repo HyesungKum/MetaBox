@@ -7,9 +7,6 @@ using UnityEngine;
 public class IngredientSpawner : MonoBehaviour
 {
     //===============table data========================
-    [Header("Spawn Data Table")]
-    public SpawnTableData[] TableData;
-
     [Header("Current Spawn Table")]
     public List<GameObject> SpawnTable;
     public List<GameObject> TempTable;
@@ -26,17 +23,30 @@ public class IngredientSpawner : MonoBehaviour
 
     //================inner variables===================
     private float timer = 0f;
-    
+
+    //=================caching==========================
+    WaitUntil waitDateGet;
+
     private void Awake()
     {
-        //apply Level
-        switch (GameManager.Inst.Level)
-        {
-            case 1: SpawnTable = TableData[0].SpawnTable; break;
-            case 2: SpawnTable = TableData[1].SpawnTable; break;
-            case 3: SpawnTable = TableData[2].SpawnTable; break;
-            case 4: SpawnTable = TableData[3].SpawnTable; break;
-        }
+        waitDateGet = new WaitUntil(()=> SpawnTable != null);
+
+        StartCoroutine(nameof(SpawnerInit));
+    }
+
+    private void OnDisable()
+    {
+        //delegate unchain
+        EventReciver.GameStart -= SpawnStart;
+    }
+    //======================================spawn Timing Controll=================================================
+    /// <summary>
+    /// spawner Initializing routine
+    /// </summary>
+    /// <returns> until wait spawning routine when data getting done </returns>
+    IEnumerator SpawnerInit()
+    {
+        yield return waitDateGet;
 
         //Init Table
         TempTable = SpawnTable.ToArray().ToList();
@@ -64,12 +74,6 @@ public class IngredientSpawner : MonoBehaviour
         EventReciver.GameStart += SpawnStart;
     }
 
-    private void OnDisable()
-    {
-        //delegate unchain
-        EventReciver.GameStart -= SpawnStart;
-    }
-
     //=====================================Spawn Reference Object using ObjPool===================================
     void SpawnStart()
     {
@@ -84,7 +88,7 @@ public class IngredientSpawner : MonoBehaviour
             if (timer > spawnTime)
             {
                 //random index
-                int index = UnityEngine.Random.Range(0, TempTable.Count);
+                int index = Random.Range(0, TempTable.Count);
 
                 //spawn gameobj
                 Spawn(index);
@@ -102,9 +106,17 @@ public class IngredientSpawner : MonoBehaviour
     }
     private GameObject Spawn(int index)
     {
-        GameObject instObj = PoolCp.Inst.BringObjectCp(TempTable[index]);
-        instObj.transform.SetPositionAndRotation(this.transform.position, Quaternion.identity);
-        return instObj;
+        //try
+        //{
+            GameObject instObj = PoolCp.Inst.BringObjectCp(TempTable[index]);
+            instObj.transform.SetPositionAndRotation(this.transform.position, Quaternion.identity);
+            return instObj;
+        //}
+        //catch
+        //{
+        //    Debug.LogError("##Spawner Error : Cannot Found any spawning target");
+        //    return null;
+        //}
     }
 
     #region Editor
