@@ -9,14 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2c9ce2fe67ef5f419aac4193fc29ade, type: 3}
-  m_Name: SetOctoEggPlant
+  m_Script: {fileID: 11500000, guid: cb5b4ede711941e4bba365b96ad694f3, type: 3}
+  m_Name: OctoEggplant
   m_EditorClassIdentifier: 
-  setName: OctoEggPlant
+  foodName: OctoEggplant
+  foodImage: {fileID: 21300000, guid: 11f2286f46a099d4f8e722679631dfc4, type: 3}
+  combineImage: {fileID: 21300006, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+  cookType: 0
+  Score: 100
+  foodVfx: {fileID: 3506292326563085180, guid: 6e72e10491801b94db3551e33cdf2398, type: 3}
   needIngred:
   - {fileID: 11400000, guid: 05d6e9dbfe71875489db7f2e5018449e, type: 2}
   - {fileID: 11400000, guid: 6c7865b14faa6c6438b7c4875d601a15, type: 2}
-  CombineImage: {fileID: 21300000, guid: 11f2286f46a099d4f8e722679631dfc4, type: 3}
-  particle: {fileID: 3506292326563085180, guid: 6e72e10491801b94db3551e33cdf2398, type: 3}
-  TaskCount: 15
-  Score: 70

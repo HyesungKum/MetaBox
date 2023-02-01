@@ -4,13 +4,16 @@ public delegate void BasicCallBack();
 public delegate void IntCallBack(int value);
 public delegate void VectorCallBack(Vector3 pos);
 
-static public class EventReciver
+public class EventReciver
 {
     //===============================main game delegate==================================
-    static public BasicCallBack NewCostomer = null;
-    static public BasicCallBack NewOrder = null;
+    static public BasicCallBack NewCostomerR = null;
+    static public BasicCallBack NewCostomerL = null;
+    static public BasicCallBack NewOrderR = null;
+    static public BasicCallBack NewOrderL = null;
     static public IntCallBack ScoreModi = null;
-    static public BasicCallBack DoSubmission = null;
+    static public BasicCallBack DoSubmissionR = null;
+    static public BasicCallBack DoSubmissionL = null;
 
     static public VectorCallBack CorrectIngred = null;
     static public VectorCallBack WrongIngred = null;
@@ -30,12 +33,15 @@ static public class EventReciver
     static public BasicCallBack ButtonClicked;
 
     //customer event
-    static public void CallNewComstomer() => NewCostomer?.Invoke();
-    static public void CallNewOrder() => NewOrder?.Invoke();
+    static public void CallNewComstomerR() => NewCostomerR?.Invoke();
+    static public void CallNewComstomerL() => NewCostomerL?.Invoke();
+    static public void CallNewOrderR() => NewOrderR?.Invoke();
+    static public void CallNewOrderL() => NewOrderL?.Invoke();
 
     //score event
     static public void CallScoreModi(int value) => ScoreModi?.Invoke(value);
-    static public void CallDoSubmission() => DoSubmission?.Invoke();
+    static public void CallDoSubmissionR() => DoSubmissionR?.Invoke();
+    static public void CallDoSubmissionL() => DoSubmissionL?.Invoke();
 
     //ingred event
     static public void CallCorrectIngred(Vector3 pos) => CorrectIngred?.Invoke(pos);

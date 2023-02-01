@@ -155,6 +155,7 @@ public class UIManager : MonoBehaviour
     //============================================Initializing UI=======================================
     void UIInitializing()
     {
+        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.countDown / 60f), (int)(GameManager.Inst.countDown % 60f));
         optionButton.interactable = false;
     }
 

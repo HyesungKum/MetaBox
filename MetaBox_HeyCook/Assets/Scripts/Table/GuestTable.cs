@@ -5,33 +5,37 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 
-public class Submission : MonoBehaviour
+public enum Side
+{
+    Left,
+    Right
+}
+
+public class GuestTable : MonoBehaviour
 {
     //=====================================Reference Data======================================
     [Header("Reference Data")]
-    [SerializeField] public GuestGroup guestGroup;
-    [SerializeField] List<FoodData> FoodList;
-    [SerializeField] private List<FoodData> TempTable;
+    public GuestGroup guestGroup;
+    [SerializeField] private List<FoodData> FoodList;
+    private List<FoodData> TempTable;
 
     [Header("Current Recipe")]
-    [SerializeField] public FoodData requireFood;
+    public FoodData requireFood;
+    public List<IngredData> requireIngreds;
 
-    [SerializeField] public SetData SetDataR;
-    [SerializeField] public SetData SetDataL;
-    //[SerializeField] TalkData 대사정보
+    public Side side;
 
     //=====================================Reference Obj=======================================
-    [Header("Customer")]
+    [Header("Guest")]
     [SerializeField] Guest curGuest = null;
     [SerializeField] GameObject guestObj;
-    [SerializeField] SpriteRenderer guestImage;//++
-    [SerializeField] SpriteRenderer talkBubble;//++
+    [SerializeField] SpriteRenderer guestImage;
+    [SerializeField] SpriteRenderer talkBubble;
     [SerializeField] AnimationCurve moveCurve;
     [SerializeField] TextMeshProUGUI guestText;
 
-    [Header("SetMenu Particle")]
-    [SerializeField] public GameObject particleR;
-    [SerializeField] public GameObject particleL;
+    [Header("Food Particle")]
+    [SerializeField] public GameObject foodParticle;
 
     //=======================================Component=========================================
     [SerializeField] SpriteRenderer spriteRenderer;
@@ -55,39 +59,53 @@ public class Submission : MonoBehaviour
         curGuest = null;
 
         //delegate chain
-        EventReciver.NewCostomer += NewCostomerPord;
-        EventReciver.DoSubmission += DoSubmission;
+        if (side == Side.Right)
+        {
+            EventReciver.NewCostomerR += NewCostomerPord;
+            EventReciver.DoSubmissionR += DoSubmission;
+        }
+        else
+        {
+            EventReciver.NewCostomerL += NewCostomerPord;
+            EventReciver.DoSubmissionL += DoSubmission;
+        }
     }
     private void Start()
     {
-        EventReciver.CallNewComstomer();
+        if (side == Side.Right) EventReciver.CallNewComstomerR();
+        else EventReciver.CallNewComstomerL();
     }
 
     private void OnDestroy()
     {
-        EventReciver.NewCostomer -= NewCostomerPord;
-        EventReciver.DoSubmission -= DoSubmission;
+        //delegate unchain
+        if (side == Side.Right)
+        {
+            EventReciver.NewCostomerR -= NewCostomerPord;
+            EventReciver.DoSubmissionR -= DoSubmission;
+        }
+        else
+        {
+            EventReciver.NewCostomerL -= NewCostomerPord;
+            EventReciver.DoSubmissionL -= DoSubmission;
+        }
     }
 
     //=====================================Submission==========================================
     void DoSubmission()
     {
-        count++;
-        if (count == 2)
-        {
-            count = 0;
-            StartCoroutine(nameof(FoodReset));
-        }
+        StartCoroutine(nameof(FoodReset));
     }
     IEnumerator FoodReset()
     {
         yield return waitSec;
 
-        PoolCp.Inst.DestoryObjectCp(particleR);
-        PoolCp.Inst.DestoryObjectCp(particleL);
+        PoolCp.Inst.DestoryObjectCp(foodParticle);
 
         EventReciver.CallScoreModi(requireFood.Score);
-        EventReciver.CallNewComstomer();
+
+        if(side == Side.Right) EventReciver.CallNewComstomerR();
+        else EventReciver.CallNewComstomerL();
     }
 
     //==============================Customer Move Production===================================
@@ -144,13 +162,12 @@ public class Submission : MonoBehaviour
         requireFood = TempTable[index];
         TempTable.RemoveAt(index);
 
-        spriteRenderer.sprite = requireFood.FoodImage;
+        //show combine hint Image
+        spriteRenderer.sprite = requireFood.combineImage;
 
-        SetDataR = requireFood.needSet[0];
-        SetDataL = requireFood.needSet[1];
-        
         //call new order
-        EventReciver.CallNewOrder();
+        if (side == Side.Right) EventReciver.CallNewOrderR();
+        else EventReciver.CallNewOrderL();
 
         if (TempTable.Count == 0) TempTable = FoodList.ToArray().ToList();
     }

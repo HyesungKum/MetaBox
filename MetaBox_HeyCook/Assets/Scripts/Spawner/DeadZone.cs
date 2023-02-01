@@ -6,6 +6,12 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider2D))]
 public class DeadZone: MonoBehaviour
 {
+    private void Awake()
+    {
+        TryGetComponent(out BoxCollider2D collider);
+        collider.isTrigger = true;
+    }
+
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag(nameof(Ingredient)))

@@ -9,14 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2c9ce2fe67ef5f419aac4193fc29ade, type: 3}
-  m_Name: SetKimchRice
+  m_Script: {fileID: 11500000, guid: cb5b4ede711941e4bba365b96ad694f3, type: 3}
+  m_Name: KimchRice
   m_EditorClassIdentifier: 
-  setName: KimchiRice
+  foodName: KimchRice
+  foodImage: {fileID: 21300000, guid: b7f04c4ac5fe5c04f826ff8a0f994258, type: 3}
+  combineImage: {fileID: 21300004, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
+  cookType: 0
+  Score: 100
+  foodVfx: {fileID: 3506292326563085180, guid: 6e72e10491801b94db3551e33cdf2398, type: 3}
   needIngred:
   - {fileID: 11400000, guid: b476cf026248e354291a7dc0a079d2eb, type: 2}
   - {fileID: 11400000, guid: 3489b28c38c98ac47b884d7783d0f868, type: 2}
-  CombineImage: {fileID: 21300000, guid: b7f04c4ac5fe5c04f826ff8a0f994258, type: 3}
-  particle: {fileID: 2347605465459426321, guid: 972cc363cd9f9974687d43f5feb94616, type: 3}
-  TaskCount: 10
-  Score: 20

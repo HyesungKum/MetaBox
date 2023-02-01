@@ -4,35 +4,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-enum TablePos
-{
-    Right,
-    Left
-}
-
-public class Kitchen : MonoBehaviour
+public class KitchenTable : MonoBehaviour
 {
     //================================Reference Customer=====================================
     [Header("Reference Customer")]
-    [SerializeField] Submission submission = null;
-    [SerializeField] TablePos CurTablePos;
+    [SerializeField] GuestTable guestTable = null;
 
     //==================================ObjectReferance======================================
     [Header("Require Recipe data")]
-    [SerializeField] SpriteRenderer BillboradRenderer;
-    [SerializeField] SetData setOrder = null;
+    [SerializeField] FoodData foodOrder = null;
     [SerializeField] List<IngredData> curNeedIngred = new();
 
     //================================Current Ingredient in Pot==============================
     [Header("current ingred in pot")]
     [SerializeField] Ingredient curIngred = null;
     [SerializeField] Ingredient tempIngred = null;
-    [SerializeField] Ingredient rawSet = null;
+    [SerializeField] Ingredient rawFood = null;
 
     //===================================Table Setting=======================================
     [Header("Table Value")]
     [SerializeField] float servingSpeed;
     [SerializeField] float ingredMoveSpeed;
+    [SerializeField] Side side;
 
     //=======================================Slider==========================================
     [Header("Slider Obj")]
@@ -55,13 +48,14 @@ public class Kitchen : MonoBehaviour
     private void Awake()
     {
         //Reference componet
-        cookSliderObj.TryGetComponent<Slider>(out cookSlider);
+        cookSliderObj.TryGetComponent(out cookSlider);
 
         //Tagging
         this.transform.tag = "Table";
 
         //delegate chain
-        EventReciver.NewOrder += NewCustomerOrder;
+        if (side == Side.Right) EventReciver.NewOrderR += NewCustomerOrder;
+        else EventReciver.NewOrderL += NewCustomerOrder;
 
         //init inner variables 
         Initailizing();
@@ -70,7 +64,8 @@ public class Kitchen : MonoBehaviour
     private void OnDisable()
     {
         //delegate unchain
-        EventReciver.NewOrder -= NewCustomerOrder;
+        if (side == Side.Right) EventReciver.NewOrderR -= NewCustomerOrder;
+        else EventReciver.NewOrderL -= NewCustomerOrder;
     }
 
     //=================================Initializing=====================================
@@ -81,8 +76,8 @@ public class Kitchen : MonoBehaviour
         tableRoundY = Mathf.Round(this.transform.position.y);
 
         //submission Position Round
-        subRoundX = Mathf.Round(submission.transform.position.x);
-        subRoundY = Mathf.Round(submission.transform.position.y);
+        subRoundX = Mathf.Round(guestTable.transform.position.x);
+        subRoundY = Mathf.Round(guestTable.transform.position.y);
 
         //Ingredient Position setting
         targetPos = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z);
@@ -100,8 +95,8 @@ public class Kitchen : MonoBehaviour
     //=================================Cooking Task=====================================
     public void Pressing()
     {
-        if (!nowCooking || rawSet == null) return;
-        if (!(rawSet.IsCookReady && rawSet.CookType == CookType.Pressing)) return;
+        if (!nowCooking || rawFood == null) return;
+        if (!(rawFood.IsCookReady && rawFood.CookType == CookType.Pressing)) return;
 
         //누르기 이펙트
 
@@ -109,8 +104,8 @@ public class Kitchen : MonoBehaviour
     }
     public void Touching()
     {
-        if (!nowCooking || rawSet == null) return;
-        if (!(rawSet.IsCookReady && rawSet.CookType == CookType.Touching)) return;
+        if (!nowCooking || rawFood == null) return;
+        if (!(rawFood.IsCookReady && rawFood.CookType == CookType.Touching)) return;
 
         //만지기 이펙트
 
@@ -118,8 +113,8 @@ public class Kitchen : MonoBehaviour
     }
     public void Slicing()
     {
-        if (!nowCooking || rawSet == null) return;
-        if (!(rawSet.IsCookReady && rawSet.CookType == CookType.Slicing)) return;
+        if (!nowCooking || rawFood == null) return;
+        if (!(rawFood.IsCookReady && rawFood.CookType == CookType.Slicing)) return;
 
         //자르기 이펙트
 
@@ -127,21 +122,19 @@ public class Kitchen : MonoBehaviour
     }
     private void TaskContoll()
     {
-        rawSet.curTask++;
-        cookSlider.value = rawSet.curTask / rawSet.needTask;
+        rawFood.curTask++;
+        cookSlider.value = rawFood.curTask / rawFood.needTask;
 
         if (cookSlider.value == 1)
         {
-            EventReciver.CallScoreModi(setOrder.Score);
-
             cookSliderObj.SetActive(false);
             nowCooking = false;
 
-            GameObject instObj = PoolCp.Inst.BringObjectCp(setOrder.particle);
+            GameObject instObj = PoolCp.Inst.BringObjectCp(foodOrder.foodVfx);
             instObj.transform.position = this.transform.position;
             StartCoroutine(nameof(ParticleMove), instObj);
 
-            PoolCp.Inst.DestoryObjectCp(rawSet.gameObject);
+            PoolCp.Inst.DestoryObjectCp(rawFood.gameObject);
         }
     }
     
@@ -240,8 +233,8 @@ public class Kitchen : MonoBehaviour
             if (curNeedIngred.Count == 0)
             {
                 //rawfood setting
-                rawSet = curIngred;
-                rawSet.setData = setOrder;
+                rawFood = curIngred;
+                rawFood.FoodData = foodOrder;
 
                 tempIngred = null;
                 curIngred = null;
@@ -274,32 +267,26 @@ public class Kitchen : MonoBehaviour
     /// </summary>
     void NewCustomerOrder()
     {
-        //split recipe right and left
-        switch (CurTablePos)
-        {
-            case TablePos.Left: setOrder = submission.SetDataL; break;
-            case TablePos.Right: setOrder = submission.SetDataR; break;
-        }
-
-        //apply need combine list Image
-        BillboradRenderer.sprite = setOrder.CombineImage;
+        //get guest's order
+        foodOrder = guestTable.requireFood;
 
         //recipe data clean
-        if (curNeedIngred.Count >= 0)
-        {
-            curNeedIngred.Clear();
-        }
+        if (curNeedIngred.Count >= 0) curNeedIngred.Clear();
+
+        //first exception
+        if (foodOrder == null) return;
 
         //apply new order
-        for (int i = 0; i < setOrder.needIngred.Length; i++)
+        for (int i = 0; i < foodOrder.needIngred.Length; i++)
         {
-            curNeedIngred.Add(setOrder.needIngred[i]);
+            curNeedIngred.Add(foodOrder.needIngred[i]);
         }
     }
 
     //=========================================Production=====================================
     /// <summary>
-    /// particle move to submission position and tranfer
+    /// particle move to guestTable's position and tranfer,
+    /// Do submission when arriving at last position 
     /// </summary>
     /// <param name="target">target Object</param>
     /// <returns> null </returns>
@@ -312,20 +299,17 @@ public class Kitchen : MonoBehaviour
             float fixedX = Mathf.Round(target.transform.position.x);
             float fixedY = Mathf.Round(target.transform.position.y);
 
-            target.transform.position = Vector3.Lerp(target.transform.position, submission.transform.position, timeCache * servingSpeed);
+            target.transform.position = Vector3.Lerp(target.transform.position, guestTable.transform.position, timeCache * servingSpeed);
 
             if (subRoundX == fixedX && subRoundY == fixedY)
             {
-                target.transform.position = submission.transform.position;
+                target.transform.position = guestTable.transform.position;
 
-                switch (CurTablePos)
-                {
-                    case TablePos.Left: submission.particleR = target; break;
-                    case TablePos.Right: submission.particleL = target; break;
-                }
+                guestTable.foodParticle = target;
 
-                EventReciver.CallDoSubmission();
-
+                if (side == Side.Right) EventReciver.CallDoSubmissionR();
+                else EventReciver.CallDoSubmissionL();
+                
                 yield break;
             }
 
