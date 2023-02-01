@@ -1,6 +1,5 @@
 using ObjectPoolCP;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Touch : MonoBehaviour
@@ -25,7 +24,7 @@ public class Touch : MonoBehaviour
             movePoint.z = 0;
             StartCoroutine(TouchEff(movePoint));
             if (GameManager.Instance.IsGaming == false || Time.timeScale == 0) return;
-            if (movePoint.y < -3.2) movePoint.y = -3.2f;
+            if (movePoint.x > 4.6) movePoint.x = 4.6f;
             police.Move(movePoint);
         }
     }

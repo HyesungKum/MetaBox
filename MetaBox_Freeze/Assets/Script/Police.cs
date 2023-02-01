@@ -9,7 +9,8 @@ public class Police : MonoBehaviour
     [SerializeField] float playerArea;
 
     bool isMoving = false;
-
+    Vector3 rightFlip = new Vector3(1, 1, 1);
+    Vector3 leftFlip = new Vector3(-1, 1, 1);
     private void Awake()
     {
         if(circleArea == null) this.gameObject.TryGetComponent<CircleCollider2D>(out circleArea);
@@ -18,15 +19,17 @@ public class Police : MonoBehaviour
 
     void Setting()
     {
-        this.transform.position = new Vector3(Random.Range(-2f, 2f), Random.Range(-2f, 2f), 0); //단 모든 캐릭터는 겹치지 않게 배치
+        this.transform.position = new Vector3(Random.Range(-2f, 2f), Random.Range(-3f, 1f), 0); //단 모든 캐릭터는 겹치지 않게 배치
         playerSpeed = GameManager.Instance.FreezeData.playerSpeed * 0.02f;
-        playerArea = GameManager.Instance.FreezeData.playerArea * 0.8f;
+        playerArea = GameManager.Instance.FreezeData.playerArea * 0.6f;
         circleArea.radius *= playerArea;
     }
 
     public void Move(Vector3 movepoint)
     {
         isMoving = false;
+        if (movepoint.x >= this.transform.position.x) this.transform.localScale = rightFlip;
+        else this.transform.localScale = leftFlip;
         StartCoroutine(_Move(movepoint));
     }
 

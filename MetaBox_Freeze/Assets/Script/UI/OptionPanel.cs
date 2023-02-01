@@ -44,8 +44,8 @@ public class OptionPanel : MonoBehaviour
     {
         Time.timeScale = 1f;
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
-        GameManager.Instance.ReStart();
         this.gameObject.SetActive(false);
+        GameManager.Instance.ReStart();
     }
 
     void OnClick_Quit() //½ºÅ¸Æ®¾À

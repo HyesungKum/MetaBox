@@ -29,6 +29,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI catchNumber = null;
     [SerializeField] TextMeshProUGUI gameClear = null;
     [SerializeField] CountDown countDown = null;
+    [SerializeField] Image gameStart = null;
 
     //[SerializeField] ScrollRect wantedList = null;
     //[SerializeField] Wanted wantedListImage = null;
@@ -46,11 +47,11 @@ public class UIManager : MonoBehaviour
         waitHalf = new WaitForSeconds(0.5f);
         wait1 = new WaitForSeconds(1f);
 
-        optionPanel.SetActive(false);
         clearPanel.SetActive(false);
         catchNumber.gameObject.SetActive(false);
         gameClear.gameObject.SetActive(false);
         countDown.gameObject.SetActive(false);
+        gameStart.gameObject.SetActive(false);
     }
     
     public void DataSetting()
@@ -87,9 +88,13 @@ public class UIManager : MonoBehaviour
     }
     */
 
+
+    public void Option(bool interact)
+    {
+        option.interactable = interact;
+    }
     public void Countdown()
     {
-        option.gameObject.SetActive(false);
         StartCoroutine(nameof(RunCountdown));
     }
 
@@ -104,11 +109,10 @@ public class UIManager : MonoBehaviour
         }
 
         countDown.gameObject.SetActive(false);
-        gameClear.gameObject.SetActive(true);
-        gameClear.text = "Game Start";
+        gameStart.gameObject.SetActive(true);
         yield return waitHalf;
-        gameClear.gameObject.SetActive(false);
-        option.gameObject.SetActive(true);
+        gameStart.gameObject.SetActive(false);
+        GameManager.Instance.hideEff?.Invoke();
     }
 
     public void Catch()
@@ -123,7 +127,7 @@ public class UIManager : MonoBehaviour
     public void Lose()
     {
         gameClear.gameObject.SetActive(true);
-        gameClear.text = "You Lose";
+        //gameClear.text = "아쉽네요 다시 도전해보세요";
     }
 
     void OnClick_Option()

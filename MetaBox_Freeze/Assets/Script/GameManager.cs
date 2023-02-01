@@ -32,11 +32,13 @@ public class GameManager : MonoBehaviour
     public CallBackFunction openThief = null;
     public CallBackFunction hideThief = null;
     public CallBackFunction removeThief = null;
+    public CallBackFunction hideEff = null;
 
     [SerializeField] ParticleSystem waveClearEff = null;
     public GameData FreezeData { get; private set; }
     public List<StageData> StageDatas { get; private set; }
     public bool IsGaming { get; private set; } = false;
+    public bool IsPreparing { get; private set; } = false;
     public int CurStage { get; private set; } = -1;
     public int PlayTime { get; private set; } = 0;
     public int CatchNumber { get; private set; } = 0;
@@ -83,6 +85,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator WaveReady()
     {
+        UIManager.Instance.Option(false);
         yield return wait1;
         WaveSetting();
         playTimerEvent?.Invoke();
@@ -90,6 +93,7 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.Countdown();
         yield return waitNextWave;
         WaveStart();
+        UIManager.Instance.Option(true);
     }
 
     public void WaveSetting()
@@ -114,11 +118,12 @@ public class GameManager : MonoBehaviour
         openThief = null;
         hideThief = null;
         removeThief = null;
+        hideEff = null;
         if (CurStage == StageDatas.Count-1) GameOver(true);
         else
         {
             SoundManager.Instance.WaveClearSFX();
-            waveClearEff.Play();
+            //waveClearEff.Play();
             //UIManager.Instance.WaveClear();
             StartCoroutine(nameof(WaveReady));
         }
@@ -160,6 +165,7 @@ public class GameManager : MonoBehaviour
         while (showTime > 0f && imgShowTime)
         {
             showTime -= Time.deltaTime;
+            if(IsGaming == false) imgShowTime = false;
             yield return null;
         }
         if(imgShowTime) hideThief?.Invoke();

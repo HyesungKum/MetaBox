@@ -34,7 +34,7 @@ public class ThiefSpawner : ObjectPool<Thief>
             if (wantedCount <= 0) wanted = false; 
             int random = Random.Range(0, ThiefDatas.Count);
             Thief thief = Get();
-            thief.transform.position = new Vector3(Random.Range(-8f, 8f), Random.Range(-3.5f, 2.5f), 0);
+            thief.transform.position = new Vector3(Random.Range(-7.5f, 4f), Random.Range(-3.5f, 1.8f), 0);
             thief.Setting(wanted, ThiefDatas[random].id, ThiefDatas[random].moveSpeed, ThiefDatas[random].moveTime);
             if (wanted)
             {

@@ -12,7 +12,7 @@ public class Loading : MonoBehaviour
     [SerializeField] AnimationCurve PoliceCarCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, -10f), new Keyframe(1.8f, 10f) });
     [SerializeField] AnimationCurve FocusCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(1.8f, 1f) });
 
-    Vector3 policeCarPos = new Vector3(-10f, -3.62f, 0f);
+    Vector3 policeCarPos = new Vector3(-10f, -2.16f, 0f);
     Color focusColor = new Color(0, 0, 0, 0);
     bool fade = false;
 

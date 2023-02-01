@@ -9,6 +9,9 @@ public class Thief : MonoBehaviour
 
     [SerializeField] ScriptableObj thiefImages = null;
     [SerializeField] SpriteRenderer spriteRenderer = null;
+    [SerializeField] ParticleSystem hideEff = null;
+    [SerializeField] ParticleSystem catchEff = null;
+    [SerializeField] Vector3 policeStation = new Vector3(7.9f, -1.8f, 0f);
 
     Police police = null;
     WaitUntil runnigTime = null;
@@ -22,13 +25,15 @@ public class Thief : MonoBehaviour
     bool runningAway;
     bool arrest;
     Vector3 dir;
+    Vector3 rightFlip = new Vector3(1, 1, 1);
+    Vector3 leftFlip = new Vector3(-1, 1, 1);
 
     void Awake()
     {
         police = FindObjectOfType<Police>();
         if (spriteRenderer == null) this.gameObject.TryGetComponent<SpriteRenderer>(out spriteRenderer);
 
-        runnigTime = new WaitUntil(() => (police.transform.position - this.transform.position).magnitude > 2f);
+        runnigTime = new WaitUntil(() => (police.transform.position - this.transform.position).magnitude > 1.5f);
         GameStart = new WaitUntil(() => GameManager.Instance.IsGaming);
         waitArrestTime = new WaitForSeconds(1f);
     }
@@ -39,12 +44,13 @@ public class Thief : MonoBehaviour
         this.speed = movespeed * 0.4f;
         this.wantedThief = wantedThief;
         waitMoveTime = new WaitForSeconds(movetime);
-        if (wantedThief) spriteRenderer.sprite = thiefImages.Thief[2];
-        else spriteRenderer.sprite = thiefImages.Thief[0];
+        if (wantedThief) spriteRenderer.sprite = thiefImages.Thief[2]; //µµµÏ
+        else spriteRenderer.sprite = thiefImages.Thief[0]; //½Ã¹Î
 
         GameManager.Instance.openThief += ImgShow;
-        GameManager.Instance.hideThief += () => spriteRenderer.sprite = thiefImages.Thief[1];
+        GameManager.Instance.hideThief += () => spriteRenderer.sprite = thiefImages.Thief[1]; //½Ç·ç¿§
         GameManager.Instance.removeThief += () => callbackArrest?.Invoke(this);
+        GameManager.Instance.hideEff += () => hideEff.Play();
 
         runningAway = false;
         arrest = false;
@@ -56,8 +62,9 @@ public class Thief : MonoBehaviour
 
     void ImgShow()
     {
-        if (wantedThief) spriteRenderer.sprite = thiefImages.Thief[2];
-        else spriteRenderer.sprite = thiefImages.Thief[0];
+        if (wantedThief && arrest) spriteRenderer.sprite = thiefImages.Thief[3];
+        else if (wantedThief == false) spriteRenderer.sprite = thiefImages.Thief[0];
+        else spriteRenderer.sprite = thiefImages.Thief[2];
     }
     IEnumerator RandomDir()
     {
@@ -77,6 +84,11 @@ public class Thief : MonoBehaviour
         while (GameManager.Instance.IsGaming)
         {
             transform.Translate(dir * speed * Time.deltaTime);
+            if (wantedThief && spriteRenderer.sprite == thiefImages.Thief[2])
+            {
+                if (dir.x >= 0) this.transform.localScale = rightFlip;
+                else this.transform.localScale = leftFlip;
+            }
             yield return null;
         }
     }
@@ -127,15 +139,15 @@ public class Thief : MonoBehaviour
             {
                 arrest = true;
                 StopCoroutine(nameof(RunAwayMode));
-                dir = (collision.transform.position - this.transform.position).normalized;
-                if (dir.x > 0) transform.localScale = new Vector3(-1, 1);
+                dir = (policeStation - this.transform.position).normalized;
                 speed *= 0.8f;
                 GameManager.Instance.ShowImg();
+                if (wantedThief) catchEff.Play();
                 StartCoroutine(nameof(Destroy));
             }
             else
             {
-                dir.y = 1f;
+                dir.x = -1f;
                 dir.Normalize();
             }
         }
@@ -154,15 +166,15 @@ public class Thief : MonoBehaviour
             {
                 arrest = true;
                 StopCoroutine(nameof(RunAwayMode));
-                dir = (collision.transform.position - this.transform.position).normalized;
-                if (dir.x > 0) transform.localScale = new Vector3(-1, 1);
+                dir = (policeStation - this.transform.position).normalized;
                 speed *= 0.8f;
                 GameManager.Instance.ShowImg();
+                if (wantedThief) catchEff.Play();
                 StartCoroutine(nameof(Destroy));
             }
             else if(arrest == false && runningAway == false)
             {
-                dir.y = 1f;
+                dir.x = -1f;
                 dir.Normalize();
             }
         }
