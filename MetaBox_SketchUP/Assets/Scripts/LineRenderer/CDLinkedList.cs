@@ -7,11 +7,11 @@ public delegate void DelegateTraversalCDNode(CDLinkedList.CDNode node);
 
 public class CDLinkedList
 {
-
     public class CDNodeData
     {
         public int index;
         public Vector3 nodePos;
+        public GameObject circlePoint;
     }
 
     public class CDNode

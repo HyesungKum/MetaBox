@@ -5,8 +5,7 @@ using TMPro;
 
 public class LinePosCDLinkedList : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI checkText = null;
-
+    //[SerializeField] List<GameObject> circlePointList = null;
     LineRenderer linePos = null;
 
     CDLinkedList.CDLinkedListInst cdLinkedList = null;
@@ -19,6 +18,7 @@ public class LinePosCDLinkedList : MonoBehaviour
     {
         TryGetComponent<LineRenderer>(out linePos);
         linePosCount = linePos.positionCount;
+        //circlePointObj = new List<GameObject>();
         nodeData = new CDLinkedList.CDNodeData();
         cdLinkedList = new CDLinkedList.CDLinkedListInst();
     }
@@ -44,6 +44,7 @@ public class LinePosCDLinkedList : MonoBehaviour
         //cdLinkedList.Search(new Vector3(-1.27f, 2.60f, -10f), 0);
         //cdLinkedList.Search(new Vector3(-2.16f, 1.19f, -10f), 2);
         //cdLinkedList.TraversalForWard(new Vector3(-2.16f, 1.19f, -10f), 2);
+
         cdLinkedList.TraversalBackWard(new Vector3(-2.16f, 1.19f, -10f), 2);
     }
 
