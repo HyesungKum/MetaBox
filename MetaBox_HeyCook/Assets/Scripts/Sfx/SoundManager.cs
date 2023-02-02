@@ -1,6 +1,6 @@
+using Kum;
 using UnityEngine;
 using UnityEngine.Audio;
-using Kum;
 
 public class SoundManager : MonoSingleTon<SoundManager>
 {
@@ -25,6 +25,7 @@ public class SoundManager : MonoSingleTon<SoundManager>
     public void SetBGM(string sourceName)
     {
         soundData.clips.TryGetValue(sourceName, out AudioClip clip);
+        BGMAudio.pitch = 1f;
         BGMAudio.clip = clip;
     }
     public void SetBGMLoop() => BGMAudio.loop = true;
@@ -47,10 +48,15 @@ public class SoundManager : MonoSingleTon<SoundManager>
     //=======================Volume Controll==============================
     public void VolumeControll(string target ,float volume)
     {
-
-        audioMixer.SetFloat(target, volume);
+        if (volume == -40) audioMixer.SetFloat(target, -80);
+        else audioMixer.SetFloat(target, volume);
     }
-
+    public float GetVolume(string target)
+    {
+        audioMixer.GetFloat(target, out float value);
+        if (value == -80) return -40;
+        else return value;
+    }
     /// <summary>
     /// toggle sound (on - off)
     /// </summary>

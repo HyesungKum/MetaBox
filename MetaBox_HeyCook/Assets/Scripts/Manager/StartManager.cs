@@ -1,10 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
+using ToolKum.AppTransition;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using ToolKum.AppTransition;
-using System;
 
 public class StartManager : MonoBehaviour
 {
@@ -51,6 +49,10 @@ public class StartManager : MonoBehaviour
 
     [SerializeField] Button optionExitButton;
 
+    [Header("[Production]")]
+    [SerializeField] GameObject production;
+    [SerializeField] GameObject viewHall;
+
     private void Awake()
     {
         //=================screen setting==================
@@ -62,10 +64,11 @@ public class StartManager : MonoBehaviour
         Screen.autorotateToLandscapeRight = true;
 
         //=================apply first button listener===================
-        startButton  .onClick.AddListener(() => ShowUI(difficultyUIGroup));
+        startButton.onClick.AddListener(() => ShowUI(difficultyUIGroup));
         startButton  .onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
-        optionButton .onClick.AddListener(() => ShowUI(optionUIGroup));
+        optionButton.onClick.AddListener(() => ShowUI(optionUIGroup));
+        optionButton .onClick.AddListener(() => SoundCheck());
         optionButton .onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         villageButton.onClick.AddListener(() => AppTrans.MoveScene(mainPackName));
@@ -112,19 +115,67 @@ public class StartManager : MonoBehaviour
         SoundManager.Inst.SetBGM("StartBGM");
         SoundManager.Inst.SetBGMLoop();
         SoundManager.Inst.PlayBGM();
+
+        Production();
     }
 
     void SceneMove(int level)
     {
-        // = level;
-        //로딩씬으로 교체하기
-        SceneManager.LoadScene(SceneName.Main);
+        LevelTransfer.Inst.Level = level;
+        StartCoroutine(nameof(ViewHallShrink));
     }
     void ShowUI(GameObject targetUIObj)
     {
         curUI.SetActive(false);
         curUI = targetUIObj;
         curUI.SetActive(true);
+    }
+
+    //==========================================Production Controll==========================================
+    void Production()
+    {
+        StartCoroutine(nameof(ViewHallExtension));
+    }
+    IEnumerator ViewHallExtension()
+    {
+        production.SetActive(true);
+
+        float timer = 0f;
+        while (viewHall.transform.localScale.x <= 45)
+        {
+            timer += Time.deltaTime/15f;
+
+            viewHall.transform.localScale = Vector3.Lerp(viewHall.transform.localScale, Vector3.one * 46f, timer);
+            yield return null;
+        }
+
+        viewHall.transform.localScale = Vector3.one * 45f;
+        production.SetActive(false);
+    }
+    IEnumerator ViewHallShrink()
+    {
+        production.SetActive(true);
+
+        float timer = 0f;
+        while (viewHall.transform.localScale.x >= 0.8f)
+        {
+            timer += Time.deltaTime / 15f;
+
+            viewHall.transform.localScale = Vector3.Lerp(viewHall.transform.localScale, Vector3.zero, timer);
+            yield return null;
+        }
+
+        viewHall.transform.localScale = Vector3.zero;
+
+        SceneManager.LoadScene(SceneName.Loading);
+    }
+
+    //==========================================Sound Slider Controll========================================
+    void SoundCheck()
+    {
+        masterSlider.value = SoundManager.Inst.GetVolume("Master");
+        bgmSlider.value = SoundManager.Inst.GetVolume("BGM");
+        sfxSlider.value = SoundManager.Inst.GetVolume("SFX");
     }
     void ToggleSlider(Slider target)
     {

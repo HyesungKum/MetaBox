@@ -6,24 +6,35 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider2D))]
 public class DeadZone: MonoBehaviour
 {
-    #region Editor Gizmo
+    private void Awake()
+    {
+        TryGetComponent(out BoxCollider2D collider);
+        collider.isTrigger = true;
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag(nameof(Ingredient)))
+        {
+            collision.TryGetComponent<Ingredient>(out Ingredient ingred);
+
+            if (!ingred.IsCliked)
+            {
+                GameObject instVfx = ingred.IngredData.delVfx;
+                PoolCp.Inst.BringObjectCp(instVfx).transform.position = collision.transform.position;
+                PoolCp.Inst.DestoryObjectCp(ingred.gameObject);
+            }
+        }
+    }
+
+    #region Editor
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         Gizmos.color = new(1f, 0f, 0f, 0.4f);
-        Gizmos.DrawCube(this.transform.position, this.transform.localScale);
+        Gizmos.matrix = this.transform.localToWorldMatrix;
+        Gizmos.DrawCube(Vector3.zero, this.transform.GetComponent<BoxCollider2D>().size);
     }
 #endif
     #endregion
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.collider.CompareTag(nameof(Ingredient)))
-        {
-            collision.collider.TryGetComponent<Ingredient>(out Ingredient ingred);
-            GameObject instVfx = ingred.IngredData.delVfx;
-            PoolCp.Inst.BringObjectCp(instVfx).transform.position = collision.contacts[0].point;
-            PoolCp.Inst.DestoryObjectCp(collision.gameObject);
-        }
-    }
 }

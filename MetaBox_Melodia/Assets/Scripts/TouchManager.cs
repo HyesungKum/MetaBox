@@ -7,36 +7,15 @@ using UnityEngine.UI;
 
 public class TouchManager : MonoBehaviour
 {
-
     Vector3 touchedToScreen;
     Touch myTouch;
 
     bool isDragging = false;
 
     PlayableNote myNote;
-    RaycastHit2D hitPoint;
+    Vector3 myNoteOriginPos;
 
-    bool isGameOver = false;
-    bool isStarted = false;
-
-
-    // code for demo test ==================================================
-    [SerializeField] bool isTestMode = false;
-    [SerializeField] bool createNormalNote = false;
-    [SerializeField] bool deleteNote = false;
-    [SerializeField] bool createQuizNote = false;
-
-    [SerializeField] Toggle myToggle4NormalNote;
-    [SerializeField] Toggle myToggle4QuizNote;
-    [SerializeField] Toggle myToggle4DeleteNote;
-
-    [SerializeField] GameObject NormalNote;
-    [SerializeField] GameObject quizNote;
-
-    GameObject newNote;
-
-    // code for demo test ==================================================
-
+    RaycastHit2D hitPoint2D;
 
 
     private void Update()
@@ -52,170 +31,84 @@ public class TouchManager : MonoBehaviour
             return;
         }
 
-        else
+
+        touchedToScreen = Camera.main.ScreenToWorldPoint(new Vector3(myTouch.position.x, myTouch.position.y, Camera.main.nearClipPlane));
+
+
+        // touch ended => drop object 
+        if (isDragging && Input.GetTouch(0).phase == TouchPhase.Ended)
         {
-
-            // touch ended => drop object 
-            if (isDragging && Input.GetTouch(0).phase == TouchPhase.Ended)
-            {
-                dropObject();
-                return;
-            }
-
-            touchedToScreen = Camera.main.ScreenToWorldPoint(new Vector3(myTouch.position.x, myTouch.position.y, Camera.main.nearClipPlane));
-
-            // ray hit resptect to world space point of touch point
-            hitPoint = shootRay(touchedToScreen);
-
-            if (hitPoint == false)
-                return;
-
-
-            // code for demo test ==================================================
-
-            if (isTestMode && Input.GetTouch(0).phase == TouchPhase.Began)
-            {
-
-                if (createNormalNote)
-                {
-                    if (hitPoint.collider.name == "SheetMusic")
-                    {
-                        newNote = ObjectPoolCP.PoolCp.Inst.BringObjectCp(NormalNote);
-
-                        newNote.transform.position = touchedToScreen;
-
-                        Debug.Log("Create normal note");
-                    }
-
-                    return;
-                }
-
-
-                if (createQuizNote)
-                {
-                    if (hitPoint.collider.name == "SheetMusic")
-                    {
-                        newNote = ObjectPoolCP.PoolCp.Inst.BringObjectCp(quizNote);
-
-                        newNote.transform.position = touchedToScreen;
-
-                        Debug.Log("Create quiz note");
-                    }
-
-                    return;
-                }
-
-
-                else if (deleteNote)
-                {
-                    Debug.Log($"บฮผล? {hitPoint.collider.name}");
-                    if (hitPoint.collider.name == "QNote" || hitPoint.collider.name == "Note")
-                    {
-                        ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(shootRay(touchedToScreen).transform.gameObject);
-                        Debug.Log("Destroy!");
-                    }
-
-                    return;
-                }
-            }
-
-
-            // code for demo test ==================================================
-
-
-            if (isDragging)
-            {
-                dragObject();
-                return;
-            }
-
-
-            isMyNote(touchedToScreen);
+            dropObject();
+            return;
         }
+
+        if (isDragging)
+        {
+            dragObject();
+            return;
+        }
+
+        // ray hit resptect to world space point of touch point
+        hitPoint2D = shootRay(touchedToScreen);
+
+        if (!hitPoint2D)
+            return;
+
+        isMyNote(hitPoint2D);
+
     }
 
 
 
-
-    // raycast where touched 
-    RaycastHit2D shootRay(Vector3 targetT)
+    RaycastHit2D shootRay(Vector2 targetT)
     {
         RaycastHit2D hit;
         Ray2D ray;
 
         ray = new Ray2D(targetT, Vector2.zero);
-        hit = Physics2D.Raycast(ray.origin, ray.direction, 5f);
+        hit = Physics2D.Raycast(ray.origin, ray.direction);
 
         return hit;
     }
 
 
-
-    void isMyNote(Vector3 touchPos)
+    void isMyNote(RaycastHit2D hitPoint)
     {
+        // if ray hits playablenote 
+        PlayableNote isMyNote = hitPoint.transform.gameObject.GetComponent<PlayableNote>();
 
-        if (hitPoint)
+        if (isMyNote != null)
         {
-            PlayableNote isMyNote = hitPoint.transform.gameObject.GetComponent<PlayableNote>();
-            if (isMyNote != null)
-            {
-                myNote = isMyNote;
+            myNote = isMyNote;
 
-                isMyNote.SetOriginPos();
-
-                startDragging();
-            }
+            // disable collider 
+            hitPoint2D.collider.enabled = false;
+            startDragging();
         }
     }
 
+
+    // is drag stared? 
     void startDragging()
     {
+        //myNoteOriginPos = myNote.transform.position;
+        myNote.StartToMove();
         isDragging = true;
     }
 
 
+    // is dragging object? 
     void dragObject()
     {
         myNote.transform.position = touchedToScreen;
     }
 
+    // is object dropped 
     void dropObject()
     {
         isDragging = false;
-        myNote.Landed();
-    }
 
-
-
-
-
-    // code for demo test ============================================================
-
-
-    public void OnClickCreateNormalNote()
-    {
-
-        createNormalNote = myToggle4NormalNote.isOn;
-        isTestMode = myToggle4NormalNote.isOn;
-
-    }
-
-
-
-    public void OnClickCreateQuizNote()
-    {
-
-        createQuizNote = myToggle4QuizNote.isOn;
-        isTestMode = myToggle4QuizNote.isOn;
-
-    }
-
-
-    public void OnClickDeleteNote()
-    {
-        deleteNote = myToggle4DeleteNote.isOn;
-        isTestMode = myToggle4DeleteNote.isOn;
-
+        myNote.Dropped();
     }
 
 }

@@ -1,8 +1,7 @@
-using UnityEngine;
 using Kum;
-using System.Collections;
+using UnityEngine;
 
-public delegate void TouchDelegate(int id, Vector3 pos);
+public delegate void TouchEvent(int id, Vector3 pos);
 
 public class TouchEventGenerator : MonoSingleTon<TouchEventGenerator>
 {
@@ -11,11 +10,11 @@ public class TouchEventGenerator : MonoSingleTon<TouchEventGenerator>
     [SerializeField] private int touchCount = 0;
     [SerializeField] private Touch[] touches = new Touch[10];
 
-    public TouchDelegate[] touchBegan      = new TouchDelegate[10];
-    public TouchDelegate[] touchStationary = new TouchDelegate[10];
-    public TouchDelegate[] touchMoved      = new TouchDelegate[10];
-    public TouchDelegate[] touchEnded      = new TouchDelegate[10];
-    public TouchDelegate[] touchCancled    = new TouchDelegate[10];
+    public TouchEvent[] touchBegan      = new TouchEvent[10];
+    public TouchEvent[] touchStationary = new TouchEvent[10];
+    public TouchEvent[] touchMoved      = new TouchEvent[10];
+    public TouchEvent[] touchEnded      = new TouchEvent[10];
+    public TouchEvent[] touchCancled    = new TouchEvent[10];
 
     private void Update()
     {
@@ -30,11 +29,14 @@ public class TouchEventGenerator : MonoSingleTon<TouchEventGenerator>
             Vector3 pos = touches[i].position;
             TouchPhase phase = touches[i].phase;
 
-            if (phase == TouchPhase.Began) touchBegan[i]?.Invoke(i, pos);
-            else if (phase == TouchPhase.Stationary) touchStationary[i]?.Invoke(i, pos);
-            else if (phase == TouchPhase.Moved) touchMoved[i]?.Invoke(i, pos);
-            else if (phase == TouchPhase.Ended) touchEnded[i]?.Invoke(i, pos);
-            else if (phase == TouchPhase.Canceled) touchCancled[i]?.Invoke(i, pos);
+            switch (phase)
+            {
+                case TouchPhase.Began: touchBegan[i]?.Invoke(i, pos); break;
+                case TouchPhase.Stationary: touchStationary[i]?.Invoke(i, pos);break;
+                case TouchPhase.Moved: touchMoved[i]?.Invoke(i, pos); break;
+                case TouchPhase.Ended: touchEnded[i]?.Invoke(i, pos); break;
+                case TouchPhase.Canceled: touchCancled[i]?.Invoke(i, pos); break;
+            }
         }
     }
 }

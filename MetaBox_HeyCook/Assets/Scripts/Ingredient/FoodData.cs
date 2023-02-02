@@ -1,19 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "ScriptableObj/FoodData", fileName = "FoodData")]
 public class FoodData : ScriptableObject
 {
+    [Header("[Food Settings]")]
     public string foodName;
-
-    [Header("need child SetMenu List")]
-    public SetData[] needSet;
-    
-    [Header("Cooked Food Image")]
-    public Sprite FoodImage;
-
-    [Header("Value")]
+    public Sprite foodImage;
+    public Sprite combineImage;
+    public CookType cookType;
+    public int needTask;
     public int Score;
+
+    [Header("[Vfx]")]
+    public GameObject foodVfx;
+
+    [Header("Recipe Data")]
+    public IngredData[] needIngred;
 }
 

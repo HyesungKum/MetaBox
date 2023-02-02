@@ -5,26 +5,9 @@ using UnityEngine;
 
 public class QNote : MonoBehaviour
 {
-    
 
-    [SerializeField] protected PitchName myPitchName;
-    public PitchName MyPitchName { get { return myPitchName; } set { myPitchName = value; } }
-
-
-    SheetMusic mySheetMusic;
-
-    private void Awake()
-    {
-        mySheetMusic = this.GetComponentInParent<SheetMusic>();
-    }
-
-
-
-    private void OnDisable()
-    {
-        mySheetMusic.QNoteDisabled(this.gameObject);
-        Debug.Log("Disappear!!");
-    }
+    [SerializeField] protected int myPitchNum;
+    public int MyPitchNum { get { return myPitchNum; } set { myPitchNum = value; } }
 
 
 }
