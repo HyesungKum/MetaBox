@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4364074104963354721}
-  - component: {fileID: 6333484457491638974}
+  - component: {fileID: 7231376397735780156}
   m_Layer: 0
-  m_Name: DrawLine_Curve
+  m_Name: DrawLine_CurveFree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6333484457491638974
+--- !u!114 &7231376397735780156
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,10 +41,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 4364074104963354722}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 197ef9c1f275d774a993f5f35a7792ac, type: 3}
+  m_Script: {fileID: 11500000, guid: 1e43bbc93e2b05f46849d69b86bbbb18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  linePrefab: {fileID: 8676314743409034108, guid: aba9d289dd5c3094b9d535d6ad2fd8af, type: 3}
-  checkObj: {fileID: 0}
+  linePrefab: {fileID: 8676314743409034108, guid: 0792d313145c4164a829640ee3f97849, type: 3}
   startPos: {x: 0, y: 0, z: 0}
-  nodePosList: []

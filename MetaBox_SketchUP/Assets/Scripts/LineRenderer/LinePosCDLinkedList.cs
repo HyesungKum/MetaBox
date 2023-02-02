@@ -2,50 +2,51 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Unity.VisualScripting;
+using UnityEngine.UI;
 
 public class LinePosCDLinkedList : MonoBehaviour
 {
-    //[SerializeField] List<GameObject> circlePointList = null;
+    [SerializeField] public GameObject[] circlePointArry = null;
     LineRenderer linePos = null;
 
-    CDLinkedList.CDLinkedListInst cdLinkedList = null;
-    CDLinkedList.CDNodeData nodeData = null;
+    public CDLinkedList.CDLinkedListInst cdLinkedList = null;
+    public CDLinkedList.CDNodeData nodeData = null;
+    public CDLinkedList.CDNode cdNode = null;
     int linePosCount;
-
-    DelegateTraversalCDNode delegateTraversal;
 
     void Awake()
     {
         TryGetComponent<LineRenderer>(out linePos);
         linePosCount = linePos.positionCount;
-        //circlePointObj = new List<GameObject>();
+
         nodeData = new CDLinkedList.CDNodeData();
+        cdNode = new CDLinkedList.CDNode();
         cdLinkedList = new CDLinkedList.CDLinkedListInst();
     }
 
     void Start()
     {
+        CDLinkedListInsets();
+    }
+
+    public CDLinkedList.CDLinkedListInst CDLinkedListInsets()
+    {
         Vector3 nodePos;
         int nodeIndex = 0;
 
         // 포지션 연결
-        for (int i = 0; i < linePosCount; ++i)
+        for (int i = 0; i < linePosCount - 1 ; ++i)
         {
             nodePos = linePos.GetPosition(i);
             nodeData.nodePos = nodePos;
             nodeData.index = nodeIndex;
+            nodeData.circlePointObj = circlePointArry[i];
 
-            cdLinkedList.InsertHead(nodeData.nodePos, nodeData.index);
+            cdLinkedList.InsertHead(nodeData.nodePos, nodeData.index, nodeData.circlePointObj);
             nodeIndex += 1;
         }
 
-        //cdLinkedList.Search(new Vector3(-0.17f, 3.05f, -10f), 0);
-        //cdLinkedList.Search(new Vector3(-1.27f, 2.60f, -10f), 0);
-        //cdLinkedList.Search(new Vector3(-1.27f, 2.60f, -10f), 0);
-        //cdLinkedList.Search(new Vector3(-2.16f, 1.19f, -10f), 2);
-        //cdLinkedList.TraversalForWard(new Vector3(-2.16f, 1.19f, -10f), 2);
-
-        cdLinkedList.TraversalBackWard(new Vector3(-2.16f, 1.19f, -10f), 2);
+        return cdLinkedList;
     }
-
 }

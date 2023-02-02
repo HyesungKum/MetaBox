@@ -7,7 +7,6 @@ using static UnityEditor.PlayerSettings;
 public class LineRender : MonoBehaviour
 {
     private LineRenderer lineRender = null;
-    [SerializeField] private BoxCollider2D collider = null;
     public const float resolutio = 0.1f;
 
     public Stack<Vector3> posStack;
