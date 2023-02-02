@@ -9,7 +9,6 @@ public class PlayableNote : MonoBehaviour
     public static DelegatePlayableNote myDelegatePlayableNote;
 
 
-
     bool isMoving = false;
     float movingSpeed;
 
@@ -61,7 +60,7 @@ public class PlayableNote : MonoBehaviour
     {
         myInventory.DestoyedPlayableNote(this.gameObject);
     }
-
+      
     // use note!
     public void UseNote()
     {
@@ -73,17 +72,19 @@ public class PlayableNote : MonoBehaviour
     {
         RaycastHit2D hit = shootRay(this.transform.position);
 
-        if (!hit)
+        // layer 7 is MusicSheet
+        if (hit && hit.transform.gameObject.layer == 7)
         {
-            transform.position = originPos;
-            this.GetComponent<Collider2D>().enabled = true;
+            hit.transform.TryGetComponent<MusicSheet>(out MusicSheet landingPoint);
+            landingPoint.CheckPlayableNotePos(this.gameObject.transform);
+            return;
         }
 
-        // layer 7 is MusicSheet
-        else if (hit.transform.gameObject.layer == 7)
-        {
-            hit.transform.GetComponent<MusicSheet>().CheckPlayableNotePos(this.gameObject);
-        }
+
+        transform.position = originPos;
+        this.TryGetComponent<Collider2D>(out Collider2D myCollider);
+        myCollider.enabled = true;
+
     }
 
 

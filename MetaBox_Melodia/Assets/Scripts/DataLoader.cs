@@ -40,7 +40,6 @@ public class DataLoader : MonoBehaviour
             stageData.Add(int.Parse(data[0]), notes);
 
             stage++;
-            Debug.Log($"{stage}스테이지! {data[0]} 스테이지 번호 ");
 
         }
 

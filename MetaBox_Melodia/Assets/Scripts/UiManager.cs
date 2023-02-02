@@ -17,12 +17,15 @@ public class UiManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI myTextCountdown;    // play time countdown
     [SerializeField] TextMeshProUGUI myTextTimer;       // ready time countdown
     [SerializeField] TextMeshProUGUI myTextCorrectedNote;    // text whether get correct answer or not
+    [SerializeField] TextMeshProUGUI myTextGameOver;       // GameResult panel
     [SerializeField] TextMeshProUGUI myTextResult;       // GameResult panel
+    [SerializeField] TextMeshProUGUI myTextClear;
 
     [Header("Panel")]
     [SerializeField] GameObject myPaneUntouchable;
     [SerializeField] GameObject myPanelPause;
     [SerializeField] GameObject myPanelGameResult;
+    [SerializeField] GameObject myPanelNextStage;
     [SerializeField] GameObject myPanelStageClear;
 
 
@@ -54,15 +57,13 @@ public class UiManager : MonoBehaviour
     {
         // observe game status 
         GameManager.myDelegateGameStatus += curGameStatus;
+
+        // delegate chain
+        myDelegateUiManager = correctedNote;
     }
 
     public void StartGame()
     {
-        Debug.Log("시작해_유아이");
-
-        // delegate chain
-        myDelegateUiManager = correctedNote;
-
         PlayTimer.DelegateTimer = playTimer;
 
         // text whether get correct answer or not
@@ -92,6 +93,11 @@ public class UiManager : MonoBehaviour
         // stage clear panel
         myPanelStageClear.SetActive(false);
 
+        // Next stage panel 
+        myPanelNextStage.SetActive(false);
+
+
+        myTextResult.enabled = false;
     }
 
 
@@ -114,6 +120,9 @@ public class UiManager : MonoBehaviour
     // time count down for play time 
     public void playCountDown(float t)
     {
+        curTime = t;
+
+
         if (myTextTimer.isActiveAndEnabled == true)
         {
             myTextTimer.enabled = false;
@@ -127,7 +136,8 @@ public class UiManager : MonoBehaviour
 
     public void Touchable(bool status)
     {
-        // touchable == panel off 
+        // touchable false == panel on
+        // touchable true == panel off
         myPaneUntouchable.SetActive(!status);
     }
 
@@ -137,7 +147,8 @@ public class UiManager : MonoBehaviour
     void correctedNote(string text)
     {
         // show text 
-        myTextCorrectedNote.enabled = true;
+        correctedNote(true);
+
         myTextCorrectedNote.text = text;
 
         // change color
@@ -154,13 +165,7 @@ public class UiManager : MonoBehaviour
                 {
                     myTextCorrectedNote.color = new Color(1, 0, 0.8f);
                 }
-                break;
-
-            default:
-                {
-                    myTextCorrectedNote.enabled = false;
-                }
-                return;
+                break;                
         }
 
         calledTime = curTime;
@@ -176,38 +181,50 @@ public class UiManager : MonoBehaviour
     float calledTime;
     void hideText()
     {
-        if (calledTime - curTime <= 0.5f)
+        if (calledTime - curTime <= 0.4f)
         {
-            Invoke("hideText", 0.5f);
+            Invoke(nameof(hideText), 0.4f);
             return;
         }
 
-        myTextCorrectedNote.enabled = false;
+        correctedNote(false);
     }
+
+
+    void resultText()
+    {
+        myTextResult.enabled = true;
+        myTextResult.text = "와 다 맞췄어요!";
+    }
+
 
 
     public void GameOver(string text)
     {
         myPanelGameResult.SetActive(true);
-        //myButtonResult.onClick.AddListener(OnClickRestart);
+
         myButtonResult.GetComponentInChildren<TextMeshProUGUI>().text = "다시 할래";
-        myTextResult.text = text;
+        myTextGameOver.text = text;
     }
 
 
-    public void NextStage(string text)
+    public void NextStage()
     {
-        myPanelGameResult.SetActive(true);
-        myButtonResult.GetComponentInChildren<TextMeshProUGUI>().text = "다음으로";
-        myTextResult.text = text;
+        myTextResult.enabled = false;
+
+
+        myPanelNextStage.SetActive(true);
     }
 
     public void StageClear(string text)
     {
+        myTextResult.enabled = false;
+
+
         myPanelStageClear.SetActive(true);
-        myButtonResult.GetComponentInChildren<TextMeshProUGUI>().text = "또 할래";
-        myTextResult.text = text;
+        myTextClear.text = text;
     }
+
 
 
     void curGameStatus(GameStatus curStatus)
@@ -240,18 +257,33 @@ public class UiManager : MonoBehaviour
 
             case GameStatus.GetAllQNotes:
                 {
-                    NextStage("다 맞췄어요!");
-                    Debug.Log("다 맞췄대!");
+                    NextStage();
                 }
                 break;
+
             case GameStatus.NoMorePlayableNote:
                 {
                     GameOver("음표가 더이상 없어요");
                 }
                 break;
 
+
+            case GameStatus.GameResult:
+                {
+                    // myPaneUntouchable is activated 
+                    Touchable(false);
+
+                    // hide correct text
+                    correctedNote(false);
+
+                    resultText();
+                }
+                break;
+
             case GameStatus.ClearStage:
                 {
+                    Touchable(true);
+
                     StageClear("와! 성공했어요!");
                 }
                 break;
@@ -261,6 +293,7 @@ public class UiManager : MonoBehaviour
 
 
 
+    // Replay Music ==========================================================
     public void OnClickReplay()
     {
         SoundManager.Inst.PlayStageMusic();
@@ -274,33 +307,97 @@ public class UiManager : MonoBehaviour
     {
         myButtonReplay.interactable = true;
     }
+    // Replay Music ==========================================================
 
 
 
 
 
 
-    // Option panel ==========================================================
     public void OnClickPause()
     {
         CurrentVolume();
 
         if (isPaused == false)
         {
-            Time.timeScale = 0f;
+            GameManager.Inst.UpdateCurProcess(GameStatus.Pause);
             myPanelPause.SetActive(true);
             isPaused = true;
 
             return;
         }
 
-        Time.timeScale = 1;
         myPanelPause.SetActive(false);
 
         isPaused = false;
+        GameManager.Inst.UpdateCurProcess(GameStatus.Pause);
     }
 
 
+
+    // Exit game and return to level select scene ===========================================
+    public void OnClickQuitGame()
+    {
+        SoundManager.Inst.StopMusic();
+
+        SceneManager.LoadScene("MelodiaLobby");
+        Time.timeScale = 1;
+
+        // back to start scene
+        SceneModeController.MySceneMode = SceneModeController.SceneMode.StartScene;      // turn start panel on, turn lobby panel off
+    }
+
+
+
+
+    // Exit game and return to start scene ===========================================
+    public void OnClickExitStage()
+    {
+        SoundManager.Inst.StopMusic();
+
+        Time.timeScale = 1;
+        SceneManager.LoadScene("MelodiaLobby");
+
+        // re-select mode 
+        SceneModeController.MySceneMode = SceneModeController.SceneMode.LobbyScene;      // turn start panel off, turn lobby panel on
+
+    }
+
+
+
+
+    // Restart stage from beginning =================================================
+    public void OnClickReStart()
+    {
+        SoundManager.Inst.StopMusic();
+
+        Time.timeScale = 0;
+
+        PlayTimer.DelegateTimer -= playCountDown;
+
+        readyReplay();
+
+        GameManager.Inst.UpdateCurProcess(GameStatus.Restart);
+    }
+
+
+    // Move to next stage ==========================================================
+    public void OnClickNextStage()
+    {
+        Time.timeScale = 0;
+
+        PlayTimer.DelegateTimer -= playCountDown;
+
+        readyReplay();
+
+        GameManager.Inst.UpdateCurProcess(GameStatus.Idle);
+    }
+
+    
+
+
+    // Option panel ==========================================================
+    #region ### Audio Related functions ###
     public void MasterAudioControl()
     {
         float volume = myAudioSliderMaster.value;
@@ -337,55 +434,7 @@ public class UiManager : MonoBehaviour
         myAudioSliderBGM.value = bGMVolume;
         myAudioSliderSFX.value = sFXVolume;
     }
-
-
-    public void OnClickQuitGame()
-    {
-        SoundManager.Inst.StopMusic();
-        Debug.Log("멈춰!");
-
-
-        SceneManager.LoadScene("MelodiaLobby");
-        Time.timeScale = 1;
-
-        // back to start scene
-        SceneModeController.MySceneMode = SceneModeController.SceneMode.StartScene;      // turn start panel on, turn lobby panel off
-
-
-    }
-
-
-    // fucntion for test, reload scene 
-    public void OnClickExitStage()
-    {
-        SoundManager.Inst.StopMusic();
-        Debug.Log("멈춰!");
-
-        Time.timeScale = 1;
-        SceneManager.LoadScene("MelodiaLobby");
-
-        // re-select mode 
-        SceneModeController.MySceneMode = SceneModeController.SceneMode.LobbyScene;      // turn start panel on, turn lobby panel off
-
-    }
-
-    // Option panel ==========================================================
-
-
-    // GameOver panel ==========================================================
-    public void OnClickRestart()
-    {
-        Time.timeScale = 0;
-
-        PlayTimer.DelegateTimer -= playCountDown;
-
-        readyReplay();
-        Debug.Log("다시해_유아이!");
-
-        GameManager.myDelegateGameStatus(GameStatus.Idle);
-    }
-    // GameOver panel ==========================================================
-
+    #endregion
 
 
 

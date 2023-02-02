@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using static GameManager;
 
 
 public class PlayTimer : MonoBehaviour
@@ -20,21 +20,32 @@ public class PlayTimer : MonoBehaviour
     {
         // observe game status 
         GameManager.myDelegateGameStatus += curGameStatus;
+        myDelegateIsGameOver += isGameFinished;
 
+        playTime = 0f;
     }
 
 
     void curGameStatus(GameStatus curStatus)
     {
-        Debug.Log("타이머!" + curStatus.ToString());
-
         switch (curStatus)
         {
             case GameStatus.Idle:
                 {
-                    Debug.Log("타이머 idle");
-
                     StartGame();
+                }
+                break;
+
+            case GameStatus.Restart:
+                {
+                    playTime = GameManager.Inst.MyPlayableTime;
+                }
+                break;
+
+
+            case GameStatus.GameResult:
+                {
+                    isGameOver = true;
                 }
                 break;
         }
@@ -51,9 +62,7 @@ public class PlayTimer : MonoBehaviour
         Time.timeScale = 1;
 
         timer = 3f;
-        playTime = 0f;
 
-        GameManager.myDelegateIsGameOver = gameIsOver;
         StartCoroutine(startTimer());
     }
 
@@ -72,11 +81,9 @@ public class PlayTimer : MonoBehaviour
 
     void timeCountDown()
     {
-        playTime += Time.deltaTime;
+        playTime -= Time.deltaTime;
 
-        float remainTime = myPlayableTime - playTime;
-
-        DelegateTimer(remainTime);
+        DelegateTimer(playTime);
     }
 
 
@@ -95,16 +102,22 @@ public class PlayTimer : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        GameManager.myDelegateGameStatus(GameStatus.Ready);
-
-        myPlayableTime = GameManager.Inst.MyPlayableTime;
         isStarted = true;
+
+
+        if (playTime == 0)
+        {
+            playTime = GameManager.Inst.MyPlayableTime;
+        }
+
+        GameManager.Inst.UpdateCurProcess(GameStatus.Ready);
     }
 
 
-    void gameIsOver(bool isOver)
+
+    void isGameFinished()
     {
-        isGameOver = isOver;
+        isGameOver = true;
     }
 
 }
