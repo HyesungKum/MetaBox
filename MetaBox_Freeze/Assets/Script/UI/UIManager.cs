@@ -58,6 +58,7 @@ public class UIManager : MonoBehaviour
     {
         this.wantedCount = GameManager.Instance.StageDatas[GameManager.Instance.CurStage].wantedCount;
         this.countdown = GameManager.Instance.StageDatas[GameManager.Instance.CurStage].startCountdown;
+        gameClear.gameObject.SetActive(false);
         catchNumber.gameObject.SetActive(true);
         catchNumber.text = $"{GameManager.Instance.CatchNumber} / {wantedCount}";
     }
@@ -119,6 +120,12 @@ public class UIManager : MonoBehaviour
     {
         catchNumber.text = $"{GameManager.Instance.CatchNumber} / {wantedCount}";
     }
+
+    public void WaveClear()
+    {
+        gameClear.gameObject.SetActive(true);
+        gameClear.text = "☆성공☆";
+    }
     public void Win()
     {
         clearPanel.SetActive(true);
@@ -127,7 +134,7 @@ public class UIManager : MonoBehaviour
     public void Lose()
     {
         gameClear.gameObject.SetActive(true);
-        //gameClear.text = "아쉽네요 다시 도전해보세요";
+        gameClear.text = "아쉽네요 다시 도전해보세요";
     }
 
     void OnClick_Option()

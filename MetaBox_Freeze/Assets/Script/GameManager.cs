@@ -1,3 +1,4 @@
+using ObjectPoolCP;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,7 +35,11 @@ public class GameManager : MonoBehaviour
     public CallBackFunction removeThief = null;
     public CallBackFunction hideEff = null;
 
-    [SerializeField] ParticleSystem waveClearEff = null;
+    [SerializeField] ParticleSystem catchEff = null;
+    [SerializeField] GameObject wantedPost = null;
+    List<GameObject> wantedPostList = new List<GameObject>();
+
+    [SerializeField] List<ParticleSystem> waveClearEff = null;
     public GameData FreezeData { get; private set; }
     public List<StageData> StageDatas { get; private set; }
     public bool IsGaming { get; private set; } = false;
@@ -53,6 +58,7 @@ public class GameManager : MonoBehaviour
         DataManager.Instance.LoadGameData();
         SoundManager.Instance.AddButtonListener();
         LevelSetting(PlayerPrefs.GetInt("level"));
+        if (wantedPost == null) wantedPost = (GameObject)Resources.Load(nameof(WantedPost));
         wait1 = new WaitForSeconds(1f);
         waitNextWave = new WaitForSeconds(4f);
     }
@@ -100,6 +106,9 @@ public class GameManager : MonoBehaviour
     {
         CurStage++;
         CatchNumber = 0;
+        openThief = null;
+        hideThief = null;
+        removeThief = null;
         spawnThief();
         UIManager.Instance.DataSetting();
     }
@@ -123,8 +132,18 @@ public class GameManager : MonoBehaviour
         else
         {
             SoundManager.Instance.WaveClearSFX();
-            //waveClearEff.Play();
-            //UIManager.Instance.WaveClear();
+            for(int i = 0; i < wantedPostList.Count; i++)
+            {
+                PoolCp.Inst.DestoryObjectCp(wantedPostList[i]);
+            }
+            wantedPostList.Clear();
+
+            for (int i = 0; i < waveClearEff.Count; i++)
+            {
+                waveClearEff[i].Play();
+            }
+            
+            UIManager.Instance.WaveClear();
             StartCoroutine(nameof(WaveReady));
         }
     }
@@ -133,11 +152,13 @@ public class GameManager : MonoBehaviour
     {
         IsGaming = false;
         removeThief?.Invoke();
-        openThief = null;
-        hideThief = null;
-        removeThief = null;
         PlayTime = FreezeData.playTime;
         CurStage = -1;
+        for (int i = 0; i < wantedPostList.Count; i++)
+        {
+            PoolCp.Inst.DestoryObjectCp(wantedPostList[i]);
+        }
+        wantedPostList.Clear();
         StartCoroutine(nameof(WaveReady));
     }
 
@@ -145,6 +166,11 @@ public class GameManager : MonoBehaviour
     {
         if (win)
         {
+            for (int i = 0; i < wantedPostList.Count; i++)
+            {
+                PoolCp.Inst.DestoryObjectCp(wantedPostList[i]);
+            }
+            wantedPostList.Clear();
             UIManager.Instance.Win();
             gameClearRecord?.Invoke();
         }
@@ -170,6 +196,18 @@ public class GameManager : MonoBehaviour
         }
         if(imgShowTime) hideThief?.Invoke();
     }
+    
+    public void CatchShow()
+    {
+        if(catchEff.isPlaying) catchEff.Stop();
+        catchEff.Play();
+        wantedPostList.Add(PoolCp.Inst.BringObjectCp(wantedPost));
+    }
+    public void PostDone()
+    {
+        if (wantedPostList.Count > 1) wantedPostList[wantedPostList.Count - 2].SendMessage("SetImg", SendMessageOptions.DontRequireReceiver);
+    }
+
     public void Catch()
     {
         CatchNumber++;
