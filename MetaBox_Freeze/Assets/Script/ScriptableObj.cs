@@ -7,4 +7,6 @@ public class ScriptableObj : ScriptableObject
 {
     public Sprite[] Thief;
     public Sprite[] CountDown;
+    public AudioClip[] BGM;
+    public AudioClip[] SFX;
 }

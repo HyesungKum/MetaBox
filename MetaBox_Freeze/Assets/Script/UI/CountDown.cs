@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,7 +6,7 @@ public class CountDown : MonoBehaviour
 {
     [SerializeField] ScriptableObj countDownObj = null;
     [SerializeField] Image countDownImg = null;
-    [SerializeField] AnimationCurve ScaleCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0.5f), new Keyframe(1f, 1.5f) });
+    [SerializeField] AnimationCurve ScaleCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0.5f), new Keyframe(0.95f, 1f) });
 
     public void Show(int number)
     {
@@ -24,6 +23,7 @@ public class CountDown : MonoBehaviour
             transform.localScale = curScale;
 
             startTime += Time.deltaTime;
+
             yield return null;
         }
     }

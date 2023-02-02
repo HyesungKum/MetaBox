@@ -1,10 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System;
-using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -26,44 +23,45 @@ public class UIManager : MonoBehaviour
     }
 
     [SerializeField] GameObject optionPanel = null;
+    [SerializeField] GameObject clearPanel = null;
 
+    [SerializeField] Button option = null;
+    [SerializeField] TextMeshProUGUI catchNumber = null;
     [SerializeField] TextMeshProUGUI gameClear = null;
     [SerializeField] CountDown countDown = null;
 
-    [SerializeField] ScrollRect wantedList = null;
-    Dictionary<int, Wanted> wantedDic = new Dictionary<int, Wanted>();
-    [SerializeField] Wanted wantedListImage = null;
-    
-    [SerializeField] Button option = null;
-    
+    //[SerializeField] ScrollRect wantedList = null;
+    //[SerializeField] Wanted wantedListImage = null;
+    //Dictionary<int, Wanted> wantedDic = new Dictionary<int, Wanted>();
 
     WaitForSeconds waitHalf = null;
     WaitForSeconds wait1 = null;
-    public int PlayTime { get; set; }
+
     int wantedCount;
     int countdown;
-    
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         option.onClick.AddListener(OnClick_Option);
-        
         waitHalf = new WaitForSeconds(0.5f);
         wait1 = new WaitForSeconds(1f);
 
         optionPanel.SetActive(false);
-
+        clearPanel.SetActive(false);
+        catchNumber.gameObject.SetActive(false);
         gameClear.gameObject.SetActive(false);
         countDown.gameObject.SetActive(false);
     }
-
-    public void DataSetting(int wantedCount, int startCountdown)
+    
+    public void DataSetting()
     {
-        this.wantedCount = wantedCount;
-        this.countdown = startCountdown;
+        this.wantedCount = GameManager.Instance.StageDatas[GameManager.Instance.CurStage].wantedCount;
+        this.countdown = GameManager.Instance.StageDatas[GameManager.Instance.CurStage].startCountdown;
+        catchNumber.gameObject.SetActive(true);
+        catchNumber.text = $"{GameManager.Instance.CatchNumber} / {wantedCount}";
     }
 
+    /* [Obsolete]
     public void WantedListSetting(List<int> list)
     {
         wantedDic.Clear();
@@ -78,52 +76,30 @@ public class UIManager : MonoBehaviour
     }
     public void Catch(int id)
     {
-        Wanted value = null;
-        if (wantedDic.TryGetValue(id, out value)) value.Catch();
+        if (wantedDic.TryGetValue(id, out Wanted value)) value.Catch();
     }
-    public void Arrest(int id)
-    {
-        Wanted value = null;
-        if(wantedDic.TryGetValue(id, out value)) value.Arrest();
-    }
-
-    public void WaveStart()
-    {
-        StartCoroutine(nameof(RunCountdown));
-    }
-
     public void WaveClear()
     {
-        for(int i = 0; i < wantedList.content.childCount; i++)
+        for (int i = 0; i < wantedList.content.childCount; i++)
         {
             Destroy(wantedList.content.GetChild(i).gameObject);
         }
     }
+    */
 
-    public void Win()
+    public void Countdown()
     {
-        gameClear.gameObject.SetActive(true);
-        gameClear.text = "You Win" + Environment.NewLine + $"{PlayTime - GameManager.Instance.PlayTime}";
-        //모든 스테이지 클리어하는데 걸린 시간이 짧은 유저가 상위에 랭크
-        //플레이어 ID, 게임 분류 아이디(각 게임 테이블의 gameGroup), 게임 난이도(각 게임 테이블의 id), 플레이타임(초로 환산), 랭킹을 달성한 날짜와 시간 을 랭킹 DB에 저장
-        //만약 랭킹 DB에 플레이어 id가 있을 경우 현재 결과와 이전 결과를 비교해서 현재 결과가 더 짧을 경우 현재 결과로 변경
-
-    }
-
-    public void Lose()
-    {
-        gameClear.gameObject.SetActive(true);
-        gameClear.text = "You Lose";
+        option.gameObject.SetActive(false);
+        StartCoroutine(nameof(RunCountdown));
     }
 
     IEnumerator RunCountdown()
     {
         countDown.gameObject.SetActive(true);
 
-        for(int i = countdown; i > 0; i--)
+        for (int i = countdown; i > 0; i--)
         {
-            countDown.Show(countdown);
-            countdown--;
+            countDown.Show(i);
             yield return wait1;
         }
 
@@ -132,14 +108,29 @@ public class UIManager : MonoBehaviour
         gameClear.text = "Game Start";
         yield return waitHalf;
         gameClear.gameObject.SetActive(false);
-        GameManager.Instance.WaveStart();
+        option.gameObject.SetActive(true);
+    }
+
+    public void Catch()
+    {
+        catchNumber.text = $"{GameManager.Instance.CatchNumber} / {wantedCount}";
+    }
+    public void Win()
+    {
+        clearPanel.SetActive(true);
+    }
+
+    public void Lose()
+    {
+        gameClear.gameObject.SetActive(true);
+        gameClear.text = "You Lose";
     }
 
     void OnClick_Option()
     {
         Time.timeScale = 0f;
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
+        gameClear.gameObject.SetActive(false);
         optionPanel.SetActive(true);
     }
-
 }

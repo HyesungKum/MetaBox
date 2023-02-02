@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Police : MonoBehaviour
@@ -13,19 +12,15 @@ public class Police : MonoBehaviour
 
     private void Awake()
     {
-        if(circleArea == null) circleArea = this.gameObject.GetComponent<CircleCollider2D>();
-        GameManager.Instance.FreezeDataSetting += DataSetting;
+        if(circleArea == null) this.gameObject.TryGetComponent<CircleCollider2D>(out circleArea);
+        GameManager.Instance.freezeDataSetting = Setting;
     }
 
-    void Start()
+    void Setting()
     {
-        this.transform.position = new Vector3(Random.Range(-2f, 5f), Random.Range(-3f, 2f), 0); //단 모든 캐릭터는 겹치지 않게 배치
-    }
-
-    void DataSetting()
-    {
+        this.transform.position = new Vector3(Random.Range(-2f, 2f), Random.Range(-2f, 2f), 0); //단 모든 캐릭터는 겹치지 않게 배치
         playerSpeed = GameManager.Instance.FreezeData.playerSpeed * 0.02f;
-        playerArea = GameManager.Instance.FreezeData.playerArea * 0.6f;
+        playerArea = GameManager.Instance.FreezeData.playerArea * 0.8f;
         circleArea.radius *= playerArea;
     }
 
@@ -37,15 +32,14 @@ public class Police : MonoBehaviour
 
     IEnumerator _Move(Vector3 movepoint)
     {
-        yield return new WaitForSeconds(0.05f);
+        yield return null; //이동중에 방향 변경하는 경우 이전에 돌아가던 코루틴 종료
         isMoving = true;
-        while (isMoving)
+        while (isMoving && Time.timeScale != 0)
         {
             transform.position = Vector3.MoveTowards(transform.position, movepoint, playerSpeed);
             //transform.position = Vector3.SmoothDamp(transform.position, movepoint, ref speed, 0.1f);
 
             if (transform.position.Equals(movepoint)) yield break;
-            if (Time.timeScale == 0) yield break;
             yield return null;
         }
     }
@@ -53,7 +47,7 @@ public class Police : MonoBehaviour
     
     private void OnCollisionStay2D(Collision2D collision)
     {
-        isMoving = false;
+        if(collision.rigidbody == null) isMoving = false; //npc와 출동 시 밀면서 진행
     }
 
     void OnDrawGizmos()

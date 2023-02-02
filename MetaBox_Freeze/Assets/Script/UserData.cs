@@ -23,12 +23,12 @@ public class UserData : MonoBehaviour
         // MongoDB collection name
         collection = dataBase.GetCollection<BsonDocument>("RankingCollection");
 
-        GameManager.Instance.GameClearEvent += Record;
+        GameManager.Instance.gameClearRecord += Record;
     }
     
     void Start()
     {
-        InGame();
+        //InGame();
     }
 
     void InGame()
@@ -63,20 +63,18 @@ public class UserData : MonoBehaviour
             int prevTime = (int)targetData.GetValue("playtime");
             if (prevTime > playtime) //기록갱신
             {
-                Debug.Log("기록을 업데이트합니다");
-
                 UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update.Set("playtime", playtime);
                 //collection.FindOneAndUpdate(filter, update);
                 collection.UpdateOne(filter,update);
             }
             else
             {
-                Debug.Log("이전 기록이 더 좋습니다");
+                //Debug.Log("이전 기록이 더 좋습니다");
             }
         }
         else //기록무
         {
-            Debug.Log("새로운 기록을 추가합니다");
+            //Debug.Log("새로운 기록을 추가합니다");
             SaveScoreToDataBase(playtime, time);
         }
     }

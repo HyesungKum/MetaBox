@@ -1,14 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+
+using UnityEngine.Audio;
 
 [RequireComponent(typeof(AudioSource))]
 public class SoundManager : MonoBehaviour
 {
     private static SoundManager instance;
-    public static SoundManager Inst
+    public static SoundManager Instance
     {
         get
         {
@@ -24,19 +24,19 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    [SerializeField] AudioClip[] buttonList = null; //HighLighted - Click
-    [SerializeField] AudioClip[] answerList = null; //Right - Wrong
-    [SerializeField] AudioClip[] musicList = null; //lobby - ingame
-    AudioSource Audio = null;
-    public int musiclist = 0;
+    [SerializeField] ScriptableObj scriptableSound = null;
+    [SerializeField] AudioMixer audioMixer = null;
+    [SerializeField] AudioSource audioBGM = null;
+    [SerializeField] AudioSource audioSFX = null;
 
-
+    public bool BGMMute { get; private set; } = false;
+    public bool SFXMute { get; private set; } = false;
     private void Awake()
     {
         Application.targetFrameRate = 60;
-        DontDestroyOnLoad(this);
-        Audio = this.GetComponent<AudioSource>();
-        musiclist = musicList.Length;
+        if (FindObjectOfType<SoundManager>().gameObject != this.gameObject) Destroy(this.gameObject);
+        DontDestroyOnLoad(this.gameObject);
+        AddButtonListener();
     }
 
     #region Button
@@ -50,7 +50,7 @@ public class SoundManager : MonoBehaviour
             Component[] buttons = go.transform.GetComponentsInChildren(typeof(Button), true);
             foreach (Button button in buttons)
             {
-                button.onClick.AddListener(delegate { UISound_OnClick(); });
+                button.onClick.AddListener(() => audioSFX.PlayOneShot(scriptableSound.SFX[0]));
             }
         }
     }
@@ -60,25 +60,50 @@ public class SoundManager : MonoBehaviour
         return curscene.GetRootGameObjects();
     }
 
-    public void UISound_OnClick()
-    {
-        Audio.PlayOneShot(buttonList[1], 1);
-    }
     #endregion
+
+    public void AudioVolumeControl(string target, float volume)
+    {
+        if (volume == -40f) audioMixer.SetFloat(target, -80);
+        else audioMixer.SetFloat(target, volume);
+    }
+
+    public float GetVolume(string target)
+    {
+        audioMixer.GetFloat(target, out float volume);
+        return volume;
+    }
+
+    public void AudioMute(string target, float value)
+    {
+        audioMixer.GetFloat(target, out float volume);
+        volume = volume == -80 ? value : -80;
+        if(target.Equals("BGM")) BGMMute = volume == -80 ? true : false;
+        else SFXMute = volume == -80 ? true : false;
+        audioMixer.SetFloat(target, volume);
+    }
 
     public void MusicStart(int musicindex)
     {
-        if (Audio.isPlaying) Audio.Stop();
-        Audio.clip = musicList[musicindex];
-        Audio.Play();
+        if (audioBGM.isPlaying) audioBGM.Stop();
+        audioBGM.clip = scriptableSound.BGM[0];
+        audioBGM.Play();
     }
-    public void UISound_RightAnswer()
+    public void CatchSFX()
     {
-        Audio.PlayOneShot(answerList[0], 1);
+        audioSFX.PlayOneShot(scriptableSound.SFX[1]);
     }
-    public void UISound_WrongAnswer()
+    public void PenaltySFX()
     {
-        Debug.Log("틀렸다고 재생해");
-        Audio.PlayOneShot(answerList[1], 1);
+        audioSFX.PlayOneShot(scriptableSound.SFX[2]);
     }
+    public void WaveClearSFX()
+    {
+        audioSFX.PlayOneShot(scriptableSound.SFX[3]);
+    }
+    public void WaveFailSFX()
+    {
+        audioSFX.PlayOneShot(scriptableSound.SFX[4]);
+    }
+
 }

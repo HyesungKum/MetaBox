@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class LevelPanel : MonoBehaviour
 {
     [SerializeField] GameObject startPanel = null;
-    [SerializeField] Loading loadingObject = null;
+    [SerializeField] Fade fade = null;
     [SerializeField] Button back = null;
     [SerializeField] Button easy = null;
     [SerializeField] Button normal = null;
@@ -23,25 +23,21 @@ public class LevelPanel : MonoBehaviour
     void OnClick_Easy()
     {
         PlayerPrefs.SetInt("level", 1);
-        this.gameObject.SetActive(false);
-        loadingObject.gameObject.SetActive(true);
+        fade.FadeOut();
     }
     void OnClick_Normal()
     {
         PlayerPrefs.SetInt("level", 2);
-        this.gameObject.SetActive(false);
-        loadingObject.gameObject.SetActive(true);
+        fade.FadeOut();
     }
     void OnClick_Hard()
     {
         PlayerPrefs.SetInt("level", 3);
-        this.gameObject.SetActive(false);
-        loadingObject.gameObject.SetActive(true);
+        fade.FadeOut();
     }
     void OnClick_Extreme()
     {
         PlayerPrefs.SetInt("level", 4);
-        this.gameObject.SetActive(false);
-        loadingObject.gameObject.SetActive(true);
+        fade.FadeOut();
     }
 }
