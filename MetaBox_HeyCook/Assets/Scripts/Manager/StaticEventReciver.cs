@@ -31,6 +31,8 @@ public class EventReciver
 
     //=============================Loading delegate======================================
     static public BasicCallBack ButtonClicked;
+    static public BasicCallBack PlayerFall;
+    static public BasicCallBack PlayerRise;
 
     //customer event
     static public void CallNewComstomerR() => NewCostomerR?.Invoke();
@@ -63,4 +65,6 @@ public class EventReciver
 
     //loading event
     static public void CallButtonClicked() => ButtonClicked?.Invoke();
+    static public void CallPlayerFall() => PlayerFall?.Invoke();
+    static public void CallPlayerRise() => PlayerRise?.Invoke();
 }

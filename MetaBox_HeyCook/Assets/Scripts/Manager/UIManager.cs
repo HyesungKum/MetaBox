@@ -68,8 +68,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject viewHall;
 
     //=================caching========================================
-    [Header("Score Production Value")]
-    [SerializeField] float ScoreDelay;
     private WaitForSecondsRealtime waitSec;
 
     private void Awake()
@@ -106,10 +104,6 @@ public class UIManager : MonoBehaviour
 
         endRestartButton.onClick      .AddListener(() => SceneMove(SceneName.Main));
         endRestartButton.onClick      .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
-
-        //========================Caching==============================================
-        waitSec = new WaitForSecondsRealtime(ScoreDelay);
-
 
         //delegate chain
         EventReciver.ScoreModi     += UIScoreModi;
@@ -196,6 +190,11 @@ public class UIManager : MonoBehaviour
     }
     IEnumerator GameOverProd()
     {
+        //Caching
+        float delay = 10 / GameManager.Inst.Score;
+        waitSec = new WaitForSecondsRealtime(delay);
+
+        //production score
         int tempScore = 0;
 
         while (tempScore < GameManager.Inst.Score)

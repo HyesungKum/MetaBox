@@ -44,7 +44,7 @@ public class LinePosCDLinkedList : MonoBehaviour
         //cdLinkedList.Search(new Vector3(-1.27f, 2.60f, -10f), 0);
         //cdLinkedList.Search(new Vector3(-2.16f, 1.19f, -10f), 2);
         //cdLinkedList.TraversalForWard(new Vector3(-2.16f, 1.19f, -10f), 2);
-        cdLinkedList.TraversalBackWard(new Vector3(-2.16f, 1.19f, -10f), 2);
+        //cdLinkedList.TraversalBackWard(new Vector3(-2.16f, 1.19f, -10f), 2);
     }
 
 }
