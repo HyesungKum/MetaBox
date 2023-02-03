@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -17,6 +15,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float playerLastSpeed;
     //=======================inner variables============================
     private bool isGrounded;
+    private bool isFall;
+    private bool isDone;
 
     private void Awake()
     {
@@ -30,9 +30,12 @@ public class PlayerController : MonoBehaviour
 
         //inner variables
         isGrounded = true;
+        isFall = false;
+        isDone = false;
 
         //delegate chain
         TouchEventGenerator.Inst.touchBegan[0] += Jump;
+        TouchEventGenerator.Inst.touchBegan[0] += Run;
 
         EventReciver.ButtonClicked += MoveRight;
     }
@@ -44,6 +47,7 @@ public class PlayerController : MonoBehaviour
 
         //delegate unchain
         TouchEventGenerator.Inst.touchBegan[0] -= Jump;
+        TouchEventGenerator.Inst.touchBegan[0] -= Run;
 
         EventReciver.ButtonClicked -= MoveRight;
     }
@@ -51,28 +55,50 @@ public class PlayerController : MonoBehaviour
     //============================player Controll==============================
     void Jump(int index, Vector3 pos)
     {
-        if (!isGrounded) return;
+        if (!isGrounded || isFall) return;
 
-        animator.ChangeAnimation("Jump");
         isGrounded = false;
+        animator.ChangeAnimation("Jump");
         rigidbody2d.AddForce(Vector3.up * jumpFoce, ForceMode2D.Impulse);
     }
+    void Run(int index, Vector3 pos)
+    {
+        if (!isFall) return;
 
+        isFall = false;
+        animator.ChangeAnimation("Idle");
+        EventReciver.CallPlayerRise();
+    }
+
+    //============================End Scene Move===============================
     void MoveRight()
     {
-        rigidbody2d.velocity = Vector2.right * playerLastSpeed;
+        isDone = true;
+        isFall = false;
+        isGrounded = true;
+        rigidbody2d.velocity = Vector2.right * playerLastSpeed; 
+        animator.ChangeAnimation("Idle");
     }
 
     //===========================platform & obstacle===========================
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        animator.ChangeAnimation("Idle");
         isGrounded = true;
+
+        if (isFall) return;
+
+        animator.ChangeAnimation("Idle");
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (isDone) return;
+
         if (collision.gameObject.name == "Rock")
         {
+            isFall = true;
+            collision.enabled = false;
+
+            EventReciver.CallPlayerFall();
             animator.ChangeAnimation("Die");
         }
     }
