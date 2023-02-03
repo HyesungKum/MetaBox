@@ -195,4 +195,14 @@ public class Thief : MonoBehaviour
             dir = (this.transform.position - collision.transform.position).normalized;
         }
     }
+
+#if UNITY_EDITOR
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.matrix = this.transform.localToWorldMatrix;
+        Gizmos.DrawSphere(Vector3.zero, (float)(this.transform.localScale.x*0.5));
+    }
+#endif
+
 }

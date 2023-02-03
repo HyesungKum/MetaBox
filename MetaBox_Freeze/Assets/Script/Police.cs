@@ -53,9 +53,11 @@ public class Police : MonoBehaviour
         if(collision.rigidbody == null) isMoving = false; //npc와 출동 시 밀면서 진행
     }
 
+#if UNITY_EDITOR
     void OnDrawGizmos()
     {
         Gizmos.color = new Color(0, 100, 100, 10);
         Gizmos.DrawSphere(this.transform.position, circleArea.radius);
     }
+#endif
 }

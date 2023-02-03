@@ -344,7 +344,7 @@ public class UiManager : MonoBehaviour
         Time.timeScale = 1;
 
         // back to start scene
-        SceneModeController.MySceneMode = SceneModeController.SceneMode.StartScene;      // turn start panel on, turn lobby panel off
+        SceneModeController.MySceneMode = SceneMode.StartScene;      // turn start panel on, turn lobby panel off
     }
 
 
@@ -359,7 +359,7 @@ public class UiManager : MonoBehaviour
         SceneManager.LoadScene("MelodiaLobby");
 
         // re-select mode 
-        SceneModeController.MySceneMode = SceneModeController.SceneMode.LobbyScene;      // turn start panel off, turn lobby panel on
+        SceneModeController.MySceneMode = SceneMode.LobbyScene;      // turn start panel off, turn lobby panel on
 
     }
 
@@ -375,7 +375,9 @@ public class UiManager : MonoBehaviour
 
         PlayTimer.DelegateTimer -= playCountDown;
 
-        readyReplay();
+        readyReplay(); 
+
+
 
         GameManager.Inst.UpdateCurProcess(GameStatus.Restart);
     }

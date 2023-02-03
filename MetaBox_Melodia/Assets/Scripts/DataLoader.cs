@@ -9,7 +9,7 @@ public class DataLoader : MonoBehaviour
     protected Dictionary<int, List<int>> StageData(string targetStage)
     {
         Dictionary<int, List<int>> stageData = new();
-        TextAsset sourcefile = Resources.Load<TextAsset>($"StageData/{targetStage}");
+        TextAsset sourcefile = Resources.Load<TextAsset>($"{targetStage}");
         StringReader sr = new StringReader(sourcefile.text);
 
         // first line of CSV

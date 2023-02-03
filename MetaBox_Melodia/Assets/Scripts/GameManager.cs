@@ -400,7 +400,7 @@ public class GameManager : DataLoader
     {
         switch (SceneModeController.MySceneMode)
         {
-            case SceneModeController.SceneMode.EasyMode:
+            case SceneMode.EasyMode:
                 {
                     stagePlayTime = 180f;
                     myCoolTime = 15;
@@ -412,14 +412,14 @@ public class GameManager : DataLoader
                 }
                 break;
 
-            case SceneModeController.SceneMode.NormalMode:
+            case SceneMode.NormalMode:
                 {
                     //depends on mode
                     //countDown = 180f;
                 }
                 break;
 
-            case SceneModeController.SceneMode.DifficultMode:
+            case SceneMode.HardMode:
                 {
                     //depends on mode
                     //countDown = 180f;
@@ -427,7 +427,7 @@ public class GameManager : DataLoader
                 }
                 break;
 
-            case SceneModeController.SceneMode.ExtremeMode:
+            case SceneMode.ExtremeMode:
                 {
                     //depends on mode
                     //countDown = 180f;

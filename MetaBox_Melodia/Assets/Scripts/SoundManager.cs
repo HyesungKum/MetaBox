@@ -77,7 +77,7 @@ public class SoundManager : MonoBehaviour
 
         myBGMAudioSource.clip = tempClip;
 
-        SceneModeController.myDelegateAudioControl = AudioVolumeControl;
+        Option.myDelegateAudioControl = AudioVolumeControl;
         UiManager.myDelegateAudioControl = AudioVolumeControl;
     }
 

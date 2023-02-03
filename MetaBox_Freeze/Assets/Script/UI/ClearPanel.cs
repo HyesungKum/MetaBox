@@ -3,9 +3,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 public class ClearPanel : MonoBehaviour
 {
+    [SerializeField] List<ParticleSystem> gameClearEff = null;
     [SerializeField] TextMeshProUGUI clearPlayTime = null;
     [SerializeField] Button home = null;
     [SerializeField] bool testMode = false;
@@ -27,6 +29,14 @@ public class ClearPanel : MonoBehaviour
     void Start()
     {
         if(testMode == false) clearPlayTime.text = (GameManager.Instance.FreezeData.playTime - GameManager.Instance.PlayTime).ToString();
+        for(int i = 0; i < gameClearEff.Count; i++)
+        {
+            gameClearEff[i].gameObject.SetActive(true);
+        }
+        for (int i = 0; i < gameClearEff.Count; i++)
+        {
+            gameClearEff[i].Play();
+        }
         StartCoroutine(nameof(ClearPanelShow));
     }
     IEnumerator ClearPanelShow()
