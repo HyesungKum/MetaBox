@@ -91,8 +91,8 @@ public class DynamicObj : MonoBehaviour
     private void Initializing()
     {
         //textMeshProUGUI
-        TryGetComponent<TextMeshProUGUI>(out _textMesh);
-        TryGetComponent<SpriteRenderer>(out _renderer);
+        TryGetComponent(out _textMesh);
+        TryGetComponent(out _renderer);
 
         //position
         tempVec = fixedPos = this.transform.localPosition;

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Kum
@@ -28,7 +26,7 @@ namespace Kum
                         lock (_lock)
                         {
                             GameObject instObj = new(typeof(T).ToString(), typeof(T));
-                            instance = instObj.GetComponent<T>();
+                            instObj.TryGetComponent(out T instance);
                         }
                     }
                 }

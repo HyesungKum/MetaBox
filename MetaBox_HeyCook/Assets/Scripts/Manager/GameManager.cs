@@ -2,16 +2,37 @@ using System.Collections;
 using System.Threading;
 using UnityEngine;
 using Kum;
+using System.Linq;
 
 public class GameManager : MonoSingleTon<GameManager>
 {
+    //=====================Data Controll=======================
+    [SerializeField] public LevelData levelData;
+    [SerializeField] public LevelTable curLevelData;
+
+    [Header("Aquire Setting")]
+    [SerializeField] IngredientSpawner rightSpawner;
+    [SerializeField] IngredientSpawner leftSpawner;
+    [SerializeField] BeltZone beltZoneR;
+    [SerializeField] BeltZone beltZoneL;
+    [SerializeField] GuestTable guestTableR;
+    [SerializeField] GuestTable guestTableL;
+    [SerializeField] SpriteRenderer beltR;
+    [SerializeField] SpriteRenderer beltL;
+    [SerializeField] SpriteRenderer kitchenR;
+    [SerializeField] SpriteRenderer kitchenL;
+    [SerializeField] SpriteRenderer submissionImage;
+    [SerializeField] SpriteRenderer back;
+    [SerializeField] SpriteRenderer bottom;
+
     //=====================var=======================
     [Header("Currnet Score")]
     public int Score = 0;
     
     [Header("Limit Time")]
-    public int Timer = 180;
-    private float timer = 0f;
+    public int countDown = 180;
+    private float timer = 0f; 
+    [HideInInspector] public int count = 0;
 
     [Header("Imminent Time")]
     public int ImTime = 30;
@@ -31,8 +52,6 @@ public class GameManager : MonoSingleTon<GameManager>
 
     private readonly WaitForSeconds wait = new(1f);
 
-    private float SecCount = 0f;
-
     private new void Awake()
     {
         //delegate chain
@@ -43,13 +62,44 @@ public class GameManager : MonoSingleTon<GameManager>
         EventReciver.GameOver += GameOver;
 
         //initializing
+        Level = LevelTransfer.Inst.Level;
+        curLevelData = levelData.levelTables[Level];
+
+        //divide each data
+        countDown       = curLevelData.countDown;
+
+        rightSpawner.SpawnTable = curLevelData.ingredGroup.ingredObjs.ToList();
+        leftSpawner.SpawnTable = curLevelData.ingredGroup.ingredObjs.ToList();
+
+        //rightSpawner.spawnTime = curLevelDtat.spawnTime;
+        //leftSpawner.spawnTime = curLevelDtat.spawnTime;
+        beltZoneL.beltSpeed    = curLevelData.beltSpeed;
+        beltZoneR.beltSpeed    = curLevelData.beltSpeed;
+        guestTableR.guestGroup = curLevelData.guestGroup;
+        guestTableL.guestGroup = curLevelData.guestGroup;
+
+        guestTableR.FoodList = curLevelData.foodDataGroup.foodDatas.ToList();
+        guestTableL.FoodList = curLevelData.foodDataGroup.foodDatas.ToList();
+
+        beltR.sprite           = curLevelData.conveyorBeltImage;
+        beltL.sprite           = curLevelData.conveyorBeltImage;
+        kitchenR.sprite        = curLevelData.kitchenImage;
+        kitchenL.sprite        = curLevelData.kitchenImage;
+        submissionImage.sprite = curLevelData.submissionImage;
+        //back.sprite            = curLevelDtat.backGroundImage1;
+        //bottom.sprite          = curLevelDtat.backGroundImage2;
+
         IsGameIn = true;
         IsStart = false;
         IsPause = false;
         IsGameOver = false;
 
+        Score = 0;
         timer = 0f;
+    }
 
+    private void Start()
+    {
         StartCoroutine(nameof(BeforeStart));
     }
 
@@ -94,15 +144,16 @@ public class GameManager : MonoSingleTon<GameManager>
         Time.timeScale = 0f;
     }
 
-    //============================================Timer Controll==========================================
+    //============================================Timer Controll==========================================//씬 시작 연출 수정
     IEnumerator BeforeStart()
     {
         SoundManager.Inst.StopBGM();
+        EventReciver.CallSceneStart();
 
-        while (timer <= 4f)
+        while (timer <= 6f)
         {
-            timer += Time.deltaTime;
-
+            timer += Time.fixedDeltaTime;
+            count = (int)timer;
             yield return null;
         }
 
@@ -122,15 +173,14 @@ public class GameManager : MonoSingleTon<GameManager>
         {
             yield return wait;
 
-            Timer -= 1;
+            countDown -= 1;
             EventReciver.CallTickCount();
-            if (AudioToken && Timer == ImTime)
+            if (AudioToken && countDown == ImTime)
             {
                 AudioToken = false;
                 SoundManager.Inst.SetBGMSpeed(1.3f);
             }
-            if (Timer == 0) EventReciver.CallGameOver();
+            if (countDown == 0) EventReciver.CallGameOver();
         }
     }
-
 }

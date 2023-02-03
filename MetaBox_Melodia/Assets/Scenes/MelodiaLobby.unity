@@ -2880,7 +2880,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0
   far clip plane: 1000
   field of view: 60
   orthographic: 1
@@ -5943,7 +5943,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b76b3b343d9a8c418643c00f9553921, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myNoteSound: {fileID: 11400000, guid: 3a059941b7932bd459f2b7fe390ad45c, type: 2}
+  myNoteSound: {fileID: 11400000, guid: 787344b37660e614ca17b3d6f1479a2e, type: 2}
+  myMusicSound: {fileID: 11400000, guid: ba1fd5123ac077046a7e2ad463fb9c29, type: 2}
   myNoteAudioSource: {fileID: 5146239734610642952}
   myBGMAudioSource: {fileID: 4267084306673489484}
   tempClip: {fileID: 8300000, guid: 29fb3d4a3ee29734f8ef3543c957bc75, type: 3}

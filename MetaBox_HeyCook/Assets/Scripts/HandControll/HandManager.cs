@@ -86,18 +86,22 @@ public class HandManager : MonoBehaviour
     //==========================================Ingredient Controll=====================================
     private void OnTouchedIngred(int index, Vector3 pos)
     {
+        if (GameManager.Inst.IsGameOver || GameManager.Inst.IsPause) return;
+
         Ray ray = mainCam.ScreenPointToRay(pos);
         RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, float.MaxValue);
 
         if (!hit || !hit.transform.CompareTag(nameof(Ingredient))) return;
 
-        Ingredient ingred = hit.transform.GetComponent<Ingredient>();
+        hit.transform.TryGetComponent(out Ingredient ingred);
 
         touchedIngred[index] = ingred;
         touchedIngred[index].IsCliked = true;
     }
     private void OnMovedIngred(int index, Vector3 pos)
     {
+        if (GameManager.Inst.IsGameOver || GameManager.Inst.IsPause) return;
+
         if (touchedIngred[index] == null) return;
 
         Vector3 movePos = mainCam.ScreenToWorldPoint(pos);

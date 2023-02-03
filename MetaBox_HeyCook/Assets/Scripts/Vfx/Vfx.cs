@@ -1,6 +1,6 @@
-using UnityEngine;
-using System.Collections;
 using ObjectPoolCP;
+using System.Collections;
+using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class Vfx : MonoBehaviour

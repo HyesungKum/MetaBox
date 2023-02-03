@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb5b4ede711941e4bba365b96ad694f3, type: 3}
+  m_Name: ShrimpFry
+  m_EditorClassIdentifier: 
+  foodName: ShrimpFry
+  foodImage: {fileID: 21300000, guid: 42938d1df82d0164b82491d83bfe5836, type: 3}
+  combineImage: {fileID: 21300000, guid: 42938d1df82d0164b82491d83bfe5836, type: 3}
+  cookType: 0
+  needTask: 10
+  Score: 100
+  foodVfx: {fileID: 3506292326563085180, guid: 6e72e10491801b94db3551e33cdf2398, type: 3}
+  needIngred:
+  - {fileID: 11400000, guid: ed9d41b27d7f334479936a923f65b80c, type: 2}
+  - {fileID: 11400000, guid: 9f043823d5eadda489b8a951602eff07, type: 2}

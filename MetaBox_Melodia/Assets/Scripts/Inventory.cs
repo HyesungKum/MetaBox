@@ -1,8 +1,6 @@
-using System.Collections;
+
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.UI;
 using ObjectPoolCP;
 
 public class Inventory : MonoBehaviour
@@ -12,7 +10,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] GameObject playableNote;
 
 
-    int PlayableNoteCount = 5;
+    int PlayableNoteCount = 10;
 
 
     private void Start()
@@ -38,7 +36,7 @@ public class Inventory : MonoBehaviour
 
 
 
-    public void ReadyGame()
+    void ReadyGame()
     {
 
         if (playableNoteList.Count > 0)
@@ -62,7 +60,7 @@ public class Inventory : MonoBehaviour
             usedNoteList.Clear();
         }
 
-        GeneratePlayableNote();
+        generatePlayableNote();
     }
 
 
@@ -74,9 +72,9 @@ public class Inventory : MonoBehaviour
     }
 
 
-    void GeneratePlayableNote()
+    void generatePlayableNote()
     {
-        float xPos = (-1.5f * PlayableNoteCount) / 2;
+        float xPos = -2f * (PlayableNoteCount / 2);
 
 
         for (int i = 0; i < PlayableNoteCount; ++i)
@@ -87,21 +85,21 @@ public class Inventory : MonoBehaviour
 
             newNote.transform.SetParent(this.transform);
 
-            newNote.GetComponent<Collider2D>().enabled = true;
+            newNote.TryGetComponent<Collider2D>(out Collider2D myCollider);
+            myCollider.enabled = true;
 
             playableNoteList.Add(newNote);
 
-            xPos += 1.5f;
+            xPos += 2f;
         }
     }
 
 
-    public void CheckHowManyNotes()
+    void CheckHowManyNotes()
     {
         if (playableNoteList.Count <= 0)
         {
-            UiManager.myDelegateUiManager("³¡³µ¾î");
-            GameManager.myDelegateGameStatus(GameStatus.NoMorePlayableNote);
+            GameManager.Inst.UpdateCurProcess(GameStatus.NoMorePlayableNote);
         }
     }
 

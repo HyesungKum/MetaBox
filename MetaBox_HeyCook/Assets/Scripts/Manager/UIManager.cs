@@ -1,31 +1,23 @@
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using TMPro;
 using ObjectPoolCP;
+using System.Collections;
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     //==============master canvas==================
-    [Header("Master UI")]
+    [Header("[Master UI]")]
     [SerializeField] GameObject UICanvas;
     
-    [Header("Vfx")]
+    [Header("[Vfx]")]
     [SerializeField] GameObject correctVfx;
     [SerializeField] GameObject wrongVfx;
 
     //current activation UI Object
     [Header("[Current Active UI]")]
     [SerializeField] GameObject curUI;
-
-    //================IngameProduction===============================
-    [Header("Start Production")]
-    [SerializeField] GameObject CountDownUI;
-    [Space]
-    [SerializeField] GameObject CountThreeImage;
-    [SerializeField] GameObject CountTwoImage;
-    [SerializeField] GameObject CountOneImage;
-    [SerializeField] GameObject CountStartImage;
 
     //================in game ui===================
     [Header("[In Game UI]")]
@@ -58,8 +50,27 @@ public class UIManager : MonoBehaviour
     [Header("[Game Over UI]")]
     [SerializeField] GameObject gameOverUI;
     [Space]
-    [SerializeField] Button restartButton;
+    [SerializeField] TextMeshProUGUI scoreResultText;
+    [Space]
+    [SerializeField] Button endRestartButton;
     [SerializeField] Button endExitButton;
+
+    //================IngameProduction===============================
+    [Header("[Production]")]
+    [SerializeField] GameObject CountDownUI;
+    [Space]
+    [SerializeField] GameObject CountThreeImage;
+    [SerializeField] GameObject CountTwoImage;
+    [SerializeField] GameObject CountOneImage;
+    [SerializeField] GameObject CountStartImage;
+    [Space]
+    [SerializeField] GameObject production;
+    [SerializeField] GameObject viewHall;
+
+    //=================caching========================================
+    [Header("Score Production Value")]
+    [SerializeField] float ScoreDelay;
+    private WaitForSecondsRealtime waitSec;
 
     private void Awake()
     {
@@ -93,13 +104,19 @@ public class UIManager : MonoBehaviour
         endExitButton.onClick      .AddListener(() => SceneMove(SceneName.Start));
         endExitButton.onClick      .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
-        restartButton.onClick      .AddListener(() => SceneMove(SceneName.Main));
-        restartButton.onClick      .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
+        endRestartButton.onClick      .AddListener(() => SceneMove(SceneName.Main));
+        endRestartButton.onClick      .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
+
+        //========================Caching==============================================
+        waitSec = new WaitForSecondsRealtime(ScoreDelay);
+
 
         //delegate chain
         EventReciver.ScoreModi     += UIScoreModi;
         EventReciver.CorrectIngred += UICorrectIngred;
         EventReciver.WrongIngred   += UIWrongIngred;
+
+        EventReciver.SceneStart += SceneStartProd;
 
         EventReciver.TickCount  += UITcikCount;
         EventReciver.GameStart  += UIGameStart;
@@ -126,6 +143,9 @@ public class UIManager : MonoBehaviour
         EventReciver.CorrectIngred -= UICorrectIngred;
         EventReciver.WrongIngred   -= UIWrongIngred;
 
+
+        EventReciver.SceneStart -= SceneStartProd;
+
         EventReciver.TickCount  -= UITcikCount;
         EventReciver.GameStart  -= UIGameStart;
         EventReciver.GamePause  -= UIGamePause;
@@ -135,12 +155,11 @@ public class UIManager : MonoBehaviour
     //============================================Initializing UI=======================================
     void UIInitializing()
     {
+        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.countDown / 60f), (int)(GameManager.Inst.countDown % 60f));
         optionButton.interactable = false;
     }
 
     //=============================================In Game Production===================================
-
-
     void UICorrectIngred(Vector3 pos)
     {
          GameObject instText = PoolCp.Inst.BringObjectCp(correctVfx);
@@ -162,6 +181,9 @@ public class UIManager : MonoBehaviour
     void UIGamePause()
     {
         ShowUI(optionUI);
+        masterSlider.value = SoundManager.Inst.GetVolume("Master");
+        bgmSlider.value = SoundManager.Inst.GetVolume("BGM");
+        sfxSlider.value = SoundManager.Inst.GetVolume("SFX");
     }
     void UIGameResume()
     {
@@ -170,12 +192,22 @@ public class UIManager : MonoBehaviour
     void UIGameOver()
     {
         ShowUI(gameOverUI);
+        StartCoroutine(nameof(GameOverProd));
     }
-    void ShowUI(GameObject targetUIObj)
+    IEnumerator GameOverProd()
     {
-        curUI.SetActive(false);
-        curUI = targetUIObj;
-        curUI.SetActive(true);
+        int tempScore = 0;
+
+        while (tempScore < GameManager.Inst.Score)
+        {
+            tempScore++;
+            scoreResultText.text = tempScore.ToString();
+
+            yield return waitSec;
+        }
+        
+        endExitButton.gameObject.SetActive(true);
+        endRestartButton.gameObject.SetActive(true);
     }
 
     //=============================================UI Value Controll======================================
@@ -189,17 +221,78 @@ public class UIManager : MonoBehaviour
     /// <param name="value">target time value</param>
     void UIScoreModi(int value)
     {
-        score.text = GameManager.Inst.Score.ToString();
+        score.text = (GameManager.Inst.Score + value).ToString();
     }
     void UITcikCount()
     {
-        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.Timer / 60f), (int)(GameManager.Inst.Timer % 60f));
+        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.countDown / 60f), (int)(GameManager.Inst.countDown % 60f));
     }
 
-    //================================================SceneMove============================================
+    //===============================================UI Transition========================================
+    void ShowUI(GameObject targetUIObj)
+    {
+        curUI.SetActive(false);
+        curUI = targetUIObj;
+        curUI.SetActive(true);
+    }
+
+    //================================================SceneMove===========================================
     void SceneMove(string sceneName)
     {
+        StartCoroutine(nameof(ViewHallShrink), sceneName);
+    }
+    IEnumerator ViewHallShrink(string sceneName)
+    {
+        production.SetActive(true);
+
+        float timer = 0f;
+        while (viewHall.transform.localScale.x >= 0.8f)
+        {
+            timer += Time.fixedDeltaTime / 15f;
+
+            viewHall.transform.localScale = Vector3.Lerp(viewHall.transform.localScale, Vector3.zero, timer);
+            yield return null;
+        }
+
+        viewHall.transform.localScale = Vector3.zero;
+
         Time.timeScale = 1f;
         SceneManager.LoadScene(sceneName);
+    }
+    //=============================================SceneProduction========================================
+    void SceneStartProd()
+    {
+        StartCoroutine(nameof(CountDown));
+    }
+    IEnumerator CountDown()
+    {
+        production.SetActive(true);
+
+        float timer = 0f;
+        while (viewHall.transform.localScale.x <= 45)
+        {
+            timer += Time.fixedDeltaTime / 15f;
+
+            viewHall.transform.localScale = Vector3.Lerp(viewHall.transform.localScale, Vector3.one * 46f, timer);
+            yield return null;
+        }
+
+        production.SetActive(false);
+
+        CountDownUI.SetActive(true);
+        yield return new WaitUntil(() => GameManager.Inst.count >= 2);
+        CountThreeImage.SetActive(true);
+        yield return new WaitUntil(() => GameManager.Inst.count >= 3);
+        CountThreeImage.SetActive(false);
+        CountTwoImage.SetActive(true);
+        yield return new WaitUntil(() => GameManager.Inst.count >= 4);
+        CountTwoImage.SetActive(false);
+        CountOneImage.SetActive(true);
+        yield return new WaitUntil(() => GameManager.Inst.count >= 5);
+        CountOneImage.SetActive(false);
+        CountStartImage.SetActive(true);
+        yield return new WaitUntil(() => GameManager.Inst.count >= 6);
+
+        CountDownUI.SetActive(false);
     }
 }
