@@ -14,25 +14,29 @@ public enum Side
 public class GuestTable : MonoBehaviour
 {
     //=====================================Reference Data======================================
-    [Header("Reference Data")]
+    [Header("[Guest Data]")]
     public GuestGroup guestGroup;
-    public List<FoodData> FoodList;
-    private List<FoodData> TempTable;
-
-    [Header("Current Recipe")]
-    public FoodData requireFood;
-    public List<IngredData> requireIngreds;
-
-    public Side side;
-
-    //=====================================Reference Obj=======================================
-    [Header("Guest")]
-    [SerializeField] Guest curGuest = null;
     [SerializeField] GameObject guestObj;
     [SerializeField] SpriteRenderer guestImage;
     [SerializeField] SpriteRenderer talkBubble;
     [SerializeField] AnimationCurve moveCurve;
     [SerializeField] TextMeshProUGUI guestText;
+
+    [Header("Current Guest")]
+    [SerializeField] Guest curGuest = null;
+
+    [Header("[Require Food List]")]
+    public List<FoodData> FoodList;
+    private List<FoodData> TempTable;
+
+    [Header("[Current Recipe]")]
+    public FoodData requireFood;
+    public List<IngredData> requireIngreds;
+
+    [Header("[TablePostion]")]
+    public Side side;
+
+    //=====================================Reference Obj=======================================
 
     [Header("Food Particle")]
     [SerializeField] public GameObject foodParticle;
@@ -57,6 +61,22 @@ public class GuestTable : MonoBehaviour
         StartCoroutine(nameof(GettingData));
     }
 
+    private void OnDestroy()
+    {
+        //delegate unchain
+        if (side == Side.Right)
+        {
+            EventReciver.NewCostomerR -= NewCostomerPord;
+            EventReciver.DoSubmissionR -= DoSubmission;
+        }
+        else
+        {
+            EventReciver.NewCostomerL -= NewCostomerPord;
+            EventReciver.DoSubmissionL -= DoSubmission;
+        }
+    }
+
+    //==================================Guest require recipe getting routine=============================
     IEnumerator GettingData()
     {
         yield return waitGetData;
@@ -83,22 +103,7 @@ public class GuestTable : MonoBehaviour
         else EventReciver.CallNewComstomerL();
     }
 
-    private void OnDestroy()
-    {
-        //delegate unchain
-        if (side == Side.Right)
-        {
-            EventReciver.NewCostomerR -= NewCostomerPord;
-            EventReciver.DoSubmissionR -= DoSubmission;
-        }
-        else
-        {
-            EventReciver.NewCostomerL -= NewCostomerPord;
-            EventReciver.DoSubmissionL -= DoSubmission;
-        }
-    }
-
-    //=====================================Submission==========================================
+    //============================================Submission=============================================
     void DoSubmission()
     {
         StartCoroutine(nameof(FoodReset));
@@ -115,7 +120,7 @@ public class GuestTable : MonoBehaviour
         else EventReciver.CallNewComstomerL();
     }
 
-    //==============================Customer Move Production===================================
+    //====================================Customer Move Production=======================================
     void NewCostomerPord()
     {
         StartCoroutine(nameof(CustomerMove));
@@ -161,7 +166,8 @@ public class GuestTable : MonoBehaviour
             yield return null;
         }
     }
-    //=================================picking Controll=========================================
+
+    //========================================picking Controll===========================================
     void PickRecipe()
     {
         //pick index

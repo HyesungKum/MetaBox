@@ -7,8 +7,8 @@ using System.Linq;
 public class GameManager : MonoSingleTon<GameManager>
 {
     //=====================Data Controll=======================
-    [SerializeField] public LevelData levelData;
-    [SerializeField] public LevelTable curLevelData;
+    [SerializeField] private LevelData levelData;
+    [SerializeField] private LevelTable curLevelData;
 
     [Header("Aquire Setting")]
     [SerializeField] IngredientSpawner rightSpawner;
@@ -27,25 +27,25 @@ public class GameManager : MonoSingleTon<GameManager>
 
     //=====================var=======================
     [Header("Currnet Score")]
-    public int Score = 0;
+    [SerializeField] private int score = 0;
     
     [Header("Limit Time")]
-    public int countDown = 180;
+    [SerializeField] private int countDown = 180;
     private float timer = 0f; 
     [HideInInspector] public int count = 0;
 
     [Header("Imminent Time")]
-    public int ImTime = 30;
-    private bool AudioToken = true;
+    [SerializeField] private int imTime = 30;
+    private bool audioToken = true;
 
     [Header("Current Game Status")]
-    public bool IsGameIn = false;
-    public bool IsStart = false;
-    public bool IsPause = false;
-    public bool IsGameOver = false;
+    public bool IsGameIn;
+    public bool IsStart;
+    public bool IsPause;
+    public bool IsGameOver;
 
     [Header("Game Difficulty Level")]
-    public int Level = 1;
+    private int level = 1;
 
     //======================timer====================
     Coroutine TickRoutine;
@@ -62,8 +62,8 @@ public class GameManager : MonoSingleTon<GameManager>
         EventReciver.GameOver += GameOver;
 
         //initializing
-        Level = LevelTransfer.Inst.Level;
-        curLevelData = levelData.levelTables[Level];
+        level = LevelTransfer.Inst.Level;
+        curLevelData = levelData.levelTables[level];
 
         //divide each data
         countDown       = curLevelData.countDown;
@@ -94,7 +94,7 @@ public class GameManager : MonoSingleTon<GameManager>
         IsPause = false;
         IsGameOver = false;
 
-        Score = 0;
+        score = 0;
         timer = 0f;
     }
 
@@ -116,9 +116,9 @@ public class GameManager : MonoSingleTon<GameManager>
     //============================================Score Controll============================================
     void ScoreAddSub(int value)
     {
-        Score += value;
+        score += value;
 
-        if (Score < 0) Score = 0;
+        if (score < 0) score = 0;
     }
 
     //=========================================Game Life Controll============================================
@@ -142,9 +142,14 @@ public class GameManager : MonoSingleTon<GameManager>
         SoundManager.Inst.SetBGMUnLoop();
         SoundManager.Inst.PlayBGM();
         Time.timeScale = 0f;
+
+        if (SaveLoadManger.Inst.GetOldScore(level) < score)
+        {
+            EventReciver.CallSaveCallBack(level, score);
+        }
     }
 
-    //============================================Timer Controll==========================================//씬 시작 연출 수정
+    //============================================Timer Controll==========================================
     IEnumerator BeforeStart()
     {
         SoundManager.Inst.StopBGM();
@@ -175,12 +180,17 @@ public class GameManager : MonoSingleTon<GameManager>
 
             countDown -= 1;
             EventReciver.CallTickCount();
-            if (AudioToken && countDown == ImTime)
+            if (audioToken && countDown == imTime)
             {
-                AudioToken = false;
+                audioToken = false;
                 SoundManager.Inst.SetBGMSpeed(1.3f);
             }
             if (countDown == 0) EventReciver.CallGameOver();
         }
     }
+
+    //============================================Getting Data=========================================
+    public int GetScore() => score;
+    public int GetCountDown() => countDown;
+    public int GetLevel() => level;
 }

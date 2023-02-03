@@ -35,7 +35,7 @@ namespace Kum
             }
         }
 
-        protected void Awake()
+        protected virtual void Awake()
         {
             if (FindObjectOfType<T>(typeof(T) as T).gameObject != this.gameObject) Destroy(this.gameObject);
             {
@@ -43,7 +43,7 @@ namespace Kum
             }
         }
 
-        private void OnApplicationQuit()
+        protected void OnApplicationQuit()
         {
             applicationQuitting = true;
         }

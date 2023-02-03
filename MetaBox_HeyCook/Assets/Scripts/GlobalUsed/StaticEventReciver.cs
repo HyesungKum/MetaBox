@@ -4,6 +4,9 @@ public delegate void BasicCallBack();
 public delegate void IntCallBack(int value);
 public delegate void VectorCallBack(Vector3 pos);
 
+public delegate void LoadCallBack(string id);
+public delegate void SaveCallBack(int level, int score);
+
 public class EventReciver
 {
     //===============================main game delegate==================================
@@ -30,9 +33,13 @@ public class EventReciver
     static public BasicCallBack GameOver = null;
 
     //=============================Loading delegate======================================
-    static public BasicCallBack ButtonClicked;
-    static public BasicCallBack PlayerFall;
-    static public BasicCallBack PlayerRise;
+    static public BasicCallBack ButtonClicked = null;
+    static public BasicCallBack PlayerFall = null;
+    static public BasicCallBack PlayerRise = null;
+
+    //=============================Save Load delegate====================================
+    static public SaveCallBack saveCallBack = null;
+    static public LoadCallBack loadCallBack = null;
 
     //customer event
     static public void CallNewComstomerR() => NewCostomerR?.Invoke();
@@ -67,4 +74,8 @@ public class EventReciver
     static public void CallButtonClicked() => ButtonClicked?.Invoke();
     static public void CallPlayerFall() => PlayerFall?.Invoke();
     static public void CallPlayerRise() => PlayerRise?.Invoke();
+
+    //save load event
+    static public void CallSaveCallBack(int level, int score) => saveCallBack?.Invoke(level,score);
+    static public void CallLoadCallBack(string id) => loadCallBack?.Invoke(id);
 }

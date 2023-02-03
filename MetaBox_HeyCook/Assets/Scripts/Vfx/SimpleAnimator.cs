@@ -46,7 +46,7 @@ public class SimpleAnimator : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Debug.LogError("##SimpleAnimation Error : Cannot Found \"Idle\" key animation");
+            Debug.LogError("##SimpleAnimation Error : Cannot Found \"Idle\" key animation" + ex);
         }
     }
 

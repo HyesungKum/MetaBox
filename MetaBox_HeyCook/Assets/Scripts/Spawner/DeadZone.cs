@@ -28,13 +28,13 @@ public class DeadZone: MonoBehaviour
     }
 
     #region Editor
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         Gizmos.color = new(1f, 0f, 0f, 0.4f);
         Gizmos.matrix = this.transform.localToWorldMatrix;
         Gizmos.DrawCube(Vector3.zero, this.transform.GetComponent<BoxCollider2D>().size);
     }
-#endif
+    #endif
     #endregion
 }

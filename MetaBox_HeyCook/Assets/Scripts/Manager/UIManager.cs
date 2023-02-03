@@ -149,7 +149,7 @@ public class UIManager : MonoBehaviour
     //============================================Initializing UI=======================================
     void UIInitializing()
     {
-        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.countDown / 60f), (int)(GameManager.Inst.countDown % 60f));
+        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.GetCountDown() / 60f), (int)(GameManager.Inst.GetCountDown() % 60f));
         optionButton.interactable = false;
     }
 
@@ -191,13 +191,14 @@ public class UIManager : MonoBehaviour
     IEnumerator GameOverProd()
     {
         //Caching
-        float delay = 10 / GameManager.Inst.Score;
+        float delay = GameManager.Inst.GetScore() == 0 ? 0 : 10 / GameManager.Inst.GetScore();
+
         waitSec = new WaitForSecondsRealtime(delay);
 
         //production score
         int tempScore = 0;
 
-        while (tempScore < GameManager.Inst.Score)
+        while (tempScore < GameManager.Inst.GetScore())
         {
             tempScore++;
             scoreResultText.text = tempScore.ToString();
@@ -220,11 +221,11 @@ public class UIManager : MonoBehaviour
     /// <param name="value">target time value</param>
     void UIScoreModi(int value)
     {
-        score.text = (GameManager.Inst.Score + value).ToString();
+        score.text = (GameManager.Inst.GetScore() + value).ToString();
     }
     void UITcikCount()
     {
-        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.countDown / 60f), (int)(GameManager.Inst.countDown % 60f));
+        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.GetCountDown() / 60f), (int)(GameManager.Inst.GetCountDown() % 60f));
     }
 
     //===============================================UI Transition========================================
