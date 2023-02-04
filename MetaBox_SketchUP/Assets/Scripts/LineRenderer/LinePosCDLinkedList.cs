@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class LinePosCDLinkedList : MonoBehaviour
 {
     [SerializeField] public GameObject[] circlePointArry = null;
+
     LineRenderer linePos = null;
 
     public CDLinkedList.CDLinkedListInst cdLinkedList = null;
@@ -15,11 +16,11 @@ public class LinePosCDLinkedList : MonoBehaviour
     public CDLinkedList.CDNode cdNode = null;
     int linePosCount;
 
+
     void Awake()
     {
         TryGetComponent<LineRenderer>(out linePos);
         linePosCount = linePos.positionCount;
-
         nodeData = new CDLinkedList.CDNodeData();
         cdNode = new CDLinkedList.CDNode();
         cdLinkedList = new CDLinkedList.CDLinkedListInst();
@@ -36,7 +37,7 @@ public class LinePosCDLinkedList : MonoBehaviour
         int nodeIndex = 0;
 
         // 포지션 연결
-        for (int i = 0; i < linePosCount - 1 ; ++i)
+        for (int i = 0; i < linePosCount - 1; ++i)
         {
             nodePos = linePos.GetPosition(i);
             nodeData.nodePos = nodePos;
@@ -46,7 +47,6 @@ public class LinePosCDLinkedList : MonoBehaviour
             cdLinkedList.InsertHead(nodeData.nodePos, nodeData.index, nodeData.circlePointObj);
             nodeIndex += 1;
         }
-
         return cdLinkedList;
     }
 }

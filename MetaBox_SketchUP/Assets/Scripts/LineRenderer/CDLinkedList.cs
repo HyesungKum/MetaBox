@@ -208,9 +208,9 @@ public class CDLinkedList
             while (temp != startNode)
             {
                 #region
-                //Debug.Log("temp.Pos 1 ## " + temp.data.nodePos);
-                //Debug.Log("temp.index 1 ## " + temp.data.index);
-                //Debug.Log("temp.index 1 ## " + temp.data.circlePointObj);
+               //Debug.Log("temp.Pos 1 ## " + temp.data.nodePos);
+               //Debug.Log("temp.index 1 ## " + temp.data.index);
+               //Debug.Log("temp.index 1 ## " + temp.data.circlePointObj);
                 #endregion
                 temp = temp.prev;
             }
@@ -229,9 +229,9 @@ public class CDLinkedList
                 if (temp == endNode)
                     break;
 
-                Debug.Log("temp.Pos (ForWard) start -> end ## " + temp.data.nodePos);
-                Debug.Log("temp.Pos (ForWard) start -> end ## " + temp.data.index);
-                Debug.Log("temp.Pos (ForWard) start -> end ##" + temp.data.circlePointObj);
+                //Debug.Log("temp.Pos (ForWard) start -> end ## " + temp.data.nodePos);
+                //Debug.Log("temp.Pos (ForWard) start -> end ## " + temp.data.index);
+                //Debug.Log("temp.Pos (ForWard) start -> end ##" + temp.data.circlePointObj);
 
                 temp = temp.next;
             }

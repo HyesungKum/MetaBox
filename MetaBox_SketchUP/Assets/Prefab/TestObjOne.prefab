@@ -1448,6 +1448,7 @@ MonoBehaviour:
   - {fileID: 5378767949404519892}
   - {fileID: 8833064664257711482}
   - {fileID: 8979153091502820306}
+  edgeCollider: {fileID: 0}
 --- !u!120 &3587565424612609724
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -1996,6 +1997,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7431094601004451997}
+  - component: {fileID: 3800517051593546890}
   m_Layer: 0
   m_Name: Collider
   m_TagString: Untagged
@@ -2018,6 +2020,28 @@ Transform:
   m_Father: {fileID: 8800160935203390392}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!68 &3800517051593546890
+EdgeCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4541075266174819751}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_EdgeRadius: 0
+  m_Points:
+  - {x: -0.5, y: 0}
+  - {x: 0.5, y: 0}
+  m_AdjacentStartPoint: {x: 0, y: 0}
+  m_AdjacentEndPoint: {x: 0, y: 0}
+  m_UseAdjacentStartPoint: 0
+  m_UseAdjacentEndPoint: 0
 --- !u!1 &4620423721989782157
 GameObject:
   m_ObjectHideFlags: 0

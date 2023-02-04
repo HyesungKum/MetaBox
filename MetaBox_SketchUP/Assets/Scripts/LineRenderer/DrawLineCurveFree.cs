@@ -30,9 +30,17 @@ public class DrawLineCurveFree : MonoBehaviour
             #region Began
             case TouchPhase.Began:
                 {
-                    currentLine = ObjectPoolCP.PoolCp.Inst.BringObjectCp(linePrefab);
-                    // ºôµå ÇÒ´ë SetParent »¾±â
-                    currentLine.transform.SetParent(this.transform);
+                    RaycastHit2D hitInfo = RayCheck();
+
+                    if (hitInfo)
+                    {
+                        //hitInfo.collider.name
+                        Debug.Log("hitInfo collider.name: " + hitInfo.transform.gameObject);
+                        currentLine = ObjectPoolCP.PoolCp.Inst.BringObjectCp(linePrefab);
+                        // ºôµå ÇÒ´ë SetParent »©±â
+                        currentLine.transform.SetParent(this.transform);
+
+                    }
                 }
                 break;
             #endregion
@@ -40,11 +48,28 @@ public class DrawLineCurveFree : MonoBehaviour
             #region Move
             case TouchPhase.Moved:
                 {
-                    currentLine.TryGetComponent<LineRender>(out linerender);
-                    linerender.SetCurvePosition(touchPos);
+                    RaycastHit2D hitInfo = RayCheck();
+
+                    if (hitInfo)
+                    {
+                        currentLine.TryGetComponent<LineRender>(out linerender);
+                        linerender.SetCurvePosition(touchPos);
+
+                    }
                 }
                 break;
                 #endregion
         }
+    }
+
+    RaycastHit2D RayCheck()
+    {
+        touchPos = mainCam.ScreenToWorldPoint(new Vector3(myTouch.position.x, myTouch.position.y, 
+            Camera.main.nearClipPlane));
+
+        Ray2D ray = new Ray2D(touchPos, Vector2.zero);
+        RaycastHit2D hitInfo = Physics2D.Raycast(ray.origin, ray.direction, 5f);
+
+        return hitInfo;
     }
 }
