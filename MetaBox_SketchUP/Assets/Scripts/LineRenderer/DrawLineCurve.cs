@@ -12,15 +12,11 @@ public class DrawLineCurve : MonoBehaviour
     [SerializeField] Transform lineClonePos = null;
     [SerializeField] TextMeshProUGUI clearText = null;
 
-    //[Header("[Color Changed]")]
-    //[SerializeField] SpriteRenderer colorOne = null;
-    //[SerializeField] SpriteRenderer colorTwo = null;
-    //[SerializeField] SpriteRenderer colorThree = null;
-
     [Header("[Color Changed]")]
     [SerializeField] Button colorOne = null;
     [SerializeField] Button colorTwo = null;
     [SerializeField] Button colorThree = null;
+    [SerializeField] Slider colorAlpha = null;
 
     private Camera mainCam;
     private GameObject currentLine;
@@ -32,8 +28,8 @@ public class DrawLineCurve : MonoBehaviour
     public Vector3 startPos;
     LineRender linerender = null;
 
-    public GameObject[] oneBrushObj;
     LinePosCDLinkedList circleObj = null;
+    LineColorChanged lineColorChanged = null;
 
     int circleObjCount;
     int nodePosCount;
@@ -43,13 +39,25 @@ public class DrawLineCurve : MonoBehaviour
     GameObject nextObj = null;
 
     Stack<GameObject> lineStack;
+
+    public Color startColor;
     public Color newColor;
+    public Color tempColor;
+
+    float colorAlphaValue;
 
     void Awake()
     {
         mainCam = Camera.main;
         clearText.transform.gameObject.SetActive(false);
         lineStack = new Stack<GameObject>();
+
+        float r = 0.1997152f;
+        float g = 0.8301887f;
+        float b = 0.7776833f;
+        colorAlphaValue = 1;
+        colorAlpha.value = colorAlphaValue;
+        startColor = new Color(r, g, b, colorAlphaValue);
 
         colorOne.onClick.AddListener(delegate { GetOtherColor(colorOne); });
         colorTwo.onClick.AddListener(delegate { GetOtherColor(colorTwo); });
@@ -61,6 +69,7 @@ public class DrawLineCurve : MonoBehaviour
         checkObj.TryGetComponent<LinePosCDLinkedList>(out circleObj);
         circleObjCount = circleObj.circlePointArry.Length;
         revertBut.onClick.AddListener(delegate { OnClickRevertBut(); });
+        colorAlpha.onValueChanged.AddListener(delegate { SetColorAlpha(); });
     }
 
     void Update()
@@ -191,11 +200,10 @@ public class DrawLineCurve : MonoBehaviour
                 DestroyLine();
             }
         }
-
     }
 
 
-    void InstLine()
+    void InstLine() 
     {
         //if (currentLine == null)
         currentLine = ObjectPoolCP.PoolCp.Inst.BringObjectCp(linePrefab);
@@ -203,18 +211,27 @@ public class DrawLineCurve : MonoBehaviour
         // === SetParent 빌드 할때 꼭 빼자 ===
         currentLine.transform.SetParent(lineClonePos);
         currentLine.TryGetComponent<LineRender>(out linerender);
-        //newColor = linerender.GetLineColor();
-        linerender.GetLineColor();
-        linerender.SetColor(newColor);
+        //linerender.GetLineColor(); // 기존 컬러 받아 오기
+        linerender.SetColor(startColor);
+        colorAlphaValue = startColor.a;
+        //Debug.Log("### colorAlphaValue : " + colorAlphaValue);
     }
 
-    public void GetOtherColor(Button colorNum)
+    void SetColorAlpha()
+    {
+        colorAlphaValue = colorAlpha.value;
+        startColor.a = colorAlphaValue;
+        //Debug.Log("colorAlphaValue : " + colorAlphaValue);
+    }
+
+    void GetOtherColor(Button colorNum)
     {
         Image imgageColor = null;
         colorNum.transform.gameObject.TryGetComponent<Image>(out imgageColor);
-        newColor = imgageColor.color;
-        Debug.Log("newColor : " + newColor);
+        startColor = imgageColor.color;
+        startColor.a = colorAlpha.value;
     }
+
 
     void OnClickRevertBut()
     {

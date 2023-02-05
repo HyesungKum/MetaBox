@@ -10,13 +10,8 @@ public class LineRender : MonoBehaviour
     Transform edge = null;
     public const float resolutio = 0.1f;
 
-    public Stack<Vector3> posStack;
-
-    Color newColor;
-
     void Awake()
     {
-        posStack = new Stack<Vector3>();
         TryGetComponent<LineRenderer>(out lineRender);
     }
 
@@ -47,34 +42,17 @@ public class LineRender : MonoBehaviour
         lineRender.SetPosition(lineRender.positionCount - 1, pos);
     }
 
-
-    public void GetPositions()
-    {
-        Vector3[] vector3s = new Vector3[lineRender.positionCount];
-        lineRender.GetPositions(vector3s);
-    }
-
     private bool CanAppend(Vector3 pos)
     {
         if (lineRender.positionCount == 0) return true;
         return Vector2.Distance(lineRender.GetPosition(lineRender.positionCount - 1), pos) > resolutio;
     }
 
-    public Color GetLineColor()
-    {
-        newColor = lineRender.startColor;
-        //Debug.Log("newColor :" + newColor);
-        return newColor;
-    }
-
     public void SetColor(Color newColors)
     {
-        //newColor = newColors;
         lineRender.startColor = newColors;
-        //lineRender.endColor = newColor;
-        //lineRender.SetColors(newColor, newColor);
+        lineRender.endColor = newColors;
     }
-
 
     public void setEdgeCollider()
     {

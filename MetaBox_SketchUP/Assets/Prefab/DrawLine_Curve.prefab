@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4364074104963354721}
-  - component: {fileID: 6333484457491638974}
+  - component: {fileID: -6313926084198615106}
   m_Layer: 0
   m_Name: DrawLine_Curve
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6333484457491638974
+--- !u!114 &-6313926084198615106
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,7 +44,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 197ef9c1f275d774a993f5f35a7792ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  linePrefab: {fileID: 8676314743409034108, guid: aba9d289dd5c3094b9d535d6ad2fd8af, type: 3}
+  linePrefab: {fileID: 0}
   checkObj: {fileID: 0}
+  revertBut: {fileID: 0}
+  lineClonePos: {fileID: 0}
+  clearText: {fileID: 0}
+  colorOne: {fileID: 0}
+  colorTwo: {fileID: 0}
+  colorThree: {fileID: 0}
+  startNodeObj: {fileID: 0}
   startPos: {x: 0, y: 0, z: 0}
-  nodePosList: []
+  startColor: {r: 0, g: 0, b: 0, a: 0}
+  newColor: {r: 0, g: 0, b: 0, a: 0}
+  tempColor: {r: 0, g: 0, b: 0, a: 0}

@@ -64,7 +64,11 @@ public class InGamePanelSet : MonoBehaviour
     bool wait = false;
 
     // === play time total 10 seconds === 
-    float playTime = 600;
+    private float playTime = 600;
+    public float PlayTime
+    { get { return playTime; } set { playTime = value; } }
+
+
     float curTime = 0;
     // === test ===
     //float playTime = 6;

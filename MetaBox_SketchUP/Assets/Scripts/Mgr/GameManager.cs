@@ -23,10 +23,24 @@ public class GameManager : MonoBehaviour
     //}
     #endregion
 
+    private float playerPlayTime = 600;
+    public float PlayerPlayTime
+    { get { return playerPlayTime; } set { playerPlayTime = value; }}
+
 
     void Start()
     {
         
     }
 
+    void CheckPlayTime()
+    {
+        float beforeTime = 0;
+        float checkTime = PlayerPlayTime - InGamePanelSet.Inst.PlayTime;
+
+        if(checkTime < beforeTime)
+        {
+            Debug.Log("더 빨리 풀었습니다 !!");
+        }
+    }
 }
