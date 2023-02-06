@@ -43,6 +43,7 @@ public class GameManager : MonoSingleTon<GameManager>
     public bool IsStart;
     public bool IsPause;
     public bool IsGameOver;
+    public bool IsHighScore;
 
     [Header("Game Difficulty Level")]
     private int level = 1;
@@ -93,6 +94,7 @@ public class GameManager : MonoSingleTon<GameManager>
         IsStart = false;
         IsPause = false;
         IsGameOver = false;
+        IsHighScore = false;
 
         score = 0;
         timer = 0f;
@@ -145,6 +147,7 @@ public class GameManager : MonoSingleTon<GameManager>
 
         if (SaveLoadManger.Inst.GetOldScore(level) < score)
         {
+            IsHighScore = true;
             EventReciver.CallSaveCallBack(level, score);
         }
     }

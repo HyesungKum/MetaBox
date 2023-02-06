@@ -66,6 +66,9 @@ public class UIManager : MonoBehaviour
     [Space]
     [SerializeField] GameObject production;
     [SerializeField] GameObject viewHall;
+    [Space]
+    [SerializeField] GameObject highScoreObj;
+    [SerializeField] float scoreProdDelay;
 
     //=================caching========================================
     private WaitForSecondsRealtime waitSec;
@@ -137,7 +140,6 @@ public class UIManager : MonoBehaviour
         EventReciver.CorrectIngred -= UICorrectIngred;
         EventReciver.WrongIngred   -= UIWrongIngred;
 
-
         EventReciver.SceneStart -= SceneStartProd;
 
         EventReciver.TickCount  -= UITcikCount;
@@ -190,22 +192,29 @@ public class UIManager : MonoBehaviour
     }
     IEnumerator GameOverProd()
     {
-        //Caching
-        float delay = GameManager.Inst.GetScore() == 0 ? 0 : 10 / GameManager.Inst.GetScore();
-
-        waitSec = new WaitForSecondsRealtime(delay);
-
         //production score
+        int targetScore = GameManager.Inst.GetScore();
         int tempScore = 0;
+        float lerpCount = 0f;
 
-        while (tempScore < GameManager.Inst.GetScore())
+        //score increase production
+        while (tempScore != targetScore)
         {
-            tempScore++;
+            lerpCount += Time.fixedDeltaTime * scoreProdDelay;
+
+            tempScore = (int)Mathf.Lerp(tempScore, targetScore, lerpCount);
             scoreResultText.text = tempScore.ToString();
 
-            yield return waitSec;
+            yield return null;
         }
-        
+
+        //end sfx out
+        SoundManager.Inst.SetBGM("StageClear");
+        SoundManager.Inst.SetBGMUnLoop();
+        SoundManager.Inst.PlayBGM();
+
+        //UI popup
+        if (GameManager.Inst.IsHighScore) highScoreObj.SetActive(true);
         endExitButton.gameObject.SetActive(true);
         endRestartButton.gameObject.SetActive(true);
     }

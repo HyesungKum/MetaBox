@@ -21,15 +21,15 @@ public class DynamicObj : MonoBehaviour
 
     //===================Position Production Controll====================
     public bool editXpos;
-    [SerializeField] public AnimationCurve xCurve;
+    public AnimationCurve xCurve;
     [Space]
     public bool editYpos;
-    [SerializeField] public AnimationCurve yCurve;
+    public AnimationCurve yCurve;
     [Space]
 
     //====================Scale Production Controll======================
     public bool editScale;
-    [SerializeField] public AnimationCurve scaleCurve;
+    public AnimationCurve scaleCurve;
 
     //===================Position Production Controll====================
     [Space]
@@ -37,16 +37,20 @@ public class DynamicObj : MonoBehaviour
     public ColorControll colorControll;
 
     //color curve
-    [SerializeField] public AnimationCurve colorRCurve;
-    [SerializeField] public AnimationCurve colorGCurve;
-    [SerializeField] public AnimationCurve colorBCurve;
-    [SerializeField] public AnimationCurve colorACurve;
+    public AnimationCurve colorRCurve;
+    public AnimationCurve colorGCurve;
+    public AnimationCurve colorBCurve;
+    public AnimationCurve colorACurve;
 
     //between color lerp
-    [SerializeField] public float lerpTime;
-    [SerializeField] public Color startColor;
-    [SerializeField] public Color endColor;
+    public float lerpTime;
+    public Color startColor;
+    public Color endColor;
     private float lerpCal;
+
+    //=========================influenced about frame=====================
+    [Space]
+    public bool DonCareTime;
 
     //===========================init state==============================
     private Vector3 tempVec;
@@ -114,7 +118,8 @@ public class DynamicObj : MonoBehaviour
     {
         while (this.gameObject.activeSelf)
         {
-            timer += Time.deltaTime;
+            if (DonCareTime) timer += Time.fixedDeltaTime;
+            else timer += Time.deltaTime;
 
             this.transform.localPosition = fixedPos;
             this.transform.localScale = fixedScale;

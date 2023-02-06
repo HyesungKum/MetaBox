@@ -1,8 +1,15 @@
 using System.Collections;
+using TMPro;
 using ToolKum.AppTransition;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
+public enum Env
+{
+    Connected = 0,
+    Disconnected = 1
+}
 
 public class StartManager : MonoBehaviour
 {
@@ -49,9 +56,18 @@ public class StartManager : MonoBehaviour
 
     [SerializeField] Button optionExitButton;
 
+    [SerializeField] Button optionInitBuctton;
+
     [Header("[Production]")]
     [SerializeField] GameObject production;
     [SerializeField] GameObject viewHall;
+
+    [Header("[Online Enviorment]")]
+    [SerializeField] TextMeshProUGUI PlayerIDText;
+    [SerializeField] Image connectImage;
+    [Tooltip("Index 0 Image is Connected icon Image \n" +
+             "Index 1 Image is Disconnected icon Image")]
+    [SerializeField] Sprite[] EnvSprites;
 
     private void Awake()
     {
@@ -108,14 +124,26 @@ public class StartManager : MonoBehaviour
 
         optionExitButton.onClick.AddListener(() => ShowUI(mainUIGroup));
         optionExitButton.onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
+
+        optionInitBuctton.onClick.AddListener(()=> PlayerPrefs.DeleteAll());
+        optionInitBuctton.onClick.AddListener(()=> SoundManager.Inst.CallSfx("ButtonClick"));
     }
 
     private void Start()
     {
+        //get internet connection
+        if (SaveLoadManger.Inst.OnlineMode) connectImage.sprite = EnvSprites[(int)Env.Connected];
+        else connectImage.sprite = EnvSprites[(int)Env.Disconnected];
+
+        //get guest id
+        PlayerIDText.text = SaveLoadManger.Inst.GetID();
+
+        //set startscene sound
         SoundManager.Inst.SetBGM("StartBGM");
         SoundManager.Inst.SetBGMLoop();
         SoundManager.Inst.PlayBGM();
 
+        //view hall production
         Production();
     }
 
@@ -143,7 +171,7 @@ public class StartManager : MonoBehaviour
         float timer = 0f;
         while (viewHall.transform.localScale.x <= 45)
         {
-            timer += Time.deltaTime/15f;
+            timer += Time.deltaTime * 0.067f;
 
             viewHall.transform.localScale = Vector3.Lerp(viewHall.transform.localScale, Vector3.one * 46f, timer);
             yield return null;

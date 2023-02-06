@@ -5,21 +5,23 @@ using UnityEngine;
 using Kum;
 using System;
 using System.Collections;
+using UnityEngine.Timeline;
 
-public enum Difficulty
+public struct Level
 {
-    EASY = 0,
-    NORMAL = 1,
-    HARD = 2,
-    VERYHARD = 3
+    public const int EASY = 1;
+    public const int NORMAL = 2;
+    public const int HARD = 3;
+    public const int VERYHARD = 4;
 }
 
+//score type string constantize
 public struct ScoreType
 {
-    public const string EASY = "easyScore";
-    public const string NORMAL = "nomalScore";
-    public const string HARD = "hardScore";
-    public const string VERYHARD = "veryHardScore";
+    public const string EASY     = "gameLevel_1_Score";
+    public const string NORMAL   = "gameLevel_2_Score";
+    public const string HARD     = "gameLevel_3_Score";
+    public const string VERYHARD = "gameLevel_4_Score";
 }
 
 [Serializable]
@@ -46,38 +48,36 @@ public class PlayData
 public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
 {
     //==================================Database============================
-    readonly MongoClient clientData = new("mongodb+srv://metabox:metabox@metabox.fon8dvx.mongodb.net/?retryWrites=true&w=majori");
+    readonly MongoClient clientData = new("mongodb+srv://metabox:metabox@metabox.fon8dvx.mongodb.net/?retryWrites=true&w=majority");
 
     private IMongoDatabase dataBase;
     private IMongoCollection<BsonDocument> collection;
 
     //===================================CurData=============================
-    [SerializeField] private PlayData playData;
+    public PlayData playData;
 
     //===============================InternetConnection======================
-    [SerializeField] private bool OnlineMode;
+    public bool OnlineMode;
 
     protected override void Awake()
     {
         base.Awake();
 
-        ////check internet connection
-        //if (Application.internetReachability == NetworkReachability.NotReachable)
-        //{
-        //    OnlineMode = true;
-        //
-        //    // MongoDB database name
-        //    dataBase = clientData.GetDatabase("RankingDB");
-        //    // MongoDB collection name
-        //    collection = dataBase.GetCollection<BsonDocument>("HeyCookRank");
-        //}
-        //else
-        //{
-        //    OnlineMode = false;
-        //}
-        playData.id = "guest";
-        OnlineMode = false;
-
+        //check internet connection
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            OnlineMode = false;
+        }
+        else
+        {
+            OnlineMode = true;
+        
+            // MongoDB database name
+            dataBase = clientData.GetDatabase("RankingDB");
+            // MongoDB collection name
+            collection = dataBase.GetCollection<BsonDocument>("HeyCookRank");
+        }
+        
         //delegate chain
         EventReciver.saveCallBack += SaveData;
     }
@@ -92,6 +92,20 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
     {
         if (OnlineMode) SaveMongoDB(level, score);
         else SaveLocalDB(level, score);
+
+        playData.levelDatas[level - 1].score = score;
+    }
+
+    private void SaveMongoDB(int gameLevel, int score)
+    {
+        //apply filter data setting
+        FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("playerID", playData.id);
+
+        //apply update data setting
+        UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update.Set($"gameLevel_{gameLevel}_Score", score);
+
+        //collection update
+        collection.UpdateOne(filter, update);
     }
 
     /// <summary>
@@ -101,20 +115,22 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
     /// <param name="gameLevel"></param>
     /// <param name="score"></param>
     /// <param name="date"></param>
-    private async void SaveMongoDB(int gameLevel, int score)
+    private async void SaveNewMongoDB()
     {
         if (string.IsNullOrWhiteSpace(playData.id)) return;
 
         BsonDocument playerData = new()
-        { 
-            { "playerID",  playData.id }, 
-            { "gameLevel", gameLevel }, 
-            { "score",     score     }
+        {
+            { "playerID", playData.id },
+            { $"gameLevel_1_Score", 0 },
+            { $"gameLevel_2_Score", 0 },
+            { $"gameLevel_3_Score", 0 },
+            { $"gameLevel_4_Score", 0 },
         };
 
         await collection.InsertOneAsync(playerData);
-        Debug.Log("## MongoDB Database Save Working Done : " + playerData.ToString());
     }
+
     private void SaveLocalDB(int gameLevel, int score)
     {
         switch (gameLevel)
@@ -134,16 +150,18 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
         if (OnlineMode) LoadMongoDB(playerID);
         else LoadLocalDB();
     }
+
     /// <summary>
     /// Get User ScoreData in playerfrefs
     /// </summary>
     private void LoadLocalDB()
     {
-        playData.levelDatas[(int)Difficulty.EASY].score     = PlayerPrefs.GetInt(ScoreType.EASY, 0);
-        playData.levelDatas[(int)Difficulty.NORMAL].score   = PlayerPrefs.GetInt(ScoreType.NORMAL, 0);
-        playData.levelDatas[(int)Difficulty.HARD].score     = PlayerPrefs.GetInt(ScoreType.HARD, 0);
-        playData.levelDatas[(int)Difficulty.VERYHARD].score = PlayerPrefs.GetInt(ScoreType.VERYHARD, 0);
+        playData.levelDatas[Level.EASY - 1].score     = PlayerPrefs.GetInt(ScoreType.EASY, 0);
+        playData.levelDatas[Level.NORMAL - 1].score   = PlayerPrefs.GetInt(ScoreType.NORMAL, 0);
+        playData.levelDatas[Level.HARD - 1].score     = PlayerPrefs.GetInt(ScoreType.HARD, 0);
+        playData.levelDatas[Level.VERYHARD - 1].score = PlayerPrefs.GetInt(ScoreType.VERYHARD, 0);
     }
+
     /// <summary>
     /// Get User ScoreData in MongoDB
     /// </summary>
@@ -152,29 +170,52 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
     private void LoadMongoDB(string playerID)
     {
         //apply filter to find
-        var filter = Builders<BsonDocument>.Filter.Eq("playerID", playerID);
+        FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("playerID", playerID);
 
         //find data in collection using filter
-        BsonDocument nullFilter = collection.Find(filter).FirstOrDefault();
+        BsonDocument document = collection.Find(filter).FirstOrDefault();
+
+        //online data init
+        int onlineEasy = 0;
+        int onlineNoraml = 0;
+        int onlineHard = 0;
+        int onlineVeryHard = 0;
+
+        //get local data
+        int localEasy = PlayerPrefs.GetInt(ScoreType.EASY, 0);
+        int localNormal = PlayerPrefs.GetInt(ScoreType.NORMAL, 0);
+        int localHard = PlayerPrefs.GetInt(ScoreType.HARD, 0);
+        int localVeryHard = PlayerPrefs.GetInt(ScoreType.VERYHARD, 0);
 
         //return pickup Data if was not null
-        if (nullFilter != null)
+        if (document == null)
         {
-            playData.levelDatas[(int)Difficulty.EASY].score     = (int)nullFilter.GetValue(ScoreType.EASY);
-            playData.levelDatas[(int)Difficulty.NORMAL].score   = (int)nullFilter.GetValue(ScoreType.NORMAL);
-            playData.levelDatas[(int)Difficulty.HARD].score     = (int)nullFilter.GetValue(ScoreType.HARD);
-            playData.levelDatas[(int)Difficulty.VERYHARD].score = (int)nullFilter.GetValue(ScoreType.VERYHARD);
+            //create new account
+            SaveNewMongoDB();
         }
         else
         {
-            playData.levelDatas[(int)Difficulty.EASY].score     = 0;
-            playData.levelDatas[(int)Difficulty.NORMAL].score   = 0;
-            playData.levelDatas[(int)Difficulty.HARD].score     = 0;
-            playData.levelDatas[(int)Difficulty.VERYHARD].score = 0;
+            //get online data
+            onlineEasy = (int)document.GetValue(ScoreType.EASY);
+            onlineNoraml = (int)document.GetValue(ScoreType.NORMAL);
+            onlineHard = (int)document.GetValue(ScoreType.HARD);
+            onlineVeryHard = (int)document.GetValue(ScoreType.VERYHARD);
         }
+
+        //get highter score
+        int temp1Score = playData.levelDatas[Level.EASY - 1].score = localEasy > onlineEasy ? localEasy : onlineEasy;
+        int temp2Score = playData.levelDatas[Level.NORMAL - 1].score = localNormal > onlineNoraml ? localNormal : onlineNoraml;
+        int temp3Score = playData.levelDatas[Level.HARD - 1].score = localHard > onlineHard ? localHard : onlineHard;
+        int temp4Score = playData.levelDatas[Level.VERYHARD - 1].score = localVeryHard > onlineVeryHard ? localVeryHard : onlineVeryHard;
+
+        //apply save data
+        SaveMongoDB(Level.EASY,    temp1Score);
+        SaveMongoDB(Level.NORMAL,  temp2Score);
+        SaveMongoDB(Level.HARD,    temp3Score);
+        SaveMongoDB(Level.VERYHARD,temp4Score);
     }
 
     //=============================================Getting Data===================================================
-    public string GetID() => playData.id;
+    public string GetID() => string.IsNullOrEmpty(playData.id) ? "Guest" : playData.id;
     public int GetOldScore(int level) => playData.levelDatas[level - 1].score;
 }

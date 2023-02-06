@@ -91,6 +91,8 @@ public class DynamicObjEditor : Editor
             }
         }
 
+        dynamicObj.DonCareTime = EditorGUILayout.Toggle("Dont Care Time", dynamicObj.DonCareTime);
+
         serializedObject.ApplyModifiedProperties();
     }
 }
