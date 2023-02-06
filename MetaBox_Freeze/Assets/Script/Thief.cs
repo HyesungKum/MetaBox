@@ -7,7 +7,8 @@ public class Thief : MonoBehaviour
 {
     public CallbackArrest callbackArrest = null;
 
-    [SerializeField] ScriptableObj thiefImages = null;
+    [SerializeField] ScriptableObj scriptableNPC = null;
+    [SerializeField] CapsuleCollider2D npcCollider = null;
     [SerializeField] SpriteRenderer spriteRenderer = null;
     [SerializeField] ParticleSystem hideEff = null;
     Vector3 policeStation = new Vector3(7.6f, -1.8f, 0f);
@@ -43,14 +44,15 @@ public class Thief : MonoBehaviour
         this.speed = movespeed * 0.4f;
         this.wantedThief = wantedThief;
         waitMoveTime = new WaitForSeconds(movetime);
-        if (wantedThief) spriteRenderer.sprite = thiefImages.Thief[2]; //µµµÏ
-        else spriteRenderer.sprite = thiefImages.Thief[0]; //½Ã¹Î
+        if (wantedThief) spriteRenderer.sprite = scriptableNPC.ThiefNPC[0]; //µµµÏ
+        else spriteRenderer.sprite = scriptableNPC.CitizenNPC[0]; //½Ã¹Î
 
         GameManager.Instance.openThief += ImgShow;
-        GameManager.Instance.hideThief += () => spriteRenderer.sprite = thiefImages.Thief[1]; //½Ç·ç¿§
+        GameManager.Instance.hideThief += () => spriteRenderer.sprite = scriptableNPC.DefaultNPC[0]; //½Ç·ç¿§
         GameManager.Instance.removeThief += () => callbackArrest?.Invoke(this);
         GameManager.Instance.hideEff += () => hideEff.Play();
 
+        npcCollider.enabled = true;
         runningAway = false;
         arrest = false;
         dir = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0).normalized;
@@ -61,9 +63,9 @@ public class Thief : MonoBehaviour
 
     void ImgShow()
     {
-        if (wantedThief && arrest) spriteRenderer.sprite = thiefImages.Thief[3];
-        else if (wantedThief == false) spriteRenderer.sprite = thiefImages.Thief[0];
-        else spriteRenderer.sprite = thiefImages.Thief[2];
+        if (wantedThief && arrest) spriteRenderer.sprite = scriptableNPC.ThiefNPC[1];
+        else if (wantedThief == false) spriteRenderer.sprite = scriptableNPC.CitizenNPC[0];
+        else spriteRenderer.sprite = scriptableNPC.ThiefNPC[0];
     }
     IEnumerator RandomDir()
     {
@@ -90,7 +92,7 @@ public class Thief : MonoBehaviour
             else
             {
                 transform.Translate(dir * speed * Time.deltaTime);
-                if (wantedThief && spriteRenderer.sprite == thiefImages.Thief[2])
+                if (wantedThief && spriteRenderer.sprite == scriptableNPC.ThiefNPC[0])
                 {
                     if (dir.x >= 0) this.transform.localScale = rightFlip;
                     else this.transform.localScale = leftFlip;
@@ -140,13 +142,13 @@ public class Thief : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Prison")
+        if (collision.gameObject.name == "Prison")
         {
             if (runningAway)
             {
                 arrest = true;
+                npcCollider.enabled = false;
                 StopCoroutine(nameof(RunAwayMode));
-                //dir = (policeStation - this.transform.position).normalized;
                 speed *= 0.01f;
                 GameManager.Instance.ShowImg();
                 if (wantedThief) GameManager.Instance.CatchShow();
@@ -167,13 +169,13 @@ public class Thief : MonoBehaviour
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if(collision.tag == "Prison")
+        if(collision.gameObject.name == "Prison")
         {
             if (arrest == false && runningAway)
             {
                 arrest = true;
+                npcCollider.enabled = false;
                 StopCoroutine(nameof(RunAwayMode));
-                //dir = (policeStation - this.transform.position).normalized;
                 speed *= 0.01f;
                 GameManager.Instance.ShowImg();
                 if (wantedThief) GameManager.Instance.CatchShow();

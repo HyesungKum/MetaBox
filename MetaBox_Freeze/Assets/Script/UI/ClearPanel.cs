@@ -26,17 +26,16 @@ public class ClearPanel : MonoBehaviour
         if(testMode == false) home.onClick.AddListener(() => SceneManager.LoadScene("Start"));
     }
     
+
     void Start()
     {
         if(testMode == false) clearPlayTime.text = (GameManager.Instance.FreezeData.playTime - GameManager.Instance.PlayTime).ToString();
         for(int i = 0; i < gameClearEff.Count; i++)
         {
             gameClearEff[i].gameObject.SetActive(true);
-        }
-        for (int i = 0; i < gameClearEff.Count; i++)
-        {
             gameClearEff[i].Play();
         }
+
         StartCoroutine(nameof(ClearPanelShow));
     }
     IEnumerator ClearPanelShow()

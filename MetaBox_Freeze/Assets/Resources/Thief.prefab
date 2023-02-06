@@ -100,11 +100,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63ed1a32a0a93e24a86614b3997a2ff7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thiefImages: {fileID: 11400000, guid: f806bf22709133044a32b004356b9763, type: 2}
+  scriptableNPC: {fileID: 11400000, guid: f806bf22709133044a32b004356b9763, type: 2}
+  npcCollider: {fileID: 4876808713026232135}
   spriteRenderer: {fileID: 5769696875284073721}
   hideEff: {fileID: 2825836496829601766}
-  catchEff: {fileID: 0}
-  policeStation: {x: 7.9, y: -1.8, z: 0}
 --- !u!50 &5769696875284073701
 Rigidbody2D:
   serializedVersion: 4

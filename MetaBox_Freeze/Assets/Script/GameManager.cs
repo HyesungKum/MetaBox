@@ -166,13 +166,13 @@ public class GameManager : MonoBehaviour
     {
         if (win)
         {
+            gameClearRecord?.Invoke();
             for (int i = 0; i < wantedPostList.Count; i++)
             {
                 PoolCp.Inst.DestoryObjectCp(wantedPostList[i]);
             }
             wantedPostList.Clear();
             UIManager.Instance.Win();
-            gameClearRecord?.Invoke();
         }
         else UIManager.Instance.Lose();
     }

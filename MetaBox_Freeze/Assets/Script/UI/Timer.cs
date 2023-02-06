@@ -25,6 +25,7 @@ public class Timer : MonoBehaviour
         alarm.SetActive(false);
         textrotation = new Vector3(0, 0, 0);
     }
+
     public void PlayTimer()
     {
         timer.text = string.Format("{0:D2} : {1:D2} ", (GameManager.Instance.PlayTime / 60), (GameManager.Instance.PlayTime % 60));

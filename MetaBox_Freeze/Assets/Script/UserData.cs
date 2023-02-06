@@ -28,7 +28,7 @@ public class UserData : MonoBehaviour
     
     void Start()
     {
-        //InGame();
+        InGame();
     }
 
     void InGame()
@@ -52,11 +52,12 @@ public class UserData : MonoBehaviour
 
     void DataProcess(int playtime)
     {
+        string nowDate = DateTime.Now.ToString("yyyyMMddHHmm");
+        long time = long.Parse(nowDate);
+
         BsonDocument filter = new BsonDocument { { "id", userID }, { "gameGroup", gameGroup }, { "gameLevel", level } };
         BsonDocument targetData = collection.Find(filter).FirstOrDefault();
 
-        string nowDate = DateTime.Now.ToString("yyyyMMddHHmm");
-        long time = long.Parse(nowDate);
 
         if (targetData != null) //±‚∑œ¿Ø
         {

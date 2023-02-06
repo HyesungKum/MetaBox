@@ -37,6 +37,7 @@ public class SoundManager : MonoBehaviour
         if (FindObjectOfType<SoundManager>().gameObject != this.gameObject) Destroy(this.gameObject);
         DontDestroyOnLoad(this.gameObject);
         AddButtonListener();
+
     }
 
     #region Button
