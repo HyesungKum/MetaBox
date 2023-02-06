@@ -29,24 +29,23 @@ public class LinePosCDLinkedList : MonoBehaviour
     void Start()
     {
         CDLinkedListInsets();
+        //cdLinkedList.TraversalForWard(circlePointArry[1]);
     }
 
     public CDLinkedList.CDLinkedListInst CDLinkedListInsets()
     {
         Vector3 nodePos;
-        int nodeIndex = 0;
 
         // 포지션 연결
         for (int i = 0; i < linePosCount - 1; ++i)
         {
             nodePos = linePos.GetPosition(i);
             nodeData.nodePos = nodePos;
-            nodeData.index = nodeIndex;
             nodeData.circlePointObj = circlePointArry[i];
 
-            cdLinkedList.InsertHead(nodeData.nodePos, nodeData.index, nodeData.circlePointObj);
-            nodeIndex += 1;
+            cdLinkedList.InsertHead(nodeData.nodePos, nodeData.circlePointObj);
         }
+
         return cdLinkedList;
     }
 }

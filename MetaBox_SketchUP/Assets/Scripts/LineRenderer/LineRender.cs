@@ -31,7 +31,7 @@ public class LineRender : MonoBehaviour
     public void SetPositionCountDownforTwo()
     {
         lineRender.positionCount -= 1;
-        if (lineRender.positionCount == 1)
+        if (lineRender.positionCount == 2)
             return;
     }
 
@@ -40,6 +40,12 @@ public class LineRender : MonoBehaviour
         if (!CanAppend(pos)) return;
         lineRender.positionCount += 1;
         lineRender.SetPosition(lineRender.positionCount - 1, pos);
+    }
+
+    public void SetLineSize(float value)
+    {
+        lineRender.startWidth = value;
+        lineRender.endWidth = value;
     }
 
     private bool CanAppend(Vector3 pos)
