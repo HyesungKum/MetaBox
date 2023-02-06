@@ -3,9 +3,7 @@ using UnityEngine.Audio;
 using System.Collections;
 using System.Collections.Generic;
 
-
 public delegate void DelegateAudioControl(string target, float volume);
-
 
 public class SoundManager : MonoBehaviour
 {
@@ -24,35 +22,25 @@ public class SoundManager : MonoBehaviour
                     instance = new GameObject("SoundManager", typeof(SoundManager)).GetComponent<SoundManager>();
                 }
             }
-
-            DontDestroyOnLoad(instance.gameObject);
             return instance;
         }
     }
     #endregion
 
     [Header("Note Sound ScriptableObject")]
-    [SerializeField]
-    private MySoundIndex myNoteSound;
-
-    [SerializeField]
-    private MySoundIndex myMusicSound;
-
-
-
+    [SerializeField] private MySoundIndex myNoteSound;
+    [SerializeField] private MySoundIndex myMusicSound;
 
     [Header("Audio Sources")]
     [SerializeField] AudioSource myNoteAudioSource;
     [SerializeField] AudioSource myBGMAudioSource;
-    [SerializeField] AudioClip tempClip;
-
-
-
 
     [Header("Audio Volume Control")]
     [SerializeField] AudioMixer myAudioMixer;
-    public AudioMixer MyAudioMixer { get { return myAudioMixer; } }
 
+    public bool MasterMute { get; private set; } = false;
+    public bool BGMMute { get; private set; } = false;
+    public bool SFXMute { get; private set; } = false;
 
     bool isStopped = false;
     bool isGameStart = false;
@@ -63,7 +51,7 @@ public class SoundManager : MonoBehaviour
     List<int> clipList = new();
 
 
-    private void Awake()
+    void Awake()
     {
         //==============================================
         if (instance == null)
@@ -75,23 +63,34 @@ public class SoundManager : MonoBehaviour
         DontDestroyOnLoad(instance.gameObject);
         //==============================================
 
-        myBGMAudioSource.clip = tempClip;
-
         Option.myDelegateAudioControl = AudioVolumeControl;
-        UiManager.myDelegateAudioControl = AudioVolumeControl;
+        Option.myDelegateAudioMute = AudioMute;
     }
 
-
+    public float GetVolume(string target)
+    {
+        myAudioMixer.GetFloat(target, out float volume);
+        return volume;
+    }
 
     void AudioVolumeControl(string target, float volume)
     {
-        if (volume == -40f)
-            myAudioMixer.SetFloat(target, -80f);
-
-        else
-            myAudioMixer.SetFloat(target, volume);
+        if (volume == -40f) myAudioMixer.SetFloat(target, -80f);
+        else myAudioMixer.SetFloat(target, volume);
     }
 
+    void AudioMute(string target, float value)
+    {
+        myAudioMixer.GetFloat(target, out float volume);
+        volume = volume == -80 ? value : -80; 
+        if (target.Equals("Master")) MasterMute = volume == -80 ? true : false;
+        else if (target.Equals("BGM")) BGMMute = volume == -80 ? true : false;
+        else SFXMute = volume == -80 ? true : false;
+
+        myAudioMixer.SetFloat(target, volume);
+    }
+
+    
 
     // play note sound 
     public void PlayNote(int targetPitch, float pitch)
@@ -123,7 +122,6 @@ public class SoundManager : MonoBehaviour
         myBGMAudioSource.clip = changeClip;
 
     }
-
 
 
     public void PlayStageMusic()

@@ -1,58 +1,84 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Option : MonoBehaviour
 {
     public static DelegateAudioControl myDelegateAudioControl;
+    public static DelegateAudioControl myDelegateAudioMute;
 
+    [Header("Option Panel Control")]
+    [SerializeField] Button backGround = null;
+    [SerializeField] Button exit = null;
+    [SerializeField] Button quit = null;
+    [SerializeField] Button restart = null;
 
     [Header("Audio Volume Control")]
+    [SerializeField] Button muteMaster = null;
+    [SerializeField] Button muteBGM = null;
+    [SerializeField] Button muteSFX = null;
     [SerializeField] Slider myAudioSliderMaster;
     [SerializeField] Slider myAudioSliderBGM;
     [SerializeField] Slider myAudioSliderSFX;
 
-    void OnEnable()
+    void Awake()
     {
-        CurrentVolume();
+        backGround.onClick.AddListener(OnClick_Close);
+        exit.onClick.AddListener(OnClick_Close);
+        if (quit.gameObject.activeSelf) quit.onClick.AddListener(OnClick_Quit);
+        if (restart.gameObject.activeSelf) restart.onClick.AddListener(OnClick_ReStart);
+
+        muteMaster.onClick.AddListener(() => myDelegateAudioMute("Master", myAudioSliderMaster.value));
+        muteBGM.onClick.AddListener(() => myDelegateAudioMute("BGM", myAudioSliderBGM.value));
+        muteSFX.onClick.AddListener(() => myDelegateAudioMute("SFX", myAudioSliderSFX.value));
+        myAudioSliderMaster.onValueChanged.AddListener(delegate { OnValueChanged_Master(); });
+        myAudioSliderBGM.onValueChanged.AddListener(delegate { OnValueChanged_BGM(); });
+        myAudioSliderSFX.onValueChanged.AddListener(delegate { OnValueChanged_SFX(); });
     }
 
-    public void OnClickOption()
+    void OnEnable()
     {
+        if (SoundManager.Inst.MasterMute == false) myAudioSliderMaster.value = SoundManager.Inst.GetVolume("Master");
+        if (SoundManager.Inst.BGMMute == false) myAudioSliderBGM.value = SoundManager.Inst.GetVolume("BGM");
+        if (SoundManager.Inst.SFXMute == false) myAudioSliderSFX.value = SoundManager.Inst.GetVolume("SFX");
+    }
+
+    void OnClick_Close()
+    {
+        GameManager.Inst.UpdateCurProcess(GameStatus.Pause);
+        //Time.timeScale = 1f;
+        //Time.fixedDeltaTime = 0.02f * Time.timeScale;
         this.gameObject.SetActive(false);
     }
 
-    // keep volume values as scene changes
-    void CurrentVolume()
+    void OnClick_ReStart()
     {
-        SoundManager.Inst.MyAudioMixer.GetFloat("Master", out float masterVolume);
-        SoundManager.Inst.MyAudioMixer.GetFloat("BGM", out float bGMVolume);
-        SoundManager.Inst.MyAudioMixer.GetFloat("SFX", out float sFXVolume);
-
-        myAudioSliderMaster.value = masterVolume;
-        myAudioSliderBGM.value = bGMVolume;
-        myAudioSliderSFX.value = sFXVolume;
+        Time.timeScale = 1f;
+        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+        this.gameObject.SetActive(false);
+        //GameManager.Instance.ReStart();
     }
 
-    public void MasterAudioControl()
+    void OnClick_Quit() //½ºÅ¸Æ®¾À
     {
-        float volume = myAudioSliderMaster.value;
-
-        myDelegateAudioControl("Master", volume);
+        Time.timeScale = 1f;
+        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+        SceneManager.LoadScene("Start");
     }
 
-    public void BGMAudioControl()
+    void OnValueChanged_Master()
     {
-        float volume = myAudioSliderBGM.value;
-
-        myDelegateAudioControl("BGM", volume);
+        myDelegateAudioControl("Master", myAudioSliderMaster.value);
     }
 
-    public void SFXAudioControl()
+    void OnValueChanged_BGM()
     {
-        float volume = myAudioSliderSFX.value;
-
-        myDelegateAudioControl("SFX", volume);
+        myDelegateAudioControl("BGM", myAudioSliderBGM.value);
     }
+
+    void OnValueChanged_SFX()
+    {
+        myDelegateAudioControl("SFX", myAudioSliderSFX.value);
+    }
+    
 }

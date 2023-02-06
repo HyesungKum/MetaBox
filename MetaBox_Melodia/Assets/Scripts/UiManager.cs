@@ -8,9 +8,6 @@ using UnityEngine.UI;
 
 public class UiManager : MonoBehaviour
 {
-    public static DelegateAudioControl myDelegateAudioControl;
-
-
     public delegate void DelegateUiManager(string myText);
     public static DelegateUiManager myDelegateUiManager;
 
@@ -49,7 +46,6 @@ public class UiManager : MonoBehaviour
 
 
     float curTime;
-    bool isPaused = false;
 
 
 
@@ -316,21 +312,8 @@ public class UiManager : MonoBehaviour
 
     public void OnClickPause()
     {
-        CurrentVolume();
-
-        if (isPaused == false)
-        {
-            GameManager.Inst.UpdateCurProcess(GameStatus.Pause);
-            myPanelPause.SetActive(true);
-            isPaused = true;
-
-            return;
-        }
-
-        myPanelPause.SetActive(false);
-
-        isPaused = false;
         GameManager.Inst.UpdateCurProcess(GameStatus.Pause);
+        myPanelPause.SetActive(true);
     }
 
 
@@ -394,49 +377,6 @@ public class UiManager : MonoBehaviour
 
         GameManager.Inst.UpdateCurProcess(GameStatus.Idle);
     }
-
-    
-
-
-    // Option panel ==========================================================
-    #region ### Audio Related functions ###
-    public void MasterAudioControl()
-    {
-        float volume = myAudioSliderMaster.value;
-
-        myDelegateAudioControl("Master", volume);
-    }
-
-    public void BGMAudioControl()
-    {
-        float volume = myAudioSliderBGM.value;
-
-        myDelegateAudioControl("BGM", volume);
-    }
-
-    public void SFXAudioControl()
-    {
-        float volume = myAudioSliderSFX.value;
-
-        myDelegateAudioControl("SFX", volume);
-    }
-
-
-    void CurrentVolume()
-    {
-        float masterVolume;
-        float bGMVolume;
-        float sFXVolume;
-
-        SoundManager.Inst.MyAudioMixer.GetFloat("Master", out masterVolume);
-        SoundManager.Inst.MyAudioMixer.GetFloat("BGM", out bGMVolume);
-        SoundManager.Inst.MyAudioMixer.GetFloat("SFX", out sFXVolume);
-
-        myAudioSliderMaster.value = masterVolume;
-        myAudioSliderBGM.value = bGMVolume;
-        myAudioSliderSFX.value = sFXVolume;
-    }
-    #endregion
 
 
 

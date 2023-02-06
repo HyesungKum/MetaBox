@@ -13,7 +13,7 @@ public enum SceneMode
 }
 public class SceneModeController : MonoBehaviour
 {
-    public static SceneMode MySceneMode { get; set; }
+    public static SceneMode MySceneMode { get; set; } = SceneMode.StartScene;
 
     [Header("Panel Control")]
     [SerializeField] GameObject myStartPanel;
@@ -45,6 +45,7 @@ public class SceneModeController : MonoBehaviour
                 SetPanel(false);
                 break;
         }
+
         myOptionPanel.SetActive(false);
 
         start.onClick.AddListener(() => SetPanel(false));
