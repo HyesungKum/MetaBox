@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 205d3bc7baa0db742be5cc7932df292a, type: 3}
+  m_Name: SoundData
+  m_EditorClassIdentifier: Assembly-CSharp::SoundData
+  clips:
+    dictionaryView:
+      keys:
+      - ButtonClick
+      - =======Stage=======
+      - MainBGM
+      - StageClear
+      - StageFail
+      - StartBGM
+      - =======Guest=======
+      - GuestEat
+      - GuestLeave
+      - ======Cooking======
+      - Cutting
+      - Rowing
+      - Steaming
+      - CookingDone
+      - =====CheckIngred====
+      - Correct
+      - Wrong
+      values:
+      - {fileID: 8300000, guid: eeb80d6ce669c0c4382d4da25446eb03, type: 3}
+      - {fileID: 0}
+      - {fileID: 8300000, guid: 30a67072670ac9d479c24fff033dfd26, type: 3}
+      - {fileID: 8300000, guid: d6651075fbde299429eca7f90298a9a4, type: 3}
+      - {fileID: 8300000, guid: 56133a42dafca924b8b3a427b5509ceb, type: 3}
+      - {fileID: 8300000, guid: 6e4c6d290222ab74c930a69607ad4aed, type: 3}
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+    inputKey: 
+    inputValue: {fileID: 0}
