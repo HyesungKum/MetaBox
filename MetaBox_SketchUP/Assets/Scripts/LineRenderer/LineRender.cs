@@ -16,7 +16,6 @@ public class LineRender : MonoBehaviour
         //Debug.Log("lineRender.startWidth : " + lineRender.startWidth);
     }
 
-
     public void SetPosition(int index, Vector3 pos)
     {
         if (!CanAppend(pos)) return;

@@ -20,7 +20,12 @@ public class DrawLineCurve : MonoBehaviour
     [Header("[Clear Draw]")]
     [SerializeField] GameObject choiceWordPanel = null;
     [SerializeField] GameObject animation = null;
-    [SerializeField] int clearCount;
+    [SerializeField] private int answerButtonIndex;
+    [SerializeField] private int clearCount;
+
+    public int AnswerButtonIndex { get { return answerButtonIndex; } set { answerButtonIndex = value; } }
+    public int ClearCount { get { return clearCount; } set { clearCount = value; } }
+
 
     [Header("[Other]")]
     private Camera mainCam;
@@ -226,30 +231,25 @@ public class DrawLineCurve : MonoBehaviour
         GetColor();
         SetLineSize();
         linerender.SetColor(startColor);
+        linerender.SetLineSize(lineSizeValue);
     }
-
 
     void SetLineSize()
     {
-        if (lineSizeValue == 0)
-        {
-            lineSizeValue = 0.15f;
-        }
+        //Debug.Log(" @@ lineSizeChange.LineSize : " + lineSizeChange.LineSize);
+        if (lineSizeValue == 0) lineSizeValue = 0.15f;
+        if (lineSizeChange.LineSize == 0) lineSizeValue = 0.15f;
         else
         {
             lineSizeValue = lineSizeChange.LineSize;
             Debug.Log("lineSizeValue : " + lineSizeValue);
         }
-
-        linerender.SetLineSize(lineSizeValue);
     }
 
     void GetColor()
     {
-        //Debug.Log("lineColorChanged.getColor : " + lineColorChanged.getColor);
-        if (colorPanel.getColor == new Color(0, 0, 0, 0))
+        if (colorPanel.GetColor == new Color(0, 0, 0, 0))
         {
-            //Debug.Log("µé¾î¿È ??");
             float r = 0.1997152f;
             float g = 0.8301887f;
             float b = 0.7776833f;
@@ -258,9 +258,9 @@ public class DrawLineCurve : MonoBehaviour
         }
         else
         {
-            startColor = colorPanel.getColor;
+            startColor = colorPanel.GetColor;
         }
-
+        Debug.Log("## colorPanel.GetColor : " + colorPanel.GetColor);
     }
 
     void OnClickRevertBut()

@@ -1,115 +1,84 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class LineColorChanged : MonoBehaviour
 {
+    [Header("[Color Button]")]
     [SerializeField] Button colorOne = null;
     [SerializeField] Button colorTwo = null;
     [SerializeField] Button colorThree = null;
     [SerializeField] Button colorFour = null;
     [SerializeField] Button colorFive = null;
     //[SerializeField] Button colorSix = null;
-
-    public LineColorData lineColorData;
     
-    public Color getColor;
+    [Header("[AnimationCurve Up and Down]")]
+    [SerializeField] AnimationCurve curveMoveUp = null; 
+    [SerializeField] AnimationCurve curveMoveDown = null; 
+    [SerializeField] private float moveTime = 0.2f;
+    public float MoveTime { get { return moveTime; } set { moveTime = value; } }
+    public float moveUpHeight = 60f;
+
+    private Color getColor;
+    public Color GetColor { get { return getColor; } set { getColor = value; } }
+    public LineColorData lineColorData;
 
     void Awake()
     {
-        colorOne.onClick.AddListener(delegate { GetColorOne();  });
-        colorTwo.onClick.AddListener(delegate { GetColorTwo();  });
-        colorThree.onClick.AddListener(delegate { GetColorThree(); });
-        colorFour.onClick.AddListener(delegate { GetColorFour(); });
-        colorFive.onClick.AddListener(delegate { GetColorFive(); });
+        colorOne.onClick.AddListener(delegate { 
+            GetColors(lineColorData.ColorOneR, lineColorData.ColorOneG, lineColorData.ColorOneB, lineColorData.ColorOneA); 
+            StartCoroutine(ColorPositionMove(colorOne)); });
+
+        colorTwo.onClick.AddListener(delegate {
+            GetColors(lineColorData.ColorTwoR, lineColorData.ColorTwoG, lineColorData.ColorTwoB, lineColorData.ColorTwoA);
+            StartCoroutine(ColorPositionMove(colorTwo)); });
+
+        colorThree.onClick.AddListener(delegate {
+            GetColors(lineColorData.ColorThreeR, lineColorData.ColorThreeG, lineColorData.ColorThreeB, lineColorData.ColorThreeA);
+            StartCoroutine(ColorPositionMove(colorThree)); });
+
+        colorFour.onClick.AddListener(delegate {
+            GetColors(lineColorData.ColorFourR, lineColorData.ColorFourG, lineColorData.ColorFourB, lineColorData.ColorFourA);
+            StartCoroutine(ColorPositionMove(colorFour)); });
+
+        colorFive.onClick.AddListener(delegate {
+            GetColors(lineColorData.ColorFiveR, lineColorData.ColorFiveG, lineColorData.ColorFiveB, lineColorData.ColorFiveA);
+            StartCoroutine(ColorPositionMove(colorFive)); });
+
         //colorSix.onClick.AddListener(delegate { });
     }
 
-    void ColorPosMove(Button colorNum)
+    public IEnumerator ColorPositionMove(Button buttonNum)
     {
-        // ========== 애니메이션 커브로 다시 만들자 =============
-        Transform rackPos = colorNum.gameObject.transform;
-        Transform startPos = rackPos;
+        Vector3 startPos = buttonNum.transform.localPosition;
+        Vector3 targetPos = startPos + new Vector3(0, moveUpHeight,0);
 
-        rackPos.localPosition = new Vector3(rackPos.localPosition.x, rackPos.localPosition.y + 60, rackPos.localPosition.z);
-        //Debug.Log("rackPos.localPosition : " + rackPos.localPosition);
+        float timer = 0.0f;
+        while(timer < MoveTime)
+        {
+            timer += Time.deltaTime;
+            float check = timer / moveTime;
+            buttonNum.transform.localPosition = Vector3.Lerp(startPos, targetPos, curveMoveUp.Evaluate(check));
+            yield return null;
+        }
+
+        timer = 0.0f;
+        startPos = buttonNum.transform.localPosition;
+        targetPos = startPos - new Vector3(0, moveUpHeight, 0);
+
+        while(timer < MoveTime)
+        {
+            timer += Time.deltaTime;
+            float check = timer / moveTime;
+            buttonNum.transform.localPosition = Vector3.Lerp(startPos, targetPos, curveMoveDown.Evaluate(check));
+        }
     }
 
-    Color GetColorOne()
+    Color GetColors(float r, float g, float b, float a)
     {
-        float r = lineColorData.ColorOneR / 255;
-        float g = lineColorData.ColorOneG / 255;
-        float b = lineColorData.ColorOneB / 255;
-        float a = lineColorData.ColorOneA / 255;
-        //Debug.Log("r : "  + r + "g :" + g + "b : " + b + "a : " + a );
+        GetColor = new Color(r / 255, g / 255, b / 255, a / 255);
+        //Debug.Log("## r : " + GetColor.r + "## g : " +  GetColor.g + "## b : " + GetColor.b + "## a : " + GetColor.a);
 
-        getColor = new Color(r, g, b, a);
-        //Debug.Log("getColor(Colorone) : " + getColor);
-        return getColor;
+        return GetColor;
     }
-
-    Color GetColorTwo()
-    {
-        float r = lineColorData.ColorTwoR / 255;
-        float g = lineColorData.ColorTwoG / 255;
-        float b = lineColorData.ColorTwoB / 255;
-        float a = lineColorData.ColorTwoA / 255;
-        //Debug.Log("r : " + r + "g :" + g + "b : " + b + "a : " + a);
-
-        getColor = new Color(r, g, b, a);
-        //Debug.Log("getColor(ColorTwo) : " + getColor);
-        return getColor;
-    }
-
-    Color GetColorThree()
-    {
-        float r = lineColorData.ColorThreeR / 255;
-        float g = lineColorData.ColorThreeG / 255;
-        float b = lineColorData.ColorThreeB / 255;
-        float a = lineColorData.ColorThreeA / 255;
-        //Debug.Log("r : " + r + "g :" + g + "b : " + b + "a : " + a);
-
-        getColor = new Color(r, g, b, a);
-        //Debug.Log("getColor(ColorThree) : " + getColor);
-        return getColor;
-    }
-
-    Color GetColorFour() 
-    {
-        float r = lineColorData.ColorFourR / 255;
-        float g = lineColorData.ColorFourG / 255;
-        float b = lineColorData.ColorFourB / 255;
-        float a = lineColorData.ColorFourA / 255;
-        //Debug.Log("r : " + r + "g :" + g + "b : " + b + "a : " + a);
-
-        getColor = new Color(r, g, b, a);
-        //Debug.Log("getColor(ColorFour) : " + getColor);
-        return getColor;
-    }
-
-    Color GetColorFive()
-    {
-        float r = lineColorData.ColorFiveR / 255;
-        float g = lineColorData.ColorFiveG / 255;
-        float b = lineColorData.ColorFiveB / 255;
-        float a = lineColorData.ColorFiveA / 255;
-        //Debug.Log("r : " + r + "g :" + g + "b : " + b + "a : " + a);
-
-        getColor = new Color(r, g, b, a);
-        //Debug.Log("getColor(ColorFive) : " + getColor);
-        return getColor;
-    }
-
-    // Color six
-    //Color GetColorSix()
-    //{
-    //   // float r = lineColorData.ColorSixR / 255;
-    //   // float g = lineColorData.ColorSixG / 255;
-    //   // float b = lineColorData.ColorSixB / 255;
-    //   // float a = lineColorData.ColorSixA / 255;
-    //   //
-    //   // getColor = new Color(r, g, b, a);
-    //   // return getColor;
-    //}
 }
