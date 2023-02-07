@@ -2,14 +2,7 @@ using ObjectPoolCP;
 using System.Collections;
 using UnityEngine;
 
-//Different Cook and Trimable Ways Enum
-public enum TrimType
-{
-    Pressing,
-    Touching,
-    Slicing,
-    Max
-}
+//Different Cook Ways Enum
 public enum CookType
 {
     Pressing,
@@ -46,10 +39,6 @@ public class Ingredient : MonoBehaviour
     //============================trimControll=============================
     [Header("[CookControll]")]
     public float curTask = 0;
-    public TrimType TrimType;
-
-    //==================================cookControll========================
-    public CookType CookType;
 
     private void Awake()
     {
@@ -150,5 +139,16 @@ public class Ingredient : MonoBehaviour
         }
 
         PoolCp.Inst.DestoryObjectCp(this.gameObject);
+    }
+
+    //===========================================public contact===============================================
+    public void DoFadeOut()
+    {
+        StartCoroutine(nameof(FadeOut));
+    }
+    public void SetImage(Sprite sprite, int order)
+    {
+        Renderer.sprite = sprite;
+        Renderer.sortingOrder = order;
     }
 }

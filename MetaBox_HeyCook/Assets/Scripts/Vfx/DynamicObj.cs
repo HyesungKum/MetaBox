@@ -1,3 +1,5 @@
+
+
 using System.Collections;
 using UnityEngine;
 using TMPro;
@@ -27,11 +29,22 @@ public class DynamicObj : MonoBehaviour
     public AnimationCurve yCurve;
     [Space]
 
+    //====================Rotation Production Controll===================
+    public bool editXrot;
+    public AnimationCurve xRotCurve;
+    [Space]
+    public bool editYrot;
+    public AnimationCurve yRotCurve;
+    [Space]
+    public bool editZrot;
+    public AnimationCurve zRotCurve;
+    [Space]
+
     //====================Scale Production Controll======================
     public bool editScale;
     public AnimationCurve scaleCurve;
 
-    //===================Position Production Controll====================
+    //===================Color Production Controll====================
     [Space]
     public bool editColor;
     public ColorControll colorControll;
@@ -50,16 +63,19 @@ public class DynamicObj : MonoBehaviour
 
     //=========================influenced about frame=====================
     [Space]
-    public bool DonCareTime;
+    public bool OnAwake;
+    public bool DontCareTime;
 
     //===========================init state==============================
     private Vector3 tempVec;
+    private Quaternion tempRot;
     private Vector3 tempScale;
 
     private Color tempCol;
 
     //==========================fixed state==============================
     private Vector3 fixedPos;
+    private Quaternion fixedRot;
     private Vector3 fixedScale;
 
     private Color fixedCol;
@@ -75,11 +91,14 @@ public class DynamicObj : MonoBehaviour
         //local delegate chain
         if (editXpos) doDynamic += ChangeX;
         if (editYpos) doDynamic += ChangeY;
+        if (editXrot) doDynamic += ChangeXRot;
+        if (editYrot) doDynamic += ChangeYRot;
+        if (editZrot) doDynamic += ChangeZRot;
         if (editScale) doDynamic += ChangeScale;
         if (editColor && colorControll == ColorControll.CURVE) doDynamic += ChangeCurveColor;
         if (editColor && colorControll == ColorControll.LERP) doDynamic += ChangeLerpColor;
 
-        StartCoroutine(nameof(Production));
+        if(OnAwake) StartCoroutine(nameof(Production));
     }
     private void OnDisable()
     {
@@ -101,6 +120,9 @@ public class DynamicObj : MonoBehaviour
         //position
         tempVec = fixedPos = this.transform.localPosition;
 
+        //rotation
+        tempRot = fixedRot = this.transform.localRotation;
+
         //scale
         tempScale = fixedScale = this.transform.localScale;
 
@@ -116,12 +138,14 @@ public class DynamicObj : MonoBehaviour
     //================================Production============================================
     IEnumerator Production()
     {
+        timer = 0;
         while (this.gameObject.activeSelf)
         {
-            if (DonCareTime) timer += Time.fixedDeltaTime;
+            if (DontCareTime) timer += Time.fixedDeltaTime;
             else timer += Time.deltaTime;
 
             this.transform.localPosition = fixedPos;
+            this.transform.localRotation = fixedRot;
             this.transform.localScale = fixedScale;
 
             doDynamic?.Invoke();
@@ -142,6 +166,18 @@ public class DynamicObj : MonoBehaviour
     {
         fixedPos.y = yCurve.Evaluate(timer);
     }
+    void ChangeXRot()
+    {
+        fixedRot.x = xRotCurve.Evaluate(timer);
+    }
+    void ChangeYRot()
+    {
+        fixedRot.y = yRotCurve.Evaluate(timer);
+    }
+    void ChangeZRot()
+    {
+        fixedRot.z = zRotCurve.Evaluate(timer);
+    }
     void ChangeScale()
     {
         fixedScale = Vector3.one * scaleCurve.Evaluate(timer);
@@ -156,5 +192,12 @@ public class DynamicObj : MonoBehaviour
 
         fixedCol = Color.Lerp(startColor, endColor, lerpCal);
         lerpCal += Time.deltaTime / lerpTime;
+    }
+
+    //==============================Production Call=========================================
+    public void CallDoDynamic()
+    {
+        StopCoroutine(nameof(Production));
+        StartCoroutine(nameof(Production));
     }
 }

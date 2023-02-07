@@ -72,8 +72,8 @@ public class GameManager : MonoSingleTon<GameManager>
         rightSpawner.SpawnTable = curLevelData.ingredGroup.ingredObjs.ToList();
         leftSpawner.SpawnTable = curLevelData.ingredGroup.ingredObjs.ToList();
 
-        //rightSpawner.spawnTime = curLevelDtat.spawnTime;
-        //leftSpawner.spawnTime = curLevelDtat.spawnTime;
+        //rightSpawner.spawnTime = curLevelData.spawnTime;
+        //leftSpawner.spawnTime = curLevelData.spawnTime;
         beltZoneL.beltSpeed    = curLevelData.beltSpeed;
         beltZoneR.beltSpeed    = curLevelData.beltSpeed;
         guestTableR.guestGroup = curLevelData.guestGroup;
@@ -87,8 +87,8 @@ public class GameManager : MonoSingleTon<GameManager>
         kitchenR.sprite        = curLevelData.kitchenImage;
         kitchenL.sprite        = curLevelData.kitchenImage;
         submissionImage.sprite = curLevelData.submissionImage;
-        //back.sprite            = curLevelDtat.backGroundImage1;
-        //bottom.sprite          = curLevelDtat.backGroundImage2;
+        //back.sprite            = curLevelData.backGroundImage1;
+        //bottom.sprite          = curLevelData.backGroundImage2;
 
         IsGameIn = true;
         IsStart = false;
@@ -140,10 +140,12 @@ public class GameManager : MonoSingleTon<GameManager>
     {
         StopCoroutine(TickRoutine);
         IsGameOver = true;
+        Time.timeScale = 0f;
+
         SoundManager.Inst.SetBGM("StageClear");
         SoundManager.Inst.SetBGMUnLoop();
         SoundManager.Inst.PlayBGM();
-        Time.timeScale = 0f;
+
 
         if (SaveLoadManger.Inst.GetOldScore(level) < score)
         {

@@ -4009,6 +4009,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCam: {fileID: 1579395710}
+  kitchenTableR: {fileID: 1684007016}
+  kitchenTableL: {fileID: 1407148483}
   TouchVfx: {fileID: 3527676520550265843, guid: 91375ba91658c5c438a2cf58be43a478, type: 3}
   TitleScene: 0
   touchedIngred: []
@@ -5362,6 +5364,27 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  editXrot: 0
+  xRotCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  editYrot: 0
+  yRotCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  editZrot: 0
+  zRotCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   editScale: 1
   scaleCurve:
     serializedVersion: 2
@@ -5443,7 +5466,8 @@ MonoBehaviour:
   lerpTime: 0
   startColor: {r: 0, g: 0, b: 0, a: 0}
   endColor: {r: 0, g: 0, b: 0, a: 0}
-  DonCareTime: 1
+  OnAwake: 0
+  DontCareTime: 0
 --- !u!114 &1018417820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5888,8 +5912,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UICanvas: {fileID: 1831846538}
-  correctVfx: {fileID: 836487283751420175, guid: 151e1b2c533d081478bb625efce227cd, type: 3}
-  wrongVfx: {fileID: 1080471233519062714, guid: 15ddb7474a5ea5d4490511e48787230a, type: 3}
+  correctVfx: {fileID: 5282089466342749903, guid: 151e1b2c533d081478bb625efce227cd, type: 3}
+  wrongVfx: {fileID: 7806628083646821403, guid: 15ddb7474a5ea5d4490511e48787230a, type: 3}
   curUI: {fileID: 966744538}
   inGameUI: {fileID: 966744538}
   timer: {fileID: 447919547}
@@ -5917,6 +5941,7 @@ MonoBehaviour:
   production: {fileID: 1285921253}
   viewHall: {fileID: 543429928}
   highScoreObj: {fileID: 1018417817}
+  scoreProdDelay: 0.7
 --- !u!1 &1189306932
 GameObject:
   m_ObjectHideFlags: 0
@@ -6294,6 +6319,27 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  editXrot: 0
+  xRotCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  editYrot: 0
+  yRotCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  editZrot: 0
+  zRotCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   editScale: 0
   scaleCurve:
     serializedVersion: 2
@@ -6411,7 +6457,8 @@ MonoBehaviour:
   lerpTime: 0
   startColor: {r: 0.9433962, g: 0.93894625, b: 0.93894625, a: 0}
   endColor: {r: 0, g: 0, b: 0, a: 0}
-  DonCareTime: 0
+  OnAwake: 0
+  DontCareTime: 0
 --- !u!1 &1338190516
 GameObject:
   m_ObjectHideFlags: 0
@@ -6979,7 +7026,7 @@ GameObject:
   - component: {fileID: 1407148483}
   - component: {fileID: 1407148482}
   m_Layer: 0
-  m_Name: KitchenL
+  m_Name: KitchenTableL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7038,12 +7085,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbfdc9c026c29c143a45c2d6d3a37bff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collider: {fileID: 0}
   guestTable: {fileID: 420432534}
   foodOrder: {fileID: 0}
   curNeedIngred: []
   curIngred: {fileID: 0}
   tempIngred: {fileID: 0}
   rawFood: {fileID: 0}
+  CookingVfx: {fileID: 0}
   servingSpeed: 1
   ingredMoveSpeed: 8
   side: 0
@@ -8393,7 +8442,7 @@ GameObject:
   - component: {fileID: 1684007016}
   - component: {fileID: 1684007019}
   m_Layer: 0
-  m_Name: KitchenR
+  m_Name: KitchenTableR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8411,12 +8460,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbfdc9c026c29c143a45c2d6d3a37bff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collider: {fileID: 0}
   guestTable: {fileID: 819232680}
   foodOrder: {fileID: 0}
   curNeedIngred: []
   curIngred: {fileID: 0}
   tempIngred: {fileID: 0}
   rawFood: {fileID: 0}
+  CookingVfx: {fileID: 0}
   servingSpeed: 1
   ingredMoveSpeed: 8
   side: 1
@@ -9585,6 +9636,27 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  editXrot: 0
+  xRotCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  editYrot: 0
+  yRotCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  editZrot: 0
+  zRotCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   editScale: 0
   scaleCurve:
     serializedVersion: 2
@@ -9702,7 +9774,8 @@ MonoBehaviour:
   lerpTime: 0
   startColor: {r: 0.9433962, g: 0.93894625, b: 0.93894625, a: 0}
   endColor: {r: 0, g: 0, b: 0, a: 0}
-  DonCareTime: 0
+  OnAwake: 0
+  DontCareTime: 0
 --- !u!114 &1974202793
 MonoBehaviour:
   m_ObjectHideFlags: 0

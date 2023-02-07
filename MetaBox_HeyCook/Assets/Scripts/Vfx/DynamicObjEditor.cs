@@ -11,6 +11,11 @@ public class DynamicObjEditor : Editor
     private SerializedProperty xProperty;
     private SerializedProperty yProperty;
 
+    //rotation property
+    private SerializedProperty xRotProperty;
+    private SerializedProperty yRotProperty;
+    private SerializedProperty zRotProperty;
+
     //scale property
     private SerializedProperty scaleProperty;
 
@@ -28,9 +33,16 @@ public class DynamicObjEditor : Editor
     {
         dynamicObj = target as DynamicObj;
 
+        //position property
         xProperty = serializedObject.FindProperty(nameof(dynamicObj.xCurve));
         yProperty = serializedObject.FindProperty(nameof(dynamicObj.yCurve));
 
+        //rotation porperty
+        xRotProperty = serializedObject.FindProperty(nameof(dynamicObj.xRotCurve));
+        yRotProperty = serializedObject.FindProperty(nameof(dynamicObj.yRotCurve));
+        zRotProperty = serializedObject.FindProperty(nameof(dynamicObj.zRotCurve));
+
+        //scale property
         scaleProperty = serializedObject.FindProperty(nameof(dynamicObj.scaleCurve));
 
         colorRProperty = serializedObject.FindProperty(nameof(dynamicObj.colorRCurve));
@@ -45,6 +57,8 @@ public class DynamicObjEditor : Editor
 
     public override void OnInspectorGUI()
     {
+        //position property drawing
+        EditorGUILayout.LabelField("[Dynamic Position]");
         dynamicObj.editXpos = EditorGUILayout.Toggle("Custom X Postion", dynamicObj.editXpos);
         if (dynamicObj.editXpos)
         {
@@ -59,6 +73,33 @@ public class DynamicObjEditor : Editor
             EditorGUILayout.Space();
         }
 
+        //rotation property drawing
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("[Dynamic Rotation]");
+        dynamicObj.editXrot = EditorGUILayout.Toggle("Custom X Rotation", dynamicObj.editXrot);
+        if (dynamicObj.editXrot)
+        {
+            EditorGUILayout.PropertyField(xRotProperty);
+            EditorGUILayout.Space();
+        }
+
+        dynamicObj.editYrot = EditorGUILayout.Toggle("Custom Y Rotation", dynamicObj.editYrot);
+        if (dynamicObj.editYrot)
+        {
+            EditorGUILayout.PropertyField(yRotProperty);
+            EditorGUILayout.Space();
+        }
+
+        dynamicObj.editZrot = EditorGUILayout.Toggle("Custom Z Rotation", dynamicObj.editZrot);
+        if (dynamicObj.editZrot)
+        {
+            EditorGUILayout.PropertyField(zRotProperty);
+            EditorGUILayout.Space();
+        }
+
+        //scale property drawing
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("[Dynamic Scale]");
         dynamicObj.editScale = EditorGUILayout.Toggle("Custom Scale", dynamicObj.editScale);
         if (dynamicObj.editScale)
         {
@@ -66,6 +107,9 @@ public class DynamicObjEditor : Editor
             EditorGUILayout.Space();
         }
 
+        //color property drawing
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("[Dynamic Color]");
         dynamicObj.editColor = EditorGUILayout.Toggle("Custom Color", dynamicObj.editColor);
         if (dynamicObj.editColor)
         {
@@ -91,7 +135,13 @@ public class DynamicObjEditor : Editor
             }
         }
 
-        dynamicObj.DonCareTime = EditorGUILayout.Toggle("Dont Care Time", dynamicObj.DonCareTime);
+        //setting drawing
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("[Dynamic Setting]");
+        //setting care about frame time
+        dynamicObj.DontCareTime = EditorGUILayout.Toggle("Dont Care Time", dynamicObj.DontCareTime);
+        //looping movement
+        dynamicObj.OnAwake = EditorGUILayout.Toggle("Dynamic OnAwake", dynamicObj.OnAwake);
 
         serializedObject.ApplyModifiedProperties();
     }

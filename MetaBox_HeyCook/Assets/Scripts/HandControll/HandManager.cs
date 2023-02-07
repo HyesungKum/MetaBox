@@ -4,15 +4,18 @@ using UnityEngine;
 public class HandManager : MonoBehaviour
 {
     //==================================Reference Object============================
-    [Header("Reference Main Camera")]
+    [Header("[Reference Main Camera]")]
     [SerializeField] Camera mainCam;
 
-    [Header("Touch Vfx Prefabs")]
+    [Header("[Touch Vfx Prefabs]")]
     [SerializeField] GameObject TouchVfx;
 
-    [Header("Current Handling Ingred")]
+    [Header("[Current Handling Ingred]")]
     [SerializeField] bool TitleScene;
     [SerializeField] Ingredient[] touchedIngred;
+
+    //===================================Table Controll=============================
+    private KitchenTable kitchenTable;
 
     private void Awake()
     {
@@ -123,7 +126,8 @@ public class HandManager : MonoBehaviour
 
         if (!hit || !hit.transform.CompareTag("Table")) return;
 
-        hit.transform.SendMessage(nameof(TrimType.Touching), SendMessageOptions.DontRequireReceiver);
+        hit.collider.gameObject.TryGetComponent(out kitchenTable);
+        kitchenTable.Touching();
     }
     private void OnSlicingTable(int index, Vector3 pos)
     {
@@ -132,7 +136,8 @@ public class HandManager : MonoBehaviour
 
         if (!hit || !hit.transform.CompareTag("Table")) return;
 
-        hit.transform.SendMessage(nameof(TrimType.Slicing), SendMessageOptions.DontRequireReceiver);
+        hit.collider.gameObject.TryGetComponent(out kitchenTable);
+        kitchenTable.Slicing();
     }
     private void OnPressTable(int index, Vector3 pos)
     {
@@ -141,6 +146,7 @@ public class HandManager : MonoBehaviour
 
         if (!hit || !hit.transform.CompareTag("Table")) return;
 
-        hit.transform.SendMessage(nameof(TrimType.Pressing), SendMessageOptions.DontRequireReceiver);
+        hit.collider.gameObject.TryGetComponent(out kitchenTable);
+        kitchenTable.Pressing();
     }
 }
