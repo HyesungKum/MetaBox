@@ -38,10 +38,11 @@ public class InGamePanelSet : MonoBehaviour
     [SerializeField] GameObject onBushObj = null;
     [SerializeField] GameObject clearImgPanel = null;
 
-    [Header("[ClearImg Set]")]
-    [SerializeField] GameObject ImgOne = null;
-    [SerializeField] GameObject ImgTwo = null;
-    [SerializeField] GameObject ImgThree = null;
+
+    //[Header("[ClearImg Set]")]
+    //[SerializeField] GameObject ImgOne = null;
+    //[SerializeField] GameObject ImgTwo = null;
+    //[SerializeField] GameObject ImgThree = null;
 
     [Header("[ReStart]")]
     [SerializeField] Button loseReStartBut = null;
@@ -165,7 +166,10 @@ public class InGamePanelSet : MonoBehaviour
         LosePanelSet(false);
     }
 
-    public void SelectPanelSet(bool active) => selectPanel.gameObject.SetActive(active);
+    public void SelectPanelSet(bool active)
+    {
+        selectPanel.gameObject.SetActive(active);
+    }
 
     public void InGameSet(bool active) => closePlayOneBrush.gameObject.SetActive(active);
 
@@ -181,9 +185,9 @@ public class InGamePanelSet : MonoBehaviour
 
     public void ClearImgSet(bool oneSet, bool twoSet, bool threeSet)
     {
-        ImgOne.gameObject.SetActive(oneSet);
-        ImgTwo.gameObject.SetActive(twoSet);
-        ImgThree.gameObject.SetActive(threeSet);
+        //ImgOne.gameObject.SetActive(oneSet);
+        //ImgTwo.gameObject.SetActive(twoSet);
+        //ImgThree.gameObject.SetActive(threeSet);
     }
 
     void OnClickGoStartPanel() => SceneManager.LoadScene(SceneName.StartScene);

@@ -15,18 +15,36 @@ public class LevelPanelSet : MonoBehaviour
 
     void Awake()
     {
-        levelone.onClick.AddListener(delegate { OnClickLevelBut(); SoundManager.Inst.ButtonSFXPlay(); });
-        leveltwo.onClick.AddListener(delegate { SoundManager.Inst.ButtonSFXPlay(); });
-        levelthree.onClick.AddListener(delegate { SoundManager.Inst.ButtonSFXPlay(); });
-        levelfour.onClick.AddListener(delegate { SoundManager.Inst.ButtonSFXPlay(); });
+        levelone.onClick.AddListener(delegate { OnClickLevelOneBut(); SoundManager.Inst.ButtonSFXPlay(); });
+        leveltwo.onClick.AddListener(delegate { OnClickLevelTwoBut(); SoundManager.Inst.ButtonSFXPlay(); });
+        levelthree.onClick.AddListener(delegate { OnClickLevelThreeBut();  SoundManager.Inst.ButtonSFXPlay(); });
+        levelfour.onClick.AddListener(delegate { OnClickLevelFourBut(); SoundManager.Inst.ButtonSFXPlay(); });
 
         // === close button set ===
         closeBut.onClick.AddListener(delegate { OnClickCloseBut(); SoundManager.Inst.ButtonSFXPlay(); });
     }
 
-    public void OnClickLevelBut()
+    public void OnClickLevelOneBut()
     {
-        SceneManager.LoadScene(SceneName.InGameScene);
+        SceneManager.LoadScene(SceneName.LevelOneScene);
+        this.gameObject.SetActive(false);
+    }
+
+    public void OnClickLevelTwoBut()
+    {
+        SceneManager.LoadScene(SceneName.LevelTwoScene);
+        this.gameObject.SetActive(false);
+    }
+
+    public void OnClickLevelThreeBut()
+    {
+        SceneManager.LoadScene(SceneName.LevelThreeScene);
+        this.gameObject.SetActive(false);
+    }
+
+    public void OnClickLevelFourBut()
+    {
+        SceneManager.LoadScene(SceneName.LevelFourScene);
         this.gameObject.SetActive(false);
     }
 

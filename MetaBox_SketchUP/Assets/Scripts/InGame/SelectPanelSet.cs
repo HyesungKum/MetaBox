@@ -15,7 +15,6 @@ public class SelectPanelSet : MonoBehaviour
     [SerializeField] GameObject objTwo = null;
     [SerializeField] GameObject objThree = null;
 
-    [SerializeField] TextMeshProUGUI stageName = null;
 
     void Awake()
     {
@@ -54,7 +53,6 @@ public class SelectPanelSet : MonoBehaviour
     public void PlayGameObjSet(bool objOneSet, bool objTwoSet, bool objThreeSet)
     {
         InGamePanelSet.Inst.InGameSet(true);
-        stageName.gameObject.SetActive(false);
         objOne.gameObject.SetActive(objOneSet);
         objTwo.gameObject.SetActive(objTwoSet);
         objThree.gameObject.SetActive(objThreeSet);

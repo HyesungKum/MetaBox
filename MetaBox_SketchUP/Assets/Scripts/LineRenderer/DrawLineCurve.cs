@@ -5,23 +5,24 @@ using TMPro;
 
 public class DrawLineCurve : MonoBehaviour
 {
+    [Header("[Draw Line Prefab]")]
     [SerializeField] private GameObject linePrefab = null;
+
     [Header("[Object Prefabs]")]
     [SerializeField] GameObject checkObj = null;
     [SerializeField] Button revertBut = null;
     [SerializeField] Transform lineClonePos = null;
 
-    [Header("[Color Changed]")]
-    [SerializeField] Button colorOne = null;
-    [SerializeField] Button colorTwo = null;
-    [SerializeField] Button colorThree = null;
-    [SerializeField] Slider colorAlpha = null;
-    [SerializeField] Slider lineSize = null;
+    [Header("[Line Change]")]
+    [SerializeField] LineColorChanged colorPanel = null;
+    [SerializeField] LineSizeChange lineSizeChange = null;
 
-    [SerializeField] int clearCount;
+    [Header("[Clear Draw]")]
+    [SerializeField] GameObject choiceWordPanel = null;
     [SerializeField] GameObject animation = null;
-    ClearAnimation clearAnimaition = null;
+    [SerializeField] int clearCount;
 
+    [Header("[Other]")]
     private Camera mainCam;
     private GameObject currentLine;
     public GameObject startNodeObj = null;
@@ -34,7 +35,6 @@ public class DrawLineCurve : MonoBehaviour
     LineRender linerender = null;
 
     LinePosCDLinkedList circleObj = null;
-    LineColorChanged lineColorChanged = null;
 
     int circleObjCount;
     int nodePosCount;
@@ -44,30 +44,16 @@ public class DrawLineCurve : MonoBehaviour
     GameObject nextObj = null;
 
     Stack<GameObject> lineStack;
+    ClearAnimation clearAnimaition = null;
 
-    Color startColor;
+    public Color startColor;
 
-    float colorAlphaValue;
     float lineSizeValue;
 
     void Awake()
     {
-
         mainCam = Camera.main;
         lineStack = new Stack<GameObject>();
-
-        float r = 0.1997152f;
-        float g = 0.8301887f;
-        float b = 0.7776833f;
-        colorAlphaValue = 1;
-        lineSizeValue = 1;
-        lineSize.value = lineSizeValue;
-        colorAlpha.value = colorAlphaValue;
-        startColor = new Color(r, g, b, colorAlphaValue);
-
-        colorOne.onClick.AddListener(delegate { GetOtherColor(colorOne); ColorPosMove(colorOne); /*SoundManager.Inst.ClearSFXPlay(); */});
-        colorTwo.onClick.AddListener(delegate { GetOtherColor(colorTwo); ColorPosMove(colorTwo); /* SoundManager.Inst.ClearSFXPlay(); */});
-        colorThree.onClick.AddListener(delegate { GetOtherColor(colorThree); ColorPosMove(colorThree); /* SoundManager.Inst.ClearSFXPlay(); */});
     }
 
     void Start()
@@ -76,8 +62,6 @@ public class DrawLineCurve : MonoBehaviour
         checkObj.TryGetComponent<LinePosCDLinkedList>(out circleObj);
         circleObjCount = circleObj.circlePointArry.Length;
         revertBut.onClick.AddListener(delegate { OnClickRevertBut(); });
-        colorAlpha.onValueChanged.AddListener(delegate { SetColorAlpha(); });
-        lineSize.onValueChanged.AddListener(delegate { SetLineSize(); });
     }
 
     void Update()
@@ -113,11 +97,17 @@ public class DrawLineCurve : MonoBehaviour
 
         if (hitInfo)
         {
+            if (hitInfo.collider.name == "Collider")
+            {
+                //Debug.Log("콜라이더 부디쳤니?") ;
+                return;
+            }
             if (currentLine == null)
             {
-                InstLine();
-                startNodeObj = hitInfo.transform.gameObject;
+                startNodeObj = hitInfo.transform.gameObject; // 클릭한 걸 받아오기
                 circleObj.cdNode = circleObj.cdLinkedList.SearchObj(startNodeObj);
+                InstLine(); // 라인 만들고 
+                //Debug.Log("circleObj.cdNode : " + circleObj.cdNode);
 
                 startNodeObj = circleObj.cdNode.data.circlePointObj;
                 prevObj = circleObj.cdNode.prev.data.circlePointObj;
@@ -138,7 +128,6 @@ public class DrawLineCurve : MonoBehaviour
 
                 if (startNodeObj == endNodeObj)
                 {
-                    //InstLine();
                     circleObj.cdNode = circleObj.cdLinkedList.SearchObj(endNodeObj);
                     startNodeObj = circleObj.cdNode.data.circlePointObj;
 
@@ -149,11 +138,9 @@ public class DrawLineCurve : MonoBehaviour
                     linerender.SetPosition(0, startPos);
                     linerender.SetPosition(1, startPos);
                 }
-
             }
         }
     }
-
 
     void TouchMove()
     {
@@ -191,39 +178,42 @@ public class DrawLineCurve : MonoBehaviour
 
     void MoveEnd()
     {
-        RaycastHit2D hitInfo = RayCheck();
+        //Debug.Log("stackCount : " + lineStack.Count);
 
-        if (hitInfo)
-        {
-            GameObject hitObjCheck = hitInfo.transform.gameObject;
+        //RaycastHit2D hitInfo = RayCheck();
 
-            if (hitObjCheck == prevObj)
-            {
-                lineStack.Push(currentLine);
-                //Debug.Log("(prevObj) Starck Count : " + lineStack.Count);
-            }
-            else if (hitObjCheck == nextObj)
-            {
-                lineStack.Push(currentLine);
-                //Debug.Log("nextObj 같아" + lineStack.Count);
-            }
-        }
+        //if (hitInfo)
+        //{
+        //    GameObject hitObjCheck = hitInfo.transform.gameObject;
+
+        //    if (hitObjCheck == prevObj)
+        //    {
+        //        lineStack.Push(currentLine);
+        //        //Debug.Log("(prevObj) Starck Count : " + lineStack.Count);
+        //    }
+        //    else if (hitObjCheck == nextObj)
+        //    {
+        //        lineStack.Push(currentLine);
+        //        //Debug.Log("nextObj 같아" + lineStack.Count);
+        //    }
+        //}
 
         ClearCheck();
     }
 
     void ClearCheck()
     {
-        if (lineStack.Count == clearCount)
-        {
-            Debug.Log("너가 이겼다 @!!");
+        // ==== 승리 판정 ====
+        //if (lineStack.Count == clearCount)
+        //{
+        //    Debug.Log("너가 이겼다 @!!");
 
-            clearAnimaition.StartCoroutine(clearAnimaition.Moving());
-        }
-        else if (lineStack.Count > clearCount)
-        {
-            DestroyLine();
-        }
+        //    clearAnimaition.StartCoroutine(clearAnimaition.Moving());
+        //}
+        //else if (lineStack.Count > clearCount)
+        //{
+        //    DestroyLine();
+        //}
     }
 
     void InstLine()
@@ -232,39 +222,46 @@ public class DrawLineCurve : MonoBehaviour
         // === SetParent 빌드 할때 꼭 빼자 ===
         currentLine.transform.SetParent(lineClonePos);
         currentLine.TryGetComponent<LineRender>(out linerender);
+
+        GetColor();
+        SetLineSize();
         linerender.SetColor(startColor);
-        colorAlphaValue = startColor.a;
     }
 
-    void SetColorAlpha()
-    {
-        colorAlphaValue = colorAlpha.value;
-        startColor.a = colorAlphaValue;
-    }
 
     void SetLineSize()
     {
-        lineSizeValue = lineSize.value;
+        if (lineSizeValue == 0)
+        {
+            lineSizeValue = 0.15f;
+        }
+        else
+        {
+            lineSizeValue = lineSizeChange.LineSize;
+            Debug.Log("lineSizeValue : " + lineSizeValue);
+        }
+
         linerender.SetLineSize(lineSizeValue);
     }
 
-    void GetOtherColor(Button colorNum)
+    void GetColor()
     {
-        Image imgageColor = null;
-        colorNum.transform.gameObject.TryGetComponent<Image>(out imgageColor);
-        startColor = imgageColor.color;
-        startColor.a = colorAlpha.value;
+        //Debug.Log("lineColorChanged.getColor : " + lineColorChanged.getColor);
+        if (colorPanel.getColor == new Color(0, 0, 0, 0))
+        {
+            //Debug.Log("들어옴 ??");
+            float r = 0.1997152f;
+            float g = 0.8301887f;
+            float b = 0.7776833f;
+            float a = 1f;
+            startColor = new Color(r, g, b, a);
+        }
+        else
+        {
+            startColor = colorPanel.getColor;
+        }
+
     }
-
-    void ColorPosMove(Button colorNum)
-    {
-        Transform rackPos = colorNum.gameObject.transform;
-        Transform startPos = rackPos;
-
-        rackPos.localPosition = new Vector3(rackPos.localPosition.x, rackPos.localPosition.y + 60, rackPos.localPosition.z);
-        //Debug.Log("rackPos.localPosition : " + rackPos.localPosition);
-    }
-
 
     void OnClickRevertBut()
     {

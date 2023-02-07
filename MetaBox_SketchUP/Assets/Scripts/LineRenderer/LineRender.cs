@@ -13,7 +13,9 @@ public class LineRender : MonoBehaviour
     void Awake()
     {
         TryGetComponent<LineRenderer>(out lineRender);
+        //Debug.Log("lineRender.startWidth : " + lineRender.startWidth);
     }
+
 
     public void SetPosition(int index, Vector3 pos)
     {

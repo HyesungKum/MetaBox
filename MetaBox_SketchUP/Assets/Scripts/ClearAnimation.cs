@@ -15,11 +15,11 @@ public class ClearAnimation : MonoBehaviour
         //StartCoroutine(Moving());
     }
 
-    void Update()
+    [ContextMenu("TEST")]
+    public void Func()
     {
-
+        StartCoroutine(Moving());
     }
-
 
     public IEnumerator Moving()
     {

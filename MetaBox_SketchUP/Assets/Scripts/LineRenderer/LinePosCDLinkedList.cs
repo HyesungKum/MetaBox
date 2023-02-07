@@ -24,12 +24,13 @@ public class LinePosCDLinkedList : MonoBehaviour
         nodeData = new CDLinkedList.CDNodeData();
         cdNode = new CDLinkedList.CDNode();
         cdLinkedList = new CDLinkedList.CDLinkedListInst();
+        //Debug.Log("circlePointArry.Length : " + circlePointArry.Length);
     }
 
     void Start()
     {
         CDLinkedListInsets();
-        //cdLinkedList.TraversalForWard(circlePointArry[1]);
+        //cdLinkedList.TraversalForWard(circlePointArry[0]);
     }
 
     public CDLinkedList.CDLinkedListInst CDLinkedListInsets()

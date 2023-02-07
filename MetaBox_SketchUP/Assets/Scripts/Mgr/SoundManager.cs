@@ -29,6 +29,8 @@ public class SoundManager : MonoBehaviour
     [SerializeField] public AudioClip butSourceClip = null;
     [SerializeField] public AudioClip clearSFXClip = null;
     [SerializeField] public AudioClip failSFXClip = null;
+    //[SerializeField] public AudioClip playNodeClearClip = null;
+    //[SerializeField] public AudioClip colorPanelSFXClip = null;
 
     [Header("[Audio Volume Control]")]
     [SerializeField] AudioMixer myAudioMixer = null;
