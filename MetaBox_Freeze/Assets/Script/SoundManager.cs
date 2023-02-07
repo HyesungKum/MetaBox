@@ -4,6 +4,15 @@ using UnityEngine.SceneManagement;
 
 using UnityEngine.Audio;
 
+public enum SFX
+{
+    Button = 0,
+    Catch = 1,
+    Penalty = 2,
+    WaveClear = 3,
+    WaveFail = 4
+}
+
 [RequireComponent(typeof(AudioSource))]
 public class SoundManager : MonoBehaviour
 {
@@ -51,7 +60,7 @@ public class SoundManager : MonoBehaviour
             Component[] buttons = go.transform.GetComponentsInChildren(typeof(Button), true);
             foreach (Button button in buttons)
             {
-                button.onClick.AddListener(() => audioSFX.PlayOneShot(scriptableSound.SFX[0]));
+                button.onClick.AddListener(() => audioSFX.PlayOneShot(scriptableSound.SFX[(int)SFX.Button]));
             }
         }
     }
@@ -92,19 +101,19 @@ public class SoundManager : MonoBehaviour
     }
     public void CatchSFX()
     {
-        audioSFX.PlayOneShot(scriptableSound.SFX[1]);
+        audioSFX.PlayOneShot(scriptableSound.SFX[(int)SFX.Catch]);
     }
     public void PenaltySFX()
     {
-        audioSFX.PlayOneShot(scriptableSound.SFX[2]);
+        audioSFX.PlayOneShot(scriptableSound.SFX[(int)SFX.Penalty]);
     }
     public void WaveClearSFX()
     {
-        audioSFX.PlayOneShot(scriptableSound.SFX[3]);
+        audioSFX.PlayOneShot(scriptableSound.SFX[(int)SFX.WaveClear]);
     }
     public void WaveFailSFX()
     {
-        audioSFX.PlayOneShot(scriptableSound.SFX[4]);
+        audioSFX.PlayOneShot(scriptableSound.SFX[(int)SFX.WaveFail]);
     }
 
 }

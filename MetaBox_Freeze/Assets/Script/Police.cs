@@ -5,12 +5,13 @@ public class Police : MonoBehaviour
 {
     [SerializeField] CircleCollider2D circleArea = null;
     [SerializeField] Sprite playerImg; //PC 모델링은 미니게임 마을에서 유저가 커스터마이징한 이미지로 사용
-    [SerializeField] float playerSpeed;
-    [SerializeField] float playerArea;
+    float playerSpeed;
+    float playerArea;
 
     bool isMoving = false;
     Vector3 rightFlip = new Vector3(1, 1, 1);
     Vector3 leftFlip = new Vector3(-1, 1, 1);
+
     private void Awake()
     {
         if(circleArea == null) this.gameObject.TryGetComponent<CircleCollider2D>(out circleArea);
@@ -21,7 +22,7 @@ public class Police : MonoBehaviour
     {
         this.transform.position = new Vector3(Random.Range(-2f, 2f), Random.Range(-3f, 1f), 0); //단 모든 캐릭터는 겹치지 않게 배치
         playerSpeed = GameManager.Instance.FreezeData.playerSpeed * 0.02f;
-        playerArea = GameManager.Instance.FreezeData.playerArea * 0.6f;
+        playerArea = GameManager.Instance.FreezeData.playerArea * 0.8f;
         circleArea.radius *= playerArea;
     }
 

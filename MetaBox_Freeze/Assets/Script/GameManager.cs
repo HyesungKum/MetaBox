@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
     public int CatchNumber { get; private set; } = 0;
 
     WaitForSeconds wait1 = null;
-    WaitForSeconds waitNextWave = null;
+    WaitForSeconds waitWaveStart = null;
     
     bool imgShowTime = false;
 
@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
         LevelSetting(PlayerPrefs.GetInt("level"));
         if (wantedPost == null) wantedPost = (GameObject)Resources.Load(nameof(WantedPost));
         wait1 = new WaitForSeconds(1f);
-        waitNextWave = new WaitForSeconds(4f);
+        waitWaveStart = new WaitForSeconds(4f);
     }
 
     public void LevelSetting(int level)
@@ -97,7 +97,7 @@ public class GameManager : MonoBehaviour
         playTimerEvent?.Invoke();
         yield return wait1;
         UIManager.Instance.Countdown();
-        yield return waitNextWave;
+        yield return waitWaveStart;
         WaveStart();
         UIManager.Instance.Option(true);
     }
@@ -166,13 +166,13 @@ public class GameManager : MonoBehaviour
     {
         if (win)
         {
+            UIManager.Instance.Invoke("Win", 1f);
             gameClearRecord?.Invoke();
             for (int i = 0; i < wantedPostList.Count; i++)
             {
                 PoolCp.Inst.DestoryObjectCp(wantedPostList[i]);
             }
             wantedPostList.Clear();
-            UIManager.Instance.Win();
         }
         else UIManager.Instance.Lose();
     }
@@ -182,6 +182,7 @@ public class GameManager : MonoBehaviour
         imgShowTime = false;
         StartCoroutine(nameof(ImgShow));
     }
+
     IEnumerator ImgShow()
     {
         yield return null;
@@ -202,12 +203,10 @@ public class GameManager : MonoBehaviour
         if(catchEff.isPlaying) catchEff.Stop();
         catchEff.Play();
         wantedPostList.Add(PoolCp.Inst.BringObjectCp(wantedPost));
-    }
-    public void PostDone()
-    {
         if (wantedPostList.Count > 1) wantedPostList[wantedPostList.Count - 2].SendMessage("SetImg", SendMessageOptions.DontRequireReceiver);
+        if(wantedPostList.Count > 2) wantedPostList[wantedPostList.Count - 3].SendMessage("HideImg", SendMessageOptions.DontRequireReceiver);
     }
-
+    
     public void Catch()
     {
         CatchNumber++;

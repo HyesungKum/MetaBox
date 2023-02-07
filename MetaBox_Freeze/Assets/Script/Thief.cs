@@ -11,6 +11,7 @@ public class Thief : MonoBehaviour
     [SerializeField] CapsuleCollider2D npcCollider = null;
     [SerializeField] SpriteRenderer spriteRenderer = null;
     [SerializeField] ParticleSystem hideEff = null;
+
     Vector3 policeStation = new Vector3(7.6f, -1.8f, 0f);
 
     Police police = null;
@@ -110,7 +111,6 @@ public class Thief : MonoBehaviour
 
     IEnumerator Destroy()
     {
-        //UIManager.Instance.Catch(id);
         yield return waitArrestTime;
         callbackArrest?.Invoke(this);
         callbackArrest = null;
@@ -121,9 +121,8 @@ public class Thief : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision) //npc³¢¸® Ãæµ¹½Ã
     {
-        if (collision.rigidbody)
+        if (collision.rigidbody && runningAway == false)
         {
-            if (runningAway) return;
             dir.x = Random.Range(-1f, 1f);
             dir.y = Random.Range(-1f, 1f);
             dir.Normalize();
