@@ -31,10 +31,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] CountDown countDown = null;
     [SerializeField] Image gameStart = null;
 
-    //[SerializeField] ScrollRect wantedList = null;
-    //[SerializeField] Wanted wantedListImage = null;
-    //Dictionary<int, Wanted> wantedDic = new Dictionary<int, Wanted>();
-
+    
     WaitForSeconds waitHalf = null;
     WaitForSeconds wait1 = null;
 
@@ -88,6 +85,7 @@ public class UIManager : MonoBehaviour
         }
     }
     */
+
 
 
     public void Option(bool interact)

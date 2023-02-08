@@ -7,7 +7,7 @@ public class StartUI : MonoBehaviour
     [SerializeField] GameObject startPanel = null;
     [SerializeField] GameObject levelPanel = null;
     [SerializeField] GameObject optionPanel = null;
-    [SerializeField] Fade fade = null;
+    [SerializeField] Fade fade = null; //for scene transitions
 
     [Header("Start Panel Button")]
     [SerializeField] Button start = null;
@@ -16,7 +16,7 @@ public class StartUI : MonoBehaviour
     [SerializeField] Button exit = null;
 
     [Header("Level Panel Button")]
-    [SerializeField] Button back = null;
+    [SerializeField] Button back = null; //activate start panel
     [SerializeField] Button easy = null;
     [SerializeField] Button normal = null;
     [SerializeField] Button hard = null;

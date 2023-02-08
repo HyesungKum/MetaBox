@@ -3,9 +3,13 @@ using UnityEngine;
 
 public class WantedPost : MonoBehaviour
 {
+    [Header("Order in Layer Control")]
     [SerializeField] SpriteRenderer postImg = null;
     [SerializeField] SpriteRenderer thiefImg = null;
     [SerializeField] SpriteRenderer arrestImg = null;
+
+
+    [Header("Animation Control")]
     [SerializeField] AnimationCurve PostPosYCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, -1f), new Keyframe(1.2f, 3f) });
     [SerializeField] AnimationCurve PostRotCurve;
     [SerializeField] AnimationCurve PostScaleCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(1.2f, 1f) });

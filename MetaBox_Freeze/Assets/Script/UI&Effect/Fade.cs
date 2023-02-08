@@ -4,8 +4,11 @@ using UnityEngine.SceneManagement;
 
 public class Fade : MonoBehaviour
 {
-    [SerializeField] GameObject fade = null;
-    [SerializeField] Loading loading = null;
+    [SerializeField] Loading loading = null; //Objects for loading presentation
+
+
+    [Header("circle Control")]
+    [SerializeField] GameObject circle = null; //a circle showing the game screen
     [SerializeField] AnimationCurve FadeInCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(1.4f, 1f)});
     [SerializeField] AnimationCurve FadeOutCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 1f), new Keyframe(1.4f, 0f)});
 
@@ -13,13 +16,13 @@ public class Fade : MonoBehaviour
 
     void Start()
     {
-        fade.transform.localScale = fadeScale;
+        circle.transform.localScale = fadeScale;
         StartCoroutine(nameof(_FadeIn));
     }
 
     public void FadeOut()
     {
-        fade.transform.localScale = fadeScale;
+        circle.transform.localScale = fadeScale;
         StartCoroutine(nameof(_FadeOut));
     }
 
@@ -28,7 +31,7 @@ public class Fade : MonoBehaviour
         float startTime = 0;
         while (FadeInCurve.keys[FadeInCurve.keys.Length - 1].time >= startTime)
         {
-            fade.transform.localScale = fadeScale * FadeInCurve.Evaluate(startTime);
+            circle.transform.localScale = fadeScale * FadeInCurve.Evaluate(startTime);
 
             startTime += Time.deltaTime;
             yield return null;
@@ -41,7 +44,7 @@ public class Fade : MonoBehaviour
         float startTime = 0;
         while (FadeOutCurve.keys[FadeOutCurve.keys.Length - 1].time >= startTime)
         {
-            fade.transform.localScale = fadeScale * FadeOutCurve.Evaluate(startTime);
+            circle.transform.localScale = fadeScale * FadeOutCurve.Evaluate(startTime);
 
             startTime += Time.deltaTime;
             yield return null;

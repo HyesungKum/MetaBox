@@ -4,15 +4,18 @@ using UnityEngine.UI;
 
 public class OptionPanel : MonoBehaviour
 {
-    [SerializeField] Button backGround = null;
-    [SerializeField] Button exit = null;
-    [SerializeField] Button quit = null;
-    [SerializeField] Button restart = null;
-    
-    [SerializeField] Button sound = null; //bgm
-    [SerializeField] Button music = null; //sfx
-    [SerializeField] Slider soundSlider = null;
-    [SerializeField] Slider musicSlider = null;
+    [Header("Game Control")]
+    [SerializeField] Button backGround = null; //button outside the optionPanel. Disable the optionPanel.
+    [SerializeField] Button exit = null; //button X. Disable the optionPanel.
+    [SerializeField] Button quit = null; //button to move to start scene
+    [SerializeField] Button restart = null; //button to return to stage 1 and restart the game.
+
+
+    [Header("Sound Control")]
+    [SerializeField] Button sound = null; //bgm Mute
+    [SerializeField] Button music = null; //sfx Mute
+    [SerializeField] Slider soundSlider = null; //slider to adjust the BGM volume
+    [SerializeField] Slider musicSlider = null; //slider to adjust the SFX volume
 
     void Awake()
     {
@@ -48,7 +51,7 @@ public class OptionPanel : MonoBehaviour
         GameManager.Instance.ReStart();
     }
 
-    void OnClick_Quit() //½ºÅ¸Æ®¾À
+    void OnClick_Quit() //move to start scene
     {
         Time.timeScale = 1f;
         Time.fixedDeltaTime = 0.02f * Time.timeScale;

@@ -4,10 +4,10 @@ using UnityEngine;
 public class Police : MonoBehaviour
 {
     [SerializeField] CircleCollider2D circleArea = null;
-    [SerializeField] Sprite playerImg; //PC 모델링은 미니게임 마을에서 유저가 커스터마이징한 이미지로 사용
+    [SerializeField] Sprite playerImg;
+    
     float playerSpeed;
     float playerArea;
-
     bool isMoving = false;
     Vector3 rightFlip = new Vector3(1, 1, 1);
     Vector3 leftFlip = new Vector3(-1, 1, 1);
@@ -20,7 +20,7 @@ public class Police : MonoBehaviour
 
     void Setting()
     {
-        this.transform.position = new Vector3(Random.Range(-2f, 2f), Random.Range(-3f, 1f), 0); //단 모든 캐릭터는 겹치지 않게 배치
+        this.transform.position = new Vector3(Random.Range(-2f, 2f), Random.Range(-3f, 1f), 0);
         playerSpeed = GameManager.Instance.FreezeData.playerSpeed * 0.02f;
         playerArea = GameManager.Instance.FreezeData.playerArea * 0.8f;
         circleArea.radius *= playerArea;
@@ -28,7 +28,7 @@ public class Police : MonoBehaviour
 
     public void Move(Vector3 movepoint)
     {
-        isMoving = false;
+        isMoving = false;  //If police change direction while moving, terminate the previous coroutine.
         if (movepoint.x >= this.transform.position.x) this.transform.localScale = rightFlip;
         else this.transform.localScale = leftFlip;
         StartCoroutine(_Move(movepoint));
@@ -36,7 +36,7 @@ public class Police : MonoBehaviour
 
     IEnumerator _Move(Vector3 movepoint)
     {
-        yield return null; //이동중에 방향 변경하는 경우 이전에 돌아가던 코루틴 종료
+        yield return null; //If police change direction while moving, terminate the previous coroutine.
         isMoving = true;
         while (isMoving && Time.timeScale != 0)
         {
@@ -51,7 +51,7 @@ public class Police : MonoBehaviour
     
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if(collision.rigidbody == null) isMoving = false; //npc와 출동 시 밀면서 진행
+        if(collision.rigidbody == null) isMoving = false; //If police collides with the play area, stops. Moves while pushing when colliding with an NPC.
     }
 
 #if UNITY_EDITOR

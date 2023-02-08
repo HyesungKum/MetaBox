@@ -4,8 +4,9 @@ using UnityEngine.UI;
 
 public class CountDown : MonoBehaviour
 {
-    [SerializeField] ScriptableObj scriptableCountDown = null;
-    [SerializeField] Image countDownImg = null;
+    [SerializeField] ScriptableObj scriptableCountDown = null; //scriptableObject containing numeric images.
+
+    [SerializeField] Image countDownImg = null; //component for image replacement
     [SerializeField] AnimationCurve PosXCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 7f), new Keyframe(0.9f, -1.5f) });
     [SerializeField] AnimationCurve ScaleCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0.1f), new Keyframe(0.9f, 1f) });
 
@@ -18,6 +19,7 @@ public class CountDown : MonoBehaviour
         countDownImg.sprite = scriptableCountDown.CountDown[number-1];
         StartCoroutine(nameof(ShowCountDown));
     }
+
     IEnumerator ShowCountDown()
     {
         float startTime = 0;

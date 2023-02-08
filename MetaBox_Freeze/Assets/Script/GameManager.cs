@@ -24,26 +24,31 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public CallBackFunction freezeDataSetting = null;
-    public CallBackFunction gameClearRecord = null;
-    public CallBackFunction playTimerEvent = null;
-    public CallBackFunction penaltyEvent = null;
+    public CallBackFunction freezeDataSetting = null; //police set data according to game level.
+    public CallBackFunction gameClearRecord = null; //When the game is cleared, records are updated in the DB.
+    public CallBackFunction playTimerEvent = null; //play time that changes every second is applied to the UI.
+    public CallBackFunction penaltyEvent = null; //directing a penalty when arresting a citizen.
 
+
+    [Header("Thief Control")]
     public CallBackFunction spawnThief = null;
     public CallBackFunction openThief = null;
     public CallBackFunction hideThief = null;
     public CallBackFunction removeThief = null;
     public CallBackFunction hideEff = null;
 
-    [SerializeField] ParticleSystem catchEff = null;
-    [SerializeField] GameObject wantedPost = null;
+    
+    [SerializeField] GameObject postPrefab = null;
     List<GameObject> wantedPostList = new List<GameObject>();
 
+    [SerializeField] ParticleSystem catchEff = null;
     [SerializeField] List<ParticleSystem> waveClearEff = null;
+
+
     public GameData FreezeData { get; private set; }
     public List<StageData> StageDatas { get; private set; }
     public bool IsGaming { get; private set; } = false;
-    public bool IsPreparing { get; private set; } = false;
+    public bool IsPreparing { get; private set; } = false; //wave Ready
     public int CurStage { get; private set; } = -1;
     public int PlayTime { get; private set; } = 0;
     public int CatchNumber { get; private set; } = 0;
@@ -58,7 +63,7 @@ public class GameManager : MonoBehaviour
         DataManager.Instance.LoadGameData();
         SoundManager.Instance.AddButtonListener();
         LevelSetting(PlayerPrefs.GetInt("level"));
-        if (wantedPost == null) wantedPost = (GameObject)Resources.Load(nameof(WantedPost));
+        if (postPrefab == null) postPrefab = (GameObject)Resources.Load(nameof(postPrefab));
         wait1 = new WaitForSeconds(1f);
         waitWaveStart = new WaitForSeconds(4f);
     }
@@ -109,6 +114,7 @@ public class GameManager : MonoBehaviour
         openThief = null;
         hideThief = null;
         removeThief = null;
+        hideEff = null;
         spawnThief();
         UIManager.Instance.DataSetting();
     }
@@ -124,10 +130,7 @@ public class GameManager : MonoBehaviour
     {
         IsGaming = false;
         removeThief?.Invoke();
-        openThief = null;
-        hideThief = null;
-        removeThief = null;
-        hideEff = null;
+        
         if (CurStage == StageDatas.Count-1) GameOver(true);
         else
         {
@@ -192,7 +195,7 @@ public class GameManager : MonoBehaviour
         while (showTime > 0f && imgShowTime)
         {
             showTime -= Time.deltaTime;
-            if(IsGaming == false) imgShowTime = false;
+            if(IsGaming == false) imgShowTime = false; //If the last thief is apprehended, the function to hide the image is not executed.
             yield return null;
         }
         if(imgShowTime) hideThief?.Invoke();
@@ -202,7 +205,7 @@ public class GameManager : MonoBehaviour
     {
         if(catchEff.isPlaying) catchEff.Stop();
         catchEff.Play();
-        wantedPostList.Add(PoolCp.Inst.BringObjectCp(wantedPost));
+        wantedPostList.Add(PoolCp.Inst.BringObjectCp(postPrefab));
         if (wantedPostList.Count > 1) wantedPostList[wantedPostList.Count - 2].SendMessage("SetImg", SendMessageOptions.DontRequireReceiver);
         if(wantedPostList.Count > 2) wantedPostList[wantedPostList.Count - 3].SendMessage("HideImg", SendMessageOptions.DontRequireReceiver);
     }

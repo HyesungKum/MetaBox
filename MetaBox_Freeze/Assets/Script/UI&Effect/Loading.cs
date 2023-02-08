@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -6,15 +7,18 @@ public class Loading : MonoBehaviour
 {
     AsyncOperation asyncLoad = null;
 
+    [Header("policecar Control")]
     [SerializeField] GameObject policeCar = null;
-    [SerializeField] SpriteRenderer focus = null;
-    
     [SerializeField] AnimationCurve PoliceCarCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, -10f), new Keyframe(1.8f, 10f) });
+
+
+    [Header("fade Out Control")]
+    [SerializeField] SpriteRenderer focus = null; //fadeout effect of following a police car
     [SerializeField] AnimationCurve FocusCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(1.8f, 1f) });
 
     Vector3 policeCarPos = new Vector3(-10f, -2.16f, 0f);
     Color focusColor = new Color(0, 0, 0, 0);
-    bool fade = false;
+    bool fade = false; //flag to start fading out when the next scene is ready to load
 
     public void StartLoading()
     {

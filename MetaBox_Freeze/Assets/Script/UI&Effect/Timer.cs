@@ -4,12 +4,18 @@ using TMPro;
 
 public class Timer : MonoBehaviour
 {
+    [Header("timer Control")]
+    [SerializeField] TextMeshProUGUI timer = null;
     [SerializeField] AnimationCurve RotationCurve; // = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(0.25f, 8f), new Keyframe(0.5f, -8f), new Keyframe(0.7f, 6f), new Keyframe(0.9f, -6f), new Keyframe(1.05f, 4f), new Keyframe(1.2f, -4f), new Keyframe(1.3f, 2f), new Keyframe(1.4f, -2f), new Keyframe(1.5f, 0f) });
+
+
+    [Header("alwarm Control")]
+    [SerializeField] GameObject alarm = null;
+    [SerializeField] int hurryUp = 10; //remaining time for the alarm display to start.
     [SerializeField] AnimationCurve AlarmPosCurve; // = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(0.5f, 0.2f), new Keyframe(0.7f, 0f) });
     [SerializeField] AnimationCurve AlarmRotCurve; // = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(0.1f, 6f), new Keyframe(0.2f, -6f), new Keyframe(0.3f, 4f), new Keyframe(0.4f, -4f), new Keyframe(0.5f, 2f), new Keyframe(0.6f, -2f), new Keyframe(0.7f, 0f) });
-    [SerializeField] TextMeshProUGUI timer = null;
-    [SerializeField] GameObject alarm = null;
-
+    
+    
     Vector3 textrotation;
     Vector3 alarmrotation;
     Vector3 alarmOriPos;
@@ -29,12 +35,12 @@ public class Timer : MonoBehaviour
     public void PlayTimer()
     {
         timer.text = string.Format("{0:D2} : {1:D2} ", (GameManager.Instance.PlayTime / 60), (GameManager.Instance.PlayTime % 60));
-        if (GameManager.Instance.PlayTime == 0f)
+        if (GameManager.Instance.PlayTime == 0)
         {
             timer.color = Color.white;
             alarm.SetActive(false);
         }
-        else if (GameManager.Instance.PlayTime <= 10f)
+        else if (GameManager.Instance.PlayTime <= hurryUp)
         {
             alarm.SetActive(true);
             timer.color = Color.red;
