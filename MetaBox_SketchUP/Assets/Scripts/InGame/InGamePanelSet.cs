@@ -36,13 +36,9 @@ public class InGamePanelSet : MonoBehaviour
 
     [Header("[OneBrush Paly Obj]")]
     [SerializeField] GameObject onBushObj = null;
-    [SerializeField] GameObject clearImgPanel = null;
 
-
-    //[Header("[ClearImg Set]")]
-    //[SerializeField] GameObject ImgOne = null;
-    //[SerializeField] GameObject ImgTwo = null;
-    //[SerializeField] GameObject ImgThree = null;
+    [Header("[Line Color and Size Change]")]
+    [SerializeField] private Canvas lineChangedPanel = null; 
 
     [Header("[ReStart]")]
     [SerializeField] Button loseReStartBut = null;
@@ -88,7 +84,7 @@ public class InGamePanelSet : MonoBehaviour
         // === changed (false) ===
         FirstSet(false);
         OneBrushPlayPanelSet(false);
-        ClearPanelSet(false);
+        //ClearPanelSet(false);
 
         // === button event Set ===
         #region
@@ -160,6 +156,7 @@ public class InGamePanelSet : MonoBehaviour
     {
         inGameCanvas.gameObject.SetActive(true);
         SelectPanelSet(selectPanel);
+        LineColorAndSizeChange(false);
         InGameSet(false);
         InGameOptionSet(false);
         WinPanelSet(false);
@@ -179,16 +176,9 @@ public class InGamePanelSet : MonoBehaviour
 
     public void LosePanelSet(bool active) => losePanel.gameObject.SetActive(active);
 
-    public void ClearPanelSet(bool active) => clearImgPanel.gameObject.SetActive(active);
-
     public void WinPanelSet(bool active) => winPanel.gameObject.SetActive(active);
 
-    public void ClearImgSet(bool oneSet, bool twoSet, bool threeSet)
-    {
-        //ImgOne.gameObject.SetActive(oneSet);
-        //ImgTwo.gameObject.SetActive(twoSet);
-        //ImgThree.gameObject.SetActive(threeSet);
-    }
+    public void LineColorAndSizeChange(bool active) => lineChangedPanel.gameObject.SetActive(active);
 
     void OnClickGoStartPanel() => SceneManager.LoadScene(SceneName.StartScene);
 

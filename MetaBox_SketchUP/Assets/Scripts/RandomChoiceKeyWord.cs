@@ -11,35 +11,68 @@ public class RandomChoiceKeyWord : MonoBehaviour
     [SerializeField] TextMeshProUGUI choiceThreeButText = null;
     [SerializeField] TextMeshProUGUI choiceFourButText = null;
 
-    [Header("[AnimaData]")]
-    [SerializeField] AnimalDatas animalData = null;
-
     [Header("[Answer String]")]
     [SerializeField] private string answerKeyWord;
+    [SerializeField] private string koreanAnswerKeyWord;
     public string AnswerKeyWord { get { return answerKeyWord; } set { answerKeyWord = value; } }
+    public string KoreanAnswerKeyWord { get { return koreanAnswerKeyWord; } set { koreaAnimalOne = value; } }
 
     [Header("[Other Animal String]")]
     [SerializeField] private string animalOne = null;
+    [SerializeField] string koreaAnimalOne = null;
     [SerializeField] private string animalTwo = null;
+    [SerializeField] string koreaAnimalTwo = null;
     [SerializeField] private string animalThree = null;
+    [SerializeField] string koreaAnimalThree = null;
+
 
     public string AnimalOne { get { return animalOne; } set { animalOne = value; } }
     public string AnimalTwo { get { return animalTwo; } set { animalTwo = value; } }
     public string AnimalThree { get { return animalThree; } set { animalThree = value; } }
 
-    void Start()
+    public ChoicePanelData AnimalDataContainer = null;
+    public List<string> animalDataList;
+
+    void Awake()
     {
-        if (animalData.animalList.Contains(AnswerKeyWord) == true &&
-           animalData.animalList.Contains(AnimalOne) == true &&
-           animalData.animalList.Contains(AnimalTwo) == true &&
-           animalData.animalList.Contains(AnimalThree) == true)
+        if (AnimalDataContainer == null)
+            AnimalDataContainer = Resources.Load<ChoicePanelData>("Data/AnimalNameData");
+
+        #region List Add
+        animalDataList = new List<string>();
+        animalDataList.Add(AnimalDataContainer.Polarbear); // ºÏ±Ø°õ
+        animalDataList.Add(AnimalDataContainer.Reindeer);  // ¼ø·Ï
+        animalDataList.Add(AnimalDataContainer.Penguin);   // Æë±Ï
+
+        animalDataList.Add(AnimalDataContainer.Orca);      // ¹ü°í·¡
+        animalDataList.Add(AnimalDataContainer.Walrus);    // ¹Ù´ÙÄÚ³¢¸®
+        animalDataList.Add(AnimalDataContainer.Dolphin);   // µ¹°í·¡
+
+        animalDataList.Add(AnimalDataContainer.Giraffe);   // ±â¸°
+        animalDataList.Add(AnimalDataContainer.Elephant);  // ÄÚ³¢¸® 
+        animalDataList.Add(AnimalDataContainer.Cheetah);   // Ä¡Å¸
+
+        animalDataList.Add(AnimalDataContainer.Tiger);     // È£¶ûÀÌ
+        animalDataList.Add(AnimalDataContainer.Deer);      // »ç½¿
+        animalDataList.Add(AnimalDataContainer.Rabbit);    // Åä³¢
+        #endregion
+
+        //Debug.Log("## " + animalDataList.Contains(AnswerKeyWord));
+        //Debug.Log("## " + animalDataList.Contains(AnimalOne));
+        //Debug.Log("## " + animalDataList.Contains(AnimalTwo));
+        //Debug.Log("## " + animalDataList.Contains(AnimalThree));
+        if (animalDataList.Contains(AnswerKeyWord) == true &&
+           animalDataList.Contains(AnimalOne) == true &&
+           animalDataList.Contains(AnimalTwo) == true &&
+           animalDataList.Contains(AnimalThree) == true)
         {
+            AnswerKeyWord = koreanAnswerKeyWord;
+            AnimalOne = koreaAnimalOne;
+            AnimalTwo = koreaAnimalTwo;
+            AnimalThree = koreaAnimalThree;
             StagRandomKeyWord(AnswerKeyWord, AnimalOne, AnimalTwo, AnimalThree);
         }
-        //Debug.Log("AnswerKeyWord : " + animalData.animalList.Contains(AnswerKeyWord));
-        //Debug.Log("AnimalOne : " + animalData.animalList.Contains(AnimalOne));
-        //Debug.Log("AnimalTwo : " + animalData.animalList.Contains(AnimalTwo));
-        //Debug.Log("AnimalThree : " + animalData.animalList.Contains(AnimalThree));
+
     }
 
     void StagRandomKeyWord(string answer, string animalOne, string animalTwo, string animalThree)
@@ -49,6 +82,7 @@ public class RandomChoiceKeyWord : MonoBehaviour
         int randomtwo = Random.Range(0, 4);
         int randomThree = Random.Range(0, 4);
         int randomFour = Random.Range(0, 4);
+
 
         //Debug.Log("$$ random : " + random);
         //Debug.Log("$$ randomtwo : " + randomtwo);
@@ -89,10 +123,13 @@ public class RandomChoiceKeyWord : MonoBehaviour
             }
         }
 
-        //Debug.Log("## random : " + random);
-        //Debug.Log("## randomtwo : " + randomtwo);
-        //Debug.Log("## randomThree : " + randomThree);
-        //Debug.Log("## RandomFour : " + randomFour);
+        if (random == randomtwo)
+        {
+            Debug.Log("## random : " + random);
+            Debug.Log("## randomtwo : " + randomtwo);
+            Debug.Log("## randomThree : " + randomThree);
+            Debug.Log("## RandomFour : " + randomFour);
+        }
 
         for (int i = 0; i < 4; i++)
         {
@@ -125,6 +162,8 @@ public class RandomChoiceKeyWord : MonoBehaviour
             else if (randomFour == 2) choiceFourButText.text = animalTwo;
             else choiceFourButText.text = animalThree;
         }
+
+
         #endregion
     }
 }

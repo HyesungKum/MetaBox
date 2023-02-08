@@ -19,7 +19,7 @@ public class DrawLineCurve : MonoBehaviour
 
     [Header("[Clear Draw]")]
     [SerializeField] GameObject choiceWordPanel = null;
-    [SerializeField] GameObject animation = null;
+    [SerializeField] GameObject clearAnimation = null;
     [SerializeField] private int answerButtonIndex;
     [SerializeField] private int clearCount;
 
@@ -59,11 +59,12 @@ public class DrawLineCurve : MonoBehaviour
     {
         mainCam = Camera.main;
         lineStack = new Stack<GameObject>();
+        //choiceWordPanel.gameObject.SetActive(false);
     }
 
     void Start()
     {
-        animation.TryGetComponent<ClearAnimation>(out clearAnimaition);
+        clearAnimation.TryGetComponent<ClearAnimation>(out clearAnimaition);
         checkObj.TryGetComponent<LinePosCDLinkedList>(out circleObj);
         circleObjCount = circleObj.circlePointArry.Length;
         revertBut.onClick.AddListener(delegate { OnClickRevertBut(); });
@@ -104,7 +105,6 @@ public class DrawLineCurve : MonoBehaviour
         {
             if (hitInfo.collider.name == "Collider")
             {
-                //Debug.Log("콜라이더 부디쳤니?") ;
                 return;
             }
             if (currentLine == null)
@@ -112,11 +112,15 @@ public class DrawLineCurve : MonoBehaviour
                 startNodeObj = hitInfo.transform.gameObject; // 클릭한 걸 받아오기
                 circleObj.cdNode = circleObj.cdLinkedList.SearchObj(startNodeObj);
                 InstLine(); // 라인 만들고 
-                //Debug.Log("circleObj.cdNode : " + circleObj.cdNode);
+                currentLine.transform.position = startNodeObj.transform.position;
+                //Debug.Log("currentLine.transform.position : " + currentLine.transform.position);
 
                 startNodeObj = circleObj.cdNode.data.circlePointObj;
+                Debug.Log("starNodeObj : " + startNodeObj);
                 prevObj = circleObj.cdNode.prev.data.circlePointObj;
+                Debug.Log("prevObj : " + prevObj);
                 nextObj = circleObj.cdNode.next.data.circlePointObj;
+                Debug.Log("nextObj : " + nextObj);
 
                 startPos = startNodeObj.transform.position;
                 linerender.SetPosition(0, startPos);
@@ -127,6 +131,8 @@ public class DrawLineCurve : MonoBehaviour
                 InstLine();
 
                 startNodeObj = hitInfo.transform.gameObject;
+                currentLine.transform.position = startNodeObj.transform.position;
+
                 linerender.SetPosition(0, startNodeObj.transform.position);
                 linerender.SetPosition(1, startNodeObj.transform.position);
 
@@ -160,10 +166,11 @@ public class DrawLineCurve : MonoBehaviour
             if (hitObjCheck == prevObj)
             {
                 linerender.SetPosition(1, chekcPos);
-
+                //linerender.PositionDown(1);
                 //SoundManager.Inst.ButtonSFXPlay(); //// 효과음
                 endNodeObj = prevObj;
                 //Debug.Log("(prevObj) endNodeObj  : " + endNodeObj);
+
             }
             else if (hitObjCheck == nextObj)
             {
@@ -177,6 +184,7 @@ public class DrawLineCurve : MonoBehaviour
             {
                 //linerender.SetPosition(1, chekcPos);
                 endNodeObj = hitObjCheck;
+
             }
         }
     }
@@ -185,23 +193,29 @@ public class DrawLineCurve : MonoBehaviour
     {
         //Debug.Log("stackCount : " + lineStack.Count);
 
-        //RaycastHit2D hitInfo = RayCheck();
+        RaycastHit2D hitInfo = RayCheck();
 
-        //if (hitInfo)
-        //{
-        //    GameObject hitObjCheck = hitInfo.transform.gameObject;
+        if (hitInfo)
+        {
+            GameObject hitObjCheck = hitInfo.transform.gameObject;
 
-        //    if (hitObjCheck == prevObj)
-        //    {
-        //        lineStack.Push(currentLine);
-        //        //Debug.Log("(prevObj) Starck Count : " + lineStack.Count);
-        //    }
-        //    else if (hitObjCheck == nextObj)
-        //    {
-        //        lineStack.Push(currentLine);
-        //        //Debug.Log("nextObj 같아" + lineStack.Count);
-        //    }
-        //}
+            if (hitObjCheck == prevObj)
+            {
+                lineStack.Push(currentLine);
+                //Debug.Log("(prevObj) Starck Count : " + lineStack.Count);
+            }
+            else if (hitObjCheck == nextObj)
+            {
+                lineStack.Push(currentLine);
+                //Debug.Log("nextObj 같아" + lineStack.Count);
+            }
+        }
+
+        if (linerender.GetPosition(0) == linerender.GetPosition(1))
+        {
+            Debug.Log(" 삭제 함 ?? ");
+            DestroyLine();
+        }
 
         ClearCheck();
     }
@@ -227,40 +241,12 @@ public class DrawLineCurve : MonoBehaviour
         // === SetParent 빌드 할때 꼭 빼자 ===
         currentLine.transform.SetParent(lineClonePos);
         currentLine.TryGetComponent<LineRender>(out linerender);
+       
 
         GetColor();
         SetLineSize();
         linerender.SetColor(startColor);
         linerender.SetLineSize(lineSizeValue);
-    }
-
-    void SetLineSize()
-    {
-        //Debug.Log(" @@ lineSizeChange.LineSize : " + lineSizeChange.LineSize);
-        if (lineSizeValue == 0) lineSizeValue = 0.15f;
-        if (lineSizeChange.LineSize == 0) lineSizeValue = 0.15f;
-        else
-        {
-            lineSizeValue = lineSizeChange.LineSize;
-            Debug.Log("lineSizeValue : " + lineSizeValue);
-        }
-    }
-
-    void GetColor()
-    {
-        if (colorPanel.GetColor == new Color(0, 0, 0, 0))
-        {
-            float r = 0.1997152f;
-            float g = 0.8301887f;
-            float b = 0.7776833f;
-            float a = 1f;
-            startColor = new Color(r, g, b, a);
-        }
-        else
-        {
-            startColor = colorPanel.GetColor;
-        }
-        Debug.Log("## colorPanel.GetColor : " + colorPanel.GetColor);
     }
 
     void OnClickRevertBut()
@@ -288,5 +274,36 @@ public class DrawLineCurve : MonoBehaviour
         RaycastHit2D hitInfo = Physics2D.Raycast(ray.origin, ray.direction, 5f);
 
         return hitInfo;
+    }
+
+    void SetLineSize()
+    {
+        //Debug.Log(" @@ lineSizeChange.LineSize : " + lineSizeChange.LineSize);
+
+        if (lineSizeValue == 0)
+            lineSizeValue = 0.15f;
+        if (lineSizeChange.LineSize == 0)
+            lineSizeValue = 0.15f;
+        else
+            lineSizeValue = lineSizeChange.LineSize;
+    }
+
+    void GetColor()
+    {
+
+        if (colorPanel.GetColor == new Color(0, 0, 0, 0))
+        {
+            float r = 0.1997152f;
+            float g = 0.8301887f;
+            float b = 0.7776833f;
+            float a = 1f;
+            startColor = new Color(r, g, b, a);
+            //Debug.Log("## colorPanel.GetColor : " + colorPanel.GetColor);
+        }
+        else
+        {
+            startColor = colorPanel.GetColor;
+            //Debug.Log("## colorPanel.GetColor : " + colorPanel.GetColor);
+        }
     }
 }

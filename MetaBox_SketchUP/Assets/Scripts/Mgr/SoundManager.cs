@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
@@ -34,15 +36,18 @@ public class SoundManager : MonoBehaviour
 
     [Header("[Audio Volume Control]")]
     [SerializeField] AudioMixer myAudioMixer = null;
-    public AudioMixer MyAudioMixer { get { return myAudioMixer; } }
+
+    public AnimalAudioData animalAudioData = null;
+    private AudioClip animalAudioPlayClip = null;
 
     private float bGMValue;
-    public float BGMValue
-    { get { return bGMValue; } set { bGMValue = value; } }
-
     private float sfxValue;
-    public float SFXValue
-    { get { return sfxValue; } set { sfxValue = value; } }
+
+    public AudioMixer MyAudioMixer { get { return myAudioMixer; } }
+    public float BGMValue { get { return bGMValue; } set { bGMValue = value; } }
+    public float SFXValue { get { return sfxValue; } set { sfxValue = value; } }
+
+    Dictionary<int, AudioClip> animalAudioDictionary;
 
     void Awake()
     {
@@ -54,6 +59,34 @@ public class SoundManager : MonoBehaviour
         DontDestroyOnLoad(instatce.gameObject);
 
         BGMAudioSurce.playOnAwake = true;
+
+        if (animalAudioData == null)
+            animalAudioData = Resources.Load<AnimalAudioData>("Data/AnimalAudioData");
+
+        animalAudioDictionary = new Dictionary<int, AudioClip>();
+
+        #region Dictionary Add
+        animalAudioDictionary.Add(1, animalAudioData.PolarbearAudioClip);
+        animalAudioDictionary.Add(2, animalAudioData.ReindeerAudioClip);
+        animalAudioDictionary.Add(3, animalAudioData.PenguinAudioClip);
+
+        animalAudioDictionary.Add(4, animalAudioData.OrcaAudioClip);
+        animalAudioDictionary.Add(5, animalAudioData.WalrusAudioClip);
+        animalAudioDictionary.Add(6, animalAudioData.DolphinAudioClip);
+
+        animalAudioDictionary.Add(7, animalAudioData.GiraffeAudioClip);
+        animalAudioDictionary.Add(8, animalAudioData.ElephantAudioClip);
+        animalAudioDictionary.Add(9, animalAudioData.CheetahAudioClip);
+
+        animalAudioDictionary.Add(10, animalAudioData.TigerAudioClip);
+        animalAudioDictionary.Add(11, animalAudioData.DeerAudioClip);
+        animalAudioDictionary.Add(12, animalAudioData.RabbitAudioClip);
+        #endregion
+    }
+
+    void Start()
+    {
+        //AnimalAudioPlay(1);
     }
 
     public void BGMControl(Slider BGMSlider)
@@ -100,5 +133,25 @@ public class SoundManager : MonoBehaviour
     public void ToggleAduioVolume()
     {
         AudioListener.volume = AudioListener.volume == 0 ? 1 : 0;
+    }
+
+    public void AnimalAudioPlay(int index)
+    {
+        //animalAudioDictionary.ContainsKey(index);
+        animalAudioDictionary.TryGetValue(index, out animalAudioPlayClip);
+
+        Debug.Log("## check " + animalAudioPlayClip);
+        SFXSource.clip = animalAudioPlayClip;
+        Debug.Log("SFXSource.clip : " + SFXSource.clip);
+        SFXSource.Play();
+
+        //    animalAudioPlayClip = animalAudioData.PolarbearAudioClip;
+        //    Debug.Log("name Check : " + animalAudioPlayClip.name);
+        //    //animalAudioPlayClip.name = animalWord;
+        //    animalAudioList.Contains(animalAudioPlayClip);
+        //    Debug.Log("## 찾았는지? : " + animalAudioList.Contains(animalAudioPlayClip));
+        //    Debug.Log("## 오디오 찾기 : " + animalAudioPlayClip.name);
+
+        //    SFXSource.clip = animalAudioPlayClip;
     }
 }

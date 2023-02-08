@@ -7,18 +7,21 @@ using UnityEngine;
 public class ChoicePanelData : ScriptableObject
 {
     [Header("[Level Choice Panel Animal String]")]
-    [SerializeField] private string polarbear = "ºÏ±Ø°õ";
-    [SerializeField] private string reindeer = "¼ø·Ï";
-    [SerializeField] private string penguin = "Æë±Ï";
-    [SerializeField] private string orca = "¹ü°í·¡";
-    [SerializeField] private string walrus = "¹Ù´ÙÄÚ³¢¸®";
-    [SerializeField] private string dolphin = "µ¹°í·¡";
-    [SerializeField] private string giraffe = "±â¸°";
-    [SerializeField] private string elephant = "ÄÚ³¢¸®";
-    [SerializeField] private string cheetah = "Ä¡Å¸";
-    [SerializeField] private string tiger = "È£¶ûÀÌ";
-    [SerializeField] private string deer = "»ç½¿";
-    [SerializeField] private string rabbit = "Åä³¢";
+    [SerializeField] private string polarbear = "polarbear"; //ºÏ±Ø°õ
+    [SerializeField] private string reindeer = "reindeer";   //¼ø·Ï
+    [SerializeField] private string penguin = "penguin";     //Æë±Ï
+
+    [SerializeField] private string orca = "orca";           //¹ü°í·¡
+    [SerializeField] private string walrus = "walrus";       //¹Ù´ÙÄÚ³¢¸®
+    [SerializeField] private string dolphin = "dolphin";     //µ¹°í·¡
+
+    [SerializeField] private string giraffe = "giraffe";     //±â¸°
+    [SerializeField] private string elephant = "elephant";   //ÄÚ³¢¸®
+    [SerializeField] private string cheetah = "cheetah";     //Ä¡Å¸
+
+    [SerializeField] private string tiger = "tiger";         //È£¶ûÀÌ
+    [SerializeField] private string deer = "deer";           //»ç½¿
+    [SerializeField] private string rabbit = "rabbit";       //Åä³¢
 
     #region Property
     public string Polarbear { get { return polarbear; } set { polarbear = value; } }

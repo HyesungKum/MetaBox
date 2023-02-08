@@ -29,6 +29,17 @@ public class LineRender : MonoBehaviour
 
     public int SetPositionCountDown() => lineRender.positionCount -= 1;
 
+    public int PositionDown(int index)
+    {
+        lineRender.positionCount -= 1;
+        if (lineRender.positionCount == index)
+        {
+            Debug.Log("positionCount : " + lineRender.positionCount);
+            return lineRender.positionCount;
+        }
+        return lineRender.positionCount = 1;
+    }
+
     public void SetPositionCountDownforTwo()
     {
         lineRender.positionCount -= 1;

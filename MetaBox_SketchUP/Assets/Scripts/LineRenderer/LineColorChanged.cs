@@ -21,10 +21,13 @@ public class LineColorChanged : MonoBehaviour
 
     private Color getColor;
     public Color GetColor { get { return getColor; } set { getColor = value; } }
-    public LineColorData lineColorData;
+    public LineColorData lineColorData = null;
 
     void Awake()
     {
+        if (lineColorData == null)
+            lineColorData = Resources.Load<LineColorData>("Data/ColorRGBData");
+
         colorOne.onClick.AddListener(delegate { 
             GetColors(lineColorData.ColorOneR, lineColorData.ColorOneG, lineColorData.ColorOneB, lineColorData.ColorOneA); 
             StartCoroutine(ColorPositionMove(colorOne)); });

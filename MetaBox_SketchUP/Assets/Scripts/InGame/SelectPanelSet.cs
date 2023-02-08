@@ -29,6 +29,7 @@ public class SelectPanelSet : MonoBehaviour
     {
         PanelChangedSet(oneBrush, false);
         PlayGameObjSet(true, false, false);
+
     }
 
     void OnClickTwoBrush()
@@ -53,6 +54,7 @@ public class SelectPanelSet : MonoBehaviour
     public void PlayGameObjSet(bool objOneSet, bool objTwoSet, bool objThreeSet)
     {
         InGamePanelSet.Inst.InGameSet(true);
+        InGamePanelSet.Inst.LineColorAndSizeChange(true);
         objOne.gameObject.SetActive(objOneSet);
         objTwo.gameObject.SetActive(objTwoSet);
         objThree.gameObject.SetActive(objThreeSet);
