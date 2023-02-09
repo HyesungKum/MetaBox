@@ -1,6 +1,8 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class InGamePanelSet : MonoBehaviour
@@ -38,7 +40,7 @@ public class InGamePanelSet : MonoBehaviour
     [SerializeField] GameObject onBushObj = null;
 
     [Header("[Line Color and Size Change]")]
-    [SerializeField] private Canvas lineChangedPanel = null; 
+    [SerializeField] private Canvas lineChangedPanel = null;
 
     [Header("[ReStart]")]
     [SerializeField] Button loseReStartBut = null;
@@ -49,15 +51,23 @@ public class InGamePanelSet : MonoBehaviour
     [SerializeField] Button quitBut = null;
     [SerializeField] Button resumeBut = null;
 
+    [Header("[Wait Time Img]")]
+    [SerializeField] TextMeshProUGUI startWaitTime = null;
+    [SerializeField] GameObject waitTimeObjs = null;
+
     [Header("[Timer Text]")]
     [SerializeField] TextMeshProUGUI playTimeText = null;
-    [SerializeField] TextMeshProUGUI startWaitTime = null;
 
+    [Header("[Character Move]")]
+    [SerializeField] GameObject characterMove = null;
+
+    WaitForSeconds waitHalf = null;
+    WaitForSeconds waitOnSceonds = null;
     #endregion
 
     // === wait 3 seconds ===
     //float waitTime = 3f;
-    float waitTime = 1f;
+    float waitTime = 3f;
     bool wait = false;
 
     // === play time total 10 seconds === 
@@ -75,10 +85,14 @@ public class InGamePanelSet : MonoBehaviour
 
     void Awake()
     {
+        waitHalf = new WaitForSeconds(0.5f);
+        waitOnSceonds = new WaitForSeconds(1f);
+
         Time.timeScale = 1;
-        startWaitTime.text = $"Start";
         // === changed (true) ===
-        startWaitTime.gameObject.SetActive(true);
+        startWaitTime.gameObject.SetActive(false);
+        waitTimeObjs.gameObject.SetActive(true);
+        StartCoroutine(CountDowns());
         playTimeText.gameObject.SetActive(false);
 
         // === changed (false) ===
@@ -88,8 +102,8 @@ public class InGamePanelSet : MonoBehaviour
 
         // === button event Set ===
         #region
-        loseReStartBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.FailSFXPlay(); });
-        winReStartBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.ClearSFXPlay(); });
+        loseReStartBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.GameLoseSFXPlay(); });
+        winReStartBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.GameClearSFXPlay(); });
         optionBut.onClick.AddListener(delegate { OnClickOptionBut(); SoundManager.Inst.ButtonSFXPlay(); });
         resumeBut.onClick.AddListener(delegate { OnClickOptionBut(); SoundManager.Inst.ButtonSFXPlay(); });
         quitBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.ButtonSFXPlay(); });
@@ -99,41 +113,40 @@ public class InGamePanelSet : MonoBehaviour
     void Update()
     {
         #region Timer Setting
-        if (startWaitTime.gameObject.active == true)
-        {
-            SetWaitTime();
-        }
-        else if (playTimeText.gameObject.active == true)
+        if (playTimeText.gameObject.active == true)
         {
             PlayTimeDown();
         }
         #endregion
     }
 
-    void SetWaitTime()
+    IEnumerator CountDowns()
     {
-        if (waitTime > 0)
-        {
-            waitTime -= 1 * Time.deltaTime;
-            startWaitTime.text = $"Time : {Mathf.Round(waitTime).ToString()}";
+        CountDown countDown = null;
+        waitTimeObjs.TryGetComponent<CountDown>(out countDown);
+         
+        int waitTime = 3;
 
-            if (Mathf.Round(waitTime) == 0)
-            {
-                startWaitTime.text = "Go".ToString();
-            }
-        }
-        else if (waitTime < 0)
+        for(int i = waitTime; i > 0; i --)
         {
-            startWaitTime.gameObject.SetActive(false);
-            FirstSet(true);
-            InGameSet(false);
-            playTimeText.gameObject.SetActive(true);
-            return;
+            countDown.ShowWaitTime(waitTime);
+            waitTime--;
+            yield return waitOnSceonds;
         }
+
+        waitTimeObjs.gameObject.SetActive(false);
+        startWaitTime.gameObject.SetActive(true);
+        startWaitTime.text = "Go";
+        yield return waitHalf;
+        FirstSet(true);
+        playTimeText.gameObject.SetActive(true);
     }
+
 
     void PlayTimeDown()
     {
+        startWaitTime.gameObject.SetActive(false);
+
         playTime -= 1 * Time.deltaTime;
         curTime = playTime;
 
@@ -156,6 +169,7 @@ public class InGamePanelSet : MonoBehaviour
     {
         inGameCanvas.gameObject.SetActive(true);
         SelectPanelSet(selectPanel);
+        CharacterMoveSet(selectPanel);
         LineColorAndSizeChange(false);
         InGameSet(false);
         InGameOptionSet(false);
@@ -169,6 +183,8 @@ public class InGamePanelSet : MonoBehaviour
     }
 
     public void InGameSet(bool active) => closePlayOneBrush.gameObject.SetActive(active);
+
+    public void CharacterMoveSet(bool active) => characterMove.gameObject.SetActive(active);
 
     public void InGameOptionSet(bool active) => optionPanel.gameObject.SetActive(active);
 

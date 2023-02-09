@@ -25,19 +25,21 @@ public class SoundManager : MonoBehaviour
     }
     #endregion
 
-    [Header("[Audio Sources]")]
+    [Header("[Audio BGM]")]
     [SerializeField] AudioSource BGMAudioSurce = null;
+    [SerializeField] public AudioClip titleAudioClip = null;
+    [SerializeField] public AudioClip inGameAudioClip = null;
+    
+    [Header("[Audio SFX]")]
     [SerializeField] public AudioSource SFXSource = null;
     [SerializeField] public AudioClip butSourceClip = null;
-    [SerializeField] public AudioClip clearSFXClip = null;
-    [SerializeField] public AudioClip failSFXClip = null;
-    //[SerializeField] public AudioClip playNodeClearClip = null;
-    //[SerializeField] public AudioClip colorPanelSFXClip = null;
 
     [Header("[Audio Volume Control]")]
     [SerializeField] AudioMixer myAudioMixer = null;
 
+    [Header("[Audio Data]")]
     public AnimalAudioData animalAudioData = null;
+    public SFXData sfxData = null;
     private AudioClip animalAudioPlayClip = null;
 
     private float bGMValue;
@@ -59,9 +61,15 @@ public class SoundManager : MonoBehaviour
         DontDestroyOnLoad(instatce.gameObject);
 
         BGMAudioSurce.playOnAwake = true;
+        BGMAudioSurce.loop = true;
+
+        TitleBGMPlay();
 
         if (animalAudioData == null)
             animalAudioData = Resources.Load<AnimalAudioData>("Data/AnimalAudioData");
+
+        if (sfxData == null)
+            sfxData = Resources.Load<SFXData>("Data/SFXData");
 
         animalAudioDictionary = new Dictionary<int, AudioClip>();
 
@@ -82,11 +90,6 @@ public class SoundManager : MonoBehaviour
         animalAudioDictionary.Add(11, animalAudioData.DeerAudioClip);
         animalAudioDictionary.Add(12, animalAudioData.RabbitAudioClip);
         #endregion
-    }
-
-    void Start()
-    {
-        //AnimalAudioPlay(1);
     }
 
     public void BGMControl(Slider BGMSlider)
@@ -112,21 +115,63 @@ public class SoundManager : MonoBehaviour
             MyAudioMixer.SetFloat("SFX", SFXValue);
     }
 
+    public void BGMPlayStop()
+    {
+        BGMAudioSurce.Stop();
+    }    
+
+    public void TitleBGMPlay()
+    {
+        BGMAudioSurce.clip = titleAudioClip;
+        BGMAudioSurce.Play();
+    }
+
+    public void InGameBGMPlay()
+    {
+        BGMAudioSurce.clip = inGameAudioClip;
+        BGMAudioSurce.Play();
+    }
+
+
     public void ButtonSFXPlay()
     {
         SFXSource.clip = butSourceClip;
         SFXSource.Play();
     }
 
-    public void ClearSFXPlay()
+    public void AlarmClockSFXPlay()
     {
-        SFXSource.clip = clearSFXClip;
+        SFXSource.clip = sfxData.AlarmClock;
         SFXSource.Play();
     }
 
-    public void FailSFXPlay()
+    public void StageClearSFXPlay()
     {
-        SFXSource.clip = failSFXClip;
+        SFXSource.clip = sfxData.StageClear;
+        SFXSource.Play();
+    }
+
+    public void GameClearSFXPlay()
+    {
+        SFXSource.clip = sfxData.GameClear;
+        SFXSource.Play();
+    }
+
+    public void GameLoseSFXPlay()
+    {
+        SFXSource.clip = sfxData.GameLose;
+        SFXSource.Play();
+    }
+
+    public void ChangeLineAndColorSFXPlay()
+    {
+        SFXSource.clip = sfxData.ChangeLineAndColor;
+        SFXSource.Play();
+    }
+
+    public void ConnectLineSFXPlay()
+    {
+        SFXSource.clip = sfxData.ConnectLine;
         SFXSource.Play();
     }
 
@@ -137,21 +182,20 @@ public class SoundManager : MonoBehaviour
 
     public void AnimalAudioPlay(int index)
     {
-        //animalAudioDictionary.ContainsKey(index);
         animalAudioDictionary.TryGetValue(index, out animalAudioPlayClip);
-
-        Debug.Log("## check " + animalAudioPlayClip);
         SFXSource.clip = animalAudioPlayClip;
-        Debug.Log("SFXSource.clip : " + SFXSource.clip);
         SFXSource.Play();
+    }
 
-        //    animalAudioPlayClip = animalAudioData.PolarbearAudioClip;
-        //    Debug.Log("name Check : " + animalAudioPlayClip.name);
-        //    //animalAudioPlayClip.name = animalWord;
-        //    animalAudioList.Contains(animalAudioPlayClip);
-        //    Debug.Log("## 찾았는지? : " + animalAudioList.Contains(animalAudioPlayClip));
-        //    Debug.Log("## 오디오 찾기 : " + animalAudioPlayClip.name);
+    public void SelectPanelYesNameSFXPlay()
+    {
+        SFXSource.clip = sfxData.yesName;
+        SFXSource.Play();
+    }
 
-        //    SFXSource.clip = animalAudioPlayClip;
+    public void SelectPanelNoNameSFXPlay()
+    {
+        SFXSource.clip = sfxData.noName;
+        SFXSource.Play();
     }
 }

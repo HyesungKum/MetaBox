@@ -59,7 +59,7 @@ public class DrawLineCurve : MonoBehaviour
     {
         mainCam = Camera.main;
         lineStack = new Stack<GameObject>();
-        //choiceWordPanel.gameObject.SetActive(false);
+        choiceWordPanel.gameObject.SetActive(false);
     }
 
     void Start()
@@ -223,16 +223,19 @@ public class DrawLineCurve : MonoBehaviour
     void ClearCheck()
     {
         // ==== ½Â¸® ÆÇÁ¤ ====
-        //if (lineStack.Count == clearCount)
-        //{
-        //    Debug.Log("³Ê°¡ ÀÌ°å´Ù @!!");
-
-        //    clearAnimaition.StartCoroutine(clearAnimaition.Moving());
-        //}
-        //else if (lineStack.Count > clearCount)
-        //{
-        //    DestroyLine();
-        //}
+        if (lineStack.Count == ClearCount)
+        {
+            Debug.Log("³Ê°¡ ÀÌ°å´Ù @!!");
+            clearAnimaition.StartCoroutine(clearAnimaition.Moving());
+            revertBut.transform.gameObject.SetActive(false);
+            colorPanel.transform.gameObject.SetActive(false);
+            checkObj.transform.gameObject.SetActive(false);
+            choiceWordPanel.gameObject.SetActive(true);
+        }
+        else if (lineStack.Count > clearCount)
+        {
+            DestroyLine();
+        }
     }
 
     void InstLine()

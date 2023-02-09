@@ -136,6 +136,7 @@ public class StartManager : MonoBehaviour
     {
         StartCoroutine(nameof(ViewHallExtension));
     }
+
     IEnumerator ViewHallExtension()
     {
         production.SetActive(true);
@@ -177,6 +178,7 @@ public class StartManager : MonoBehaviour
         bgmSlider.value = SoundManager.Inst.GetVolume("BGM");
         sfxSlider.value = SoundManager.Inst.GetVolume("SFX");
     }
+
     void ToggleSlider(Slider target)
     {
         target.interactable = target.interactable == true ? false : true;

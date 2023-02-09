@@ -44,7 +44,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -5788714869767621611, guid: 49c4b4f0bdfa2404f9bbfcd5825b68c5, type: 2}
-  m_audioClip: {fileID: 8300000, guid: daa648c3d3c4be443a44bf08c0dc9e5a, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -239,9 +239,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BGMAudioSurce: {fileID: 4136518319251502182}
+  titleAudioClip: {fileID: 8300000, guid: eae23f118bf90c147aa8f4da6cdbaa74, type: 3}
+  inGameAudioClip: {fileID: 8300000, guid: ad9343cfd98fd2c4bb5c9aa0018c6f7d, type: 3}
   SFXSource: {fileID: 4136518319251502183}
-  butSourceClip: {fileID: 8300000, guid: e9cc4a34e20d42b44827da2036963385, type: 3}
-  clearSFXClip: {fileID: 8300000, guid: 1d487221a1a1aa342acc31b673d59042, type: 3}
-  failSFXClip: {fileID: 8300000, guid: 531051fe9777d78449d47f23e9e731f2, type: 3}
+  butSourceClip: {fileID: 8300000, guid: 69be5da8bf7f4da4a8ebecf9dce6f562, type: 3}
   myAudioMixer: {fileID: 24100000, guid: 49c4b4f0bdfa2404f9bbfcd5825b68c5, type: 2}
   animalAudioData: {fileID: 11400000, guid: 97460b13ccfc94644b8bec6187fc7af8, type: 2}
+  sfxData: {fileID: 11400000, guid: 1907131db44e0034aa5a69101e086d7d, type: 2}

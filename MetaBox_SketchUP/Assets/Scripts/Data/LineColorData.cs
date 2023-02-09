@@ -12,10 +12,10 @@ public class LineColorData : ScriptableObject
     [SerializeField] private float colorOneB;
     [SerializeField] private float colorOneA;
     #region Property
-    public float ColorOneR { get { return colorOneR; } set { colorOneR = value; } }
-    public float ColorOneG { get { return colorOneG; } set { colorOneG = value; } }
-    public float ColorOneB { get { return colorOneB; } set { colorOneB = value; } }
-    public float ColorOneA { get { return colorOneA; } set { colorOneA = value; } }
+    public float ColorOneR { get { return colorOneR; }}
+    public float ColorOneG { get { return colorOneG; }}
+    public float ColorOneB { get { return colorOneB; }}
+    public float ColorOneA { get { return colorOneA; }}
     #endregion
 
     [Header("[Color Two]")]
@@ -24,10 +24,10 @@ public class LineColorData : ScriptableObject
     [SerializeField] private float colorTwoB;
     [SerializeField] private float colorTwoA;
     #region Property
-    public float ColorTwoR { get { return colorTwoR; } set { colorTwoR = value; } }
-    public float ColorTwoG { get { return colorTwoG; } set { colorTwoG = value; } }
-    public float ColorTwoB { get { return colorTwoB; } set { colorTwoB = value; } }
-    public float ColorTwoA { get { return colorTwoA; } set { colorTwoA = value; } }
+    public float ColorTwoR { get { return colorTwoR; }}
+    public float ColorTwoG { get { return colorTwoG; }}
+    public float ColorTwoB { get { return colorTwoB; }}
+    public float ColorTwoA { get { return colorTwoA; }}
     #endregion
 
     [Header("[Color Three]")]
@@ -36,10 +36,10 @@ public class LineColorData : ScriptableObject
     [SerializeField] private float colorThreeB;
     [SerializeField] private float colorThreeA;
     #region Property
-    public float ColorThreeR { get { return colorThreeR; } set { colorThreeR = value; } }
-    public float ColorThreeG { get { return colorThreeG; } set { colorThreeG = value; } }
-    public float ColorThreeB { get { return colorThreeB; } set { colorThreeB = value; } }
-    public float ColorThreeA { get { return colorThreeA; } set { colorThreeA = value; } }
+    public float ColorThreeR { get { return colorThreeR; }}
+    public float ColorThreeG { get { return colorThreeG; }}
+    public float ColorThreeB { get { return colorThreeB; }}
+    public float ColorThreeA { get { return colorThreeA; }}
     #endregion
 
     [Header("[Color Four]")]
@@ -48,10 +48,10 @@ public class LineColorData : ScriptableObject
     [SerializeField] private float colorFourB;
     [SerializeField] private float colorFourA;
     #region Property
-    public float ColorFourR { get { return colorFourR; } set { colorFourR = value; } }
-    public float ColorFourG { get { return colorFourG; } set { colorFourG = value; } }
-    public float ColorFourB { get { return colorFourB; } set { colorFourB = value; } }
-    public float ColorFourA { get { return colorFourA; } set { colorFourA = value; } }
+    public float ColorFourR { get { return colorFourR; }}
+    public float ColorFourG { get { return colorFourG; }}
+    public float ColorFourB { get { return colorFourB; }}
+    public float ColorFourA { get { return colorFourA; }}
     #endregion
 
     [Header("[Color Five]")]
@@ -60,10 +60,10 @@ public class LineColorData : ScriptableObject
     [SerializeField] private float colorFiveB;
     [SerializeField] private float colorFiveA;
     #region Property
-    public float ColorFiveR { get { return colorFiveR; } set { colorFiveR = value; } }
-    public float ColorFiveG { get { return colorFiveG; } set { colorFiveG = value; } }
-    public float ColorFiveB { get { return colorFiveB; } set { colorFiveB = value; } }
-    public float ColorFiveA { get { return colorFiveA; } set { colorFiveA = value; } }
+    public float ColorFiveR { get { return colorFiveR; }}
+    public float ColorFiveG { get { return colorFiveG; }}
+    public float ColorFiveB { get { return colorFiveB; }}
+    public float ColorFiveA { get { return colorFiveA; }}
     #endregion
 
     [Header("[Color Six]")]
@@ -72,9 +72,57 @@ public class LineColorData : ScriptableObject
     [SerializeField] private float colorSixB;
     [SerializeField] private float colorSixA;
     #region Property
-    public float ColorSixR { get { return colorSixR; } set { colorSixR = value; } }
-    public float ColorSixG { get { return colorSixG; } set { colorSixG = value; } }
-    public float ColorSixB { get { return colorSixB; } set { colorSixB = value; } }
-    public float ColorSixA { get { return colorSixA; } set { colorSixA = value; } }
+    public float ColorSixR { get { return colorSixR; }}
+    public float ColorSixG { get { return colorSixG; }}
+    public float ColorSixB { get { return colorSixB; }}
+    public float ColorSixA { get { return colorSixA; }}
+    #endregion
+
+    [Header("[Color Seven]")]
+    [SerializeField] private float colorSevenR;
+    [SerializeField] private float colorSevenG;
+    [SerializeField] private float colorSevenB;
+    [SerializeField] private float colorSevenA;
+    #region Property
+    public float ColorSevenR { get { return colorSevenR; }}
+    public float ColorSevenG { get { return colorSevenG; }}
+    public float ColorSevenB { get { return colorSevenB; }}
+    public float ColorSevenA { get { return colorSevenA; }}
+    #endregion
+
+    [Header("[Color Eight]")]
+    [SerializeField] private float colorEightR;
+    [SerializeField] private float colorEightG;
+    [SerializeField] private float colorEightB;
+    [SerializeField] private float colorEightA;
+    #region Property
+    public float ColorEightR { get { return colorEightR; } }
+    public float ColorEightG { get { return colorEightG; } }
+    public float ColorEightB { get { return colorEightB; } }
+    public float ColorEightA { get { return colorEightA; } }
+    #endregion
+
+    [Header("[Color Nine]")]
+    [SerializeField] private float colorNineR;
+    [SerializeField] private float colorNineG;
+    [SerializeField] private float colorNineB;
+    [SerializeField] private float colorNineA;
+    #region Property
+    public float ColorNineR { get { return colorNineR; } }
+    public float ColorNineG { get { return colorNineG; } }
+    public float ColorNineB { get { return colorNineB; } }
+    public float ColorNineA { get { return colorNineA; } }
+    #endregion
+
+    [Header("[Color Ten]")]
+    [SerializeField] private float colorTenR;
+    [SerializeField] private float colorTenG;
+    [SerializeField] private float colorTenB;
+    [SerializeField] private float colorTenA;
+    #region Property
+    public float ColorTenR { get { return colorTenR; } }
+    public float ColorTenG { get { return colorTenG; } }
+    public float ColorTenB { get { return colorTenB; } }
+    public float ColorTenA { get { return colorTenA; } }
     #endregion
 }

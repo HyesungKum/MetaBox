@@ -10,38 +10,71 @@ public class SelectPanelSet : MonoBehaviour
     [SerializeField] Button threeBrush = null;
     [SerializeField] Button CloseSelectPanelBut = null;
 
+    [Header("[Character Move]")]
+    [SerializeField] GameObject character = null;
+
     [Header("[InGame obj Set]")]
     [SerializeField] GameObject objOne = null;
     [SerializeField] GameObject objTwo = null;
     [SerializeField] GameObject objThree = null;
 
+    Vector2 characterPos;
 
     void Awake()
     {
-        oneBrush.onClick.AddListener(delegate { OnClickOneBrush(); SoundManager.Inst.ButtonSFXPlay(); });
-        twoBrush.onClick.AddListener(delegate { OnClickTwoBrush(); SoundManager.Inst.ButtonSFXPlay(); });
-        threeBrush.onClick.AddListener(delegate { OnClickThreeBrush(); SoundManager.Inst.ButtonSFXPlay(); });
+        oneBrush.onClick.AddListener(delegate
+        {
+            OnClickQustion(oneBrush, true, false, false); CharacterMoves(1);
+            SoundManager.Inst.ButtonSFXPlay();
+        });
 
-        CloseSelectPanelBut.onClick.AddListener(delegate { OnClickInGameGoSelectPanel(); SoundManager.Inst.ButtonSFXPlay(); });
+        twoBrush.onClick.AddListener(delegate
+        {
+            OnClickQustion(twoBrush, false, true, false); CharacterMoves(2);
+            SoundManager.Inst.ButtonSFXPlay();
+        });
+
+        threeBrush.onClick.AddListener(delegate
+        {
+            OnClickQustion(threeBrush, false, false, true); CharacterMoves(3);
+            SoundManager.Inst.ButtonSFXPlay();
+        });
+
+        CloseSelectPanelBut.onClick.AddListener(delegate
+        {
+            OnClickInGameGoSelectPanel();
+            SoundManager.Inst.ButtonSFXPlay();
+        });
     }
 
-    void OnClickOneBrush()
+    void OnClickQustion(Button butNum, bool active, bool twoObjactive, bool threeObjactive)
     {
-        PanelChangedSet(oneBrush, false);
-        PlayGameObjSet(true, false, false);
-
+        PanelChangedSet(butNum, false);
+        PlayGameObjSet(active, twoObjactive, threeObjactive);
     }
 
-    void OnClickTwoBrush()
-    {
-        PanelChangedSet(twoBrush, false);
-        PlayGameObjSet(false, true, false);
-    }
 
-    void OnClickThreeBrush()
+
+    public void CharacterMoves(int stage)
     {
-        PanelChangedSet(threeBrush, false);
-        PlayGameObjSet(false, false, true);
+        characterPos = character.transform.localPosition;
+        Vector2 movePos = characterPos;
+
+        if (stage == 1)
+        {
+            movePos = characterPos;
+            character.transform.localPosition = movePos;
+        }
+        else if (stage == 2)
+        {
+            movePos = new Vector2(movePos.x, 200);
+            character.transform.localPosition = movePos;
+        }
+        else if(stage == 3)
+        {
+            movePos = new Vector2(movePos.x, 0);
+            character.transform.localPosition = movePos;
+        }
     }
 
     public void PanelChangedSet(Button button, bool butSet)
@@ -70,6 +103,7 @@ public class SelectPanelSet : MonoBehaviour
     void OnClickInGameGoSelectPanel()
     {
         InGamePanelSet.Inst.SelectPanelSet(true);
+        character.transform.localPosition = characterPos;
         InGamePanelSet.Inst.OneBrushPlayPanelSet(false);
         InGamePanelSet.Inst.InGameSet(false);
         ButAllSet();

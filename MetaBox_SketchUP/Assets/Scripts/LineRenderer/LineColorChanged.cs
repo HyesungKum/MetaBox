@@ -10,8 +10,12 @@ public class LineColorChanged : MonoBehaviour
     [SerializeField] Button colorThree = null;
     [SerializeField] Button colorFour = null;
     [SerializeField] Button colorFive = null;
-    //[SerializeField] Button colorSix = null;
-    
+    [SerializeField] Button colorSix = null;
+    [SerializeField] Button colorSeven = null;
+    [SerializeField] Button colorEight = null;
+    [SerializeField] Button colorNine = null;
+    [SerializeField] Button colorTen = null;
+
     [Header("[AnimationCurve Up and Down]")]
     [SerializeField] AnimationCurve curveMoveUp = null; 
     [SerializeField] AnimationCurve curveMoveDown = null; 
@@ -28,6 +32,7 @@ public class LineColorChanged : MonoBehaviour
         if (lineColorData == null)
             lineColorData = Resources.Load<LineColorData>("Data/ColorRGBData");
 
+        #region color Data Setting
         colorOne.onClick.AddListener(delegate { 
             GetColors(lineColorData.ColorOneR, lineColorData.ColorOneG, lineColorData.ColorOneB, lineColorData.ColorOneA); 
             StartCoroutine(ColorPositionMove(colorOne)); });
@@ -48,7 +53,31 @@ public class LineColorChanged : MonoBehaviour
             GetColors(lineColorData.ColorFiveR, lineColorData.ColorFiveG, lineColorData.ColorFiveB, lineColorData.ColorFiveA);
             StartCoroutine(ColorPositionMove(colorFive)); });
 
-        //colorSix.onClick.AddListener(delegate { });
+        colorSix.onClick.AddListener(delegate {
+            GetColors(lineColorData.ColorSixR, lineColorData.ColorSixG, lineColorData.ColorSixB, lineColorData.ColorSixA);
+            StartCoroutine(ColorPositionMove(colorSix));
+        });
+
+        colorSeven.onClick.AddListener(delegate {
+            GetColors(lineColorData.ColorSevenR, lineColorData.ColorSevenG, lineColorData.ColorSevenB, lineColorData.ColorSevenA);
+            StartCoroutine(ColorPositionMove(colorSeven));
+        });
+
+        colorEight.onClick.AddListener(delegate {
+            GetColors(lineColorData.ColorEightR, lineColorData.ColorEightG, lineColorData.ColorEightB, lineColorData.ColorEightA);
+            StartCoroutine(ColorPositionMove(colorEight));
+        });
+
+        colorNine.onClick.AddListener(delegate {
+            GetColors(lineColorData.ColorNineR, lineColorData.ColorNineG, lineColorData.ColorNineB, lineColorData.ColorNineA);
+            StartCoroutine(ColorPositionMove(colorNine));
+        });
+
+        colorTen.onClick.AddListener(delegate {
+            GetColors(lineColorData.ColorTenR, lineColorData.ColorTenG, lineColorData.ColorTenB, lineColorData.ColorTenA);
+            StartCoroutine(ColorPositionMove(colorTen));
+        });
+        #endregion
     }
 
     public IEnumerator ColorPositionMove(Button buttonNum)
