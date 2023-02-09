@@ -254,7 +254,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   policeCar: {fileID: 2125065221}
-  focus: {fileID: 163232831}
   PoliceCarCurve:
     serializedVersion: 2
     m_Curve:
@@ -279,6 +278,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  focus: {fileID: 163232831}
   FocusCurve:
     serializedVersion: 2
     m_Curve:
@@ -752,8 +752,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c75194e7a6eb914e89372c4527b2dc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fade: {fileID: 1089980156}
   loading: {fileID: 474995167}
+  circle: {fileID: 1089980156}
   FadeInCurve:
     serializedVersion: 2
     m_Curve:

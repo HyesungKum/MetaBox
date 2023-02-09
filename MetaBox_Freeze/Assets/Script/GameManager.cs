@@ -195,7 +195,7 @@ public class GameManager : MonoBehaviour
         while (showTime > 0f && imgShowTime)
         {
             showTime -= Time.deltaTime;
-            if(IsGaming == false) imgShowTime = false; //If the last thief is apprehended, the function to hide the image is not executed.
+            if(IsGaming == false) yield break; //If the last thief is apprehended, the function to hide the image is not executed.
             yield return null;
         }
         if(imgShowTime) hideThief?.Invoke();

@@ -3,14 +3,13 @@ using UnityEngine;
 
 public class ThiefSpawner : ObjectPool<Thief>
 {
-    [SerializeField] Thief thiefPref = null;
+    [SerializeField] ScriptableObj scriptableNPC = null;
 
     List<ThiefData> ThiefDatas = null;
 
     public override Thief CreatePool()
     {
-        if (thiefPref == null) thiefPref = Resources.Load<Thief>(nameof(Thief));
-        return thiefPref;
+        return scriptableNPC.NPC[0];
     }
 
     private void Awake()
