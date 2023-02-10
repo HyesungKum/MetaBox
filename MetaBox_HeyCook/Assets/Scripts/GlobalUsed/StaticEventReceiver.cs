@@ -7,7 +7,7 @@ public delegate void VectorCallBack(Vector3 pos);
 public delegate void LoadCallBack(string id);
 public delegate void SaveCallBack(int level, int score);
 
-public class EventReciver
+public class EventReceiver
 {
     //===============================main game delegate==================================
     static public BasicCallBack NewGuestR = null;

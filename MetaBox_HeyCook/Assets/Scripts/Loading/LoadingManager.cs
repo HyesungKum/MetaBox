@@ -33,7 +33,7 @@ public class LoadingManager : MonoSingleTon<LoadingManager>
     {
         secPerFrame = Time.deltaTime;
         StartButton.onClick.AddListener(()=> SceneOutReady());
-        StartButton.onClick.AddListener(()=> EventReciver.CallButtonClicked());
+        StartButton.onClick.AddListener(()=> EventReceiver.CallButtonClicked());
     }
 
     private void Start()

@@ -24,15 +24,32 @@ public class SoundManager : MonoSingleTon<SoundManager>
     //========================BGM Controll================================
     public void SetBGM(string sourceName)
     {
-        soundData.clips.TryGetValue(sourceName, out AudioClip clip);
+        if (soundData == null) return;
+        if (!soundData.clips.TryGetValue(sourceName, out AudioClip clip)) return;
+
         BGMAudio.pitch = 1f;
         BGMAudio.clip = clip;
     }
-    public void SetBGMLoop() => BGMAudio.loop = true;
-    public void SetBGMUnLoop() => BGMAudio.loop = false;
-    public void SetBGMSpeed(float speed) => BGMAudio.pitch = speed;
-    public void PlayBGM() => BGMAudio.Play();
-    public void StopBGM() => BGMAudio.Stop();
+    public void SetBGMLoop()
+    {
+        if(BGMAudio != null) BGMAudio.loop = true;
+    }
+    public void SetBGMUnLoop()
+    {
+        if (BGMAudio != null) BGMAudio.loop = false;
+    }
+    public void SetBGMSpeed(float speed)
+    {
+        if (BGMAudio != null) BGMAudio.pitch = speed;
+    }
+    public void PlayBGM()
+    {
+        if (BGMAudio != null) BGMAudio.Play();
+    }
+    public void StopBGM()
+    {
+        if (BGMAudio != null) BGMAudio.Stop();
+    }
 
     //=======================SFX Controll=================================
     /// <summary>
@@ -41,6 +58,7 @@ public class SoundManager : MonoSingleTon<SoundManager>
     /// <param name="sourceName">predefined Sfx Name</param>
     public void CallSfx(string sourceName)
     {
+        if (soundData == null) return;
         if (!soundData.clips.TryGetValue(sourceName, out AudioClip clip)) return;
 
         SFXAudio[audioCursor].clip = clip; 

@@ -79,7 +79,7 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
         }
         
         //delegate chain
-        EventReciver.saveCallBack += SaveData;
+        EventReceiver.saveCallBack += SaveData;
     }
 
     private void Start()

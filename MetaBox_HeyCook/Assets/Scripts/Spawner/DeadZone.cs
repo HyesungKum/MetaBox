@@ -14,10 +14,8 @@ public class DeadZone: MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.CompareTag(nameof(Ingredient)))
+        if (collision.TryGetComponent(out Ingredient ingred))
         {
-            collision.TryGetComponent<Ingredient>(out Ingredient ingred);
-
             if (!ingred.IsCliked)
             {
                 GameObject instVfx = ingred.IngredData.delVfx;

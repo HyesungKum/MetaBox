@@ -14,14 +14,14 @@ public enum Env
 public class StartManager : MonoBehaviour
 {
     //================app transition============================
-    [Header("Application Setting")]
+    [Header("[Application Setting]")]
     [SerializeField] string mainPackName = "com.MetaBox.MetaBox_Main";
 
     //=================UI==========================
-    [Header("Current Active UI")]
+    [Header("[Current Active UI]")]
     [SerializeField] GameObject curUI;
 
-    [Header("Main UI Group")]
+    [Header("[Main UI Group]")]
     [Tooltip("Start, option, exit group")]
     [SerializeField] GameObject mainUIGroup;
 
@@ -30,8 +30,8 @@ public class StartManager : MonoBehaviour
     [SerializeField] Button villageButton;
     [SerializeField] Button exitButton;
 
-    [Header("Second UI Group")]
-    [Tooltip("difficulty button group")]
+    [Header("[Difficulty UI Group]")]
+    [Tooltip("Difficulty button group")]
     [SerializeField] GameObject difficultyUIGroup;
 
     [SerializeField] Button easyButton;
@@ -41,7 +41,7 @@ public class StartManager : MonoBehaviour
 
     [SerializeField] Button difficultyExitButton;
 
-    [Header("Option UI Group")]
+    [Header("[Option UI Group]")]
     [Tooltip("difficulty button group")]
     [SerializeField] GameObject optionUIGroup;
 

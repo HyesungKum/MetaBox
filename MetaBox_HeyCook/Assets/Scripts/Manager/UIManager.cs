@@ -10,10 +10,6 @@ public class UIManager : MonoBehaviour
     //==============master canvas==================
     [Header("[Master UI]")]
     [SerializeField] GameObject UICanvas;
-    
-    [Header("[Vfx]")]
-    [SerializeField] GameObject correctVfx;
-    [SerializeField] GameObject wrongVfx;
 
     //current activation UI Object
     [Header("[Current Active UI]")]
@@ -23,10 +19,14 @@ public class UIManager : MonoBehaviour
     [Header("[In Game UI]")]
     [SerializeField] GameObject inGameUI;
     [Space]
-    [SerializeField] TextMeshProUGUI timer;
-    [SerializeField] TextMeshProUGUI score;
+    [SerializeField] GameObject correctVfx;
+    [SerializeField] GameObject wrongVfx;
+    [Space]
+    [SerializeField] TextMeshProUGUI timeLimitText;
+    [SerializeField] TextMeshProUGUI scoreText;
     [Space]
     [SerializeField] Button optionButton;
+    
 
     //=================option ui===================
     [Header("[Option UI]")]
@@ -41,10 +41,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] Button sfxSoundButton;
     [SerializeField] Slider sfxSlider;
     [Space]
-    [SerializeField] Button opRestartButton;
-    [SerializeField] Button opResumeButton;
-    [Space]
     [SerializeField] Button opExitButton;
+    [SerializeField] Button opRestartButton;
+    [Space]
+    [SerializeField] Button opResumeButton;
 
     //=================end game ui=================
     [Header("[Game Over UI]")]
@@ -64,25 +64,22 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject CountOneImage;
     [SerializeField] GameObject CountStartImage;
     [Space]
-    [SerializeField] GameObject production;
+    [SerializeField] GameObject sceneProduction;
     [SerializeField] GameObject viewHall;
     [Space]
-    [SerializeField] GameObject highScoreObj;
+    [SerializeField] GameObject highScoreText;
     [SerializeField] float scoreProdDelay;
 
     //=================caching========================================
-    private WaitForSecondsRealtime waitSec;
+    private WaitUntil[] waitCount = new WaitUntil[5];
 
     private void Awake()
     {
-        //===============in game button listener=======================================
-        optionButton.onClick        .AddListener(() => EventReciver.CallGamePause());
+        //in game button listener
+        optionButton.onClick        .AddListener(() => EventReceiver.CallGamePause());
         optionButton.onClick        .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
-        //===============option button listener========================================
-        opRestartButton.onClick    .AddListener(() => SceneMove(SceneName.Main));
-        opRestartButton.onClick    .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
-
+        //option button listener
         masterSoundButton.onClick  .AddListener(() => SoundManager.Inst.ToggleControll("Master", masterSlider.value));
         masterSoundButton.onClick  .AddListener(() => ToggleSlider(masterSlider));
         masterSlider.onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("Master", call));
@@ -95,13 +92,16 @@ public class UIManager : MonoBehaviour
         sfxSoundButton.onClick     .AddListener(() => ToggleSlider(sfxSlider));
         sfxSlider.onValueChanged   .AddListener((call) => SoundManager.Inst.VolumeControll("SFX", call));
 
-        opResumeButton.onClick     .AddListener(() => EventReciver.CallGameResume());
-        opResumeButton.onClick     .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
+        opRestartButton.onClick    .AddListener(() => SceneMove(SceneName.Main));
+        opRestartButton.onClick    .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         opExitButton.onClick       .AddListener(() => SceneMove(SceneName.Start));
         opExitButton.onClick       .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
-        //===============game end button listener======================================
+        opResumeButton.onClick     .AddListener(() => EventReceiver.CallGameResume());
+        opResumeButton.onClick     .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
+
+        //game end button listener
         endExitButton.onClick      .AddListener(() => SceneMove(SceneName.Start));
         endExitButton.onClick      .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
@@ -109,18 +109,26 @@ public class UIManager : MonoBehaviour
         endRestartButton.onClick      .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         //delegate chain
-        EventReciver.ScoreModi     += UIScoreModi;
-        EventReciver.CorrectIngred += UICorrectIngred;
-        EventReciver.WrongIngred   += UIWrongIngred;
+        EventReceiver.ScoreModi     += UIScoreModi;
+        EventReceiver.CorrectIngred += UICorrectIngred;
+        EventReceiver.WrongIngred   += UIWrongIngred;
 
-        EventReciver.SceneStart += SceneStartProd;
+        EventReceiver.SceneStart += SceneStartProd;
 
-        EventReciver.TickCount  += UITcikCount;
-        EventReciver.GameStart  += UIGameStart;
-        EventReciver.GamePause  += UIGamePause;
-        EventReciver.GameResume += UIGameResume;
-        EventReciver.GameOver   += UIGameOver;
+        EventReceiver.TickCount  += UITcikCount;
+        EventReceiver.GameStart  += UIGameStart;
+        EventReceiver.GamePause  += UIGamePause;
+        EventReceiver.GameResume += UIGameResume;
+        EventReceiver.GameOver   += UIGameOver;
+
+        //caching
+        waitCount[0] = new WaitUntil(() => GameManager.Inst.count >= 2);
+        waitCount[1] = new WaitUntil(() => GameManager.Inst.count >= 3);
+        waitCount[2] = new WaitUntil(() => GameManager.Inst.count >= 4);
+        waitCount[3] = new WaitUntil(() => GameManager.Inst.count >= 5);
+        waitCount[4] = new WaitUntil(() => GameManager.Inst.count >= 6);
     }
+
     private void Start()
     {
         //Init pool
@@ -136,22 +144,23 @@ public class UIManager : MonoBehaviour
     private void OnDisable()
     {
         //delegate unchain
-        EventReciver.ScoreModi     -= UIScoreModi;
-        EventReciver.CorrectIngred -= UICorrectIngred;
-        EventReciver.WrongIngred   -= UIWrongIngred;
+        EventReceiver.ScoreModi     -= UIScoreModi;
+        EventReceiver.CorrectIngred -= UICorrectIngred;
+        EventReceiver.WrongIngred   -= UIWrongIngred;
 
-        EventReciver.SceneStart -= SceneStartProd;
+        EventReceiver.SceneStart -= SceneStartProd;
 
-        EventReciver.TickCount  -= UITcikCount;
-        EventReciver.GameStart  -= UIGameStart;
-        EventReciver.GamePause  -= UIGamePause;
-        EventReciver.GameResume -= UIGameResume;
-        EventReciver.GameOver   -= UIGameOver;
+        EventReceiver.TickCount  -= UITcikCount;
+        EventReceiver.GameStart  -= UIGameStart;
+        EventReceiver.GamePause  -= UIGamePause;
+        EventReceiver.GameResume -= UIGameResume;
+        EventReceiver.GameOver   -= UIGameOver;
     }
     //============================================Initializing UI=======================================
     void UIInitializing()
     {
-        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.GetCountDown() / 60f), (int)(GameManager.Inst.GetCountDown() % 60f));
+        timeLimitText.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.GetCountDown() / 60f), (int)(GameManager.Inst.GetCountDown() % 60f));
+        scoreProdDelay = scoreProdDelay == 0 ? 0.1f : scoreProdDelay;
         optionButton.interactable = false;
     }
 
@@ -214,7 +223,7 @@ public class UIManager : MonoBehaviour
         SoundManager.Inst.PlayBGM();
 
         //UI popup
-        if (GameManager.Inst.IsHighScore) highScoreObj.SetActive(true);
+        if (GameManager.Inst.IsHighScore) highScoreText.SetActive(true);
         endExitButton.gameObject.SetActive(true);
         endRestartButton.gameObject.SetActive(true);
     }
@@ -230,11 +239,11 @@ public class UIManager : MonoBehaviour
     /// <param name="value">target time value</param>
     void UIScoreModi(int value)
     {
-        score.text = (GameManager.Inst.GetScore() + value).ToString();
+        scoreText.text = (GameManager.Inst.GetScore() + value).ToString();
     }
     void UITcikCount()
     {
-        timer.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.GetCountDown() / 60f), (int)(GameManager.Inst.GetCountDown() % 60f));
+        timeLimitText.text = string.Format("{0:D2} : {1:D2} ", (int)(GameManager.Inst.GetCountDown() / 60f), (int)(GameManager.Inst.GetCountDown() % 60f));
     }
 
     //===============================================UI Transition========================================
@@ -248,11 +257,16 @@ public class UIManager : MonoBehaviour
     //================================================SceneMove===========================================
     void SceneMove(string sceneName)
     {
-        StartCoroutine(nameof(ViewHallShrink), sceneName);
+        StartCoroutine(nameof(EndProduction), sceneName);
     }
-    IEnumerator ViewHallShrink(string sceneName)
+    /// <summary>
+    /// View Hall Shrink Production
+    /// </summary>
+    /// <param name="sceneName"></param>
+    /// <returns></returns>
+    IEnumerator EndProduction(string sceneName)
     {
-        production.SetActive(true);
+        sceneProduction.SetActive(true);
 
         float timer = 0f;
         while (viewHall.transform.localScale.x >= 0.8f)
@@ -271,11 +285,11 @@ public class UIManager : MonoBehaviour
     //=============================================SceneProduction========================================
     void SceneStartProd()
     {
-        StartCoroutine(nameof(CountDown));
+        StartCoroutine(nameof(StartProduction));
     }
-    IEnumerator CountDown()
+    IEnumerator StartProduction()
     {
-        production.SetActive(true);
+        sceneProduction.SetActive(true);
 
         float timer = 0f;
         while (viewHall.transform.localScale.x <= 45)
@@ -286,21 +300,25 @@ public class UIManager : MonoBehaviour
             yield return null;
         }
 
-        production.SetActive(false);
+        sceneProduction.SetActive(false);
 
         CountDownUI.SetActive(true);
-        yield return new WaitUntil(() => GameManager.Inst.count >= 2);
+        yield return waitCount[0];
+
         CountThreeImage.SetActive(true);
-        yield return new WaitUntil(() => GameManager.Inst.count >= 3);
+        yield return waitCount[1];
+
         CountThreeImage.SetActive(false);
         CountTwoImage.SetActive(true);
-        yield return new WaitUntil(() => GameManager.Inst.count >= 4);
+        yield return waitCount[2];
+
         CountTwoImage.SetActive(false);
         CountOneImage.SetActive(true);
-        yield return new WaitUntil(() => GameManager.Inst.count >= 5);
+        yield return waitCount[3];
+
         CountOneImage.SetActive(false);
         CountStartImage.SetActive(true);
-        yield return new WaitUntil(() => GameManager.Inst.count >= 6);
+        yield return waitCount[4];
 
         CountDownUI.SetActive(false);
     }

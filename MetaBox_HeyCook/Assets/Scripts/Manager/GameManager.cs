@@ -10,7 +10,7 @@ public class GameManager : MonoSingleTon<GameManager>
     [SerializeField] private LevelData levelData;
     [SerializeField] private LevelTable curLevelData;
 
-    [Header("Aquire Setting")]
+    [Header("Acquire Setting")]
     [SerializeField] IngredientSpawner rightSpawner;
     [SerializeField] IngredientSpawner leftSpawner;
     [SerializeField] BeltZone beltZoneR;
@@ -56,37 +56,36 @@ public class GameManager : MonoSingleTon<GameManager>
     private new void Awake()
     {
         //delegate chain
-        EventReciver.ScoreModi += ScoreAddSub;
+        EventReceiver.ScoreModi += ScoreAddSub;
 
-        EventReciver.GamePause += GamePasue;
-        EventReciver.GameResume += GameResume;
-        EventReciver.GameOver += GameOver;
+        EventReceiver.GamePause += GamePasue;
+        EventReceiver.GameResume += GameResume;
+        EventReceiver.GameOver += GameOver;
 
         //initializing
-        level = LevelTransfer.Inst.Level;
-        curLevelData = levelData.levelTables[level];
+        level = LevelTransfer.Inst.Level == 0 ? 1 : LevelTransfer.Inst.Level;
+        curLevelData = levelData.levelTables[level - 1];
 
         //divide each data
         countDown       = curLevelData.countDown;
 
-        rightSpawner.SpawnTable = curLevelData.ingredGroup.ingredObjs.ToList();
-        leftSpawner.SpawnTable = curLevelData.ingredGroup.ingredObjs.ToList();
-
+        if (rightSpawner != null   )rightSpawner.SpawnTable = curLevelData.ingredGroup.ingredObjs.ToList();
+        if (rightSpawner != null   )leftSpawner.SpawnTable  = curLevelData.ingredGroup.ingredObjs.ToList();
         //rightSpawner.spawnTime = curLevelData.spawnTime;
         //leftSpawner.spawnTime = curLevelData.spawnTime;
-        beltZoneL.beltSpeed    = curLevelData.beltSpeed;
-        beltZoneR.beltSpeed    = curLevelData.beltSpeed;
-        guestTableR.guestGroup = curLevelData.guestGroup;
-        guestTableL.guestGroup = curLevelData.guestGroup;
+        if (beltZoneL != null      )beltZoneL.beltSpeed     = curLevelData.beltSpeed;
+        if (beltZoneR != null      )beltZoneR.beltSpeed     = curLevelData.beltSpeed;
+        if (guestTableR != null    )guestTableR.guestGroup  = curLevelData.guestGroup;
+        if (guestTableL != null    )guestTableL.guestGroup  = curLevelData.guestGroup;
 
-        guestTableR.FoodList = curLevelData.foodDataGroup.foodDatas.ToList();
-        guestTableL.FoodList = curLevelData.foodDataGroup.foodDatas.ToList();
+        if (guestTableR != null    )guestTableR.FoodList    = curLevelData.foodDataGroup.foodDatas.ToList();
+        if (guestTableL != null    )guestTableL.FoodList    = curLevelData.foodDataGroup.foodDatas.ToList();
 
-        beltR.sprite           = curLevelData.conveyorBeltImage;
-        beltL.sprite           = curLevelData.conveyorBeltImage;
-        kitchenR.sprite        = curLevelData.kitchenImage;
-        kitchenL.sprite        = curLevelData.kitchenImage;
-        submissionImage.sprite = curLevelData.submissionImage;
+        if (beltR != null          )beltR.sprite            = curLevelData.conveyorBeltImage;
+        if (beltL != null          )beltL.sprite            = curLevelData.conveyorBeltImage;
+        if (kitchenR != null       )kitchenR.sprite         = curLevelData.kitchenImage;
+        if (kitchenL != null       )kitchenL.sprite         = curLevelData.kitchenImage;
+        if (submissionImage != null) submissionImage.sprite = curLevelData.submissionImage;
         //back.sprite            = curLevelData.backGroundImage1;
         //bottom.sprite          = curLevelData.backGroundImage2;
 
@@ -108,11 +107,11 @@ public class GameManager : MonoSingleTon<GameManager>
     private void OnDisable()
     {
         //delegate unchain
-        EventReciver.ScoreModi -= ScoreAddSub;
+        EventReceiver.ScoreModi -= ScoreAddSub;
 
-        EventReciver.GamePause -= GamePasue;
-        EventReciver.GameResume -= GameResume;
-        EventReciver.GameOver -= GameOver;
+        EventReceiver.GamePause -= GamePasue;
+        EventReceiver.GameResume -= GameResume;
+        EventReceiver.GameOver -= GameOver;
     }
 
     //============================================Score Controll============================================
@@ -150,7 +149,7 @@ public class GameManager : MonoSingleTon<GameManager>
         if (SaveLoadManger.Inst.GetOldScore(level) < score)
         {
             IsHighScore = true;
-            EventReciver.CallSaveCallBack(level, score);
+            EventReceiver.CallSaveCallBack(level, score);
         }
     }
 
@@ -158,7 +157,7 @@ public class GameManager : MonoSingleTon<GameManager>
     IEnumerator BeforeStart()
     {
         SoundManager.Inst.StopBGM();
-        EventReciver.CallSceneStart();
+        EventReceiver.CallSceneStart();
 
         while (timer <= 6f)
         {
@@ -174,7 +173,7 @@ public class GameManager : MonoSingleTon<GameManager>
 
         //main loop start
         IsStart = true;
-        EventReciver.CallGameStart();
+        EventReceiver.CallGameStart();
         TickRoutine = StartCoroutine(nameof(TickUpdate));
     }
     IEnumerator TickUpdate()
@@ -184,13 +183,13 @@ public class GameManager : MonoSingleTon<GameManager>
             yield return wait;
 
             countDown -= 1;
-            EventReciver.CallTickCount();
+            EventReceiver.CallTickCount();
             if (audioToken && countDown == imTime)
             {
                 audioToken = false;
                 SoundManager.Inst.SetBGMSpeed(1.3f);
             }
-            if (countDown == 0) EventReciver.CallGameOver();
+            if (countDown == 0) EventReceiver.CallGameOver();
         }
     }
 

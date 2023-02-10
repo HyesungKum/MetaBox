@@ -4,7 +4,6 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider2D))]
 public class BeltZone : MonoBehaviour
 {
-    public List<GameObject> BeltIngred = new(); 
     public float beltSpeed;
 
     private void OnTriggerStay2D(Collider2D collision)

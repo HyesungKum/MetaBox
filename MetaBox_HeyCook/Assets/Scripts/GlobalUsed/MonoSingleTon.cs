@@ -5,7 +5,6 @@ namespace Kum
     public class MonoSingleTon<T> : MonoBehaviour where T : MonoBehaviour
     {
         static private T instance = null;
-        static private object _lock = new();
         static private bool applicationQuitting = false;
 
         static public T Inst
@@ -23,11 +22,9 @@ namespace Kum
 
                     if (instance == null)
                     {
-                        lock (_lock)
-                        {
-                            GameObject instObj = new(typeof(T).ToString(), typeof(T));
-                            instObj.TryGetComponent(out T instance);
-                        }
+                        GameObject instObj = new(typeof(T).ToString(), typeof(T));
+                        instObj.TryGetComponent(out T _instance);
+                        instance = _instance;
                     }
                 }
 

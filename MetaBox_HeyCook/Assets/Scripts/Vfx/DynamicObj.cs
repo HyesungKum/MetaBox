@@ -1,15 +1,21 @@
-
-
-using System.Collections;
-using UnityEngine;
-using TMPro;
 using System;
+using System.Collections;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 [Serializable]
 public enum ColorControll
 {
     CURVE,
     LERP
+}
+
+public enum RenderType
+{
+    Text,
+    Sprite,
+    Image
 }
 
 [Serializable]
@@ -20,6 +26,9 @@ public class DynamicObj : MonoBehaviour
     //===========================components==============================
     private TextMeshProUGUI _textMesh;
     private SpriteRenderer _renderer;
+    private Image _image;
+
+    private RenderType renderType;
 
     //===================Position Production Controll====================
     public bool editXpos;
@@ -116,6 +125,11 @@ public class DynamicObj : MonoBehaviour
         //textMeshProUGUI
         TryGetComponent(out _textMesh);
         TryGetComponent(out _renderer);
+        TryGetComponent(out _image);
+
+        if (_textMesh != null) renderType = RenderType.Text;
+        if (_renderer != null) renderType = RenderType.Sprite;
+        if (_image != null) renderType = RenderType.Image;
 
         //position
         tempVec = fixedPos = this.transform.localPosition;
@@ -150,8 +164,12 @@ public class DynamicObj : MonoBehaviour
 
             doDynamic?.Invoke();
 
-            if (_textMesh != null) _textMesh.color = fixedCol;
-            if (_renderer != null) _renderer.color = fixedCol;
+            switch (renderType)
+            {
+                case RenderType.Text:   _textMesh.color = fixedCol; break;
+                case RenderType.Sprite: _renderer.color = fixedCol; break;
+                case RenderType.Image:  _image.color    = fixedCol; break;
+            }
 
             yield return null;
         }

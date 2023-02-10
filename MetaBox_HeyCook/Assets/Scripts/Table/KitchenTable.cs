@@ -7,9 +7,6 @@ using UnityEngine.UI;
 [RequireComponent(typeof(BoxCollider2D))]
 public class KitchenTable : MonoBehaviour
 {
-    //==================================Component============================================
-    [HideInInspector] public BoxCollider2D collider = null;
-
     //================================Reference Customer=====================================
     [Header("Reference Customer")]
     [SerializeField] GuestTable guestTable = null;
@@ -63,8 +60,8 @@ public class KitchenTable : MonoBehaviour
         this.transform.tag = "Table";
 
         //delegate chain
-        if (side == Side.Right) EventReciver.NewOrderR += NewCustomerOrder;
-        else EventReciver.NewOrderL += NewCustomerOrder;
+        if (side == Side.Right) EventReceiver.NewOrderR += NewCustomerOrder;
+        else EventReceiver.NewOrderL += NewCustomerOrder;
 
         //init inner variables 
         Initailizing();
@@ -73,15 +70,19 @@ public class KitchenTable : MonoBehaviour
     private void OnDisable()
     {
         //delegate unchain
-        if (side == Side.Right) EventReciver.NewOrderR -= NewCustomerOrder;
-        else EventReciver.NewOrderL -= NewCustomerOrder;
+        if (side == Side.Right) EventReceiver.NewOrderR -= NewCustomerOrder;
+        else EventReceiver.NewOrderL -= NewCustomerOrder;
     }
 
     //=================================Initializing=====================================
     private void Initailizing()
     {
-        //component
-        TryGetComponent(out collider);
+        //Guest Table reference
+        if (guestTable == null)
+        {
+            Debug.Log("## KitchenTable Error : dont Found Target Guest");
+            return;
+        }
 
         //TablePosition Round
         TableRoundX = Mathf.Round(this.transform.position.x);
@@ -95,7 +96,6 @@ public class KitchenTable : MonoBehaviour
         TargetPos = new Vector3(this.transform.position.x, this.transform.position.y, this.transform.position.z);
 
         //Cook Table Setting
-        cookSliderObj.transform.position = TargetPos + Vector3.up * 3f;
         cookSliderObj.SetActive(false);
 
         NowCooking = false;
@@ -152,6 +152,7 @@ public class KitchenTable : MonoBehaviour
             //Cook process object disable
             cookSliderObj.SetActive(false);
             CookingVfx.SetActive(false);
+            CookingVfx = null;
 
             //cooking complite vfx enable
             GameObject instObj = PoolCp.Inst.BringObjectCp(foodOrder.foodVfx);
@@ -161,7 +162,7 @@ public class KitchenTable : MonoBehaviour
             rawFood.SetImage(rawFood.FoodData.foodImage, 4);
 
             //food moving
-            StartCoroutine(nameof(FoodMove), rawFood.gameObject);
+            StartCoroutine(nameof(FoodSubmission), rawFood.gameObject);
         }
     }
     
@@ -253,7 +254,7 @@ public class KitchenTable : MonoBehaviour
         if (correct)
         {
             //Call Correct Ingredient Vfx & Sfx
-            EventReciver.CallCorrectIngred(TargetPos);
+            EventReceiver.CallCorrectIngred(TargetPos);
             SoundManager.Inst.CallSfx("Correct");
 
             //temp ingred Controll
@@ -276,7 +277,6 @@ public class KitchenTable : MonoBehaviour
                 NowCooking = true;
 
                 cookSliderObj.SetActive(true);
-                cookSliderObj.transform.position = TargetPos + Vector3.up * 3f;
                 
                 cookSlider.value = 0;
 
@@ -293,7 +293,7 @@ public class KitchenTable : MonoBehaviour
             PoolCp.Inst.DestoryObjectCp(curIngred.gameObject);
 
             //call wrong vfx & Sfx
-            EventReciver.CallWrongIngred(TargetPos);
+            EventReceiver.CallWrongIngred(TargetPos);
             SoundManager.Inst.CallSfx("Wrong");
         }
 
@@ -323,12 +323,12 @@ public class KitchenTable : MonoBehaviour
 
     //=========================================Production=====================================
     /// <summary>
-    /// particle move to guestTable's position and tranfer,
+    /// Ingredient Object move to guestTable's position and tranfer,
     /// Do submission when arriving at last position 
     /// </summary>
     /// <param name="target">target Object</param>
     /// <returns> null </returns>
-    IEnumerator FoodMove(GameObject target)
+    IEnumerator FoodSubmission(GameObject target)
     {
         while (target.activeSelf)
         {
@@ -343,10 +343,11 @@ public class KitchenTable : MonoBehaviour
             {
                 target.transform.position = guestTable.transform.position;
 
-                if (side == Side.Right) EventReciver.CallDoSubmissionR();
-                else EventReciver.CallDoSubmissionL();
+                if (side == Side.Right) EventReceiver.CallDoSubmissionR();
+                else EventReceiver.CallDoSubmissionL();
 
                 rawFood.DoFadeOut();
+                rawFood = null;
 
                 yield break;
             }

@@ -16,14 +16,19 @@ public class GuestTable : MonoBehaviour
     //=====================================Reference Data======================================
     [Header("[Guest Data]")]
     public GuestGroup guestGroup;
+    
+    [Header("Current Guest")]
+    [SerializeField] Guest curGuest = null;
+
+    [Header("Guest Reference")]
     [SerializeField] GameObject guestObj;
     [SerializeField] SpriteRenderer guestImage;
     [SerializeField] SpriteRenderer talkBubble;
-    [SerializeField] AnimationCurve moveCurve;
+    [SerializeField] SpriteRenderer orderImage;
     [SerializeField] TextMeshProUGUI guestText;
-
-    [Header("Current Guest")]
-    [SerializeField] Guest curGuest = null;
+    
+    [Header("Guest Move Production")]
+    [SerializeField] AnimationCurve moveCurve;
 
     [Header("[Require Food List]")]
     public List<FoodData> FoodList;
@@ -31,16 +36,9 @@ public class GuestTable : MonoBehaviour
 
     [Header("[Current Recipe]")]
     public FoodData requireFood;
-    public List<IngredData> requireIngreds;
 
     [Header("[TablePostion]")]
     public Side side;
-
-    //=======================================Component=========================================
-    [SerializeField] SpriteRenderer spriteRenderer;
-
-    //====================================inner variables======================================
-    [SerializeField] int count;
 
     //=======================================caching===========================================
     [SerializeField] float delayNewGuest;
@@ -61,13 +59,13 @@ public class GuestTable : MonoBehaviour
         //delegate unchain
         if (side == Side.Right)
         {
-            EventReciver.NewGuestR -= NewGuestPord;
-            EventReciver.DoSubmissionR -= DoSubmission;
+            EventReceiver.NewGuestR -= NewGuestPord;
+            EventReceiver.DoSubmissionR -= DoSubmission;
         }
         else
         {
-            EventReciver.NewGuestL -= NewGuestPord;
-            EventReciver.DoSubmissionL -= DoSubmission;
+            EventReceiver.NewGuestL -= NewGuestPord;
+            EventReceiver.DoSubmissionL -= DoSubmission;
         }
     }
 
@@ -85,17 +83,17 @@ public class GuestTable : MonoBehaviour
         //delegate chain
         if (side == Side.Right)
         {
-            EventReciver.NewGuestR += NewGuestPord;
-            EventReciver.DoSubmissionR += DoSubmission;
+            EventReceiver.NewGuestR += NewGuestPord;
+            EventReceiver.DoSubmissionR += DoSubmission;
         }
         else
         {
-            EventReciver.NewGuestL += NewGuestPord;
-            EventReciver.DoSubmissionL += DoSubmission;
+            EventReceiver.NewGuestL += NewGuestPord;
+            EventReceiver.DoSubmissionL += DoSubmission;
         }
 
-        if (side == Side.Right) EventReciver.CallNewGuestR();
-        else EventReciver.CallNewGuestL();
+        if (side == Side.Right) EventReceiver.CallNewGuestR();
+        else EventReceiver.CallNewGuestL();
     }
 
     //============================================Submission=============================================
@@ -108,14 +106,14 @@ public class GuestTable : MonoBehaviour
         yield return waitSec;
 
         //score sum modify
-        EventReciver.CallScoreModi(requireFood.Score);
+        EventReceiver.CallScoreModi(requireFood.Score);
 
         //call guest eat sfx
         SoundManager.Inst.CallSfx("GuestEat");
 
         //call new guest event
-        if(side == Side.Right) EventReciver.CallNewGuestR();
-        else EventReciver.CallNewGuestL();
+        if(side == Side.Right) EventReceiver.CallNewGuestR();
+        else EventReceiver.CallNewGuestL();
     }
 
     //====================================Customer Move Production=======================================
@@ -189,11 +187,11 @@ public class GuestTable : MonoBehaviour
         TempTable.RemoveAt(index);
 
         //show combine hint Image
-        spriteRenderer.sprite = requireFood.combineImage;
+        orderImage.sprite = requireFood.combineImage;
 
         //call new order
-        if (side == Side.Right) EventReciver.CallNewOrderR();
-        else EventReciver.CallNewOrderL();
+        if (side == Side.Right) EventReceiver.CallNewOrderR();
+        else EventReceiver.CallNewOrderL();
 
         if (TempTable.Count == 0) TempTable = FoodList.ToArray().ToList();
     }

@@ -43,8 +43,8 @@ public class ScrollingMap : MonoBehaviour
         newRockPos[1] = RockSpawnTr[1].position;
 
         //delegate chain
-        EventReciver.PlayerFall += StopScroll;
-        EventReciver.PlayerRise += StartScroll;
+        EventReceiver.PlayerFall += StopScroll;
+        EventReceiver.PlayerRise += StartScroll;
 
         //scroll routine
         StartScroll();
@@ -53,8 +53,8 @@ public class ScrollingMap : MonoBehaviour
     private void OnDisable()
     {
         //delegate unchain
-        EventReciver.PlayerFall -= StopScroll;
-        EventReciver.PlayerRise -= StartScroll;
+        EventReceiver.PlayerFall -= StopScroll;
+        EventReceiver.PlayerRise -= StartScroll;
     }
 
     //===========================Scrolling Controll==============================

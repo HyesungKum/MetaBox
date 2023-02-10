@@ -44,19 +44,7 @@ public class PlayerController : MonoBehaviour
         TouchEventGenerator.Inst.touchBegan[0] += Jump;
         TouchEventGenerator.Inst.touchBegan[0] += Run;
 
-        EventReciver.ButtonClicked += MoveRight;
-    }
-
-    private void OnDisable()
-    {
-        //application quit exception
-        if (TouchEventGenerator.Inst == null) return;
-
-        //delegate unchain
-        TouchEventGenerator.Inst.touchBegan[0] -= Jump;
-        TouchEventGenerator.Inst.touchBegan[0] -= Run;
-
-        EventReciver.ButtonClicked -= MoveRight;
+        EventReceiver.ButtonClicked += MoveRight;
     }
     
     //============================player Controll==============================
@@ -84,7 +72,7 @@ public class PlayerController : MonoBehaviour
 
         if (isBuiltIn) builtInAimator.SetBool("Idle", true);
         else customAnimator.ChangeAnimation("Idle");
-        EventReciver.CallPlayerRise();
+        EventReceiver.CallPlayerRise();
     }
 
     //============================End Scene Move===============================
@@ -96,6 +84,12 @@ public class PlayerController : MonoBehaviour
         rigidbody2d.velocity = Vector2.right * playerLastSpeed;
         if (isBuiltIn) builtInAimator.SetBool("Idle", true);
         else customAnimator.ChangeAnimation("Idle");
+
+        //delegate unchain
+        TouchEventGenerator.Inst.touchBegan[0] -= Jump;
+        TouchEventGenerator.Inst.touchBegan[0] -= Run;
+
+        EventReceiver.ButtonClicked -= MoveRight;
     }
 
     //===========================platform & obstacle===========================
@@ -118,7 +112,7 @@ public class PlayerController : MonoBehaviour
             isFall = true;
             collision.enabled = false;
 
-            EventReciver.CallPlayerFall();
+            EventReceiver.CallPlayerFall();
 
             if (isBuiltIn)
             {

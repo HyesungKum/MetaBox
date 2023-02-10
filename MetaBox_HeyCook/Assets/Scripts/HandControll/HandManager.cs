@@ -10,8 +10,10 @@ public class HandManager : MonoBehaviour
     [Header("[Touch Vfx Prefabs]")]
     [SerializeField] GameObject TouchVfx;
 
-    [Header("[Current Handling Ingred]")]
+    [Header("[Setting]")]
     [SerializeField] bool TitleScene;
+
+    [Header("[Current Handling Ingred]")]
     [SerializeField] Ingredient[] touchedIngred;
 
     //===================================Table Controll=============================
@@ -127,6 +129,7 @@ public class HandManager : MonoBehaviour
         if (!hit || !hit.transform.CompareTag("Table")) return;
 
         hit.collider.gameObject.TryGetComponent(out kitchenTable);
+
         kitchenTable.Touching();
     }
     private void OnSlicingTable(int index, Vector3 pos)
