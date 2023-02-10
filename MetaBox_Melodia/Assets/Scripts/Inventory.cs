@@ -60,6 +60,7 @@ public class Inventory : MonoBehaviour
             usedNoteList.Clear();
         }
 
+        PlayableNote.myDelegatePlayableNote = null;
         generatePlayableNote();
     }
 
@@ -68,7 +69,6 @@ public class Inventory : MonoBehaviour
     {
         playableNoteList.Clear();
         usedNoteList.Clear();
-
     }
 
 
@@ -82,12 +82,7 @@ public class Inventory : MonoBehaviour
             GameObject newNote = PoolCp.Inst.BringObjectCp(playableNote);
 
             newNote.transform.position = new Vector2(xPos, this.transform.position.y - 0.2f);
-
-            newNote.transform.SetParent(this.transform);
-
-            newNote.TryGetComponent<Collider2D>(out Collider2D myCollider);
-            myCollider.enabled = true;
-
+            PlayableNote.myDelegatePlayableNote += StatusPlayableNote;
             playableNoteList.Add(newNote);
 
             xPos += 2f;
@@ -95,39 +90,17 @@ public class Inventory : MonoBehaviour
     }
 
 
-    void CheckHowManyNotes()
+    public void StatusPlayableNote(GameObject note, bool destory)
     {
+        playableNoteList.Remove(note);
+        usedNoteList.Add(note);
+
+        if(destory)PoolCp.Inst.DestoryObjectCp(note);
+
+
         if (playableNoteList.Count <= 0)
         {
             GameManager.Inst.UpdateCurProcess(GameStatus.NoMorePlayableNote);
         }
     }
-
-
-    public void DestoyedPlayableNote(GameObject note)
-    {
-        playableNoteList.Remove(note);
-        usedNoteList.Add(note);
-
-        PoolCp.Inst.DestoryObjectCp(note);
-
-
-        CheckHowManyNotes();
-        note.transform.SetParent(null);
-    }
-
-    public void UseNote(GameObject note)
-    {
-        playableNoteList.Remove(note);
-        usedNoteList.Add(note);
-
-
-
-        CheckHowManyNotes();
-    }
-
-
-
-
-
 }

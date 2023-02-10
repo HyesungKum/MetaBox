@@ -40,13 +40,20 @@ public class SoundManager : MonoBehaviour
 
     public bool BGMMute { get; private set; } = false;
     public bool SFXMute { get; private set; } = false;
+
     private void Awake()
     {
+        if (instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        instance = this;
+
+
         Application.targetFrameRate = 60;
-        if (FindObjectOfType<SoundManager>().gameObject != this.gameObject) Destroy(this.gameObject);
         DontDestroyOnLoad(this.gameObject);
         AddButtonListener();
-
     }
 
     #region Button

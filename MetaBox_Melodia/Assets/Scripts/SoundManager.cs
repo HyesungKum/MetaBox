@@ -54,13 +54,14 @@ public class SoundManager : MonoBehaviour
     void Awake()
     {
         //==============================================
-        if (instance == null)
-            instance = this;
-
-        else if (instance != this)
+        if (instance != null)
+        {
             Destroy(gameObject);
+            return;
+        }
+        instance = this;
 
-        DontDestroyOnLoad(instance.gameObject);
+        DontDestroyOnLoad(this.gameObject);
         //==============================================
 
         Option.myDelegateAudioControl = AudioVolumeControl;

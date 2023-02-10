@@ -33,7 +33,7 @@ public class Police : MonoBehaviour
         isMoving = false;  //If police change direction while moving, terminate the previous coroutine.
         if (movepoint.x >= this.transform.position.x) this.transform.localScale = rightFlip;
         else this.transform.localScale = leftFlip;
-        movepoint.y += circleArea.offset.y;
+        movepoint.y -= circleArea.offset.y;
         StartCoroutine(_Move(movepoint));
     }
 

@@ -160,6 +160,7 @@ public class MusicSheet : MonoBehaviour
             // if code runs in unity editor, ===========================
 
 
+
             if (emptyNoteIdx.Contains(idx))
             {
                 qNoteList.Add(newNote);
@@ -179,12 +180,8 @@ public class MusicSheet : MonoBehaviour
 
 
     // check if playable note is match with Qnote
-    public void CheckPlayableNotePos(Transform target)
+    public void CheckPlayableNotePos(PlayableNote target)
     {
-        //// get note's script
-        target.TryGetComponent<PlayableNote>(out PlayableNote myPlayableNote);
-
-
         // check if playable note touched Qnote
         foreach (GameObject note in qNoteList)
         {
@@ -195,7 +192,7 @@ public class MusicSheet : MonoBehaviour
                 {
 
                     // move playable note torwards to Qnote
-                    myPlayableNote.MoveNote(note.transform.position, 3f);
+                    target.MoveNote(note.transform.position, 3f);
 
                     // remove Qnote from list
                     qNoteList.Remove(note);
@@ -215,7 +212,7 @@ public class MusicSheet : MonoBehaviour
                     }
 
                     // if Qnote remains more than 0
-                    myPlayableNote.UseNote();
+                    target.UseNote();
 
                     return;
                 }
@@ -231,11 +228,11 @@ public class MusicSheet : MonoBehaviour
 
 
         // is not touched Qnote, destroy it. 
-        myPlayableNote.DestroyNote();
+        target.DestroyNote();
     }
 
 
-    void isThisTouchedSoundLine(Transform target)
+    void isThisTouchedSoundLine(PlayableNote target)
     {
         float closestDistance = float.MaxValue;
         Transform closestSoundLine = null;

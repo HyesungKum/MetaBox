@@ -1,9 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class TouchManager : MonoBehaviour
 {
@@ -17,8 +13,7 @@ public class TouchManager : MonoBehaviour
 
     RaycastHit2D hitPoint2D;
 
-
-    private void Update()
+    void Update()
     {
         if (Input.touchCount <= 0)
             return;

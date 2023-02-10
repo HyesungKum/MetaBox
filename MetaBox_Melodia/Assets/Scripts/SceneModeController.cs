@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+///*ObservedValue*/ health = new ObservedValue(100);
+//health.OnValueChanged += () => { if (health.Value <= 0) Die(); };
 public enum SceneMode
 {
     StartScene,

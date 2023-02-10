@@ -1,44 +1,23 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
 public class PlayableNote : MonoBehaviour
 {
-    public delegate void DelegatePlayableNote(GameObject myPos);
+    public delegate void DelegatePlayableNote(GameObject myPos, bool destory);
     public static DelegatePlayableNote myDelegatePlayableNote;
 
+    [SerializeField] CapsuleCollider2D myCollider = null;
 
-    bool isMoving = false;
     float movingSpeed;
 
     Vector2 targetPos;
     Vector2 originPos;
 
-    Inventory myInventory;
-
-
-    private void Start()
+    private void OnEnable()
     {
-        myInventory = this.GetComponentInParent<Inventory>();
+        myCollider.enabled = true;
     }
-
-
-    private void Update()
-    {
-        if (isMoving)
-        {
-            this.transform.position = Vector2.MoveTowards(this.transform.position, targetPos, Time.deltaTime * movingSpeed);
-
-
-            if (Vector2.Distance(this.transform.position, targetPos) <= 0.05f)
-            {
-
-                isMoving = false;
-            }
-        }
-    }
-
 
     public void StartToMove()
     {
@@ -46,25 +25,35 @@ public class PlayableNote : MonoBehaviour
     }
 
 
-
     public void MoveNote(Vector3 target, float speed)
     {
         movingSpeed = speed;
-        isMoving = true;
         targetPos = target;
+        StartCoroutine(nameof(Move));
     }
 
+    IEnumerator Move()
+    {
+        while (true)
+        {
+            this.transform.position = Vector2.MoveTowards(this.transform.position, targetPos, Time.deltaTime * movingSpeed);
+
+            if (Vector2.Distance(this.transform.position, targetPos) <= 0.05f) yield break;
+            yield return null;
+        }
+        
+    }
 
     // destroy note! 
     public void DestroyNote()
     {
-        myInventory.DestoyedPlayableNote(this.gameObject);
+        myDelegatePlayableNote(this.gameObject, true);
     }
       
     // use note!
     public void UseNote()
     {
-        myInventory.UseNote(this.gameObject);
+        myDelegatePlayableNote(this.gameObject, false);
     }
 
 
@@ -76,13 +65,12 @@ public class PlayableNote : MonoBehaviour
         if (hit && hit.transform.gameObject.layer == 7)
         {
             hit.transform.TryGetComponent<MusicSheet>(out MusicSheet landingPoint);
-            landingPoint.CheckPlayableNotePos(this.gameObject.transform);
+            landingPoint.CheckPlayableNotePos(this);
             return;
         }
 
 
         transform.position = originPos;
-        this.TryGetComponent<Collider2D>(out Collider2D myCollider);
         myCollider.enabled = true;
 
     }

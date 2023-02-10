@@ -55,9 +55,7 @@ public class GameManager : DataLoader
     bool isGameStart = false;
     bool isGameCleared = false;
     bool isStageCleared = false;
-
     bool isMusicPlaying = false;
-
     bool isPaused = false;
 
 
@@ -96,7 +94,7 @@ public class GameManager : DataLoader
 
     private void Awake()
     {
-        myDelegateGameStatus = UpdateGameStatus;
+        myDelegateGameStatus += UpdateGameStatus;
     }
 
 
@@ -279,8 +277,6 @@ public class GameManager : DataLoader
     }
 
 
-
-
     // broadcasting current game status 
     void UpdateGameStatus(GameStatus targetStatus)
     {
@@ -414,23 +410,38 @@ public class GameManager : DataLoader
 
             case SceneMode.NormalMode:
                 {
-                    //depends on mode
-                    //countDown = 180f;
+                    stagePlayTime = 180f;
+                    myCoolTime = 15;
+
+                    if (MyStageData.Count == 0)
+                    {
+                        GetStageInfo("EasyMode");
+                    }
                 }
                 break;
 
             case SceneMode.HardMode:
                 {
-                    //depends on mode
-                    //countDown = 180f;
+                    stagePlayTime = 180f;
+                    myCoolTime = 15;
+
+                    if (MyStageData.Count == 0)
+                    {
+                        GetStageInfo("EasyMode");
+                    }
 
                 }
                 break;
 
             case SceneMode.ExtremeMode:
                 {
-                    //depends on mode
-                    //countDown = 180f;
+                    stagePlayTime = 180f;
+                    myCoolTime = 15;
+
+                    if (MyStageData.Count == 0)
+                    {
+                        GetStageInfo("EasyMode");
+                    }
 
                 }
                 break;
