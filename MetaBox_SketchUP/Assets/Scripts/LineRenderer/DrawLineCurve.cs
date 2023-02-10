@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using static UnityEngine.ParticleSystem;
 
 public class DrawLineCurve : MonoBehaviour
 {
@@ -20,10 +21,12 @@ public class DrawLineCurve : MonoBehaviour
     [Header("[Clear Draw]")]
     [SerializeField] GameObject choiceWordPanel = null;
     [SerializeField] GameObject clearAnimation = null;
-    [SerializeField] private int answerButtonIndex;
     [SerializeField] private int clearCount;
 
-    public int AnswerButtonIndex { get { return answerButtonIndex; } set { answerButtonIndex = value; } }
+    [SerializeField] GameObject particles = null;
+
+    GameObject instParticles = null;
+
     public int ClearCount { get { return clearCount; } set { clearCount = value; } }
 
 
@@ -59,6 +62,7 @@ public class DrawLineCurve : MonoBehaviour
     {
         mainCam = Camera.main;
         lineStack = new Stack<GameObject>();
+        InGamePanelSet.Inst.LineColorAndSizeChange(false);
         choiceWordPanel.gameObject.SetActive(false);
     }
 
@@ -201,7 +205,11 @@ public class DrawLineCurve : MonoBehaviour
 
             if (hitObjCheck == prevObj)
             {
+                instParticles = ObjectPoolCP.PoolCp.Inst.BringObjectCp(particles);
+                Debug.Log("instParticles :  " + instParticles);
+                instParticles.transform.position = hitInfo.transform.position;
                 lineStack.Push(currentLine);
+
                 //Debug.Log("(prevObj) Starck Count : " + lineStack.Count);
             }
             else if (hitObjCheck == nextObj)
@@ -211,11 +219,11 @@ public class DrawLineCurve : MonoBehaviour
             }
         }
 
-        if (linerender.GetPosition(0) == linerender.GetPosition(1))
-        {
-            Debug.Log(" 삭제 함 ?? ");
-            DestroyLine();
-        }
+        //if (linerender.GetPosition(0) == linerender.GetPosition(1))
+        //{
+        //    Debug.Log(" 삭제 함 ?? ");
+        //    DestroyLine();
+        //}
 
         ClearCheck();
     }
@@ -227,9 +235,13 @@ public class DrawLineCurve : MonoBehaviour
         {
             Debug.Log("너가 이겼다 @!!");
             clearAnimaition.StartCoroutine(clearAnimaition.Moving());
+            checkObj.transform.gameObject.SetActive(false);
             revertBut.transform.gameObject.SetActive(false);
             colorPanel.transform.gameObject.SetActive(false);
-            checkObj.transform.gameObject.SetActive(false);
+            lineSizeChange.transform.gameObject.SetActive(false);
+            
+            // 라인렌더러 다 삭제 하기
+
             choiceWordPanel.gameObject.SetActive(true);
         }
         else if (lineStack.Count > clearCount)
@@ -244,12 +256,18 @@ public class DrawLineCurve : MonoBehaviour
         // === SetParent 빌드 할때 꼭 빼자 ===
         currentLine.transform.SetParent(lineClonePos);
         currentLine.TryGetComponent<LineRender>(out linerender);
-       
 
         GetColor();
         SetLineSize();
         linerender.SetColor(startColor);
         linerender.SetLineSize(lineSizeValue);
+    }
+
+    void InstPrticle()
+    {
+        Debug.Log("파티클 만들어졌나?");
+        instParticles = ObjectPoolCP.PoolCp.Inst.BringObjectCp(particles);
+        instParticles.transform.SetParent(lineClonePos);
     }
 
     void OnClickRevertBut()
@@ -268,6 +286,8 @@ public class DrawLineCurve : MonoBehaviour
     {
         ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(currentLine);
     }
+
+    
 
     RaycastHit2D RayCheck()
     {
@@ -296,9 +316,9 @@ public class DrawLineCurve : MonoBehaviour
 
         if (colorPanel.GetColor == new Color(0, 0, 0, 0))
         {
-            float r = 0.1997152f;
-            float g = 0.8301887f;
-            float b = 0.7776833f;
+            float r = 0.9411765f;
+            float g = 0.9019608f;
+            float b = 0.2156863f;
             float a = 1f;
             startColor = new Color(r, g, b, a);
             //Debug.Log("## colorPanel.GetColor : " + colorPanel.GetColor);

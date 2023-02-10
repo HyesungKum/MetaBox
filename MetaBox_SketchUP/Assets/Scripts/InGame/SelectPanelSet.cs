@@ -106,6 +106,7 @@ public class SelectPanelSet : MonoBehaviour
         character.transform.localPosition = characterPos;
         InGamePanelSet.Inst.OneBrushPlayPanelSet(false);
         InGamePanelSet.Inst.InGameSet(false);
+        InGamePanelSet.Inst.LineColorAndSizeChange(false);
         ButAllSet();
     }
 }

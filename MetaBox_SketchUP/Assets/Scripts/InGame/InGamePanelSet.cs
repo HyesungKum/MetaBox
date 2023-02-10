@@ -52,11 +52,11 @@ public class InGamePanelSet : MonoBehaviour
     [SerializeField] Button resumeBut = null;
 
     [Header("[Wait Time Img]")]
-    [SerializeField] TextMeshProUGUI startWaitTime = null;
     [SerializeField] GameObject waitTimeObjs = null;
 
     [Header("[Timer Text]")]
     [SerializeField] TextMeshProUGUI playTimeText = null;
+    [SerializeField] GameObject clockPrefab = null;
 
     [Header("[Character Move]")]
     [SerializeField] GameObject characterMove = null;
@@ -65,18 +65,16 @@ public class InGamePanelSet : MonoBehaviour
     WaitForSeconds waitOnSceonds = null;
     #endregion
 
+    GameObject instClock = null;
+
     // === wait 3 seconds ===
-    //float waitTime = 3f;
     float waitTime = 3f;
     bool wait = false;
 
-    // === play time total 10 seconds === 
-    private float playTime = 600;
-    public float PlayTime
-    { get { return playTime; } set { playTime = value; } }
+    // === One Stage play time total 2 seconds === 
+    float seconds = 60;
+    int minute = 1;
 
-
-    float curTime = 0;
     // === test ===
     //float playTime = 6;
 
@@ -90,13 +88,13 @@ public class InGamePanelSet : MonoBehaviour
 
         Time.timeScale = 1;
         // === changed (true) ===
-        startWaitTime.gameObject.SetActive(false);
         waitTimeObjs.gameObject.SetActive(true);
         StartCoroutine(CountDowns());
         playTimeText.gameObject.SetActive(false);
 
         // === changed (false) ===
         FirstSet(false);
+        optionBut.gameObject.SetActive(false);
         OneBrushPlayPanelSet(false);
         //ClearPanelSet(false);
 
@@ -124,10 +122,11 @@ public class InGamePanelSet : MonoBehaviour
     {
         CountDown countDown = null;
         waitTimeObjs.TryGetComponent<CountDown>(out countDown);
-         
-        int waitTime = 3;
 
-        for(int i = waitTime; i > 0; i --)
+        //int waitTime = 3;
+        int waitTime = 1;
+
+        for (int i = waitTime; i > 0; i--)
         {
             countDown.ShowWaitTime(waitTime);
             waitTime--;
@@ -135,33 +134,39 @@ public class InGamePanelSet : MonoBehaviour
         }
 
         waitTimeObjs.gameObject.SetActive(false);
-        startWaitTime.gameObject.SetActive(true);
-        startWaitTime.text = "Go";
         yield return waitHalf;
         FirstSet(true);
+        optionBut.gameObject.SetActive(true);
         playTimeText.gameObject.SetActive(true);
     }
 
-
     void PlayTimeDown()
     {
-        startWaitTime.gameObject.SetActive(false);
+        seconds -= 1 * Time.deltaTime;
+        playTimeText.text = string.Format("{0:D2} : {1:D2}", minute, (int)seconds);
 
-        playTime -= 1 * Time.deltaTime;
-        curTime = playTime;
-
-        playTimeText.text = $" Time : {Mathf.Round(playTime).ToString()}";
-
-        if (Mathf.Round(playTime) <= 0)
+        if ((int)seconds < 0)
         {
-            playTime = 0;
-            playTimeText.text = $" Time : {Mathf.Round(playTime).ToString()}";
+            seconds = 59;
+            minute -= 1;
+        }
+        //Debug.Log("minute : " + minute + "seconds: " + (int)seconds);
+        if (minute == 0 && (int)seconds == 30)
+        {
+            ObjectPoolCP.PoolCp.Inst.BringObjectCp(clockPrefab); // 여러개 생성 안되게 막기 코루틴으로 바꾸던가
+        }
+        if (minute == 0 && (int)seconds == 29)
+            ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(clockPrefab);
+        else if (minute == 0 && (int)seconds <= 0)
+        {
+            playTimeText.text = $"00 : 00";
             playTimeText.gameObject.SetActive(false);
             LosePanelSet(true);
         }
         else if (playTimeText.gameObject.active == false)
         {
-            playTime = 0;
+            seconds = 0;
+            minute = 0;
         }
     }
 
@@ -177,10 +182,7 @@ public class InGamePanelSet : MonoBehaviour
         LosePanelSet(false);
     }
 
-    public void SelectPanelSet(bool active)
-    {
-        selectPanel.gameObject.SetActive(active);
-    }
+    public void SelectPanelSet(bool active) => selectPanel.gameObject.SetActive(active);
 
     public void InGameSet(bool active) => closePlayOneBrush.gameObject.SetActive(active);
 

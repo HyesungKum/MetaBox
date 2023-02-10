@@ -1798,7 +1798,7 @@ LineRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_Positions:
   - {x: 1.4988296, y: 0.6841308, z: -10}
   - {x: 1.34646, y: 1.1763948, z: -10}
@@ -4134,10 +4134,14 @@ MonoBehaviour:
   choiceThreeButText: {fileID: 7470298760897887635}
   choiceFourButText: {fileID: 7470298761540534264}
   answerKeyWord: "\uC21C\uB85D"
+  koreanAnswerKeyWord: 
   animalOne: "\uBC14\uB2E4\uCF54\uB07C\uB9AC"
+  koreaAnimalOne: 
   animalTwo: "\uCF54\uB07C\uB9AC"
+  koreaAnimalTwo: 
   animalThree: "\uD1A0\uB07C"
-  AnimalDatsContainer: {fileID: 11400000, guid: 4980ca1c56abe7b48935e21c27c81bfb, type: 2}
+  koreaAnimalThree: 
+  AnimalDataContainer: {fileID: 0}
   animalDataList: []
 --- !u!1 &7470298759746501334
 GameObject:
@@ -4155,7 +4159,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7470298759746501335
 Transform:
   m_ObjectHideFlags: 0
@@ -4194,9 +4198,9 @@ MonoBehaviour:
   colorPanel: {fileID: 0}
   lineSizeChange: {fileID: 0}
   choiceWordPanel: {fileID: 7470298759701843288}
-  animation: {fileID: 5002248431883735097}
-  answerButtonIndex: 0
+  clearAnimation: {fileID: 0}
   clearCount: 5
+  particles: {fileID: 0}
   startNodeObj: {fileID: 0}
   endNodeObj: {fileID: 0}
   startPos: {x: 0, y: 0, z: 0}

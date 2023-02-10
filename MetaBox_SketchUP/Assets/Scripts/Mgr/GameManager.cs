@@ -36,11 +36,11 @@ public class GameManager : MonoBehaviour
     void CheckPlayTime()
     {
         float beforeTime = 0;
-        float checkTime = PlayerPlayTime - InGamePanelSet.Inst.PlayTime;
+        //float checkTime = PlayerPlayTime - InGamePanelSet.Inst.PlayTime;
 
-        if(checkTime < beforeTime)
-        {
-            Debug.Log("더 빨리 풀었습니다 !!");
-        }
+        //if(checkTime < beforeTime)
+        //{
+        //    Debug.Log("더 빨리 풀었습니다 !!");
+        //}
     }
 }

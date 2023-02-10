@@ -56,10 +56,10 @@ public class ChoicePanel : MonoBehaviour
             SoundManager.Inst.SelectPanelYesNameSFXPlay();
             //SoundManager.Inst.AnimalAudioPlay(index);
 
-            StartCoroutine(AudioPlay(index));
+            //StartCoroutine(AudioPlay(index));
             //SoundManager.Inst.AnimalAudioPlay(index);
             SoundManager.Inst.InGameBGMPlay();
-            this.gameObject.SetActive(false);
+            //this.gameObject.SetActive(false);
         }
         else
         {
