@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     public CallBackFunction gameClearRecord = null; //When the game is cleared, records are updated in the DB.
     public CallBackFunction playTimerEvent = null; //play time that changes every second is applied to the UI.
     public CallBackFunction penaltyEvent = null; //directing a penalty when arresting a citizen.
+    public CallBackFunction policeReset = null; //police animator set - idle
 
 
     [Header("Thief Control")]
@@ -154,6 +155,7 @@ public class GameManager : MonoBehaviour
     public void ReStart()
     {
         IsGaming = false;
+        policeReset?.Invoke();
         removeThief?.Invoke();
         PlayTime = FreezeData.playTime;
         CurStage = -1;

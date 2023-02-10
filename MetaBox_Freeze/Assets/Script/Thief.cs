@@ -19,7 +19,7 @@ public class Thief : MonoBehaviour
     [SerializeField] List<Animator> npsAnimator = null;
     [SerializeField] ParticleSystem hideEff = null;
 
-    Vector3 policeStation = new Vector3(7.6f, -1.2f, 0f);
+    Vector3 policeStation = new Vector3(7.6f, -2.4f, 0f);
 
     Police police = null;
     WaitUntil runnigTime = null;
@@ -50,7 +50,6 @@ public class Thief : MonoBehaviour
     {
         for (int i = 0; i < npcMode.Count; i++)
         {
-            npsAnimator[(int)myMode].SetTrigger("Exit");
             npcMode[i].SetActive(false);
         }
     }
@@ -65,7 +64,8 @@ public class Thief : MonoBehaviour
         if (wantedThief) myMode = Mode.Thief;
         else myMode = Mode.Citizen;
         npcMode[(int)myMode].SetActive(true);
-        
+        npsAnimator[(int)myMode].SetTrigger("Init");
+
 
         GameManager.Instance.openThief += OpenImg;
         GameManager.Instance.hideThief += Hide;

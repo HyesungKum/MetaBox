@@ -6,8 +6,8 @@ public class Police : MonoBehaviour
     [SerializeField] CircleCollider2D circleArea = null;
     [SerializeField] Animator animatorPC = null;
     
-    float playerSpeed;
-    float playerArea;
+    float playerSpeed = 0;
+    float playerArea = 0;
     bool isMoving = false;
     Vector3 rightFlip = new Vector3(-1, 1, 1);
     Vector3 leftFlip = new Vector3(1, 1, 1);
@@ -16,6 +16,7 @@ public class Police : MonoBehaviour
     {
         if(circleArea == null) this.gameObject.TryGetComponent<CircleCollider2D>(out circleArea);
         GameManager.Instance.freezeDataSetting = Setting;
+        GameManager.Instance.policeReset = () => animatorPC.SetTrigger("Init");
     }
 
     void Setting()
@@ -25,6 +26,7 @@ public class Police : MonoBehaviour
         playerArea = GameManager.Instance.FreezeData.playerArea * 0.8f;
         circleArea.radius *= playerArea;
     }
+
 
     public void Move(Vector3 movepoint)
     {
