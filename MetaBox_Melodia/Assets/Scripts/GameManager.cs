@@ -394,6 +394,7 @@ public class GameManager : DataLoader
 
     void checkStageLevel()
     {
+        /*
         switch (SceneModeController.MySceneMode)
         {
             case SceneMode.EasyMode:
@@ -446,6 +447,7 @@ public class GameManager : DataLoader
                 }
                 break;
         }
+        */
 
     }
 
