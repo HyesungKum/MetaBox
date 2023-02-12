@@ -57,10 +57,6 @@ public class RandomChoiceKeyWord : MonoBehaviour
         animalDataList.Add(AnimalDataContainer.Rabbit);    // ≈‰≥¢
         #endregion
 
-        //Debug.Log("## " + animalDataList.Contains(AnswerKeyWord));
-        //Debug.Log("## " + animalDataList.Contains(AnimalOne));
-        //Debug.Log("## " + animalDataList.Contains(AnimalTwo));
-        //Debug.Log("## " + animalDataList.Contains(AnimalThree));
         if (animalDataList.Contains(AnswerKeyWord) == true &&
            animalDataList.Contains(AnimalOne) == true &&
            animalDataList.Contains(AnimalTwo) == true &&
@@ -84,11 +80,6 @@ public class RandomChoiceKeyWord : MonoBehaviour
         int randomFour = Random.Range(0, 4);
 
 
-        //Debug.Log("$$ random : " + random);
-        //Debug.Log("$$ randomtwo : " + randomtwo);
-        //Debug.Log("$$ randomThree : " + randomThree);
-        //Debug.Log("$$ RandomFour : " + randomFour);
-
         for (int i = 0; i < 4; i++)
         {
             if (random == randomtwo || random == randomThree || random == randomFour)
@@ -96,20 +87,10 @@ public class RandomChoiceKeyWord : MonoBehaviour
                 random -= 1;
                 if (random == -1) random += 4;
             }
-            else if (random == randomtwo && random != randomThree && random != randomFour)
-            {
-                random -= 2;
-                if (random == -1) random += 3;
-            }
             else if (randomtwo == random || randomtwo == randomThree || randomtwo == randomFour)
             {
                 randomtwo -= 1;
                 if (randomtwo == -1) randomtwo += 4;
-            }
-            else if (randomtwo == randomThree && randomtwo != random && randomtwo != randomFour)
-            {
-                randomtwo -= 2;
-                if (randomtwo == -1) randomtwo += 3;
             }
             else if (randomThree == random || randomThree == randomtwo || randomThree == randomFour)
             {
@@ -125,11 +106,20 @@ public class RandomChoiceKeyWord : MonoBehaviour
 
         if (random == randomtwo)
         {
-            Debug.Log("## random : " + random);
-            Debug.Log("## randomtwo : " + randomtwo);
-            Debug.Log("## randomThree : " + randomThree);
-            Debug.Log("## RandomFour : " + randomFour);
+            random -= 2;
+            if (random == -1) random += 3;
+            if (random == -2) random += 4;
         }
+        if (randomtwo == randomThree)
+        {
+            randomtwo -= 2;
+            if (randomtwo == -1) randomtwo += 3;
+        }
+
+        //Debug.Log("$$ random : " + random);
+        //Debug.Log("$$ randomtwo : " + randomtwo);
+        //Debug.Log("$$ randomThree : " + randomThree);
+        //Debug.Log("$$ RandomFour : " + randomFour);
 
         for (int i = 0; i < 4; i++)
         {
@@ -162,8 +152,6 @@ public class RandomChoiceKeyWord : MonoBehaviour
             else if (randomFour == 2) choiceFourButText.text = animalTwo;
             else choiceFourButText.text = animalThree;
         }
-
-
         #endregion
     }
 }

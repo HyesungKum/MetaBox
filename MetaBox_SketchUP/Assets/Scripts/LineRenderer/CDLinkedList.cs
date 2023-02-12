@@ -32,8 +32,8 @@ public class CDLinkedList
             CDNodeData newData = new CDNodeData();
             newData.nodePos = nodePos;
             newData.circlePointObj = cirPointObj;
-           //Debug.Log("newData.nodePos :  " + newData.nodePos);
-           //Debug.Log("newData.index :  " + newData.circlePointObj.name);
+            //Debug.Log("newData.nodePos :  " + newData.nodePos);
+            //Debug.Log("newData.index :  " + newData.circlePointObj.name);
 
             // 새 데이터를 담는 새 노드
             CDNode newNode = new CDNode();
@@ -97,21 +97,13 @@ public class CDLinkedList
                 if (temp.data.circlePointObj.name.CompareTo(nodeData.circlePointObj.name) == 0)
                 {
                     #region Debug
-                    //Debug.Log("temp SearchObj 1: " + temp.data.nodePos);
-                    //Debug.Log("temp SearchObj 2: " + temp.data.index);
-                    //Debug.Log("temp SearchObj 2: " + temp.data.circlePointObj.name);
-
-                    ///Debug.Log("temp check (next) 1: " + temp.next.data.nodePos);
-                    ///Debug.Log("temp check (next) 2: " + temp.next.data.index);  
-                    ///Debug.Log("temp check (next) 2: " + temp.next.data.circlePointObj.name);
-                    ///
-                    #endregion
                     //Debug.Log("SearchObj : " + temp.data.nodePos);
                     //Debug.Log("SearchObj : " + temp.data.circlePointObj.name);
                     //Debug.Log("SearchObj (next) : " + temp.next.data.nodePos);
                     //Debug.Log("SearchObj (next) : " + temp.next.data.circlePointObj.name);
                     //Debug.Log("SearchObj (prev) : " + temp.prev.data.nodePos);
                     //Debug.Log("SearchObj (prev) : " + temp.prev.data.circlePointObj.name);
+                    #endregion
                     return temp;
                 }
 
@@ -169,9 +161,8 @@ public class CDLinkedList
             while (temp != startNode)
             {
                 #region
-               //Debug.Log("temp.Pos 1 ## " + temp.data.nodePos);
-               //Debug.Log("temp.index 1 ## " + temp.data.index);
-               //Debug.Log("temp.index 1 ## " + temp.data.circlePointObj);
+                Debug.Log("temp.Pos 1 ## " + temp.data.nodePos);
+                Debug.Log("temp.index 1 ## " + temp.data.circlePointObj);
                 #endregion
                 temp = temp.prev;
             }
@@ -212,8 +203,6 @@ public class CDLinkedList
 
                 Debug.Log("temp.Pos (Backward) start -> end ## " + temp.data.nodePos);
                 Debug.Log("temp.Pos (Backward) start -> end ##" + temp.data.circlePointObj);
-
-
                 temp = temp.prev;
             }
         }

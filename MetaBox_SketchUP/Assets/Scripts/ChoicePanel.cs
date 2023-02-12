@@ -5,6 +5,9 @@ using System.Collections;
 
 public class ChoicePanel : MonoBehaviour
 {
+    [Header("[Obj]")]
+    [SerializeField] GameObject obj = null;
+
     [Header("[Button]")]
     [SerializeField] Button choiceOneBut = null;
     [SerializeField] Button choiceTwoBut = null;
@@ -17,13 +20,11 @@ public class ChoicePanel : MonoBehaviour
     TextMeshProUGUI butThreeText = null;
     TextMeshProUGUI butFourText = null;
 
-    //[Header("[Answer Korean]")]
-    private string answers;
-
     [Header("[Audio Index]")]
     [SerializeField] private int audioIndex = 0;
     public int AudioIndex { get { return audioIndex; }}
 
+    private string answers;
     public string Answers { get { return answers; } set { answers = value; } }
 
     RandomChoiceKeyWord choickKeyWord;
@@ -38,7 +39,7 @@ public class ChoicePanel : MonoBehaviour
 
     void Start()
     {
-        choiceOneBut.onClick.AddListener(delegate { CheckString(choiceOneBut, butOneText,AudioIndex ); });
+        choiceOneBut.onClick.AddListener(delegate { CheckString(choiceOneBut, butOneText, AudioIndex ); });
         choiceTwoBut.onClick.AddListener(delegate { CheckString(choiceTwoBut, butTwoText, AudioIndex); });
         choiceThreeBut.onClick.AddListener(delegate { CheckString(choiceThreeBut, butThreeText, AudioIndex); });
         choiceFourBut.onClick.AddListener(delegate { CheckString(choiceFourBut, butFourText, AudioIndex); });
@@ -47,31 +48,33 @@ public class ChoicePanel : MonoBehaviour
     void CheckString(Button butNum, TextMeshProUGUI butText , int index)
     {
         butNum.transform.GetChild(0).TryGetComponent<TextMeshProUGUI>(out butText);
-        //Debug.Log(" ## butText : " + butText.text);
 
         if (butText.text == Answers)
         {
-            Debug.Log("정답을 맞췄습니다 !!");
+            //Debug.Log("정답을 맞췄습니다 !!");
 
-            SoundManager.Inst.SelectPanelYesNameSFXPlay();
-            //SoundManager.Inst.AnimalAudioPlay(index);
-
-            //StartCoroutine(AudioPlay(index));
-            //SoundManager.Inst.AnimalAudioPlay(index);
+            //SoundManager.Inst.SelectPanelYesNameSFXPlay();
+            StartCoroutine(AudioPlay(index));
             SoundManager.Inst.InGameBGMPlay();
-            //this.gameObject.SetActive(false);
+            obj.transform.gameObject.SetActive(false);
+            ClearCountDown();
+            InGamePanelSet.Inst.SelectPanelSet(true);
         }
         else
-        {
             SoundManager.Inst.SelectPanelNoNameSFXPlay();
-        }
+    }
+
+    int ClearCountDown()
+    {
+        InGamePanelSet.Inst.ClearCount -= 1;
+        Debug.Log("InGamePanelSet.Inst.ClearCount : " + InGamePanelSet.Inst.ClearCount);
+        return InGamePanelSet.Inst.ClearCount;
     }
 
     IEnumerator AudioPlay(int index)
     {
-        //SoundManager.Inst.SelectPanelYesNameSFXPlay();
-        SoundManager.Inst.BGMPlayStop();
         SoundManager.Inst.AnimalAudioPlay(index);
+        SoundManager.Inst.BGMPlayStop();
         yield return waittime;
     }
 }

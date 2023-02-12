@@ -10,11 +10,7 @@ public class LineRender : MonoBehaviour
     Transform edge = null;
     public const float resolutio = 0.1f;
 
-    void Awake()
-    {
-        TryGetComponent<LineRenderer>(out lineRender);
-        //Debug.Log("lineRender.startWidth : " + lineRender.startWidth);
-    }
+    void Awake() => TryGetComponent<LineRenderer>(out lineRender);
 
     public void SetPosition(int index, Vector3 pos)
     {
@@ -29,15 +25,16 @@ public class LineRender : MonoBehaviour
 
     public int SetPositionCountDown() => lineRender.positionCount -= 1;
 
-    public int PositionDown(int index)
+    public void PositionDown(int index)
     {
+        if (lineRender.positionCount == index) return;
+
         lineRender.positionCount -= 1;
         if (lineRender.positionCount == index)
         {
             Debug.Log("positionCount : " + lineRender.positionCount);
-            return lineRender.positionCount;
+            return;
         }
-        return lineRender.positionCount = 1;
     }
 
     public void SetPositionCountDownforTwo()

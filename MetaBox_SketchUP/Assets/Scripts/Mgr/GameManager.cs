@@ -27,12 +27,6 @@ public class GameManager : MonoBehaviour
     public float PlayerPlayTime
     { get { return playerPlayTime; } set { playerPlayTime = value; }}
 
-
-    void Start()
-    {
-        
-    }
-
     void CheckPlayTime()
     {
         float beforeTime = 0;

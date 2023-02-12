@@ -15,22 +15,20 @@ public class LinePosCDLinkedList : MonoBehaviour
     public CDLinkedList.CDNodeData nodeData = null;
     public CDLinkedList.CDNode cdNode = null;
     int linePosCount;
-
-
+    int arryLength;
     void Awake()
     {
         TryGetComponent<LineRenderer>(out linePos);
-        linePosCount = linePos.positionCount;
+
         nodeData = new CDLinkedList.CDNodeData();
         cdNode = new CDLinkedList.CDNode();
         cdLinkedList = new CDLinkedList.CDLinkedListInst();
-        //Debug.Log("circlePointArry.Length : " + circlePointArry.Length);
-    }
+        linePosCount = linePos.positionCount;
+        arryLength = circlePointArry.Length;
 
-    void Start()
-    {
-        CDLinkedListInsets();
-        //cdLinkedList.TraversalForWard(circlePointArry[0]);
+        if (arryLength != linePosCount) return;
+        else
+            CDLinkedListInsets();
     }
 
     public CDLinkedList.CDLinkedListInst CDLinkedListInsets()
@@ -38,7 +36,7 @@ public class LinePosCDLinkedList : MonoBehaviour
         Vector3 nodePos;
 
         // 포지션 연결
-        for (int i = 0; i < linePosCount - 1; ++i)
+        for (int i = 0; i < linePosCount; ++i)
         {
             nodePos = linePos.GetPosition(i);
             nodeData.nodePos = nodePos;

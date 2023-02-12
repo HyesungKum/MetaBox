@@ -29,7 +29,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] AudioSource BGMAudioSurce = null;
     [SerializeField] public AudioClip titleAudioClip = null;
     [SerializeField] public AudioClip inGameAudioClip = null;
-    
+
     [Header("[Audio SFX]")]
     [SerializeField] public AudioSource SFXSource = null;
     [SerializeField] public AudioClip butSourceClip = null;
@@ -108,7 +108,6 @@ public class SoundManager : MonoBehaviour
         SFXSource.Play();
 
         SFXValue = ButSfxSlider.value;
-
         if (SFXValue == -40f)
             MyAudioMixer.SetFloat("SFX", -80);
         else
@@ -118,7 +117,16 @@ public class SoundManager : MonoBehaviour
     public void BGMPlayStop()
     {
         BGMAudioSurce.Stop();
-    }    
+    }
+
+    public void BGMValueDown()
+    {
+        if (BGMValue == -40f)
+            MyAudioMixer.SetFloat("BGM", -80);
+        else
+            MyAudioMixer.SetFloat("BGM", -10);
+        Debug.Log("BGMValue : " + BGMValue);
+    }
 
     public void TitleBGMPlay()
     {
@@ -131,7 +139,6 @@ public class SoundManager : MonoBehaviour
         BGMAudioSurce.clip = inGameAudioClip;
         BGMAudioSurce.Play();
     }
-
 
     public void ButtonSFXPlay()
     {
@@ -189,6 +196,7 @@ public class SoundManager : MonoBehaviour
 
     public void SelectPanelYesNameSFXPlay()
     {
+
         SFXSource.clip = sfxData.yesName;
         SFXSource.Play();
     }

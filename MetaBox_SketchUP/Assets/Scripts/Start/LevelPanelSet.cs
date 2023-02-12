@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class LevelPanelSet : MonoBehaviour
 {
@@ -13,22 +10,27 @@ public class LevelPanelSet : MonoBehaviour
     [SerializeField] Button levelfour = null;
     [SerializeField] Button closeBut = null;
 
+    private int levelIndex;
+    public int LevelIndex { get { return levelIndex; } set { levelIndex = value; } }
 
     void Awake()
     {
-        levelone.onClick.AddListener(delegate { OnClickLevel(SceneName.LevelOneScene); SoundManager.Inst.ButtonSFXPlay(); });
-        leveltwo.onClick.AddListener(delegate { OnClickLevel(SceneName.LevelTwoScene); SoundManager.Inst.ButtonSFXPlay(); });
-        levelthree.onClick.AddListener(delegate { OnClickLevel(SceneName.LevelThreeScene);  SoundManager.Inst.ButtonSFXPlay(); });
-        levelfour.onClick.AddListener(delegate { OnClickLevel(SceneName.LevelFourScene); SoundManager.Inst.ButtonSFXPlay(); });
+        levelone.onClick.AddListener(delegate { OnClickLevel(1); SoundManager.Inst.ButtonSFXPlay(); });
+        leveltwo.onClick.AddListener(delegate { OnClickLevel(2); SoundManager.Inst.ButtonSFXPlay(); });
+        levelthree.onClick.AddListener(delegate { OnClickLevel(3);  SoundManager.Inst.ButtonSFXPlay(); });
+        levelfour.onClick.AddListener(delegate { OnClickLevel(4); SoundManager.Inst.ButtonSFXPlay(); });
 
         // === close button set ===
         closeBut.onClick.AddListener(delegate { OnClickCloseBut(); SoundManager.Inst.ButtonSFXPlay(); });
     }
 
-    void OnClickLevel(int sceneIndex)
+    public int OnClickLevel(int Index)
     {
-        StartSceneManager.Inst.MoveScene(sceneIndex);
+        LevelIndex = Index;
+        //Debug.Log("LevelIndex : " + LevelIndex);
+        StartSceneManager.Inst.MoveScene(SceneName.InGameScene);
         SoundManager.Inst.InGameBGMPlay();
+        return LevelIndex;
     }
 
     public void OnClickCloseBut()

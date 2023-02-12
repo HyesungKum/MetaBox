@@ -1,8 +1,7 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class InGamePanelSet : MonoBehaviour
@@ -67,19 +66,15 @@ public class InGamePanelSet : MonoBehaviour
 
     GameObject instClock = null;
 
-    // === wait 3 seconds ===
-    float waitTime = 3f;
-    bool wait = false;
+    // === One Level play time total 10 seconds === 
+    float seconds;
+    int minute;
 
-    // === One Stage play time total 2 seconds === 
-    float seconds = 60;
-    int minute = 1;
-
-    // === test ===
-    //float playTime = 6;
+    // === ClearCount ===
+    private int clearCount = 3;
+    public int ClearCount { get { return clearCount; } set { clearCount = value; } }
 
     bool isOptionPanelOpen = false;
-    bool isTimeStop = false;
 
     void Awake()
     {
@@ -87,6 +82,10 @@ public class InGamePanelSet : MonoBehaviour
         waitOnSceonds = new WaitForSeconds(1f);
 
         Time.timeScale = 1;
+
+        minute = 9;
+        seconds = 60;
+
         // === changed (true) ===
         waitTimeObjs.gameObject.SetActive(true);
         StartCoroutine(CountDowns());
@@ -96,15 +95,14 @@ public class InGamePanelSet : MonoBehaviour
         FirstSet(false);
         optionBut.gameObject.SetActive(false);
         OneBrushPlayPanelSet(false);
-        //ClearPanelSet(false);
 
         // === button event Set ===
         #region
         loseReStartBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.GameLoseSFXPlay(); });
         winReStartBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.GameClearSFXPlay(); });
+        quitBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.ButtonSFXPlay(); });
         optionBut.onClick.AddListener(delegate { OnClickOptionBut(); SoundManager.Inst.ButtonSFXPlay(); });
         resumeBut.onClick.AddListener(delegate { OnClickOptionBut(); SoundManager.Inst.ButtonSFXPlay(); });
-        quitBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.ButtonSFXPlay(); });
         #endregion
     }
 
@@ -123,9 +121,7 @@ public class InGamePanelSet : MonoBehaviour
         CountDown countDown = null;
         waitTimeObjs.TryGetComponent<CountDown>(out countDown);
 
-        //int waitTime = 3;
-        int waitTime = 1;
-
+        int waitTime = 3;
         for (int i = waitTime; i > 0; i--)
         {
             countDown.ShowWaitTime(waitTime);
@@ -150,23 +146,29 @@ public class InGamePanelSet : MonoBehaviour
             seconds = 59;
             minute -= 1;
         }
-        //Debug.Log("minute : " + minute + "seconds: " + (int)seconds);
+
         if (minute == 0 && (int)seconds == 30)
         {
-            ObjectPoolCP.PoolCp.Inst.BringObjectCp(clockPrefab); // 여러개 생성 안되게 막기 코루틴으로 바꾸던가
+            if (instClock == null)
+                instClock = ObjectPoolCP.PoolCp.Inst.BringObjectCp(clockPrefab); // 여러개 생성 안되게 막기 코루틴으로 바꾸던가
         }
         if (minute == 0 && (int)seconds == 29)
-            ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(clockPrefab);
+            ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(instClock);
+
+        if(clearCount == 0)
+        {
+            Time.timeScale = 0;
+            LineColorAndSizeChange(false);
+            OneBrushPlayPanelSet(false);
+            WinPanelSet(true);
+        }
         else if (minute == 0 && (int)seconds <= 0)
         {
             playTimeText.text = $"00 : 00";
             playTimeText.gameObject.SetActive(false);
+            OneBrushPlayPanelSet(false);
+            LineColorAndSizeChange(false);
             LosePanelSet(true);
-        }
-        else if (playTimeText.gameObject.active == false)
-        {
-            seconds = 0;
-            minute = 0;
         }
     }
 
@@ -198,7 +200,7 @@ public class InGamePanelSet : MonoBehaviour
 
     public void LineColorAndSizeChange(bool active) => lineChangedPanel.gameObject.SetActive(active);
 
-    void OnClickGoStartPanel() => SceneManager.LoadScene(SceneName.StartScene);
+    public void OnClickGoStartPanel() => SceneManager.LoadScene(SceneName.StartScene);
 
     public void OnClickOptionBut()
     {
@@ -206,13 +208,16 @@ public class InGamePanelSet : MonoBehaviour
         {
             InGameOptionSet(true);
             OneBrushPlayPanelSet(false);
+            //SelectPanelSet(false);
             InGameSet(false);
+            LineColorAndSizeChange(false);
             Time.timeScale = 0;
             isOptionPanelOpen = true;
         }
         else if (isOptionPanelOpen == true)
         {
             InGameOptionSet(false);
+
             if (selectPanel.active == true)
             {
                 OneBrushPlayPanelSet(false);
@@ -220,6 +225,7 @@ public class InGamePanelSet : MonoBehaviour
             else
             {
                 OneBrushPlayPanelSet(true);
+                LineColorAndSizeChange(true);
                 InGameSet(true);
             }
 
