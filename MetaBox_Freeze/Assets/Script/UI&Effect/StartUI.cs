@@ -3,6 +3,8 @@ using UnityEngine.UI;
 
 public class StartUI : MonoBehaviour
 {
+    public static int MyLevel { get; private set; } = 0;
+
     [Header("Panel Control")]
     [SerializeField] GameObject startPanel = null;
     [SerializeField] GameObject levelPanel = null;
@@ -47,22 +49,22 @@ public class StartUI : MonoBehaviour
 
     void OnClick_Easy()
     {
-        PlayerPrefs.SetInt("level", 1);
+        MyLevel = 1;
         fade.FadeOut();
     }
     void OnClick_Normal()
     {
-        PlayerPrefs.SetInt("level", 2);
+        MyLevel = 2;
         fade.FadeOut();
     }
     void OnClick_Hard()
     {
-        PlayerPrefs.SetInt("level", 3);
+        MyLevel = 3;
         fade.FadeOut();
     }
     void OnClick_Extreme()
     {
-        PlayerPrefs.SetInt("level", 4);
+        MyLevel = 4;
         fade.FadeOut();
     }
 }

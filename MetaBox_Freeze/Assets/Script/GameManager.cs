@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour
     {
         DataManager.Instance.LoadGameData();
         SoundManager.Instance.AddButtonListener();
-        LevelSetting(PlayerPrefs.GetInt("level"));
+        LevelSetting(StartUI.MyLevel);
         if (postPrefab == null) postPrefab = (GameObject)Resources.Load(nameof(postPrefab));
         wait1 = new WaitForSeconds(1f);
         waitWaveStart = new WaitForSeconds(4f);
