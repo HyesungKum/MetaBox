@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
@@ -41,6 +41,13 @@ public class SoundManager : MonoBehaviour
     public AnimalAudioData animalAudioData = null;
     public SFXData sfxData = null;
     private AudioClip animalAudioPlayClip = null;
+
+    [Header("[Touch Effect]")]
+    [SerializeField] GameObject butClickEffect = null;
+    GameObject InstButEffect = null;
+
+    private int levelIndex;
+    public int LevelIndex { get { return levelIndex; } set { levelIndex = value; } }
 
     private float bGMValue;
     private float sfxValue;
@@ -112,6 +119,12 @@ public class SoundManager : MonoBehaviour
             MyAudioMixer.SetFloat("SFX", -80);
         else
             MyAudioMixer.SetFloat("SFX", SFXValue);
+    }
+
+    public void ButtonEffect(Vector3 instTrsnsform)
+    {
+        InstButEffect = ObjectPoolCP.PoolCp.Inst.BringObjectCp(butClickEffect);
+        InstButEffect.transform.position = instTrsnsform;
     }
 
     public void BGMPlayStop()

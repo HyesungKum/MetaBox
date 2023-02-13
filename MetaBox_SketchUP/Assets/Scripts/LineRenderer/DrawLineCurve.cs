@@ -61,7 +61,7 @@ public class DrawLineCurve : MonoBehaviour
     {
         mainCam = Camera.main;
         lineStack = new Stack<GameObject>();
-        InGamePanelSet.Inst.LineColorAndSizeChange(false);
+        InGamePanelSet.Inst.LineColorAndSizeChange(true);
         colorPanel.gameObject.SetActive(true);
         lineSizeChange.gameObject.SetActive(true);
         choiceWordPanel.gameObject.SetActive(false);
@@ -72,7 +72,11 @@ public class DrawLineCurve : MonoBehaviour
         clearAnimation.TryGetComponent<ClearAnimation>(out clearAnimaition);
         checkObj.TryGetComponent<LinePosCDLinkedList>(out circleObj);
         circleObjCount = circleObj.circlePointArry.Length;
-        revertBut.onClick.AddListener(delegate { OnClickRevertBut(); });
+        revertBut.onClick.AddListener(delegate
+        {
+            OnClickRevertBut();
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(revertBut.transform.position);
+        });
     }
 
     void Update()
@@ -130,7 +134,7 @@ public class DrawLineCurve : MonoBehaviour
                 linerender.SetPosition(0, startPos); // 라인렌더러 포지션 셋팅 해주기
                 linerender.SetPosition(1, startPos); // 라인렌더러 2번째 포지션도 셋팅 해주기
             }
-            else
+            else if (startNodeObj != null && endNodeObj != null)
             {
                 InstLine();
                 //currentLine.transform.position = endNodeObj.transform.position;
@@ -171,17 +175,14 @@ public class DrawLineCurve : MonoBehaviour
                 linerender.SetPosition(1, chekcPos);
                 endNodeObj = nextObj;
             }
+            else if (hitInfo.collider.Equals("Collider"))
+            {
+                linerender.SetPosition(1, touchPos);
+                //Debug.Log("collider.Equals : Collider ");
+            }
             else if (hitObjCheck != prevObj && hitObjCheck != nextObj)
             {
-                if (hitInfo.collider.Equals("Collider"))
-                {
-                    linerender.SetPosition(1, chekcPos);
-                }
-                else
-                {
-                    //DestroyLine();
-                    //Debug.Log("삭제 함 ??");
-                }
+                //Debug.Log("hitObjCheck 다 같지 않을 경우 (Move)");
             }
             else
             {
@@ -199,31 +200,47 @@ public class DrawLineCurve : MonoBehaviour
             if (endNodeObj == prevObj && endNodeObj != nextObj)
             {
                 linerender.SetPosition(1, prevObj.transform.position);
+                InstPrticle(endNodeObj.transform.position);
                 lineStack.Push(currentLine);
                 //Debug.Log("(prevObj)Starck Count : " + lineStack.Count);
                 //Debug.Log("ClearCount : " + ClearCount);
                 SoundManager.Inst.ConnectLineSFXPlay(); // 효과음
-                instParticles = ObjectPoolCP.PoolCp.Inst.BringObjectCp(particles); // 임팩트 생성
-                instParticles.transform.position = endNodeObj.transform.position;
                 ClearCheck();
                 return;
             }
-            else if (endNodeObj == nextObj && endNodeObj != prevObj)
+            if (endNodeObj == nextObj && endNodeObj != prevObj)
             {
                 linerender.SetPosition(1, nextObj.transform.position);
+                InstPrticle(endNodeObj.transform.position);
                 lineStack.Push(currentLine);
                 //Debug.Log("(nextObj)Starck Count : " + lineStack.Count);
                 //Debug.Log("ClearCount : " + ClearCount);
                 SoundManager.Inst.ConnectLineSFXPlay(); // 효과음
-                instParticles = ObjectPoolCP.PoolCp.Inst.BringObjectCp(particles); // 임팩트 생성
-                instParticles.transform.position = endNodeObj.transform.position;
                 ClearCheck();
                 return;
             }
-            else
+            if (endNodeObj != nextObj && endNodeObj != prevObj)
             {
+                //Debug.Log("@@ 여기 불림 ??");
                 DestroyLine();
-            }  
+            }
+        }
+        if(linerender.GetPositionCount() == 2)
+        {
+            //Debug.Log("포지션이 2개 야??");
+            lineStack.Push(currentLine);
+            InstPrticle(endNodeObj.transform.position);
+            //Debug.Log("(포지션이 2개)Starck Count : " + lineStack.Count);
+        }
+        if (linerender.GetPosition(0) == linerender.GetPosition(1))
+        {
+            //Debug.Log("## 0 여기 불림 ??");
+            DestroyLine();
+        }
+        if(linerender.GetPositionCount() > 2)
+        {
+            //Debug.Log("## 포지션이 많아 ??");
+            DestroyLine();
         }
     }
 
@@ -232,7 +249,7 @@ public class DrawLineCurve : MonoBehaviour
         // ==== 승리 판정 ====
         if (lineStack.Count == ClearCount)
         {
-            Debug.Log("너가 이겼다 @!!");
+            //Debug.Log("너가 이겼다 @!!");
             clearAnimaition.StartCoroutine(clearAnimaition.Moving());
             ObjSetFalse();
 
@@ -246,8 +263,6 @@ public class DrawLineCurve : MonoBehaviour
             }
 
             lineStack.Clear(); // 스택 비우기
-
-            //Debug.Log("lineStack Clear : " + lineStack.Count);
         }
         else if (lineStack.Count > clearCount)
         {
@@ -276,11 +291,10 @@ public class DrawLineCurve : MonoBehaviour
         linerender.SetLineSize(lineSizeValue);
     }
 
-    void InstPrticle()
+    void InstPrticle(Vector3 instPos)
     {
-        //Debug.Log("파티클 만들어졌나?");
         instParticles = ObjectPoolCP.PoolCp.Inst.BringObjectCp(particles);
-        instParticles.transform.SetParent(lineClonePos);
+        instParticles.transform.position = instPos;
     }
 
     void OnClickRevertBut()
@@ -291,13 +305,15 @@ public class DrawLineCurve : MonoBehaviour
             return;
         }
         currentLine = lineStack.Pop();
-        Debug.Log("lineStack Pop : " + lineStack.Count); ;
+        //Debug.Log("lineStack Pop : " + lineStack.Count); ;
+        endNodeObj = startNodeObj;
         DestroyLine();
     }
 
     void DestroyLine()
     {
         ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(currentLine);
+        linerender.PosReset();
     }
 
     RaycastHit2D RayCheck()

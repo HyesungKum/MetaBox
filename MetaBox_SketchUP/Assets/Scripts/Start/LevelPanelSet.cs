@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
+
 
 public class LevelPanelSet : MonoBehaviour
 {
@@ -15,22 +17,37 @@ public class LevelPanelSet : MonoBehaviour
 
     void Awake()
     {
-        levelone.onClick.AddListener(delegate { OnClickLevel(1); SoundManager.Inst.ButtonSFXPlay(); });
-        leveltwo.onClick.AddListener(delegate { OnClickLevel(2); SoundManager.Inst.ButtonSFXPlay(); });
-        levelthree.onClick.AddListener(delegate { OnClickLevel(3);  SoundManager.Inst.ButtonSFXPlay(); });
-        levelfour.onClick.AddListener(delegate { OnClickLevel(4); SoundManager.Inst.ButtonSFXPlay(); });
+        #region Button Event Setting
+        levelone.onClick.AddListener(delegate { OnClickLevel(1); 
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(levelone.transform.position);
+        });
+
+        leveltwo.onClick.AddListener(delegate { OnClickLevel(2); 
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(leveltwo.transform.position);
+        });
+
+        levelthree.onClick.AddListener(delegate { OnClickLevel(3);  
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(levelthree.transform.position);
+        });
+
+        levelfour.onClick.AddListener(delegate { OnClickLevel(4); 
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(levelfour.transform.position);
+        });
 
         // === close button set ===
-        closeBut.onClick.AddListener(delegate { OnClickCloseBut(); SoundManager.Inst.ButtonSFXPlay(); });
+        closeBut.onClick.AddListener(delegate { OnClickCloseBut(); 
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(closeBut.transform.position);
+        });
+        #endregion
     }
 
-    public int OnClickLevel(int Index)
+    public int OnClickLevel(int index)
     {
-        LevelIndex = Index;
-        //Debug.Log("LevelIndex : " + LevelIndex);
+        SoundManager.Inst.LevelIndex = index;
         StartSceneManager.Inst.MoveScene(SceneName.InGameScene);
         SoundManager.Inst.InGameBGMPlay();
-        return LevelIndex;
+        //Debug.Log("LevelIndex : " + SoundManager.Inst.LevelIndex);
+        return SoundManager.Inst.LevelIndex;
     }
 
     public void OnClickCloseBut()

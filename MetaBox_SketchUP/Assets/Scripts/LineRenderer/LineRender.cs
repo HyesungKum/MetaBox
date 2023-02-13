@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class LineRender : MonoBehaviour
@@ -19,11 +18,20 @@ public class LineRender : MonoBehaviour
         lineRender.SetPosition(index, pos);
     }
 
-    public Vector3 GetPosition(int index) => lineRender.GetPosition(index);
+    public Vector3 GetPosition(int index)
+    {
+        lineRender.positionCount = 2;
+        return lineRender.GetPosition(index);
+    }
 
     public int GetPositionCount() => lineRender.positionCount;
 
     public int SetPositionCountDown() => lineRender.positionCount -= 1;
+
+    public void PosReset()
+    {
+        lineRender.positionCount = 0;
+    }
 
     public void PositionDown(int index)
     {

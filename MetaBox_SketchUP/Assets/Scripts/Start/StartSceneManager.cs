@@ -49,8 +49,8 @@ public class StartSceneManager : MonoBehaviour
         Screen.autorotateToLandscapeLeft = true;
         Screen.autorotateToLandscapeRight = true;
 
-        Production();
-        optionBackBut.onClick.AddListener(delegate { OnClickOptionClosebut(); SoundManager.Inst.ButtonSFXPlay(); });
+        optionBackBut.onClick.AddListener(delegate { OnClickOptionClosebut(); 
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(optionBackBut.transform.position); });
     }
 
     void Start()
@@ -60,6 +60,8 @@ public class StartSceneManager : MonoBehaviour
         LevelPanelSet(false);
         TutorialPanelSet(false);
         QuitPanelSet(false);
+
+        Production();
     }
 
     public void StartPanelSet(bool active) => startPanel.gameObject.SetActive(active);
@@ -82,8 +84,8 @@ public class StartSceneManager : MonoBehaviour
     IEnumerator ViewHallExtension()
     {
         ProductionSet(true);
-
         float timer = 0f;
+        Time.timeScale = 1;
 
         while (viewHall.transform.localScale.x <= 30)
         {

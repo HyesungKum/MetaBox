@@ -11,8 +11,13 @@ public class LineSizeChange : MonoBehaviour
 
     void Awake()
     {
-        thickLineBut.onClick.AddListener(delegate { GetThickLineSize(); SoundManager.Inst.ChangeLineAndColorSFXPlay(); });
-        thinLineBut.onClick.AddListener(delegate { GetThinLineButSize(); SoundManager.Inst.ChangeLineAndColorSFXPlay(); });
+        thickLineBut.onClick.AddListener(delegate { GetThickLineSize(); 
+            SoundManager.Inst.ChangeLineAndColorSFXPlay(); SoundManager.Inst.ButtonEffect(thickLineBut.transform.position);
+        });
+
+        thinLineBut.onClick.AddListener(delegate { GetThinLineButSize(); 
+            SoundManager.Inst.ChangeLineAndColorSFXPlay(); SoundManager.Inst.ButtonEffect(thinLineBut.transform.position);
+        });
     }
 
     float GetThickLineSize()

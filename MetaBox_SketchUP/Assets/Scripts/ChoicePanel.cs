@@ -52,8 +52,6 @@ public class ChoicePanel : MonoBehaviour
         if (butText.text == Answers)
         {
             //Debug.Log("정답을 맞췄습니다 !!");
-
-            //SoundManager.Inst.SelectPanelYesNameSFXPlay();
             StartCoroutine(AudioPlay(index));
             SoundManager.Inst.InGameBGMPlay();
             obj.transform.gameObject.SetActive(false);
@@ -67,14 +65,14 @@ public class ChoicePanel : MonoBehaviour
     int ClearCountDown()
     {
         InGamePanelSet.Inst.ClearCount -= 1;
-        Debug.Log("InGamePanelSet.Inst.ClearCount : " + InGamePanelSet.Inst.ClearCount);
         return InGamePanelSet.Inst.ClearCount;
     }
 
     IEnumerator AudioPlay(int index)
     {
         SoundManager.Inst.AnimalAudioPlay(index);
-        SoundManager.Inst.BGMPlayStop();
+        //SoundManager.Inst.BGMPlayStop();
+        SoundManager.Inst.BGMValueDown();
         yield return waittime;
     }
 }

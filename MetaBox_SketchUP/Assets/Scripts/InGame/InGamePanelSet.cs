@@ -60,15 +60,23 @@ public class InGamePanelSet : MonoBehaviour
     [Header("[Character Move]")]
     [SerializeField] GameObject characterMove = null;
 
+    [Header("[Game Clear Effect ]")]
+    [SerializeField] GameObject gameClearEffect = null;
+
+    // === One Level play time total 10 seconds === 
+    [Header("[Play Time Setting]")]
+    [SerializeField] private int minute;
+    [SerializeField] private float seconds;
+    public float Secondes { get { return seconds; } set { seconds = value; } }
+    public int Minute { get { return minute; } set { minute = value; } }
+
     WaitForSeconds waitHalf = null;
     WaitForSeconds waitOnSceonds = null;
     #endregion
 
     GameObject instClock = null;
+    GameObject instEffect = null;
 
-    // === One Level play time total 10 seconds === 
-    float seconds;
-    int minute;
 
     // === ClearCount ===
     private int clearCount = 3;
@@ -83,9 +91,6 @@ public class InGamePanelSet : MonoBehaviour
 
         Time.timeScale = 1;
 
-        minute = 9;
-        seconds = 60;
-
         // === changed (true) ===
         waitTimeObjs.gameObject.SetActive(true);
         StartCoroutine(CountDowns());
@@ -98,11 +103,35 @@ public class InGamePanelSet : MonoBehaviour
 
         // === button event Set ===
         #region
-        loseReStartBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.GameLoseSFXPlay(); });
-        winReStartBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.GameClearSFXPlay(); });
-        quitBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.ButtonSFXPlay(); });
-        optionBut.onClick.AddListener(delegate { OnClickOptionBut(); SoundManager.Inst.ButtonSFXPlay(); });
-        resumeBut.onClick.AddListener(delegate { OnClickOptionBut(); SoundManager.Inst.ButtonSFXPlay(); });
+        loseReStartBut.onClick.AddListener(delegate
+        {
+            OnClickGoStartPanel();
+            SoundManager.Inst.GameLoseSFXPlay(); SoundManager.Inst.ButtonEffect(loseReStartBut.transform.position);
+        });
+
+        winReStartBut.onClick.AddListener(delegate
+        {
+            OnClickGoStartPanel();
+            SoundManager.Inst.GameClearSFXPlay(); SoundManager.Inst.ButtonEffect(winReStartBut.transform.position);
+        });
+
+        quitBut.onClick.AddListener(delegate
+        {
+            OnClickGoStartPanel();
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(quitBut.transform.position);
+        });
+
+        optionBut.onClick.AddListener(delegate
+        {
+            OnClickOptionBut();
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(optionBut.transform.position);
+        });
+
+        resumeBut.onClick.AddListener(delegate
+        {
+            OnClickOptionBut();
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(resumeBut.transform.position);
+        });
         #endregion
     }
 
@@ -120,8 +149,8 @@ public class InGamePanelSet : MonoBehaviour
     {
         CountDown countDown = null;
         waitTimeObjs.TryGetComponent<CountDown>(out countDown);
-
-        int waitTime = 3;
+        // int waitTime = 3;
+        int waitTime = 1;
         for (int i = waitTime; i > 0; i--)
         {
             countDown.ShowWaitTime(waitTime);
@@ -139,36 +168,41 @@ public class InGamePanelSet : MonoBehaviour
     void PlayTimeDown()
     {
         seconds -= 1 * Time.deltaTime;
-        playTimeText.text = string.Format("{0:D2} : {1:D2}", minute, (int)seconds);
+        playTimeText.text = string.Format("{0:D2} : {1:D2}", Minute, (int)Secondes);
 
-        if ((int)seconds < 0)
+        if ((int)Secondes < 0)
         {
-            seconds = 59;
-            minute -= 1;
+            Secondes = 59;
+            Minute -= 1;
         }
 
-        if (minute == 0 && (int)seconds == 30)
+        if (Minute == 0 && (int)Secondes == 30)
         {
             if (instClock == null)
-                instClock = ObjectPoolCP.PoolCp.Inst.BringObjectCp(clockPrefab); // 여러개 생성 안되게 막기 코루틴으로 바꾸던가
+                instClock = ObjectPoolCP.PoolCp.Inst.BringObjectCp(clockPrefab);
         }
-        if (minute == 0 && (int)seconds == 29)
+
+        if (Minute == 0 && (int)Secondes == 29)
             ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(instClock);
 
-        if(clearCount == 0)
-        {
-            Time.timeScale = 0;
-            LineColorAndSizeChange(false);
-            OneBrushPlayPanelSet(false);
-            WinPanelSet(true);
-        }
-        else if (minute == 0 && (int)seconds <= 0)
+        else if (Minute == 0 && (int)Secondes <= 0)
         {
             playTimeText.text = $"00 : 00";
             playTimeText.gameObject.SetActive(false);
             OneBrushPlayPanelSet(false);
             LineColorAndSizeChange(false);
             LosePanelSet(true);
+        }
+
+        if (clearCount == 0)
+        {
+            Time.timeScale = 0;
+            LineColorAndSizeChange(false);
+            OneBrushPlayPanelSet(false);
+            WinPanelSet(true);
+
+            // if(instEffect == null)
+            //InstGameClearEffect();
         }
     }
 
@@ -182,6 +216,11 @@ public class InGamePanelSet : MonoBehaviour
         InGameOptionSet(false);
         WinPanelSet(false);
         LosePanelSet(false);
+    }
+
+    void InstGameClearEffect()
+    {
+        instEffect = ObjectPoolCP.PoolCp.Inst.BringObjectCp(gameClearEffect);
     }
 
     public void SelectPanelSet(bool active) => selectPanel.gameObject.SetActive(active);
@@ -200,7 +239,11 @@ public class InGamePanelSet : MonoBehaviour
 
     public void LineColorAndSizeChange(bool active) => lineChangedPanel.gameObject.SetActive(active);
 
-    public void OnClickGoStartPanel() => SceneManager.LoadScene(SceneName.StartScene);
+    public void OnClickGoStartPanel()
+    {
+        SceneManager.LoadScene(SceneName.StartScene);
+        SoundManager.Inst.TitleBGMPlay(); // 타이틀 BGM 바꿔주기
+    }
 
     public void OnClickOptionBut()
     {
@@ -217,6 +260,7 @@ public class InGamePanelSet : MonoBehaviour
         else if (isOptionPanelOpen == true)
         {
             InGameOptionSet(false);
+            LineColorAndSizeChange(true);
 
             if (selectPanel.active == true)
             {
@@ -225,7 +269,6 @@ public class InGamePanelSet : MonoBehaviour
             else
             {
                 OneBrushPlayPanelSet(true);
-                LineColorAndSizeChange(true);
                 InGameSet(true);
             }
 
