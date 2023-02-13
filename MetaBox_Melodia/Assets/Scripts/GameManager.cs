@@ -58,43 +58,27 @@ public class GameManager : DataLoader
     bool isMusicPlaying = false;
     bool isPaused = false;
 
-
-
-    [Header("Game Status Info")]
-    [SerializeField] int curStage = 1;
-    public int CurStage { get { return curStage; } set { curStage = value; } }
-
-    [SerializeField]
-    GameStatus curStatus;
-    public GameStatus CurStatus { get { return curStatus; } set { curStatus = value; } }
-
-
-
-
-    [Header("Play Time")]
-    [SerializeField] float myPlayableTime;
-    public float MyPlayableTime { get { return myPlayableTime; } }
-
-    [SerializeField] float stagePlayTime;
-
-
-
-
-    [SerializeField] float myCoolTime;
-    public float MyCoolTime { get { return myCoolTime; } }
-
-
-    [SerializeField] float countDown;
-
+    public GameData MelodiaData { get; private set; }
+    public List<StageData> StageDatas { get; private set; }
 
     static Dictionary<int, List<int>> myStageData = new();
     public Dictionary<int, List<int>> MyStageData { get { return myStageData; } }
 
 
+    public GameStatus CurStatus { get; set; } = GameStatus.Idle;
+
+    public int CurStage { get; private set; } = 1;
+    public float MyPlayableTime { get; private set; }
+    public float MyCoolTime { get; private set; }
+
 
     private void Awake()
     {
-        myDelegateGameStatus += UpdateGameStatus;
+        LoadGameData();
+        MelodiaData = FindGameDataByLevel(StartUI.Level);
+        StageDatas = FindStageDatasByStageGroup(MelodiaData.stageGroup);
+        SoundManager.Inst.LoadMusicData(StartUI.MySceneMode);
+        myDelegateGameStatus += UpdateGameStatus;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
     }
 
 
@@ -108,14 +92,13 @@ public class GameManager : DataLoader
     // receive game status 
     public void UpdateCurProcess(GameStatus targetStatus)
     {
-
         switch (targetStatus)
         {
             case GameStatus.Restart:
                 {
 
                     CurStage = 1;
-                    myPlayableTime = stagePlayTime;
+                    MyPlayableTime = MelodiaData.countDown;
 
                     myDelegateGameStatus(GameStatus.Restart);
                     UpdateCurProcess(GameStatus.Idle);
@@ -133,14 +116,15 @@ public class GameManager : DataLoader
 
                     checkStageLevel();
 
-                    myPlayableTime = stagePlayTime;
+                    MyPlayableTime = MelodiaData.countDown;
+                    MyCoolTime = MelodiaData.replayCooltime;
 
 
                     // let all know idle status 
                     myDelegateGameStatus(GameStatus.Idle);
 
                     // set current audio clip
-                    SoundManager.Inst.SetStageMusic(curStage, 1);
+                    SoundManager.Inst.SetStageMusic(CurStage, 1);
                 }
                 break;
 
@@ -166,7 +150,7 @@ public class GameManager : DataLoader
                     if (isPaused)
                     {
                         // at Ready or ClearStage status, stop countdown
-                        if (curStatus == GameStatus.Ready || curStatus == GameStatus.ClearStage)
+                        if (CurStatus == GameStatus.Ready || CurStatus == GameStatus.ClearStage)
                         {
                             Time.timeScale = 0;
                         }
@@ -269,7 +253,7 @@ public class GameManager : DataLoader
                         Invoke(nameof(ClearMusic), 1f);
                     }
 
-                    curStage++;
+                    CurStage++;
                 }
                 break;
                 // sucess ============================================================
@@ -335,9 +319,9 @@ public class GameManager : DataLoader
     void ClearMusic()
     {
         // is last stage cleared ? 
-        if (curStage == MyStageData.Keys.Count)
+        if (CurStage == MyStageData.Keys.Count)
         {
-            curStatus = GameStatus.ClearStage;
+            CurStatus = GameStatus.ClearStage;
 
             isStageCleared = true;
 
@@ -358,7 +342,7 @@ public class GameManager : DataLoader
     // time count ================================================================
     void timeCountdown(float t)
     {
-        myPlayableTime = t;
+        MyPlayableTime = t;
 
         if (MyPlayableTime <= 0)
         {
@@ -371,7 +355,7 @@ public class GameManager : DataLoader
 
     // stage info ================================================================
 
-    void GetStageInfo(string targetStage)
+    void GetStageInfo(SceneMode targetStage)
     {
         myStageData = StageData(targetStage);
     }
@@ -390,64 +374,46 @@ public class GameManager : DataLoader
         Time.timeScale = 0;
     }
 
-
-
     void checkStageLevel()
     {
-        /*
-        switch (SceneModeController.MySceneMode)
+        switch (StartUI.MySceneMode)
         {
-            case SceneMode.EasyMode:
+            case SceneMode.littlestar:
                 {
-                    stagePlayTime = 180f;
-                    myCoolTime = 15;
-
                     if (MyStageData.Count == 0)
                     {
-                        GetStageInfo("EasyMode");
+                        GetStageInfo(SceneMode.littlestar);
                     }
                 }
                 break;
 
-            case SceneMode.NormalMode:
+            case SceneMode.rabbit:
                 {
-                    stagePlayTime = 180f;
-                    myCoolTime = 15;
-
                     if (MyStageData.Count == 0)
                     {
-                        GetStageInfo("EasyMode");
+                        GetStageInfo(SceneMode.rabbit);
                     }
                 }
                 break;
 
-            case SceneMode.HardMode:
+            case SceneMode.butterfly:
                 {
-                    stagePlayTime = 180f;
-                    myCoolTime = 15;
-
                     if (MyStageData.Count == 0)
                     {
-                        GetStageInfo("EasyMode");
+                        GetStageInfo(SceneMode.butterfly);
                     }
-
                 }
                 break;
 
-            case SceneMode.ExtremeMode:
+            case SceneMode.stone:
                 {
-                    stagePlayTime = 180f;
-                    myCoolTime = 15;
-
                     if (MyStageData.Count == 0)
                     {
-                        GetStageInfo("EasyMode");
+                        GetStageInfo(SceneMode.stone);
                     }
-
                 }
                 break;
         }
-        */
 
     }
 

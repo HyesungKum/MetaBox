@@ -10,7 +10,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] GameObject playableNote;
 
 
-    int PlayableNoteCount = 10;
+    int PlayableNoteCount;
 
 
     private void Start()
@@ -38,6 +38,7 @@ public class Inventory : MonoBehaviour
 
     void ReadyGame()
     {
+        PlayableNoteCount = GameManager.Inst.MelodiaData.invenNote;
 
         if (playableNoteList.Count > 0)
         {

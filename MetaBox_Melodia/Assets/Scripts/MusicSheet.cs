@@ -104,7 +104,7 @@ public class MusicSheet : MonoBehaviour
         int noteIdx = myStageData[stage].Count;
 
         // how many empty note ? <= should get from data sheet 
-        int emptyNote = stage / 3 + 2;
+        int emptyNote = GameManager.Inst.StageDatas[stage - 1].emptyNote;
 
         // note generate from this position 
         float xPos = -12.5f;

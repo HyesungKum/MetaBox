@@ -65,7 +65,6 @@ public class SoundManager : MonoBehaviour
         //==============================================
 
         Option.myDelegateAudioControl = AudioVolumeControl;
-        Option.myDelegateAudioMute = AudioMute;
     }
 
     public float GetVolume(string target)
@@ -91,7 +90,10 @@ public class SoundManager : MonoBehaviour
         myAudioMixer.SetFloat(target, volume);
     }
 
-    
+    public void LoadMusicData(SceneMode targetMusic)
+    {
+        myMusicSound = Resources.Load<MySoundIndex>($"ScriptableObject/{targetMusic}");
+    }
 
     // play note sound 
     public void PlayNote(int targetPitch, float pitch)

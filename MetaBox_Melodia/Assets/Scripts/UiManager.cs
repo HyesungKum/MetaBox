@@ -323,7 +323,7 @@ public class UiManager : MonoBehaviour
     {
         SoundManager.Inst.StopMusic();
 
-        SceneManager.LoadScene("MelodiaLobby");
+        SceneManager.LoadScene("Start");
         Time.timeScale = 1;
 
         // back to start scene
@@ -339,7 +339,7 @@ public class UiManager : MonoBehaviour
         SoundManager.Inst.StopMusic();
 
         Time.timeScale = 1;
-        SceneManager.LoadScene("MelodiaLobby");
+        SceneManager.LoadScene("Start");
 
         // re-select mode 
         //SceneModeController.MySceneMode = SceneMode.LobbyScene;      // turn start panel off, turn lobby panel on

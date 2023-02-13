@@ -63,7 +63,7 @@ public class PlayTimer : MonoBehaviour
 
         timer = 3f;
 
-        StartCoroutine(startTimer());
+        StartCoroutine(nameof(startTimer));
     }
 
     // Update is called once per frame
