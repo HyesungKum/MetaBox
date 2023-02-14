@@ -4304,6 +4304,8 @@ MonoBehaviour:
   optionPanel: {fileID: 1666148584}
   onBushObj: {fileID: 2108466361}
   lineChangedPanel: {fileID: 1907476971}
+  colorPanelObj: {fileID: 2871094531393123642}
+  LineSizeObj: {fileID: 8166088748956374920}
   loseReStartBut: {fileID: 1455349610}
   winReStartBut: {fileID: 1611714516}
   optionBut: {fileID: 1790807629}
@@ -5706,6 +5708,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1cfd22961eda78348a17fe04c279f3b3, type: 3}
+--- !u!1 &2871094531393123642 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2871094532483427834, guid: 1cfd22961eda78348a17fe04c279f3b3, type: 3}
+  m_PrefabInstance: {fileID: 2871094531393123641}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8166088748956374919
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5803,3 +5810,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 40e576c23981e4741813af98e45e23d0, type: 3}
+--- !u!1 &8166088748956374920 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8166088748771720336, guid: 40e576c23981e4741813af98e45e23d0, type: 3}
+  m_PrefabInstance: {fileID: 8166088748956374919}
+  m_PrefabAsset: {fileID: 0}

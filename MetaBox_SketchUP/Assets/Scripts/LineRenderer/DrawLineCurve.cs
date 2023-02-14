@@ -14,10 +14,6 @@ public class DrawLineCurve : MonoBehaviour
     [SerializeField] Button revertBut = null;
     [SerializeField] Transform lineClonePos = null;
 
-    [Header("[Line Change]")]
-    [SerializeField] LineColorChanged colorPanel = null;
-    [SerializeField] LineSizeChange lineSizeChange = null;
-
     [Header("[Clear Draw]")]
     [SerializeField] GameObject choiceWordPanel = null;
     [SerializeField] GameObject clearAnimation = null;
@@ -54,7 +50,6 @@ public class DrawLineCurve : MonoBehaviour
     ClearAnimation clearAnimaition = null;
 
     public Color startColor;
-
     float lineSizeValue;
 
     void Awake()
@@ -62,8 +57,6 @@ public class DrawLineCurve : MonoBehaviour
         mainCam = Camera.main;
         lineStack = new Stack<GameObject>();
         InGamePanelSet.Inst.LineColorAndSizeChange(true);
-        colorPanel.gameObject.SetActive(true);
-        lineSizeChange.gameObject.SetActive(true);
         choiceWordPanel.gameObject.SetActive(false);
     }
 
@@ -87,21 +80,15 @@ public class DrawLineCurve : MonoBehaviour
         switch (myTouch.phase)
         {
             case TouchPhase.Began:
-                {
-                    TouchBegan();
-                }
+                TouchBegan();
                 break;
 
             case TouchPhase.Moved:
-                {
-                    TouchMove();
-                }
+                TouchMove();
                 break;
 
             case TouchPhase.Ended:
-                {
-                    MoveEnd();
-                }
+                MoveEnd();
                 break;
         }
     }
@@ -200,8 +187,8 @@ public class DrawLineCurve : MonoBehaviour
             if (endNodeObj == prevObj && endNodeObj != nextObj)
             {
                 linerender.SetPosition(1, prevObj.transform.position);
-                InstPrticle(endNodeObj.transform.position);
                 lineStack.Push(currentLine);
+                InstPrticle(endNodeObj.transform.position);
                 //Debug.Log("(prevObj)Starck Count : " + lineStack.Count);
                 //Debug.Log("ClearCount : " + ClearCount);
                 SoundManager.Inst.ConnectLineSFXPlay(); // 효과음
@@ -211,8 +198,8 @@ public class DrawLineCurve : MonoBehaviour
             if (endNodeObj == nextObj && endNodeObj != prevObj)
             {
                 linerender.SetPosition(1, nextObj.transform.position);
-                InstPrticle(endNodeObj.transform.position);
                 lineStack.Push(currentLine);
+                InstPrticle(endNodeObj.transform.position);
                 //Debug.Log("(nextObj)Starck Count : " + lineStack.Count);
                 //Debug.Log("ClearCount : " + ClearCount);
                 SoundManager.Inst.ConnectLineSFXPlay(); // 효과음
@@ -225,22 +212,18 @@ public class DrawLineCurve : MonoBehaviour
                 DestroyLine();
             }
         }
-        if(linerender.GetPositionCount() == 2)
+        if (currentLine != null)
         {
-            //Debug.Log("포지션이 2개 야??");
-            lineStack.Push(currentLine);
-            InstPrticle(endNodeObj.transform.position);
-            //Debug.Log("(포지션이 2개)Starck Count : " + lineStack.Count);
-        }
-        if (linerender.GetPosition(0) == linerender.GetPosition(1))
-        {
-            //Debug.Log("## 0 여기 불림 ??");
-            DestroyLine();
-        }
-        if(linerender.GetPositionCount() > 2)
-        {
-            //Debug.Log("## 포지션이 많아 ??");
-            DestroyLine();
+            if (linerender.GetPosition(0) == linerender.GetPosition(1))
+            {
+                Debug.Log("## 0 여기 불림 ??");
+                DestroyLine();
+            }
+            if (linerender.GetPositionCount() > 2)
+            {
+                Debug.Log("## 포지션이 많아 ??");
+                DestroyLine();
+            }
         }
     }
 
@@ -274,8 +257,7 @@ public class DrawLineCurve : MonoBehaviour
     {
         checkObj.transform.gameObject.SetActive(false);
         revertBut.transform.gameObject.SetActive(false);
-        colorPanel.transform.gameObject.SetActive(false);
-        lineSizeChange.transform.gameObject.SetActive(false);
+        InGamePanelSet.Inst.LineColorAndSizeChange(false); // 컬러 판넬 비활성화
     }
 
     void InstLine()
@@ -304,6 +286,7 @@ public class DrawLineCurve : MonoBehaviour
             startNodeObj = null;
             return;
         }
+
         currentLine = lineStack.Pop();
         //Debug.Log("lineStack Pop : " + lineStack.Count); ;
         endNodeObj = startNodeObj;
@@ -328,14 +311,17 @@ public class DrawLineCurve : MonoBehaviour
 
     void SetLineSize()
     {
+        //Debug.Log("## lineSize" + InGamePanelSet.Inst.LineSize.LineSize);
+        //if (lineSizeChange.LineSize == 0) 
         if (lineSizeValue == 0) lineSizeValue = 0.15f;
-        if (lineSizeChange.LineSize == 0) lineSizeValue = 0.15f;
-        else lineSizeValue = lineSizeChange.LineSize;
+        if (InGamePanelSet.Inst.LineSize.LineSize == 0) lineSizeValue = 0.15f;
+        else lineSizeValue = InGamePanelSet.Inst.LineSize.LineSize;
     }
 
     void GetColor()
     {
-        if (colorPanel.GetColor == new Color(0, 0, 0, 0))
+        //Debug.Log("##LineGetColor : " + InGamePanelSet.Inst.colorPanel.GetColor);
+        if (InGamePanelSet.Inst.colorPanel.GetColor == new Color(0, 0, 0, 0))
         {
             float r = 0.9411765f;
             float g = 0.9019608f;
@@ -344,6 +330,6 @@ public class DrawLineCurve : MonoBehaviour
             startColor = new Color(r, g, b, a);
         }
         else
-            startColor = colorPanel.GetColor;
+            startColor = InGamePanelSet.Inst.colorPanel.GetColor;
     }
 }

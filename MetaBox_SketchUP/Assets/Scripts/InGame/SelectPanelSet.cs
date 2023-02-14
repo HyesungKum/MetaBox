@@ -87,7 +87,7 @@ public class SelectPanelSet : MonoBehaviour
 
     void ImgeSet()
     {
-        Debug.Log("animalQPrefabData : " + animalQPrefabData.Qprefab.Length);
+        //Debug.Log("animalQPrefabData : " + animalQPrefabData.Qprefab.Length);
         if (levelIndexCheck == 1)
         {
             SelecetImgOne(oneBrush, selectPanelImg.LevelOneSelectPanelImg, 0);

@@ -741,7 +741,6 @@ MonoBehaviour:
   - {fileID: 8328465004430917696}
   - {fileID: 4252808515062140044}
   - {fileID: 4607070060327621527}
-  - {fileID: 5577358197069592011}
 --- !u!120 &3881886032287198216
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -4302,8 +4301,6 @@ MonoBehaviour:
   checkObj: {fileID: 1880831734625916885}
   revertBut: {fileID: 7426256283782659293}
   lineClonePos: {fileID: 7426256281961855121}
-  colorPanel: {fileID: 0}
-  lineSizeChange: {fileID: 0}
   choiceWordPanel: {fileID: 7426256283057172784}
   clearAnimation: {fileID: 5275531043454506333}
   clearCount: 37
@@ -4959,6 +4956,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f69fe879a09d6b4791ca807859509da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  obj: {fileID: 0}
   choiceOneBut: {fileID: 7426256281814728022}
   choiceTwoBut: {fileID: 7426256282694029323}
   choiceThreeBut: {fileID: 7426256283079730349}

@@ -1465,7 +1465,6 @@ MonoBehaviour:
   - {fileID: 4055195325585397032}
   - {fileID: 7340042041791480959}
   - {fileID: 447491212289277548}
-  - {fileID: 3230810925786766248}
 --- !u!120 &6795525980846388296
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -3214,7 +3213,7 @@ MonoBehaviour:
   choiceFourButText: {fileID: 6516751794504198575}
   answerKeyWord: orca
   koreanAnswerKeyWord: "\uBC94\uACE0\uB798"
-  animalOne: polarbrear
+  animalOne: polarbear
   koreaAnimalOne: "\uBD81\uADF9\uACF0"
   animalTwo: giraffe
   koreaAnimalTwo: "\uAE30\uB9B0"
@@ -3234,6 +3233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f69fe879a09d6b4791ca807859509da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  obj: {fileID: 6516751794050929248}
   choiceOneBut: {fileID: 6516751793624455907}
   choiceTwoBut: {fileID: 6516751794842037380}
   choiceThreeBut: {fileID: 6516751794905588630}
@@ -3548,8 +3548,6 @@ MonoBehaviour:
   checkObj: {fileID: 3221469696828624632}
   revertBut: {fileID: 2696587991017604992}
   lineClonePos: {fileID: 6516751794879382342}
-  colorPanel: {fileID: 0}
-  lineSizeChange: {fileID: 0}
   choiceWordPanel: {fileID: 6516751794050929248}
   clearAnimation: {fileID: 4418767773132706192}
   clearCount: 37

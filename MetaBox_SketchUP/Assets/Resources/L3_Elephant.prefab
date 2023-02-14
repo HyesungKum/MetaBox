@@ -4682,6 +4682,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f69fe879a09d6b4791ca807859509da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  obj: {fileID: 0}
   choiceOneBut: {fileID: 5487139576415206186}
   choiceTwoBut: {fileID: 5487139575347250382}
   choiceThreeBut: {fileID: 5487139576189151481}
@@ -4739,8 +4740,6 @@ MonoBehaviour:
   checkObj: {fileID: 6220121589255048415}
   revertBut: {fileID: 5487139576408216269}
   lineClonePos: {fileID: 5487139576472486610}
-  colorPanel: {fileID: 0}
-  lineSizeChange: {fileID: 0}
   choiceWordPanel: {fileID: 5487139575400699396}
   clearAnimation: {fileID: 3583169989520002153}
   clearCount: 59
@@ -6393,7 +6392,7 @@ GameObject:
   - component: {fileID: 2592044497073852531}
   - component: {fileID: 2433214391509551035}
   m_Layer: 0
-  m_Name: Elephant
+  m_Name: Elephant_Line
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6559,7 +6558,6 @@ MonoBehaviour:
   - {fileID: 1212761866819694179}
   - {fileID: 407339548453738333}
   - {fileID: 5453359496458584199}
-  - {fileID: 5783648709013173867}
 --- !u!120 &2433214391509551035
 LineRenderer:
   m_ObjectHideFlags: 0

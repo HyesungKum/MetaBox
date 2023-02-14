@@ -3870,7 +3870,7 @@ GameObject:
   - component: {fileID: 8807044981542065326}
   - component: {fileID: 1206856277508609420}
   m_Layer: 0
-  m_Name: Giraffe
+  m_Name: Giraffe_Line
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3996,7 +3996,6 @@ MonoBehaviour:
   - {fileID: 7839082678797395988}
   - {fileID: 5676476344593539479}
   - {fileID: 1653911496131840842}
-  - {fileID: 8133725328684789444}
 --- !u!120 &1206856277508609420
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -4793,8 +4792,6 @@ MonoBehaviour:
   checkObj: {fileID: 8256280596427477947}
   revertBut: {fileID: 8272050771155765390}
   lineClonePos: {fileID: 8272050771423817865}
-  colorPanel: {fileID: 0}
-  lineSizeChange: {fileID: 0}
   choiceWordPanel: {fileID: 8272050771627819128}
   clearAnimation: {fileID: 6122290989811988161}
   clearCount: 39
@@ -5834,6 +5831,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f69fe879a09d6b4791ca807859509da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  obj: {fileID: 0}
   choiceOneBut: {fileID: 8272050771620353405}
   choiceTwoBut: {fileID: 8272050771079174772}
   choiceThreeBut: {fileID: 8272050770319571894}

@@ -40,6 +40,8 @@ public class InGamePanelSet : MonoBehaviour
 
     [Header("[Line Color and Size Change]")]
     [SerializeField] private Canvas lineChangedPanel = null;
+    [SerializeField] GameObject colorPanelObj = null;
+    [SerializeField] GameObject LineSizeObj = null;
 
     [Header("[ReStart]")]
     [SerializeField] Button loseReStartBut = null;
@@ -77,12 +79,14 @@ public class InGamePanelSet : MonoBehaviour
     GameObject instClock = null;
     GameObject instEffect = null;
 
-
     // === ClearCount ===
     private int clearCount = 3;
     public int ClearCount { get { return clearCount; } set { clearCount = value; } }
 
     bool isOptionPanelOpen = false;
+
+    public LineColorChanged colorPanel;
+    public LineSizeChange LineSize;
 
     void Awake()
     {
@@ -90,6 +94,8 @@ public class InGamePanelSet : MonoBehaviour
         waitOnSceonds = new WaitForSeconds(1f);
 
         Time.timeScale = 1;
+        colorPanelObj.TryGetComponent<LineColorChanged>(out colorPanel);
+        LineSizeObj.TryGetComponent<LineSizeChange>(out LineSize);
 
         // === changed (true) ===
         waitTimeObjs.gameObject.SetActive(true);
@@ -218,10 +224,8 @@ public class InGamePanelSet : MonoBehaviour
         LosePanelSet(false);
     }
 
-    void InstGameClearEffect()
-    {
-        instEffect = ObjectPoolCP.PoolCp.Inst.BringObjectCp(gameClearEffect);
-    }
+
+    void InstGameClearEffect() => instEffect = ObjectPoolCP.PoolCp.Inst.BringObjectCp(gameClearEffect);
 
     public void SelectPanelSet(bool active) => selectPanel.gameObject.SetActive(active);
 

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5904247709708550268}
   - component: {fileID: 5192263920446983503}
   m_Layer: 0
-  m_Name: Cheetah
+  m_Name: Cheetah_Line
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -187,7 +187,6 @@ MonoBehaviour:
   - {fileID: 8005599980881104940}
   - {fileID: 6505572956303735558}
   - {fileID: 5465442637596672749}
-  - {fileID: 5028955406950888012}
 --- !u!120 &5192263920446983503
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -6118,8 +6117,8 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7477076156374550532}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 90}
-  m_LocalScale: {x: 0.010000001, y: 0.010000001, z: 0.010000001}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7477076156366136478}
@@ -6129,7 +6128,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 960, y: 540}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &7477076156374550528
@@ -6583,6 +6582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f69fe879a09d6b4791ca807859509da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  obj: {fileID: 0}
   choiceOneBut: {fileID: 7477076157498169296}
   choiceTwoBut: {fileID: 7477076157874383029}
   choiceThreeBut: {fileID: 7477076157090961932}
@@ -6640,8 +6640,6 @@ MonoBehaviour:
   checkObj: {fileID: 111304947873987732}
   revertBut: {fileID: 7477076156366136473}
   lineClonePos: {fileID: 7477076157849110477}
-  colorPanel: {fileID: 0}
-  lineSizeChange: {fileID: 0}
   choiceWordPanel: {fileID: 7477076156631034205}
   clearAnimation: {fileID: 8839511710795984764}
   clearCount: 63

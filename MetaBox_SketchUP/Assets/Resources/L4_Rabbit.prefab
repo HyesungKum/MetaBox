@@ -549,7 +549,6 @@ MonoBehaviour:
   - {fileID: 151839280428610355}
   - {fileID: 2152374854861210678}
   - {fileID: 6460344844073780278}
-  - {fileID: 3302984783744840162}
 --- !u!120 &4533041286811511738
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -3260,8 +3259,6 @@ MonoBehaviour:
   checkObj: {fileID: 731476137335545925}
   revertBut: {fileID: 4512129725625387515}
   lineClonePos: {fileID: 4512129724741656097}
-  colorPanel: {fileID: 0}
-  lineSizeChange: {fileID: 0}
   choiceWordPanel: {fileID: 4512129726216414796}
   clearAnimation: {fileID: 1735389067424755060}
   clearCount: 44
@@ -4352,7 +4349,7 @@ MonoBehaviour:
   choiceFourButText: {fileID: 4512129724709914214}
   answerKeyWord: rabbit
   koreanAnswerKeyWord: "\uD1A0\uB07C"
-  animalOne: reindder
+  animalOne: reindeer
   koreaAnimalOne: "\uC21C\uB85D"
   animalTwo: elephant
   koreaAnimalTwo: "\uCF54\uB07C\uB9AC"
@@ -4372,6 +4369,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f69fe879a09d6b4791ca807859509da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  obj: {fileID: 4512129726216414796}
   choiceOneBut: {fileID: 4512129725463716330}
   choiceTwoBut: {fileID: 4512129726079258351}
   choiceThreeBut: {fileID: 4512129725706061915}
