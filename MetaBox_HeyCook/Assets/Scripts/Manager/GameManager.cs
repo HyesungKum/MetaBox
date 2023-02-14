@@ -17,13 +17,9 @@ public class GameManager : MonoSingleTon<GameManager>
     [SerializeField] BeltZone beltZoneL;
     [SerializeField] GuestTable guestTableR;
     [SerializeField] GuestTable guestTableL;
-    [SerializeField] SpriteRenderer beltR;
-    [SerializeField] SpriteRenderer beltL;
     [SerializeField] SpriteRenderer kitchenR;
     [SerializeField] SpriteRenderer kitchenL;
-    [SerializeField] SpriteRenderer submissionImage;
-    [SerializeField] SpriteRenderer back;
-    [SerializeField] SpriteRenderer bottom;
+    [SerializeField] SpriteRenderer background;
 
     //=====================var=======================
     [Header("Currnet Score")]
@@ -68,29 +64,27 @@ public class GameManager : MonoSingleTon<GameManager>
         level = LevelTransfer.Inst.Level == 0 ? 1 : LevelTransfer.Inst.Level;
         curLevelData = levelData.levelTables[level - 1];
 
-        //divide each data
-        countDown       = curLevelData.countDown;
+        //value setting
+        countDown = curLevelData.countDown;
+        if (beltZoneL != null   ) beltZoneL.beltSpeed = curLevelData.beltSpeed;
+        if (beltZoneR != null   ) beltZoneR.beltSpeed = curLevelData.beltSpeed;
+        if (rightSpawner != null) rightSpawner.spawnTime = curLevelData.spawnTime;
+        if (leftSpawner != null ) leftSpawner.spawnTime = curLevelData.spawnTime;
 
-        if (rightSpawner != null   )rightSpawner.SpawnTable = curLevelData.ingredGroup.ingredObjs.ToList();
-        if (rightSpawner != null   )leftSpawner.SpawnTable  = curLevelData.ingredGroup.ingredObjs.ToList();
-        //rightSpawner.spawnTime = curLevelData.spawnTime;
-        //leftSpawner.spawnTime = curLevelData.spawnTime;
-        if (beltZoneL != null      )beltZoneL.beltSpeed     = curLevelData.beltSpeed;
-        if (beltZoneR != null      )beltZoneR.beltSpeed     = curLevelData.beltSpeed;
-        if (guestTableR != null    )guestTableR.guestGroup  = curLevelData.guestGroup;
-        if (guestTableL != null    )guestTableL.guestGroup  = curLevelData.guestGroup;
+        //data setting
+        if (guestTableR != null ) guestTableR.guestGroup  = curLevelData.guestGroup;
+        if (guestTableL != null ) guestTableL.guestGroup  = curLevelData.guestGroup;
+        if (rightSpawner != null) rightSpawner.SpawnTable = curLevelData.ingredGroup.ingredObjs.ToList();
+        if (leftSpawner != null ) leftSpawner.SpawnTable = curLevelData.ingredGroup.ingredObjs.ToList();
+        if (guestTableR != null ) guestTableR.FoodList    = curLevelData.foodDataGroup.foodDatas.ToList();
+        if (guestTableL != null ) guestTableL.FoodList    = curLevelData.foodDataGroup.foodDatas.ToList();
 
-        if (guestTableR != null    )guestTableR.FoodList    = curLevelData.foodDataGroup.foodDatas.ToList();
-        if (guestTableL != null    )guestTableL.FoodList    = curLevelData.foodDataGroup.foodDatas.ToList();
+        //image setting
+        if (kitchenR != null    ) kitchenR.sprite         = curLevelData.kitchenImage;
+        if (kitchenL != null    ) kitchenL.sprite         = curLevelData.kitchenImage;
+        if (background != null        ) background.sprite            = curLevelData.backGroundImage;
 
-        if (beltR != null          )beltR.sprite            = curLevelData.conveyorBeltImage;
-        if (beltL != null          )beltL.sprite            = curLevelData.conveyorBeltImage;
-        if (kitchenR != null       )kitchenR.sprite         = curLevelData.kitchenImage;
-        if (kitchenL != null       )kitchenL.sprite         = curLevelData.kitchenImage;
-        if (submissionImage != null) submissionImage.sprite = curLevelData.submissionImage;
-        //back.sprite            = curLevelData.backGroundImage1;
-        //bottom.sprite          = curLevelData.backGroundImage2;
-
+        //flag setting
         IsGameIn = true;
         IsStart = false;
         IsPause = false;
