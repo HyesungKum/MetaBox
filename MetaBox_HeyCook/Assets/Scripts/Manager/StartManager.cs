@@ -27,7 +27,6 @@ public class StartManager : MonoBehaviour
 
     [SerializeField] Button startButton;
     [SerializeField] Button optionButton;
-    [SerializeField] Button villageButton;
     [SerializeField] Button exitButton;
 
     [Header("[Difficulty UI Group]")]
@@ -44,19 +43,16 @@ public class StartManager : MonoBehaviour
     [Header("[Option UI Group]")]
     [Tooltip("difficulty button group")]
     [SerializeField] GameObject optionUIGroup;
-
-    [SerializeField] Button masterSoundButton;
-    [SerializeField] Slider masterSlider;
-
-    [SerializeField] Button bgmSoundButton;
     [SerializeField] Slider bgmSlider;
-
-    [SerializeField] Button sfxSoundButton;
     [SerializeField] Slider sfxSlider;
-
     [SerializeField] Button optionExitButton;
-
     [SerializeField] Button optionInitBuctton;
+
+    [Header("[Exit Check UI Group]")]
+    [SerializeField] GameObject ExitCheckUIGroup;
+    [SerializeField] Button ExitCheckExitButton;
+    [SerializeField] Button ExitCheckVillageButton;
+    [SerializeField] Button ExitCheckReturnButton;
 
     [Header("[Production]")]
     [SerializeField] GameObject production;
@@ -87,10 +83,7 @@ public class StartManager : MonoBehaviour
         optionButton .onClick.AddListener(() => SoundCheck());
         optionButton .onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
-        villageButton.onClick.AddListener(() => AppTrans.MoveScene(mainPackName));
-        villageButton.onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
-
-        exitButton   .onClick.AddListener(() => Application.Quit());
+        exitButton   .onClick.AddListener(() => ShowUI(ExitCheckUIGroup));
         exitButton   .onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         //==============apply Difficulty Button listener=========================
@@ -110,16 +103,8 @@ public class StartManager : MonoBehaviour
         difficultyExitButton.onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         //============apply option button listener==========================
-        masterSoundButton.onClick.AddListener(() => SoundManager.Inst.ToggleControll("Master", masterSlider.value));
-        masterSoundButton.onClick.AddListener(() => ToggleSlider(masterSlider));
-        masterSlider     .onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("Master", call));
-                         
-        bgmSoundButton   .onClick.AddListener(() => SoundManager.Inst.ToggleControll("BGM", bgmSlider.value));
-        bgmSoundButton   .onClick.AddListener(() => ToggleSlider(bgmSlider));
         bgmSlider        .onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("BGM", call));
                          
-        sfxSoundButton   .onClick.AddListener(() => SoundManager.Inst.ToggleControll("SFX", sfxSlider.value));
-        sfxSoundButton   .onClick.AddListener(() => ToggleSlider(sfxSlider));
         sfxSlider        .onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("SFX", call));
 
         optionExitButton.onClick.AddListener(() => ShowUI(mainUIGroup));
@@ -127,6 +112,16 @@ public class StartManager : MonoBehaviour
 
         optionInitBuctton.onClick.AddListener(()=> PlayerPrefs.DeleteAll());
         optionInitBuctton.onClick.AddListener(()=> SoundManager.Inst.CallSfx("ButtonClick"));
+
+        //apply exit check listener
+        ExitCheckExitButton.onClick.AddListener(() => Application.Quit());
+        ExitCheckExitButton.onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
+        
+        ExitCheckVillageButton.onClick.AddListener(() => AppTrans.MoveScene(mainPackName));
+        ExitCheckVillageButton.onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
+
+        ExitCheckReturnButton.onClick.AddListener(() => ShowUI(mainUIGroup));
+        ExitCheckReturnButton.onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
     }
 
     private void Start()
@@ -201,7 +196,6 @@ public class StartManager : MonoBehaviour
     //==========================================Sound Slider Controll========================================
     void SoundCheck()
     {
-        masterSlider.value = SoundManager.Inst.GetVolume("Master");
         bgmSlider.value = SoundManager.Inst.GetVolume("BGM");
         sfxSlider.value = SoundManager.Inst.GetVolume("SFX");
     }

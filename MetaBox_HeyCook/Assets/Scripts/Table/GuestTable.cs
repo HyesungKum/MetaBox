@@ -23,7 +23,7 @@ public class GuestTable : MonoBehaviour
     [Header("Guest Reference")]
     [SerializeField] GameObject guestObj;
     [SerializeField] SpriteRenderer guestImage;
-    [SerializeField] SpriteRenderer talkBubble;
+    [SerializeField] GameObject     orderObj;
     [SerializeField] SpriteRenderer orderImage;
     [SerializeField] TextMeshProUGUI guestText;
     [SerializeField] TextMeshProUGUI scoreText;
@@ -133,7 +133,7 @@ public class GuestTable : MonoBehaviour
         Vector3 tempPos = guestObj.transform.position;
         float timer = 0f;
         bool token = true;
-        talkBubble.gameObject.SetActive(false);
+        orderObj.SetActive(false);
 
         //talk text out
         if (curGuest != null)
@@ -169,8 +169,7 @@ public class GuestTable : MonoBehaviour
                 PickRecipe();
 
                 //talk bubble change
-                talkBubble.gameObject.SetActive(true);
-                talkBubble.sprite = curGuest.talkBubbleImage;
+                orderObj.SetActive(true);
                 
                 //Guest Text disable
                 guestText.gameObject.SetActive(false);

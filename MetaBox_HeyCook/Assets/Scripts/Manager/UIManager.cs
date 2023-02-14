@@ -32,13 +32,8 @@ public class UIManager : MonoBehaviour
     [Header("[Option UI]")]
     [SerializeField] GameObject optionUI;
     [Space]
-    [SerializeField] Button masterSoundButton;
-    [SerializeField] Slider masterSlider;
-    [Space]
-    [SerializeField] Button bgmSoundButton;
     [SerializeField] Slider bgmSlider;
     [Space]
-    [SerializeField] Button sfxSoundButton;
     [SerializeField] Slider sfxSlider;
     [Space]
     [SerializeField] Button opExitButton;
@@ -80,16 +75,8 @@ public class UIManager : MonoBehaviour
         optionButton.onClick        .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         //option button listener
-        masterSoundButton.onClick  .AddListener(() => SoundManager.Inst.ToggleControll("Master", masterSlider.value));
-        masterSoundButton.onClick  .AddListener(() => ToggleSlider(masterSlider));
-        masterSlider.onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("Master", call));
-
-        bgmSoundButton.onClick     .AddListener(() => SoundManager.Inst.ToggleControll("BGM", bgmSlider.value));
-        bgmSoundButton.onClick     .AddListener(() => ToggleSlider(bgmSlider));
         bgmSlider.onValueChanged   .AddListener((call) => SoundManager.Inst.VolumeControll("BGM", call));
 
-        sfxSoundButton.onClick     .AddListener(() => SoundManager.Inst.ToggleControll("SFX", sfxSlider.value));
-        sfxSoundButton.onClick     .AddListener(() => ToggleSlider(sfxSlider));
         sfxSlider.onValueChanged   .AddListener((call) => SoundManager.Inst.VolumeControll("SFX", call));
 
         opRestartButton.onClick    .AddListener(() => SceneMove(SceneName.Main));
@@ -188,7 +175,6 @@ public class UIManager : MonoBehaviour
     void UIGamePause()
     {
         ShowUI(optionUI);
-        masterSlider.value = SoundManager.Inst.GetVolume("Master");
         bgmSlider.value = SoundManager.Inst.GetVolume("BGM");
         sfxSlider.value = SoundManager.Inst.GetVolume("SFX");
     }
