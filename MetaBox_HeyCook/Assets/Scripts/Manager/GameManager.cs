@@ -57,6 +57,8 @@ public class GameManager : MonoSingleTon<GameManager>
     {
         //delegate chain
         EventReceiver.ScoreModi += ScoreAddSub;
+        EventReceiver.ScoreModiR += ScoreAddSub;
+        EventReceiver.ScoreModiL += ScoreAddSub;
 
         EventReceiver.GamePause += GamePasue;
         EventReceiver.GameResume += GameResume;
@@ -108,6 +110,8 @@ public class GameManager : MonoSingleTon<GameManager>
     {
         //delegate unchain
         EventReceiver.ScoreModi -= ScoreAddSub;
+        EventReceiver.ScoreModiR -= ScoreAddSub;
+        EventReceiver.ScoreModiL -= ScoreAddSub;
 
         EventReceiver.GamePause -= GamePasue;
         EventReceiver.GameResume -= GameResume;

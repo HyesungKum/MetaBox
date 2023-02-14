@@ -1,27 +1,51 @@
+using MongoDB.Driver;
 using ObjectPoolCP;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class DeadZone: MonoBehaviour
 {
+    private Ingredient targetIngred;
+
     private void Awake()
     {
         TryGetComponent(out BoxCollider2D collider);
         collider.isTrigger = true;
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent(out Ingredient ingred))
         {
-            if (!ingred.IsCliked)
+            targetIngred = ingred;
+
+            StartCoroutine(nameof(DeleteRoutine));
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject == targetIngred.gameObject)
+        {
+            targetIngred = null;
+        }
+    }
+
+    IEnumerator DeleteRoutine()
+    {
+        while (targetIngred != null)
+        {
+            if (!targetIngred.IsCliked)
             {
-                GameObject instVfx = ingred.IngredData.delVfx;
-                PoolCp.Inst.BringObjectCp(instVfx).transform.position = collision.transform.position;
-                PoolCp.Inst.DestoryObjectCp(ingred.gameObject);
+                GameObject instVfx = targetIngred.IngredData.delVfx;
+                PoolCp.Inst.BringObjectCp(instVfx).transform.position = targetIngred.transform.position;
+                PoolCp.Inst.DestoryObjectCp(targetIngred.gameObject);
+                targetIngred = null;
             }
+            yield return null;
         }
     }
 

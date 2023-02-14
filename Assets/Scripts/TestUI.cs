@@ -38,8 +38,7 @@ public class TestUI : MonoBehaviour
 
     private void Awake()
     {
-        apk1.onClick.AddListener(() => TestSceneMove(apk1PackName));
-
+        apk1.onClick.AddListener(() => AppTrans.MoveScene(apk1PackName));
         apk2.onClick.AddListener(() => AppTrans.MoveScene(apk2PackName));
         apk3.onClick.AddListener(() => AppTrans.MoveScene(apk3PackName));
         apk4.onClick.AddListener(() => AppTrans.MoveScene(apk4PackName));
@@ -84,33 +83,6 @@ public class TestUI : MonoBehaviour
                 }
             }
         }
-
-        //BG.transform.position = Vector3.Lerp(BG.transform.position, new Vector3(BG.transform.position.x, yPos, 0f), Time.deltaTime * 2f);
-    }
-
-    //=====================================================================list of DLLize=====================================================================
-    //now dll list
-    //handinput
-    //app transition
-
-    public void TestSceneMove(string pakageName)
-    {
-        AndroidJavaClass androidJavaClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-        AndroidJavaObject @static = androidJavaClass.GetStatic<AndroidJavaObject>("currentActivity");
-        AndroidJavaObject androidJavaObject = @static.Call<AndroidJavaObject>("getPackageManager", Array.Empty<object>());
-        AndroidJavaObject androidJavaObject2 = null;
-        try
-        {
-            androidJavaObject2 = androidJavaObject.Call<AndroidJavaObject>("getLaunchIntentForPackage", new object[1] { pakageName });
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError("exception" + ex.Message);
-        }
-
-        @static.Call("startActivity", androidJavaObject2);
-
-        Application.Unload();
     }
 }
 

@@ -28,7 +28,7 @@ public class Ingredient : MonoBehaviour
     [SerializeField] private SpriteRenderer Renderer = null;
 
     //============================Flag=====================================
-    [Header("Flag")]
+    [Header("Setting")]
     [SerializeField] private float Lifetimer = 0;
     [Space]
     public bool IsCliked;
@@ -36,9 +36,12 @@ public class Ingredient : MonoBehaviour
     public bool IsCooked;
     public bool IsCookReady;
 
-    //============================trimControll=============================
+    //============================CookControll=============================
     [Header("[CookControll]")]
     public float curTask = 0;
+
+    //============================Caching==================================
+    WaitForSeconds waitSec = new(0.2f);
 
     private void Awake()
     {
@@ -77,7 +80,7 @@ public class Ingredient : MonoBehaviour
         Renderer.color = Color.white;
         Renderer.sortingOrder = 4;
 
-        Collider.size = Renderer.sprite.bounds.size;
+        Collider.size = Renderer.sprite.bounds.size * IngredData.interDistance;
         Collider.enabled = true;
 
         curTask = 0;
@@ -126,7 +129,9 @@ public class Ingredient : MonoBehaviour
         }
     }
     IEnumerator FadeOut()
-    { 
+    {
+        yield return waitSec;
+
         float timer = 0f;
         Collider.enabled = false;
 

@@ -26,6 +26,7 @@ public class GuestTable : MonoBehaviour
     [SerializeField] SpriteRenderer talkBubble;
     [SerializeField] SpriteRenderer orderImage;
     [SerializeField] TextMeshProUGUI guestText;
+    [SerializeField] TextMeshProUGUI scoreText;
     
     [Header("Guest Move Production")]
     [SerializeField] AnimationCurve moveCurve;
@@ -59,11 +60,13 @@ public class GuestTable : MonoBehaviour
         //delegate unchain
         if (side == Side.Right)
         {
+            EventReceiver.ScoreModiR -= SocreModi;
             EventReceiver.NewGuestR -= NewGuestPord;
             EventReceiver.DoSubmissionR -= DoSubmission;
         }
         else
         {
+            EventReceiver.ScoreModiL -= SocreModi;
             EventReceiver.NewGuestL -= NewGuestPord;
             EventReceiver.DoSubmissionL -= DoSubmission;
         }
@@ -83,14 +86,17 @@ public class GuestTable : MonoBehaviour
         //delegate chain
         if (side == Side.Right)
         {
+            EventReceiver.ScoreModiR += SocreModi;
             EventReceiver.NewGuestR += NewGuestPord;
             EventReceiver.DoSubmissionR += DoSubmission;
         }
         else
         {
+            EventReceiver.ScoreModiL += SocreModi;
             EventReceiver.NewGuestL += NewGuestPord;
             EventReceiver.DoSubmissionL += DoSubmission;
         }
+
 
         if (side == Side.Right) EventReceiver.CallNewGuestR();
         else EventReceiver.CallNewGuestL();
@@ -106,7 +112,8 @@ public class GuestTable : MonoBehaviour
         yield return waitSec;
 
         //score sum modify
-        EventReceiver.CallScoreModi(requireFood.Score);
+        if (side == Side.Right) EventReceiver.CallScoreModiR(requireFood.Score);
+        else EventReceiver.CallScoreModiL(requireFood.Score);
 
         //call guest eat sfx
         SoundManager.Inst.CallSfx("GuestEat");
@@ -194,5 +201,12 @@ public class GuestTable : MonoBehaviour
         else EventReceiver.CallNewOrderL();
 
         if (TempTable.Count == 0) TempTable = FoodList.ToArray().ToList();
+    }
+
+    //========================================Score Modifiy==============================================
+    void SocreModi(int value)
+    {
+        scoreText.gameObject.SetActive(true);
+        scoreText.text = $"+{value}";
     }
 }

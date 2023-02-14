@@ -109,7 +109,8 @@ public class UIManager : MonoBehaviour
         endRestartButton.onClick      .AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         //delegate chain
-        EventReceiver.ScoreModi     += UIScoreModi;
+        EventReceiver.ScoreModiR    += UIScoreModi;
+        EventReceiver.ScoreModiL    += UIScoreModi;
         EventReceiver.CorrectIngred += UICorrectIngred;
         EventReceiver.WrongIngred   += UIWrongIngred;
 
@@ -144,7 +145,8 @@ public class UIManager : MonoBehaviour
     private void OnDisable()
     {
         //delegate unchain
-        EventReceiver.ScoreModi     -= UIScoreModi;
+        EventReceiver.ScoreModiR    -= UIScoreModi;
+        EventReceiver.ScoreModiL    -= UIScoreModi;
         EventReceiver.CorrectIngred -= UICorrectIngred;
         EventReceiver.WrongIngred   -= UIWrongIngred;
 

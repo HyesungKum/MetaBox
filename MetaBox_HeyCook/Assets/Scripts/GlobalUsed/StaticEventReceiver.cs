@@ -15,6 +15,8 @@ public class EventReceiver
     static public BasicCallBack NewOrderR = null;
     static public BasicCallBack NewOrderL = null;
     static public IntCallBack ScoreModi = null;
+    static public IntCallBack ScoreModiR = null;
+    static public IntCallBack ScoreModiL = null;
     static public BasicCallBack DoSubmissionR = null;
     static public BasicCallBack DoSubmissionL = null;
 
@@ -48,7 +50,8 @@ public class EventReceiver
     static public void CallNewOrderL() => NewOrderL?.Invoke();
 
     //score event
-    static public void CallScoreModi(int value) => ScoreModi?.Invoke(value);
+    static public void CallScoreModiR(int value) => ScoreModiR?.Invoke(value);
+    static public void CallScoreModiL(int value) => ScoreModiL?.Invoke(value);
     static public void CallDoSubmissionR() => DoSubmissionR?.Invoke();
     static public void CallDoSubmissionL() => DoSubmissionL?.Invoke();
 
