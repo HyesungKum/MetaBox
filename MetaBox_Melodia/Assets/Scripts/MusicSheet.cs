@@ -25,7 +25,7 @@ public class MusicSheet : MonoBehaviour
     private void Start()
     {
         // observe game status 
-        GameManager.myDelegateGameStatus += curGameStatus;
+        GameManager.Inst.myDelegateGameStatus += curGameStatus;
     }
 
 
@@ -37,6 +37,8 @@ public class MusicSheet : MonoBehaviour
                 {
                     // clear lists 
                     ReadyGame();
+
+                    
                 }
                 break;
 
@@ -98,19 +100,21 @@ public class MusicSheet : MonoBehaviour
 
     void buildStage(int stage)
     {
-        // total length of music sheet == 27 (-12.5 ~ 15.5)
+        // total length of music sheet == 26 (-13 ~ 13)
 
         // A number of notes of current stage  
         int noteIdx = myStageData[stage].Count;
 
+        // note generate from this position
+        float xPos = -13f;
+
+        // get average distance between notes 
+        float distance = 26f / (noteIdx -1);
+
+
         // how many empty note ? <= should get from data sheet 
         int emptyNote = GameManager.Inst.StageDatas[stage - 1].emptyNote;
 
-        // note generate from this position 
-        float xPos = -12.5f;
-
-        // get average distance between notes 
-        float distance = 27f / noteIdx;
 
         List<int> emptyNoteIdx = new();
 
@@ -151,6 +155,7 @@ public class MusicSheet : MonoBehaviour
             // set note info
             newNote.TryGetComponent<QNote>(out QNote targetQNote);
             targetQNote.MyPitchNum = myStageData[stage][idx];
+            targetQNote.Setting();
 
             // if code runs in unity editor, ===========================
 #if UNITY_EDITOR
@@ -198,15 +203,14 @@ public class MusicSheet : MonoBehaviour
                     qNoteList.Remove(note);
                     noteList.Add(note);
 
-                    UiManager.myDelegateUiManager("잘했어요!");
-
                     note.TryGetComponent<QNote>(out QNote myQNote);
 
                     SoundManager.Inst.PlayNote(myQNote.MyPitchNum, 1);
-
+                    myQNote.Correct();
                     // check how many Qnotes are left
                     if (qNoteList.Count == 0)
                     {
+                        SoundManager.Inst.StopMusic();
                         getAllQNotes();
                         return;
                     }
@@ -219,8 +223,6 @@ public class MusicSheet : MonoBehaviour
             }
         }
 
-
-        UiManager.myDelegateUiManager("다시 생각해봐요");
 
         // no this is not an answer note 
         // check if toucched soundline

@@ -115,6 +115,7 @@ public class SoundManager : MonoBehaviour
     // play music 
     public void SetStageMusic(int targetMusic, float pitch)
     {
+        
         AudioClip changeClip;
 
         // change audio clip 
@@ -156,6 +157,7 @@ public class SoundManager : MonoBehaviour
 
     public void StopMusic()
     {
+        if (myBGMAudioSource.isPlaying) myBGMAudioSource.Stop();
         if (isCoroutineRunning)
         {
             myBGMAudioSource.Stop();

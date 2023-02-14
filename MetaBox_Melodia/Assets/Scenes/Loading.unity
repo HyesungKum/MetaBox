@@ -349,7 +349,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.877
+  m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -363,6 +363,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1123375614}
   - component: {fileID: 1123375613}
+  - component: {fileID: 1123375615}
   m_Layer: 0
   m_Name: BackGround
   m_TagString: Untagged
@@ -437,6 +438,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1123375615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1123375612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76588280d9ddfb240a6090a57f07c408, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loadingBar: {fileID: 959723151}
 --- !u!1 &1204994491
 GameObject:
   m_ObjectHideFlags: 0

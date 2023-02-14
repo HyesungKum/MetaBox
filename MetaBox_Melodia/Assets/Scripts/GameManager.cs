@@ -45,10 +45,10 @@ public class GameManager : DataLoader
     #endregion
 
     public delegate void DelegateIsGameOver();
-    public static DelegateIsGameOver myDelegateIsGameOver;
+    public DelegateIsGameOver myDelegateIsGameOver;
 
     public delegate void DelegateGameStatus(GameStatus curStatue);
-    public static DelegateGameStatus myDelegateGameStatus;
+    public DelegateGameStatus myDelegateGameStatus;
 
 
     bool isGameOver = false;
@@ -319,7 +319,7 @@ public class GameManager : DataLoader
     void ClearMusic()
     {
         // is last stage cleared ? 
-        if (CurStage == MyStageData.Keys.Count)
+        if (CurStage == MyStageData.Keys.Count+1)
         {
             CurStatus = GameStatus.ClearStage;
 
@@ -328,7 +328,7 @@ public class GameManager : DataLoader
             Time.timeScale = 0;
 
             // Set Audio Clip 
-            SoundManager.Inst.SetStageMusic(5, 1);
+            SoundManager.Inst.SetStageMusic(CurStage+1, 1);
         }
 
 

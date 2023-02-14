@@ -22,7 +22,7 @@ public enum SceneMode
 public class StartUI : MonoBehaviour
 {
     public static SceneMode MySceneMode { get; private set; } = SceneMode.littlestar;
-    public static int Level { get; private set; }
+    public static int Level { get; private set; } = 1;
 
     public ScriptableObj scriptableImg = null;
 
@@ -141,25 +141,25 @@ public class StartUI : MonoBehaviour
     void OnClickEasy()
     {
         Level = 1;
-        SceneManager.LoadScene("Main");
+        SceneManager.LoadScene("Loading");
     }
 
     void OnClickNormal()
     {
         Level = 2;
-        SceneManager.LoadScene("Main");
+        SceneManager.LoadScene("Loading");
     }
 
     void OnClickHard()
     {
         Level = 3;
-        SceneManager.LoadScene("Main");
+        SceneManager.LoadScene("Loading");
     }
 
     void OnClickExtreme()
     {
         Level = 4;
-        SceneManager.LoadScene("Main");
+        SceneManager.LoadScene("Loading");
     }
     #endregion
 }

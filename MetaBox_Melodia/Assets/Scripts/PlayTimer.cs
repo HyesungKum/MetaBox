@@ -1,13 +1,17 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using static GameManager;
+using static PlayTimer;
 
 
 public class PlayTimer : MonoBehaviour
 {
     // subject => timer
     static public Action<float> DelegateTimer;
+    public delegate void TimerStop();
+    public static TimerStop timerStop;
+
+    bool timerStopped = false;
 
     bool isStarted = false;
     bool isGameOver = false;
@@ -19,12 +23,11 @@ public class PlayTimer : MonoBehaviour
     private void Awake()
     {
         // observe game status 
-        GameManager.myDelegateGameStatus += curGameStatus;
-        myDelegateIsGameOver += isGameFinished;
-
+        GameManager.Inst.myDelegateGameStatus += curGameStatus;
+        GameManager.Inst.myDelegateIsGameOver += isGameFinished;
+        timerStop = TimeStop;
         playTime = 0f;
     }
-
 
     void curGameStatus(GameStatus curStatus)
     {
@@ -66,6 +69,11 @@ public class PlayTimer : MonoBehaviour
         StartCoroutine(nameof(startTimer));
     }
 
+    void TimeStop()
+    {
+        if(timerStopped == false) timerStopped = true;
+        else timerStopped = false;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -73,6 +81,9 @@ public class PlayTimer : MonoBehaviour
             return;
 
         if (!isStarted)
+            return;
+
+        if (timerStopped)
             return;
 
         timeCountDown();
@@ -91,6 +102,7 @@ public class PlayTimer : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
 
+        
         while (timer > 1)
         {
             timer -= Time.deltaTime;

@@ -16,8 +16,7 @@ public class Inventory : MonoBehaviour
     private void Start()
     {
         // observe game status 
-        GameManager.myDelegateGameStatus += curGameStatus;
-
+        GameManager.Inst.myDelegateGameStatus += curGameStatus;
     }
 
 

@@ -17,7 +17,7 @@ public class Option : MonoBehaviour
     void Awake()
     {
         exit.onClick.AddListener(OnClick_Close);
-        if (home.gameObject.activeSelf) home.onClick.AddListener(OnClick_Quit);
+        if (home != null) home.onClick.AddListener(OnClick_Quit);
 
         myAudioSliderBGM.onValueChanged.AddListener(delegate { OnValueChanged_BGM(); });
         myAudioSliderSFX.onValueChanged.AddListener(delegate { OnValueChanged_SFX(); });

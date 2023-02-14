@@ -1,58 +1,28 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Loading : MonoBehaviour
 {
     AsyncOperation asyncLoad = null;
+    [SerializeField] Slider loadingBar = null;
 
-    [Header("policecar Control")]
-    [SerializeField] GameObject policeCar = null;
-    [SerializeField] AnimationCurve PoliceCarCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, -10f), new Keyframe(1.8f, 10f) });
-
-
-    [Header("fade Out Control")]
-    [SerializeField] SpriteRenderer focus = null; //fadeout effect of following a police car
-    [SerializeField] AnimationCurve FocusCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(1.8f, 1f) });
-
-    Vector3 policeCarPos = new Vector3(-10f, -2.16f, 0f);
-    Color focusColor = new Color(0, 0, 0, 0);
-    bool fade = false; //flag to start fading out when the next scene is ready to load
-
-    public void StartLoading()
+    void Start()
     {
-        StartCoroutine(nameof(Loop));
+        StartCoroutine(nameof(Load));
     }
 
-    IEnumerator Loop()
+    IEnumerator Load()
     {
-        asyncLoad = SceneManager.LoadSceneAsync("Freeze");
-        asyncLoad.allowSceneActivation = false;
-        while (!asyncLoad.allowSceneActivation)
-        {
-            yield return StartCoroutine(nameof(LoadingShow));
-        }
-    }
-    IEnumerator LoadingShow()
-    {
-        float startTime = 0;
-        while (PoliceCarCurve.keys[PoliceCarCurve.keys.Length - 1].time >= startTime)
-        {
-            policeCarPos.x = PoliceCarCurve.Evaluate(startTime);
-            policeCar.transform.position = policeCarPos;
+        asyncLoad = SceneManager.LoadSceneAsync("Melodia");
 
-            if (fade)
-            {
-                focusColor.a = FocusCurve.Evaluate(startTime);
-                focus.color = focusColor;
-            }
-
-            startTime += Time.deltaTime;
+        while (!asyncLoad.isDone)
+        {
+            loadingBar.value = asyncLoad.progress;
             yield return null;
         }
-        if (fade) asyncLoad.allowSceneActivation = true;
-        if (asyncLoad.progress >= 0.85) fade = true;
     }
+    
 }
 
