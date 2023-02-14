@@ -8,7 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider2D))]
 public class DeadZone: MonoBehaviour
 {
-    private Ingredient targetIngred;
+    [HideInInspector] public List<Ingredient> targetIngreds = new();
 
     private void Awake()
     {
@@ -20,30 +20,32 @@ public class DeadZone: MonoBehaviour
     {
         if (collision.TryGetComponent(out Ingredient ingred))
         {
-            targetIngred = ingred;
+            targetIngreds.Add(ingred);
 
             StartCoroutine(nameof(DeleteRoutine));
         }
     }
-
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject == targetIngred.gameObject)
+        collision.TryGetComponent(out Ingredient ingred);
+        if (targetIngreds.Contains(ingred))
         {
-            targetIngred = null;
+            targetIngreds.Remove(ingred);
         }
     }
 
     IEnumerator DeleteRoutine()
     {
-        while (targetIngred != null)
+        while (targetIngreds.Count != 0)
         {
-            if (!targetIngred.IsCliked)
+            for (int i = 0; i < targetIngreds.Count; i++)
             {
-                GameObject instVfx = targetIngred.IngredData.delVfx;
-                PoolCp.Inst.BringObjectCp(instVfx).transform.position = targetIngred.transform.position;
-                PoolCp.Inst.DestoryObjectCp(targetIngred.gameObject);
-                targetIngred = null;
+                if (!targetIngreds[i].IsCliked)
+                {
+                    GameObject instVfx = targetIngreds[i].IngredData.delVfx;
+                    PoolCp.Inst.BringObjectCp(instVfx).transform.position = targetIngreds[i].transform.position;
+                    PoolCp.Inst.DestoryObjectCp(targetIngreds[i].gameObject);
+                }
             }
             yield return null;
         }
