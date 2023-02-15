@@ -116,6 +116,12 @@ public class RandomChoiceKeyWord : MonoBehaviour
             if (random == -1) random += 3;
             if (random == -2) random += 4;
         }
+        if(random == randomFour)
+        {
+            random -= 2;
+            if(random == -1) random += 3;
+            if(random == -2) random += 4;
+        }
         if (randomtwo == randomThree)
         {
             randomtwo -= 2;
@@ -127,10 +133,10 @@ public class RandomChoiceKeyWord : MonoBehaviour
             if (randomThree == -1) randomFour += 3;
         }
 
-        //Debug.Log("$$ random : " + random);
-        //Debug.Log("$$ randomtwo : " + randomtwo);
-        //Debug.Log("$$ randomThree : " + randomThree);
-        //Debug.Log("$$ RandomFour : " + randomFour);
+        Debug.Log("$$ random : " + random);
+        Debug.Log("$$ randomtwo : " + randomtwo);
+        Debug.Log("$$ randomThree : " + randomThree);
+        Debug.Log("$$ RandomFour : " + randomFour);
 
         for (int i = 0; i < 4; i++)
         {

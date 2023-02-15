@@ -6,19 +6,7 @@ public class ClearAnimation : MonoBehaviour
     public AnimationCurve leftClearAnimation; // аб
     public AnimationCurve rightClearAnimationCurve; // ©Л
 
-    public float moveTime = 0.5f;
-
-    void Start()
-    {
-        //StartCoroutine(LeftRightAnimation());
-        //StartCoroutine(Moving());
-    } 
-
-    //[ContextMenu("TEST")]
-    //public void Func()
-    //{
-    //    StartCoroutine(Moving());
-    //}
+    public float moveTime = 0.3f;
 
     public IEnumerator Moving()
     {

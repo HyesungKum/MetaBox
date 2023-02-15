@@ -46,7 +46,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] GameObject butClickEffect = null;
     GameObject InstButEffect = null;
 
-    private int levelIndex;
+    [SerializeField] private int levelIndex;
     public int LevelIndex { get { return levelIndex; } set { levelIndex = value; } }
 
     private float bGMValue;
@@ -107,6 +107,8 @@ public class SoundManager : MonoBehaviour
             MyAudioMixer.SetFloat("BGM", -80);
         else
             MyAudioMixer.SetFloat("BGM", BGMValue);
+
+        Debug.Log("BGMValue : " + BGMValue);
     }
 
     public void SFXControl(Slider ButSfxSlider)
@@ -137,24 +139,26 @@ public class SoundManager : MonoBehaviour
         if (BGMValue == -40f)
             MyAudioMixer.SetFloat("BGM", -80);
         else
-            MyAudioMixer.SetFloat("BGM", -10);
-        Debug.Log("BGMValue : " + BGMValue);
+            MyAudioMixer.SetFloat("BGM", -35);
     }
 
     public void TitleBGMPlay()
     {
         BGMAudioSurce.clip = titleAudioClip;
+        MyAudioMixer.SetFloat("BGM", 0);
         BGMAudioSurce.Play();
     }
 
     public void InGameBGMPlay()
     {
         BGMAudioSurce.clip = inGameAudioClip;
+        MyAudioMixer.SetFloat("BGM", 0);
         BGMAudioSurce.Play();
     }
 
     public void ButtonSFXPlay()
     {
+        MyAudioMixer.SetFloat("BGM", -10);
         SFXSource.clip = butSourceClip;
         SFXSource.Play();
     }
@@ -204,15 +208,10 @@ public class SoundManager : MonoBehaviour
     {
         animalAudioDictionary.TryGetValue(index, out animalAudioPlayClip);
         SFXSource.clip = animalAudioPlayClip;
+        MyAudioMixer.SetFloat("SFX", 0);
         SFXSource.Play();
     }
 
-    public void SelectPanelYesNameSFXPlay()
-    {
-
-        SFXSource.clip = sfxData.yesName;
-        SFXSource.Play();
-    }
 
     public void SelectPanelNoNameSFXPlay()
     {

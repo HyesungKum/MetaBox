@@ -8,31 +8,24 @@ public delegate int LevelIndes(int index);
 public class SelectPanelSet : MonoBehaviour
 {
     [Header("[Select Panel]")]
-    [SerializeField] Button oneBrush = null;
-    [SerializeField] Button twoBrush = null;
-    [SerializeField] Button threeBrush = null;
-    [SerializeField] Button CloseSelectPanelBut = null;
+    [SerializeField] public Button oneBrushBut = null;
+    [SerializeField] public Button twoBrushBut = null;
+    [SerializeField] public Button threeBrushBut = null;
 
     [Header("[Character Move]")]
-    [SerializeField] GameObject character = null;
-
-    [Header("[InGame obj Set]")]
-    [SerializeField] GameObject objOne = null;
-    [SerializeField] GameObject objTwo = null;
-    [SerializeField] GameObject objThree = null;
+    [SerializeField] public GameObject character = null;
 
     [Header("[Select Image Data]")]
     [SerializeField] SelectPanelImgData selectPanelImg = null;
     [SerializeField] LevelPanelSet startSceneLevelIndex;
     [SerializeField] AnimalQPrefabData animalQPrefabData = null;
 
-    Vector2 characterPos;
+    public Vector2 characterPos;
     Image selectImage = null;
     GameObject instQprefab = null;
 
-    Dictionary<int, GameObject> qAnimalPrefabDictionary;
-
     int levelIndexCheck;
+
     void Awake()
     {
         if (selectPanelImg == null)
@@ -40,91 +33,83 @@ public class SelectPanelSet : MonoBehaviour
         if (animalQPrefabData == null)
             animalQPrefabData = Resources.Load<AnimalQPrefabData>("Data/AnimalQPrefabData");
 
-        qAnimalPrefabDictionary = new Dictionary<int, GameObject>();
-
-
         levelIndexCheck = SoundManager.Inst.LevelIndex;
+        //Debug.Log("CharacterPos : " + character.transform.localPosition);
+        characterPos = new Vector2(915f, 400f);
+        character.transform.localPosition = characterPos;
+
         ImgeSet();
 
         #region Button Click Event Setting
-        oneBrush.onClick.AddListener(delegate
+        oneBrushBut.onClick.AddListener(delegate
         {
-            OnClickQustion(oneBrush, true, false, false);
+            OnClickQustion(oneBrushBut, true, false, false);
             CharacterMoves(1);
-            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(oneBrush.transform.position);
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(oneBrushBut.transform.position);
         });
 
-        twoBrush.onClick.AddListener(delegate
+        twoBrushBut.onClick.AddListener(delegate
         {
-            OnClickQustion(twoBrush, false, true, false);
+            OnClickQustion(twoBrushBut, false, true, false);
             CharacterMoves(2);
-            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(twoBrush.transform.position);
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(twoBrushBut.transform.position);
         });
 
-        threeBrush.onClick.AddListener(delegate
+        threeBrushBut.onClick.AddListener(delegate
         {
-            OnClickQustion(threeBrush, false, false, true);
+            OnClickQustion(threeBrushBut, false, false, true);
             CharacterMoves(3);
-            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(threeBrush.transform.position);
-        });
-
-        CloseSelectPanelBut.onClick.AddListener(delegate
-        {
-            OnClickInGameGoSelectPanel();
-            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(CloseSelectPanelBut.transform.position);
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(threeBrushBut.transform.position);
         });
         #endregion 
     }
 
-    void AddDictionaryPrefab()
-    {
-        int count = 0;
-        for (int i = 0; i < 10; i++)
-        {
-            qAnimalPrefabDictionary.Add(count, animalQPrefabData.Qprefab[i]);
-        }
-    }
-
     void ImgeSet()
     {
-        //Debug.Log("animalQPrefabData : " + animalQPrefabData.Qprefab.Length);
         if (levelIndexCheck == 1)
         {
-            SelecetImgOne(oneBrush, selectPanelImg.LevelOneSelectPanelImg, 0);
-            InstQPrefab(0,objOne);
-            SelecetImgOne(twoBrush, selectPanelImg.LevelOneSelectPanelImg, 1);
-            InstQPrefab(1, objTwo);
-            SelecetImgOne(threeBrush, selectPanelImg.LevelOneSelectPanelImg, 2);
-            InstQPrefab(2, objThree);
+            SelecetImgOne(oneBrushBut, selectPanelImg.LevelOneSelectPanelImg, 0);
+            InstQPrefab(0,InGamePanelSet.Inst.QOneObj());
+            SelecetImgOne(twoBrushBut, selectPanelImg.LevelOneSelectPanelImg, 1);
+            InstQPrefab(1, InGamePanelSet.Inst.QTwoObj());
+            SelecetImgOne(threeBrushBut, selectPanelImg.LevelOneSelectPanelImg, 2);
+            InstQPrefab(2, InGamePanelSet.Inst.QThreeObj());
         }
         else if (levelIndexCheck == 2)
         {
-            SelecetImgOne(oneBrush, selectPanelImg.LevelTwoSelectPanelImg, 0);
-            InstQPrefab(3, objOne);
-            SelecetImgOne(twoBrush, selectPanelImg.LevelTwoSelectPanelImg, 1);
-            InstQPrefab(4, objTwo);
-            SelecetImgOne(threeBrush, selectPanelImg.LevelTwoSelectPanelImg, 2);
-            InstQPrefab(5, objThree);
+            SelecetImgOne(oneBrushBut, selectPanelImg.LevelTwoSelectPanelImg, 0);
+            InstQPrefab(3, InGamePanelSet.Inst.QOneObj());
+
+            SelecetImgOne(twoBrushBut, selectPanelImg.LevelTwoSelectPanelImg, 1);
+            InstQPrefab(4, InGamePanelSet.Inst.QTwoObj());
+
+            SelecetImgOne(threeBrushBut, selectPanelImg.LevelTwoSelectPanelImg, 2);
+            InstQPrefab(5, InGamePanelSet.Inst.QThreeObj());
         }
         else if (levelIndexCheck == 3)
         {
-            SelecetImgOne(oneBrush, selectPanelImg.LevelThreeSelectPanelImg, 0);
-            InstQPrefab(6, objOne);
-            SelecetImgOne(twoBrush, selectPanelImg.LevelThreeSelectPanelImg, 1);
-            InstQPrefab(7, objTwo);
-            SelecetImgOne(threeBrush, selectPanelImg.LevelThreeSelectPanelImg, 2);
-            InstQPrefab(8, objThree);
+            SelecetImgOne(oneBrushBut, selectPanelImg.LevelThreeSelectPanelImg, 0);
+            InstQPrefab(6, InGamePanelSet.Inst.QOneObj());
+
+            SelecetImgOne(twoBrushBut, selectPanelImg.LevelThreeSelectPanelImg, 1);
+            InstQPrefab(7, InGamePanelSet.Inst.QTwoObj());
+
+            SelecetImgOne(threeBrushBut, selectPanelImg.LevelThreeSelectPanelImg, 2);
+            InstQPrefab(8, InGamePanelSet.Inst.QThreeObj());
         }
         else if (levelIndexCheck == 4)
         {
-            SelecetImgOne(oneBrush, selectPanelImg.LevelFourSelectPanelImg, 0);
-            InstQPrefab(9, objOne);
-            SelecetImgOne(twoBrush, selectPanelImg.LevelFourSelectPanelImg, 1);
-            InstQPrefab(10, objTwo);
-            SelecetImgOne(threeBrush, selectPanelImg.LevelFourSelectPanelImg, 2);
-            InstQPrefab(11, objThree);
+            SelecetImgOne(oneBrushBut, selectPanelImg.LevelFourSelectPanelImg, 0);
+            InstQPrefab(9, InGamePanelSet.Inst.QOneObj());
+
+            SelecetImgOne(twoBrushBut, selectPanelImg.LevelFourSelectPanelImg, 1);
+            InstQPrefab(10, InGamePanelSet.Inst.QTwoObj());
+
+            SelecetImgOne(threeBrushBut, selectPanelImg.LevelFourSelectPanelImg, 2);
+            InstQPrefab(11, InGamePanelSet.Inst.QThreeObj());
         }
     }
+
     void InstQPrefab(int index, GameObject setParent)
     {
         instQprefab = ObjectPoolCP.PoolCp.Inst.BringObjectCp(animalQPrefabData.Qprefab[index]);
@@ -170,34 +155,16 @@ public class SelectPanelSet : MonoBehaviour
     {
         this.gameObject.SetActive(false);
         InGamePanelSet.Inst.OneBrushPlayPanelSet(true);
-        button.gameObject.SetActive(butSet);
+        //button.gameObject.SetActive(butSet);
     }
 
     public void PlayGameObjSet(bool objOneSet, bool objTwoSet, bool objThreeSet)
     {
         InGamePanelSet.Inst.InGameSet(true);
         InGamePanelSet.Inst.LineColorAndSizeChange(true);
-        objOne.gameObject.SetActive(objOneSet);
-        objTwo.gameObject.SetActive(objTwoSet);
-        objThree.gameObject.SetActive(objThreeSet);
-    }
 
-    void ButAllSet()
-    {
-        oneBrush.gameObject.SetActive(true);
-        twoBrush.gameObject.SetActive(true);
-        threeBrush.gameObject.SetActive(true);
-    }
-
-
-
-    void OnClickInGameGoSelectPanel()
-    {
-        InGamePanelSet.Inst.SelectPanelSet(true);
-        character.transform.localPosition = characterPos;
-        InGamePanelSet.Inst.OneBrushPlayPanelSet(false);
-        InGamePanelSet.Inst.InGameSet(false);
-        //InGamePanelSet.Inst.LineColorAndSizeChange(false);
-        ButAllSet();
+        InGamePanelSet.Inst.QOneSet(objOneSet);
+        InGamePanelSet.Inst.QTwoSet(objTwoSet);
+        InGamePanelSet.Inst.QThreeSet(objThreeSet);
     }
 }

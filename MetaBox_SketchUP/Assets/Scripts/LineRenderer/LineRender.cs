@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class LineRender : MonoBehaviour
 {
@@ -28,29 +29,9 @@ public class LineRender : MonoBehaviour
 
     public int SetPositionCountDown() => lineRender.positionCount -= 1;
 
-    public void PosReset()
-    {
-        lineRender.positionCount = 0;
-    }
-
-    public void PositionDown(int index)
-    {
-        if (lineRender.positionCount == index) return;
-
-        lineRender.positionCount -= 1;
-        if (lineRender.positionCount == index)
-        {
-            Debug.Log("positionCount : " + lineRender.positionCount);
-            return;
-        }
-    }
-
-    public void SetPositionCountDownforTwo()
-    {
-        lineRender.positionCount -= 1;
-        if (lineRender.positionCount == 2)
-            return;
-    }
+    public int PosReset() => lineRender.positionCount = 0;
+    
+    public int SetPosCountTwo() => lineRender.positionCount = 2;
 
     public void SetCurvePosition(Vector3 pos)
     {

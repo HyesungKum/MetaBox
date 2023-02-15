@@ -10,7 +10,6 @@ public class SFXData : ScriptableObject
     [SerializeField] public AudioClip GameClear = null;
     [SerializeField] public AudioClip GameLose = null;
     [SerializeField] public AudioClip StageClear = null;
-    [SerializeField] public AudioClip yesName = null;
     [SerializeField] public AudioClip noName = null;
 
     [Header("[Line Audio]")]

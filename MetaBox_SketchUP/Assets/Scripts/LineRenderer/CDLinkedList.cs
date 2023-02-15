@@ -85,6 +85,41 @@ public class CDLinkedList
             }
         }
 
+        public GameObject SearchObjs(GameObject cirPointObj)
+        {
+            CDNodeData nodeData = new CDNodeData();
+            nodeData.circlePointObj = cirPointObj;
+
+            CDNode temp = head;
+
+            do
+            {
+                if (temp.data.circlePointObj.name.CompareTo(nodeData.circlePointObj.name) == 0)
+                {
+                    #region Debug
+                    //Debug.Log("SearchObj : " + temp.data.nodePos);
+                    //Debug.Log("SearchObj : " + temp.data.circlePointObj.name);
+                    //Debug.Log("SearchObj (next) : " + temp.next.data.nodePos);
+                    //Debug.Log("SearchObj (next) : " + temp.next.data.circlePointObj.name);
+                    //Debug.Log("SearchObj (prev) : " + temp.prev.data.nodePos);
+                    //Debug.Log("SearchObj (prev) : " + temp.prev.data.circlePointObj.name);
+                    #endregion
+                    return temp.data.circlePointObj;
+                }
+
+                temp = temp.next;
+
+                #region
+                //Debug.Log("temp check 1: " + temp.next.data.nodePos);
+                //Debug.Log("temp check 2: " + temp.next.data.index);
+                //Debug.Log("temp check 2: " + temp.next.data.circlePointObj.name);
+                #endregion
+
+            } while (temp != head);
+
+            return null;
+        }
+
         public CDNode SearchObj(GameObject cirPointObj)
         {
             CDNodeData nodeData = new CDNodeData();
@@ -148,11 +183,11 @@ public class CDLinkedList
         {
             CDNode startNode = SearchObj(cirPointObj);
 
-            #region
-            //Debug.Log("temp.Pos 00 ##  " + startNode.data.nodePos);
-            //Debug.Log("temp.index 00 ## " + startNode.data.index);
-            #endregion
-            CDNode temp = startNode.prev;
+        #region
+        //Debug.Log("temp.Pos 00 ##  " + startNode.data.nodePos);
+        //Debug.Log("temp.index 00 ## " + startNode.data.index);
+        #endregion
+        CDNode temp = startNode.prev;
             #region
             //Debug.Log("temp.Pos 0##  " + temp.data.nodePos);
             //Debug.Log("temp.index 0## " + temp.data.index);
@@ -166,45 +201,6 @@ public class CDLinkedList
                 #endregion
                 temp = temp.prev;
             }
-        }
-
-        // 데이터를 지정된 노드 순방향으로 탐색하기
-        public void TraversalForward(GameObject startNodeObj, GameObject endNodeObj)
-        {
-            CDNode startNode = SearchObj(startNodeObj);
-            CDNode endNode = SearchObj(endNodeObj);
-
-            CDNode temp = startNode;
-
-            while (temp != null)
-            {
-                if (temp == endNode)
-                    break;
-
-                //Debug.Log("temp.Pos (ForWard) start -> end ## " + temp.data.nodePos);
-                //Debug.Log("temp.Pos (ForWard) start -> end ##" + temp.data.circlePointObj);
-
-                temp = temp.next;
-            }
-
-        }
-
-        // 데이터를 역방향으로 탐색하기
-        public void TraversalBackward(GameObject startNodeObj, GameObject endNodeObj)
-        {
-            CDNode startNode = SearchObj(startNodeObj);
-            CDNode endNode = SearchObj(endNodeObj);
-
-            CDNode temp = startNode;
-            while (temp != null)
-            {
-                if (temp == endNode)
-                    break;
-
-                Debug.Log("temp.Pos (Backward) start -> end ## " + temp.data.nodePos);
-                Debug.Log("temp.Pos (Backward) start -> end ##" + temp.data.circlePointObj);
-                temp = temp.prev;
-            }
-        }
+}
     }
 }
