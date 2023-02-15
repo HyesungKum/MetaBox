@@ -227,7 +227,7 @@ public class UIManager : MonoBehaviour
     /// <param name="value">target time value</param>
     void UIScoreModi(int value)
     {
-        scoreText.text = (GameManager.Inst.GetScore() + value).ToString();
+        scoreText.text = (GameManager.Inst.GetScore()).ToString();
     }
     void UITcikCount()
     {
