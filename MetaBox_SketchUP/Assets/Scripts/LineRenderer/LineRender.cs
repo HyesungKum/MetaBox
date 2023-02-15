@@ -63,9 +63,7 @@ public class LineRender : MonoBehaviour
         edge = this.transform.GetChild(0);
 
         if (edge != null)
-        {
             edge.TryGetComponent<EdgeCollider2D>(out edgeCollider);
-        }
 
         List<Vector2> edges = new List<Vector2>();
 
