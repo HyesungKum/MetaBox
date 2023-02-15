@@ -46,8 +46,8 @@ public class SoundManager : MonoBehaviour
     bool isGameStart = false;
     bool isCoroutineRunning = false;
 
-    IEnumerator curCoroutine = null;
-
+    Coroutine runningCoroutine = null;
+    WaitUntil musicPlaying = null;
     List<int> clipList = new();
 
 
@@ -65,6 +65,7 @@ public class SoundManager : MonoBehaviour
         //==============================================
 
         Option.myDelegateAudioControl = AudioVolumeControl;
+        musicPlaying = new WaitUntil(() => myBGMAudioSource.isPlaying.Equals(false));
     }
 
     public float GetVolume(string target)
@@ -99,14 +100,9 @@ public class SoundManager : MonoBehaviour
     public void PlayNote(int targetPitch, float pitch)
     {
 
-        AudioClip changeClip;
-
-        // change audio clip as targeted pitch note 
-        changeClip = myNoteSound.MyClipList.myDictionary[targetPitch];
-
         myNoteAudioSource.pitch = pitch;
 
-        myNoteAudioSource.clip = changeClip;
+        myNoteAudioSource.clip = myNoteSound.MyClipList.myDictionary[targetPitch];
 
         myNoteAudioSource.Play();
     }
@@ -115,16 +111,8 @@ public class SoundManager : MonoBehaviour
     // play music 
     public void SetStageMusic(int targetMusic, float pitch)
     {
-        
-        AudioClip changeClip;
-
-        // change audio clip 
-        changeClip = myMusicSound.MyClipList.myDictionary[targetMusic];
-
+        myBGMAudioSource.clip = myMusicSound.MyClipList.myDictionary[targetMusic];
         myBGMAudioSource.pitch = pitch;
-
-        myBGMAudioSource.clip = changeClip;
-
     }
 
 
@@ -132,9 +120,7 @@ public class SoundManager : MonoBehaviour
     {
         GameManager.Inst.UpdateCurProcess(GameStatus.MusicPlaying);
 
-        curCoroutine = playMyMusic();
-
-        StartCoroutine(curCoroutine);
+        StartCoroutine(nameof(playMyMusic));
     }
 
 
@@ -145,9 +131,7 @@ public class SoundManager : MonoBehaviour
         myBGMAudioSource.Play();
 
 
-        yield return new WaitUntil(() => myBGMAudioSource.isPlaying == false);
-
-
+        yield return musicPlaying;
 
         isCoroutineRunning = false;
         GameManager.Inst.UpdateCurProcess(GameStatus.MusicStop);
@@ -157,12 +141,12 @@ public class SoundManager : MonoBehaviour
 
     public void StopMusic()
     {
-        if (myBGMAudioSource.isPlaying) myBGMAudioSource.Stop();
-        if (isCoroutineRunning)
+        if (myBGMAudioSource.isPlaying)
         {
+            StopCoroutine(nameof(playMyMusic));
             myBGMAudioSource.Stop();
-            StopCoroutine(curCoroutine);
         }
+        
     }
 
 

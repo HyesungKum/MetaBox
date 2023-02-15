@@ -9,30 +9,18 @@ public class Inventory : MonoBehaviour
     [SerializeField] List<GameObject> usedNoteList = new List<GameObject>();
     [SerializeField] GameObject playableNote;
 
-
     int PlayableNoteCount;
 
-
-    private void Start()
+    private void Awake()
     {
         // observe game status 
         GameManager.Inst.myDelegateGameStatus += curGameStatus;
     }
 
-
     void curGameStatus(GameStatus curStatus)
     {
-        switch (curStatus)
-        {
-            case GameStatus.Idle:
-                {
-                    ReadyGame();
-                }
-                break;
-        }
+        if(curStatus == GameStatus.Idle) ReadyGame();
     }
-
-
 
 
     void ReadyGame()
@@ -64,17 +52,11 @@ public class Inventory : MonoBehaviour
         generatePlayableNote();
     }
 
-
-    private void OnDisable()
-    {
-        playableNoteList.Clear();
-        usedNoteList.Clear();
-    }
-
-
     void generatePlayableNote()
     {
-        float xPos = -2f * (PlayableNoteCount / 2);
+        float xPos = -11f;
+ 
+        float distance = 25f / (PlayableNoteCount - 1);
 
 
         for (int i = 0; i < PlayableNoteCount; ++i)
@@ -85,7 +67,7 @@ public class Inventory : MonoBehaviour
             PlayableNote.myDelegatePlayableNote += StatusPlayableNote;
             playableNoteList.Add(newNote);
 
-            xPos += 2f;
+            xPos += distance;
         }
     }
 

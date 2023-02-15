@@ -233,7 +233,7 @@ public class GameManager : MonoBehaviour
         {
             PlayTime--;
             playTimerEvent();
-            if (GameManager.Instance.PlayTime <= 0)
+            if (PlayTime <= 0)
             {
                 if (CatchNumber < StageDatas[CurStage].wantedCount)
                 {

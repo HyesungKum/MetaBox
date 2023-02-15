@@ -20,46 +20,29 @@ public class MusicSheet : MonoBehaviour
     Dictionary<int, List<int>> myStageData = new();
     public Dictionary<int, List<int>> MyStageData { get { return myStageData; } set { myStageData = value; } }
 
-
-
-    private void Start()
+    private void Awake()
     {
         // observe game status 
         GameManager.Inst.myDelegateGameStatus += curGameStatus;
     }
 
-
     void curGameStatus(GameStatus curStatus)
     {
-        switch (curStatus)
+        if (curStatus == GameStatus.Idle)
         {
-            case GameStatus.Idle:
-                {
-                    // clear lists 
-                    ReadyGame();
+            // clear lists 
+            ReadyGame();
 
-                    
-                }
-                break;
+            // ask game manager for current stage number
+            int curStage = GameManager.Inst.CurStage;
 
-            case GameStatus.Ready:
-                {
-                    // ask game manager for current stage number
-                    int curStage = GameManager.Inst.CurStage;
+            // get stage data from game manager 
+            MyStageData = GameManager.Inst.MyStageData;
 
-                    // get stage data from game manager 
-                    MyStageData = GameManager.Inst.CurStageInfo();
-
-                    // generate notes 
-                    buildStage(curStage);
-
-                }
-                break;
-
+            // generate notes 
+            buildStage(curStage);
         }
     }
-
-
 
 
     public void ReadyGame()
@@ -89,14 +72,6 @@ public class MusicSheet : MonoBehaviour
         qNoteList.Clear();
 
     }
-
-
-    private void OnDisable()
-    {
-        noteList.Clear();
-        qNoteList.Clear();
-    }
-
 
     void buildStage(int stage)
     {
@@ -211,7 +186,7 @@ public class MusicSheet : MonoBehaviour
                     if (qNoteList.Count == 0)
                     {
                         SoundManager.Inst.StopMusic();
-                        getAllQNotes();
+                        GameManager.Inst.UpdateCurProcess(GameStatus.GetAllQNotes);
                         return;
                     }
 
@@ -262,11 +237,5 @@ public class MusicSheet : MonoBehaviour
         SoundManager.Inst.PlayNote(targetLine.MyPitchNum, 1);
     }
 
-
-
-    void getAllQNotes()
-    {
-        GameManager.Inst.UpdateCurProcess(GameStatus.GetAllQNotes);
-    }
 
 }

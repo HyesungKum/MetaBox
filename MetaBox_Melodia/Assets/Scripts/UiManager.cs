@@ -30,7 +30,13 @@ public class UiManager : MonoBehaviour
         myButtonNext.onClick.AddListener(OnClickNextStage);
         // observe game status 
         GameManager.Inst.myDelegateGameStatus += curGameStatus;
+        GameManager.Inst.DelegateTimer = playTimer;
 
+    }
+
+    private void Start()
+    {
+        ReplayCoolTime = GameManager.Inst.MelodiaData.replayCooltime;
     }
 
     void curGameStatus(GameStatus curStatus)
@@ -43,21 +49,14 @@ public class UiManager : MonoBehaviour
                 }
                 break;
 
-            case GameStatus.Ready:
-                {
-                    ReplayCoolTime = GameManager.Inst.MyCoolTime;
-                }
-                break;
-
-            case GameStatus.StartGame:
+            case GameStatus.GamePlaying:
                 {
                     myPanelUntouchable.SetActive(false);
                 }
                 break;
-
-            case GameStatus.TimeOver:
+            case GameStatus.Pause:
                 {
-                    myPanelGameOver.SetActive(true);
+                    myPanelUntouchable.SetActive(true);
                 }
                 break;
 
@@ -73,16 +72,16 @@ public class UiManager : MonoBehaviour
                 }
                 break;
 
-            case GameStatus.GameResult:
+            case GameStatus.TimeOver:
                 {
-                    myPanelUntouchable.SetActive(true);
+                    myPanelGameOver.SetActive(true);
                 }
                 break;
 
-            case GameStatus.ClearStage:
+            case GameStatus.GameClear:
                 {
                     myPanelGameClear.SetActive(true);
-                    playTime.text = $"학습 시간 : {GameManager.Inst.MelodiaData.countDown - int.Parse(myTimer.text)}초";
+                    playTime.text = $"학습 시간 : {GameManager.Inst.MelodiaData.countDown - GameManager.Inst.MyPlayableTime}초";
                 }
                 break;
         }
@@ -90,10 +89,9 @@ public class UiManager : MonoBehaviour
 
     public void StartGame()
     {
-        PlayTimer.DelegateTimer = playTimer;
-
+        
         // text for ready 
-        myTimer.text = "Ready";
+        myTimer.text = "";
 
         // to disable touch interaction 
         myPanelUntouchable.SetActive(true);
@@ -107,23 +105,21 @@ public class UiManager : MonoBehaviour
 
 
     // timer for start
-    void playTimer(float t)
+    void playTimer(int t)
     {
-        if (GameManager.Inst.CurStatus != GameStatus.StartGame && t <= 1)
+        if (GameManager.Inst.CurStatus.Equals(GameStatus.Idle))
         {
-            myTimer.text = "Go!";
-            return;
-        }
+            if (t == 999) myTimer.text = "Go!";
+            else myTimer.text = t.ToString();
 
-        myTimer.text = Mathf.Round(t).ToString();
+        }
+        else myTimer.text = string.Format("{0:D2} : {1:D2} ", (t / 60), (t % 60));
     }
 
 
     // Replay Music ==========================================================
     public void OnClickReplay()
     {
-        PlayTimer.timerStop();
-
         SoundManager.Inst.PlayStageMusic();
 
         myButtonReplay.interactable = false;
@@ -133,7 +129,6 @@ public class UiManager : MonoBehaviour
 
     void readyReplay()
     {
-        PlayTimer.timerStop();
         myButtonReplay.interactable = true;
     }
     // Replay Music ==========================================================
@@ -151,12 +146,8 @@ public class UiManager : MonoBehaviour
 
 
     // Move to next stage ==========================================================
-    public void OnClickNextStage()
+    void OnClickNextStage()
     {
-        Time.timeScale = 0;
-
-        readyReplay();
-
         GameManager.Inst.UpdateCurProcess(GameStatus.Idle);
     }
 
@@ -166,7 +157,6 @@ public class UiManager : MonoBehaviour
     {
         SoundManager.Inst.StopMusic();
 
-        Time.timeScale = 1;
         SceneManager.LoadScene("Start");
 
     }
@@ -176,10 +166,6 @@ public class UiManager : MonoBehaviour
     public void OnClickReStart()
     {
         SoundManager.Inst.StopMusic();
-
-        Time.timeScale = 0;
-
-        readyReplay(); 
 
         GameManager.Inst.UpdateCurProcess(GameStatus.Restart);
     }

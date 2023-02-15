@@ -31,9 +31,7 @@ public class Option : MonoBehaviour
 
     void OnClick_Close()
     {
-        if(Time.timeScale < 0.1f) GameManager.Inst.UpdateCurProcess(GameStatus.Pause);
-        //Time.timeScale = 1f;
-        //Time.fixedDeltaTime = 0.02f * Time.timeScale;
+        if (home != null) GameManager.Inst.UpdateCurProcess(GameStatus.GamePlaying);
         this.gameObject.SetActive(false);
     }
 
