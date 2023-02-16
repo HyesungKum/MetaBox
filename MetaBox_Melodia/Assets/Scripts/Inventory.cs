@@ -82,7 +82,7 @@ public class Inventory : MonoBehaviour
 
         if (playableNoteList.Count <= 0)
         {
-            GameManager.Inst.UpdateCurProcess(GameStatus.NoMorePlayableNote);
+            GameManager.Inst.UpdateCurProcess(GameStatus.Fail);
         }
     }
 }

@@ -4,4 +4,5 @@ using UnityEngine;
 public class ScriptableObj : ScriptableObject
 {
     public Sprite[] MusicImg;
+    public Sprite[] CountDownImg;
 }

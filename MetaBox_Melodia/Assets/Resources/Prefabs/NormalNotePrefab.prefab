@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2638324461701126263}
   - component: {fileID: 5681712122736117214}
   - component: {fileID: 6545837953995812669}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 7421891757124487772}
   - component: {fileID: 7421891757124487778}
   - component: {fileID: 2293232009216039505}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: NormalNotePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -163,7 +163,7 @@ Transform:
   m_GameObject: {fileID: 7421891757124487777}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2860268334581998600}
@@ -211,7 +211,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: c2618b5fcb135f14db15fa772ca791d5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6e5c039447ff2d24e98a7aa0cee62b51, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -251,7 +251,7 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 2.2, y: 2.2}
+  m_Size: {x: 1.5, y: 1.5}
   m_Direction: 0
 --- !u!1 &7517339803155732998
 GameObject:
@@ -265,7 +265,7 @@ GameObject:
   - component: {fileID: 2451695585803977417}
   - component: {fileID: 7138719522488669531}
   - component: {fileID: 6548584982400009671}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -336,7 +336,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &6548584982400009671
 MonoBehaviour:
   m_ObjectHideFlags: 0

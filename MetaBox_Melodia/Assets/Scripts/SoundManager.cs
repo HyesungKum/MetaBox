@@ -2,6 +2,19 @@ using UnityEngine;
 using UnityEngine.Audio;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
+public enum SFX
+{
+    Button = 1,
+    Flower,
+    ReplayTouch,
+    TimeLimit,
+    StageClear,
+    GameSuccess,
+    GameFail
+}
 
 public delegate void DelegateAudioControl(string target, float volume);
 
@@ -30,10 +43,14 @@ public class SoundManager : MonoBehaviour
     [Header("Note Sound ScriptableObject")]
     [SerializeField] private MySoundIndex myNoteSound;
     [SerializeField] private MySoundIndex myMusicSound;
+    [SerializeField] private MySoundIndex myBGMSound;
+    [SerializeField] private MySoundIndex mySFXSound;
+
 
     [Header("Audio Sources")]
-    [SerializeField] AudioSource myNoteAudioSource;
-    [SerializeField] AudioSource myBGMAudioSource;
+    [SerializeField] AudioSource mySFX;
+    [SerializeField] AudioSource myBGM;
+    [SerializeField] AudioSource myStageMusic;
 
     [Header("Audio Volume Control")]
     [SerializeField] AudioMixer myAudioMixer;
@@ -64,8 +81,40 @@ public class SoundManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
         //==============================================
 
+
         Option.myDelegateAudioControl = AudioVolumeControl;
-        musicPlaying = new WaitUntil(() => myBGMAudioSource.isPlaying.Equals(false));
+        AddButtonListener();
+        BGMPlay(1);
+        musicPlaying = new WaitUntil(() => myBGM.isPlaying.Equals(false));
+    }
+
+
+    #region Button
+    public void AddButtonListener() //각 씬매니저에서 호출
+    {
+        GameObject[] rootObj = GetSceneRootObject();
+
+        for (int i = 0; i < rootObj.Length; i++)
+        {
+            GameObject go = (GameObject)rootObj[i] as GameObject;
+            Component[] buttons = go.transform.GetComponentsInChildren(typeof(Button), true);
+            foreach (Button button in buttons)
+            {
+                button.onClick.AddListener(() => mySFX.PlayOneShot(mySFXSound.MyClipList.myDictionary[(int)SFX.Button]));
+            }
+        }
+    }
+    GameObject[] GetSceneRootObject()
+    {
+        Scene curscene = SceneManager.GetActiveScene();
+        return curscene.GetRootGameObjects();
+    }
+
+    #endregion
+
+    public void LoadMusicData(SceneMode targetMusic)
+    {
+        myMusicSound = Resources.Load<MySoundIndex>($"ScriptableObject/{targetMusic}");
     }
 
     public float GetVolume(string target)
@@ -91,28 +140,28 @@ public class SoundManager : MonoBehaviour
         myAudioMixer.SetFloat(target, volume);
     }
 
-    public void LoadMusicData(SceneMode targetMusic)
-    {
-        myMusicSound = Resources.Load<MySoundIndex>($"ScriptableObject/{targetMusic}");
-    }
+
+
 
     // play note sound 
     public void PlayNote(int targetPitch, float pitch)
     {
-
-        myNoteAudioSource.pitch = pitch;
-
-        myNoteAudioSource.clip = myNoteSound.MyClipList.myDictionary[targetPitch];
-
-        myNoteAudioSource.Play();
+        mySFX.PlayOneShot(myNoteSound.MyClipList.myDictionary[targetPitch]);
     }
+
+    public void SFXPlay(SFX sfx)
+    {
+        mySFX.PlayOneShot(mySFXSound.MyClipList.myDictionary[(int)sfx]);
+    }
+
+
 
 
     // play music 
     public void SetStageMusic(int targetMusic, float pitch)
     {
-        myBGMAudioSource.clip = myMusicSound.MyClipList.myDictionary[targetMusic];
-        myBGMAudioSource.pitch = pitch;
+        myStageMusic.clip = myMusicSound.MyClipList.myDictionary[targetMusic];
+        myStageMusic.pitch = pitch;
     }
 
 
@@ -123,28 +172,41 @@ public class SoundManager : MonoBehaviour
         StartCoroutine(nameof(playMyMusic));
     }
 
+    public void RePlay()
+    {
+        myStageMusic.Play();
+    }
+
+    public void BGMPlay(int scene) //0 - title, 1 - ingame
+    {
+        if (myStageMusic.isPlaying) myStageMusic.Stop();
+
+        myBGM.clip = myBGMSound.MyClipList.myDictionary[scene];
+        myBGM.Play();
+    }
 
     IEnumerator playMyMusic()
     {
         isCoroutineRunning = true;
 
-        myBGMAudioSource.Play();
+        myStageMusic.Play();
 
 
         yield return musicPlaying;
 
         isCoroutineRunning = false;
         GameManager.Inst.UpdateCurProcess(GameStatus.MusicStop);
+        BGMPlay(2);
     }
 
 
 
     public void StopMusic()
     {
-        if (myBGMAudioSource.isPlaying)
+        if (isCoroutineRunning)
         {
             StopCoroutine(nameof(playMyMusic));
-            myBGMAudioSource.Stop();
+            myStageMusic.Stop();
         }
         
     }

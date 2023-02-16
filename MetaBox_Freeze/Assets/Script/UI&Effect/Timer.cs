@@ -9,7 +9,7 @@ public class Timer : MonoBehaviour
     [SerializeField] AnimationCurve RotationCurve; // = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(0.25f, 8f), new Keyframe(0.5f, -8f), new Keyframe(0.7f, 6f), new Keyframe(0.9f, -6f), new Keyframe(1.05f, 4f), new Keyframe(1.2f, -4f), new Keyframe(1.3f, 2f), new Keyframe(1.4f, -2f), new Keyframe(1.5f, 0f) });
 
 
-    [Header("alwarm Control")]
+    [Header("alarm Control")]
     [SerializeField] GameObject alarm = null;
     [SerializeField] int hurryUp = 10; //remaining time for the alarm display to start.
     [SerializeField] AnimationCurve AlarmPosCurve; // = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(0.5f, 0.2f), new Keyframe(0.7f, 0f) });

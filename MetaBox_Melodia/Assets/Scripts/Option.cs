@@ -14,6 +14,8 @@ public class Option : MonoBehaviour
     [SerializeField] Slider myAudioSliderBGM;
     [SerializeField] Slider myAudioSliderSFX;
 
+    [SerializeField] Fade fade = null;
+
     void Awake()
     {
         exit.onClick.AddListener(OnClick_Close);
@@ -35,19 +37,11 @@ public class Option : MonoBehaviour
         this.gameObject.SetActive(false);
     }
 
-    void OnClick_ReStart()
-    {
-        Time.timeScale = 1f;
-        Time.fixedDeltaTime = 0.02f * Time.timeScale;
-        this.gameObject.SetActive(false);
-        //GameManager.Instance.ReStart();
-    }
-
     void OnClick_Quit() //½ºÅ¸Æ®¾À
     {
         Time.timeScale = 1f;
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
-        SceneManager.LoadScene("Start");
+        fade?.FadeOut();
     }
 
     void OnValueChanged_BGM()

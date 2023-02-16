@@ -11,8 +11,7 @@ public enum GameStatus
     MusicPlaying,
     MusicStop,
     GetAllQNotes,
-    NoMorePlayableNote,
-    TimeOver,
+    Fail,
     GameClear,
     Restart
 }
@@ -41,6 +40,7 @@ public class GameManager : DataLoader
     #endregion
 
     public Action<int> DelegateTimer;
+    public Action<int> gameClearRecord;
     public delegate void DelegateGameStatus(GameStatus curStatue);
     public DelegateGameStatus myDelegateGameStatus;
 
@@ -55,6 +55,7 @@ public class GameManager : DataLoader
 
     WaitForSeconds wait1 = null;
     bool stageClear = false;
+    bool gameClear = false;
 
     private void Awake()
     {
@@ -63,6 +64,8 @@ public class GameManager : DataLoader
         StageDatas = FindStageDatasByStageGroup(MelodiaData.stageGroup);
         MyStageData = StageData(StartUI.MySceneMode);
         SoundManager.Inst.LoadMusicData(StartUI.MySceneMode);
+        SoundManager.Inst.AddButtonListener();
+        SoundManager.Inst.BGMPlay(2);
     }
 
     private void Start()
@@ -82,6 +85,7 @@ public class GameManager : DataLoader
                 {
                     CurStage++;
                     stageClear = false;
+                    gameClear = false;
                     CurStatus = GameStatus.Idle;
 
                     // let all know idle status 
@@ -122,7 +126,8 @@ public class GameManager : DataLoader
 
             case GameStatus.MusicStop:
                 {
-                    if (stageClear && CurStage.Equals(MyStageData.Keys.Count)) UpdateCurProcess(GameStatus.GameClear);
+                    if (gameClear) break;
+                    else if (stageClear && CurStage.Equals(MyStageData.Keys.Count)) UpdateCurProcess(GameStatus.GameClear);
                     else if(stageClear) myDelegateGameStatus(GameStatus.GetAllQNotes);
                     else UpdateCurProcess(GameStatus.GamePlaying);
                 }
@@ -131,36 +136,34 @@ public class GameManager : DataLoader
             case GameStatus.GetAllQNotes:
                 {
                     stageClear = true;
-
+                    CurStatus = GameStatus.GetAllQNotes;
+                    SoundManager.Inst.SFXPlay(SFX.StageClear);
                     Invoke(nameof(ClearMusic), 1f);
                 }
                 break;
 
-            case GameStatus.NoMorePlayableNote:
+            case GameStatus.Fail:
                 {
                     SoundManager.Inst.StopMusic();
 
-                    CurStatus = GameStatus.NoMorePlayableNote;
+                    SoundManager.Inst.SFXPlay(SFX.GameFail);
 
-                    myDelegateGameStatus(GameStatus.NoMorePlayableNote);
-                }
-                break;
+                    CurStatus = GameStatus.Fail;
 
-            case GameStatus.TimeOver:
-                {
-                    CurStatus = GameStatus.TimeOver;
-
-                    SoundManager.Inst.StopMusic();
-                    myDelegateGameStatus(GameStatus.TimeOver);
+                    myDelegateGameStatus(GameStatus.Fail);
                 }
                 break;
 
             case GameStatus.GameClear:
                 {
                     CurStatus = GameStatus.GameClear;
+                    gameClear = true;
                     SoundManager.Inst.SetStageMusic(MyStageData.Keys.Count +1, 1);
+                    SoundManager.Inst.SFXPlay(SFX.GameSuccess);
                     Invoke(nameof(ClearMusic), 1f);
+                    gameClearRecord(MelodiaData.countDown - MyPlayableTime);
                     myDelegateGameStatus(GameStatus.GameClear);
+
                 }
                 break;
 
@@ -177,6 +180,7 @@ public class GameManager : DataLoader
     IEnumerator CountDown3()
     {
         yield return wait1;
+        yield return wait1;
 
         for (int i = 3; i > 0; i--)
         {
@@ -184,8 +188,10 @@ public class GameManager : DataLoader
             yield return wait1;
         }
 
-        DelegateTimer(999);
+        DelegateTimer(0);
         yield return wait1;
+        DelegateTimer(0);
+
         SoundManager.Inst.PlayStageMusic();
     }
 
@@ -205,9 +211,10 @@ public class GameManager : DataLoader
         {
             MyPlayableTime--;
             DelegateTimer(MyPlayableTime);
+            if (MyPlayableTime.Equals(30)) SoundManager.Inst.SFXPlay(SFX.TimeLimit);
             if (MyPlayableTime <= 0)
             {
-                UpdateCurProcess(GameStatus.TimeOver);
+                UpdateCurProcess(GameStatus.Fail);
             }
             yield return wait1;
         }

@@ -22,7 +22,7 @@ public class QNote : MonoBehaviour
     {
         if (hightlightFX != null) hightlightFX.transform.position = new Vector2(this.transform.position.x, -1.25f);
 
-        textPitch.transform.position = new Vector2(this.transform.position.x, 4.5f);
+        textPitch.transform.position = new Vector2(this.transform.position.x, 4.8f);
         switch (myPitchNum)
         {
             case 100:
@@ -55,4 +55,5 @@ public class QNote : MonoBehaviour
         textPitch.color = Color.white;
         hightlightFX.SetActive(false);
     }
+
 }
