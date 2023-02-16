@@ -1091,8 +1091,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1030385544}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 28.29, y: -3.71, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 28.2581, y: -3.71, z: 0}
+  m_LocalScale: {x: 1.0077, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1728669868}
@@ -1111,18 +1111,18 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -1.5213573, y: 0.29410613}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 3.13, y: 1.59}
+    oldSize: {x: 8.26, y: 8.26}
     newSize: {x: 3.13, y: 1.59}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 3.13, y: 1.59}
+  m_Size: {x: 2.872508, y: 2.0882125}
   m_EdgeRadius: 0
 --- !u!212 &1030385547
 SpriteRenderer:
@@ -1165,7 +1165,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 7
-  m_Sprite: {fileID: 21300000, guid: 347aa832ed8b25342813483ecbeb2b46, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0079a99b5a9944544b70073d7500fc3d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1520,7 +1520,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 3.13, y: 1.59}
+  m_Size: {x: 2.5, y: 1.5}
   m_EdgeRadius: 0
 --- !u!1 &1261048495
 GameObject:
@@ -2047,10 +2047,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   customAnimator: {fileID: 0}
   builtInAimator: {fileID: 985891744227162747}
-  jumpSfx: {fileID: 0}
-  jumpFoce: 130
-  mass: 15
-  gravity: 1.7
+  jumpSfx: {fileID: 8300000, guid: 87d65960defc4a6409ff09face5e49dd, type: 3}
+  jumpFoce: 200
+  mass: 12
+  gravity: 3
   playerLastSpeed: 15
 --- !u!61 &1475346622
 BoxCollider2D:
@@ -2441,7 +2441,7 @@ MonoBehaviour:
   - {fileID: 53296529}
   - {fileID: 1967429174}
   - {fileID: 2055272910}
-  scrollSpeed: 3
+  scrollSpeed: 6
   rockRenderer: {fileID: 1180634872}
   Rock:
   - {fileID: 1180634873}
@@ -2449,7 +2449,7 @@ MonoBehaviour:
   RockSpawnTr:
   - {fileID: 65862120}
   - {fileID: 1535983708}
-  rockSpeed: 4
+  rockSpeed: 6
 --- !u!1 &1752905946
 GameObject:
   m_ObjectHideFlags: 0
