@@ -45,6 +45,8 @@ public class DeadZone: MonoBehaviour
                     GameObject instVfx = targetIngreds[i].IngredData.delVfx;
                     PoolCp.Inst.BringObjectCp(instVfx).transform.position = targetIngreds[i].transform.position;
                     PoolCp.Inst.DestoryObjectCp(targetIngreds[i].gameObject);
+
+                    SoundManager.Inst.CallSfx("Delete");
                 }
             }
             yield return null;

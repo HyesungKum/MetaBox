@@ -40,6 +40,8 @@ public class GuestTable : MonoBehaviour
 
     [Header("[TablePostion]")]
     public Side side;
+    //===================================inner variables=======================================
+    private bool FirstToken { get; set; }
 
     //=======================================caching===========================================
     [SerializeField] float delayNewGuest;
@@ -51,6 +53,9 @@ public class GuestTable : MonoBehaviour
         //caching
         waitSec = new WaitForSeconds(delayNewGuest);
         waitGetData = new WaitUntil(() => FoodList != null);
+
+        //innver var init
+        FirstToken = true;
 
         StartCoroutine(nameof(GettingData));
     }
@@ -159,7 +164,8 @@ public class GuestTable : MonoBehaviour
                 guestImage.sprite = curGuest.guestImage;
 
                 //Guest Chang Sfx
-                SoundManager.Inst.CallSfx("GuestLeave");
+                if(FirstToken) FirstToken = false;
+                else SoundManager.Inst.CallSfx("GuestLeave");
             }
 
             //Guest Move Finish -> point of Guest arrive
