@@ -178,8 +178,8 @@ public class InGamePanelSet : MonoBehaviour
     {
         CountDown countDown = null;
         waitTimeObjs.TryGetComponent<CountDown>(out countDown);
-        // int waitTime = 3;
-        int waitTime = 1;
+
+        int waitTime = 3;
         for (int i = waitTime; i > 0; i--)
         {
             countDown.ShowWaitTime(waitTime);

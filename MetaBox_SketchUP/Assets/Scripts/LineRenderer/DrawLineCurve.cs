@@ -48,7 +48,6 @@ public class DrawLineCurve : MonoBehaviour
     LineRender linerender = null;
 
     LinePosCDLinkedList circleObj = null;
-    CDLinkedList.CDNode cdNode = null;
 
     int circleObjCount;
     int nodePosCount;
@@ -63,10 +62,9 @@ public class DrawLineCurve : MonoBehaviour
     {
         mainCam = Camera.main;
         lineStack = new Stack<GameObject>();
-        cdNode = new CDLinkedList.CDNode();
         InGamePanelSet.Inst.LineColorAndSizeChange(true);
-        choiceWordPanel.gameObject.SetActive(false); // ¼±ÅÃ ÆÇ³Ú ºñÈ°¼ºÈ­
-        clearAnimation.gameObject.SetActive(false); // ¾Ö´Ï¸ŞÀÌ¼Ç ÀÌ¹ÌÁö ºñÈ°¼ºÈ­
+        choiceWordPanel.gameObject.SetActive(false); // ì„ íƒ íŒë„¬ ë¹„í™œì„±í™”
+        clearAnimation.gameObject.SetActive(false); // ì• ë‹ˆë©”ì´ì…˜ ì´ë¯¸ì§€ ë¹„í™œì„±í™”
         GetObjIndex();
     }
 
@@ -78,7 +76,8 @@ public class DrawLineCurve : MonoBehaviour
         revertBut.onClick.AddListener(delegate
         {
             OnClickRevertBut();
-            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(revertBut.transform.position);
+            SoundManager.Inst.ButtonSFXPlay(); 
+            SoundManager.Inst.ButtonEffect(revertBut.transform.position);
         });
     }
 
@@ -114,32 +113,28 @@ public class DrawLineCurve : MonoBehaviour
             if (hitInfo.collider.name.Equals("Collider")) return;
             if (startNodeObj == null)
             {
-                startNodeObj = hitInfo.transform.gameObject; // Å¬¸¯ÇÑ °É ¿ÀºêÁ§Æ® ¹Ş¾Æ¿À±â
-                circleObj.cdNode = circleObj.cdLinkedList.SearchObj(startNodeObj); // ¿øÇü ¾ç¹æÇâ ¸®½ºÆ®¿¡¼­ ³ëµå°¡ ÀÖ´ÂÁö Ã£±â
-                InstLine(); // ¶óÀÎ »ı¼º
-
-                startNodeObj = circleObj.cdNode.data.circlePointObj;// Ã¹ Å¬¸¯ ³ëµå ¿¹ :4
-                Debug.Log("#1)Touch Start : " + startNodeObj);
-                endNodeObj = startNodeObj;
-                prevObj = circleObj.cdNode.prev.data.circlePointObj;  // ¿¹: 5
-                nextObj = circleObj.cdNode.next.data.circlePointObj; // ¿¹: 3
-
-                startPos = startNodeObj.transform.position; // Ã¹ ½ÃÀÛ Pos Á¤ÇØÁÖ±â
-                linerender.SetPosition(0, startPos); // ¶óÀÎ·»´õ·¯ Æ÷Áö¼Ç ¼ÂÆÃ ÇØÁÖ±â
-                linerender.SetPosition(1, startPos); // ¶óÀÎ·»´õ·¯ 2¹øÂ° Æ÷Áö¼Çµµ ¼ÂÆÃ ÇØÁÖ±â
+                startNodeObj = hitInfo.transform.gameObject; // í´ë¦­í•œ ê±¸ ì˜¤ë¸Œì íŠ¸ ë°›ì•„ì˜¤ê¸°
             }
+            // startNodeObj ê°€ null ì•„ë‹Œ ê²ƒì€ ì´ì „ì— ê·¸ì—ˆë˜ ë§ˆì§€ë§‰ ì ì¸ê±°ë‹¤.
             else if (startNodeObj != null)
             {
-                InstLine();
-                Debug.Log("#2)Touch Start : " + startNodeObj);
-                endNodeObj = startNodeObj;
-                circleObj.cdNode = circleObj.cdLinkedList.SearchObj(startNodeObj); // ¿øÇü ¾ç¹æÇâ ¸®½ºÆ®¿¡¼­ ³ëµå°¡ ÀÖ´ÂÁö Ã£±â
-                prevObj = circleObj.cdNode.prev.data.circlePointObj;  // ¿¹: 5
-                nextObj = circleObj.cdNode.next.data.circlePointObj; // ¿¹: 3
-
-                linerender.SetPosition(0, startNodeObj.transform.position);
-                linerender.SetPosition(1, startNodeObj.transform.position);
+                // ë§ˆì§€ë§‰ ê¸‹ë˜ ì ì´ë¯€ë¡œ ì´ë²ˆì— í„°ì¹˜í•œ ê²ƒê³¼ ë‹¤ë¥´ë©´ ì•ˆëœë‹¤.
+                if (startNodeObj != hitInfo.transform.gameObject)
+                    return;
             }
+
+            // í„°ì¹˜í•œ ì ì„ ê¸°ì¤€ìœ¼ë¡œ ë¼ì¸ì„ ìƒì„±í•œë‹¤.
+            circleObj.cdNode = circleObj.cdLinkedList.SearchObj(startNodeObj); // ì›í˜• ì–‘ë°©í–¥ ë¦¬ìŠ¤íŠ¸ì—ì„œ ë…¸ë“œê°€ ìˆëŠ”ì§€ ì°¾ê¸°
+            InstLine(); // ë¼ì¸ ìƒì„±
+
+            startNodeObj = circleObj.cdNode.data.circlePointObj;// ì²« í´ë¦­ ë…¸ë“œ ì˜ˆ :4
+            endNodeObj = startNodeObj;
+            prevObj = circleObj.cdNode.prev.data.circlePointObj;  // ì˜ˆ: 5
+            nextObj = circleObj.cdNode.next.data.circlePointObj; // ì˜ˆ: 3
+
+            startPos = startNodeObj.transform.position; // ì²« ì‹œì‘ Pos ì •í•´ì£¼ê¸°
+            linerender.SetPosition(0, startPos); // ë¼ì¸ë Œë”ëŸ¬ í¬ì§€ì…˜ ì…‹íŒ… í•´ì£¼ê¸°
+            linerender.SetPosition(1, startPos); // ë¼ì¸ë Œë”ëŸ¬ 2ë²ˆì§¸ í¬ì§€ì…˜ë„ ì…‹íŒ… í•´ì£¼ê¸°
         }
     }
 
@@ -148,129 +143,66 @@ public class DrawLineCurve : MonoBehaviour
         if (startNodeObj == null) return;
         if (hitInfo)
         {
-            GameObject hitObjCheck = hitInfo.transform.gameObject; // ´ÙÀ½ Æ÷Áö¼Ç Ã¼Å©
-            linerender.SetCurvePosition(touchPos); // ¶óÀÎ·»´õ·¯ Æ÷Áö¼Ç °íºÒ °íºÒÇÏ°Ô ±×¸®°Ô ÇØÁÖ±â
+            GameObject hitObjCheck = hitInfo.transform.gameObject; // ë‹¤ìŒ í¬ì§€ì…˜ ì²´í¬
+            linerender.SetCurvePosition(touchPos); // ë¼ì¸ë Œë”ëŸ¬ í¬ì§€ì…˜ ê³ ë¶ˆ ê³ ë¶ˆí•˜ê²Œ ê·¸ë¦¬ê²Œ í•´ì£¼ê¸°
 
-            Debug.Log("## ¹Ù²î±â Àü startPos : " + startNodeObj);
-            //Debug.Log("hitPos : " + hitObjCheck.transform.position);
-            //endNodeObj = startNodeObj;
-            if (hitObjCheck == prevObj)
+            if (hitObjCheck == prevObj || hitObjCheck == nextObj)
             {
-                startNodeObj = hitObjCheck.gameObject;
-                Debug.Log("## ¹Ù²î°í ³ª¼­ startPos : " + startNodeObj);
-                Debug.Log("## EndNodeObj : " + endNodeObj);
-
                 linerender.SetPosition(1, hitObjCheck.transform.position);
-                prevObj = circleObj.cdNode.prev.prev.data.circlePointObj;
-                //Debug.Log("## move startNodeObj )" + startNodeObj);
-                //Debug.Log("## move prevObj )" + prevObj);
-
-
-                InstPrticle(startNodeObj.transform.position);
-                Debug.Log("@@ ÀÓÆÑÆ® Ãâ·Â @@");
-                SoundManager.Inst.ConnectLineSFXPlay(); // È¿°úÀ½
-
-                if (linerender.GetPosition(0) == linerender.GetPosition(1))
-                {
-                    linerender.SetPosition(1, hitObjCheck.transform.position);
-                    Debug.Log("## P)µÎ°³ Æ÷Áö¼ÇÀÌ 0°ú 1ÀÌ °°À¸¸é");
-                }
-                //linerender.SetPosCountTwo();
-                //Debug.Log("SetPosCountTwo : " + linerender.GetPositionCount());
-                //Debug.Log("ClearCount : " + ClearCount);
+                // ì •ìƒì ìœ¼ë¡œ ê·¸ì–´ì§„ ê²ƒì´ë‹ˆ ìŠ¤íƒì— ì¶”ê°€
                 lineStack.Push(currentLine);
-                Debug.Log("$$ P)Starck Count : " + lineStack.Count);
+                // íš¨ê³¼ ì¶œë ¥
+                InstPrticle(hitObjCheck.gameObject.transform.position); // ì„í™íŠ¸
+                SoundManager.Inst.ConnectLineSFXPlay(); // íš¨ê³¼ìŒ
+
+                circleObj.cdNode = circleObj.cdLinkedList.SearchObj(hitObjCheck); // ì›í˜• ì–‘ë°©í–¥ ë¦¬ìŠ¤íŠ¸ì—ì„œ ë…¸ë“œê°€ ìˆëŠ”ì§€ ì°¾ê¸°
+
+                startNodeObj = circleObj.cdNode.data.circlePointObj;// ì²« í´ë¦­ ë…¸ë“œ ì˜ˆ :4
+                prevObj = circleObj.cdNode.prev.data.circlePointObj;  // ì˜ˆ: 5
+                nextObj = circleObj.cdNode.next.data.circlePointObj; // ì˜ˆ: 3
+
+                startPos = startNodeObj.transform.position; // ì²« ì‹œì‘ Pos ì •í•´ì£¼ê¸°
+                InstLine(); // ë¼ì¸ ìƒì„±
+                linerender.SetPosition(0, startPos); // ë¼ì¸ë Œë”ëŸ¬ í¬ì§€ì…˜ ì…‹íŒ… í•´ì£¼ê¸°
+                linerender.SetPosition(1, startPos); // ë¼ì¸ë Œë”ëŸ¬ 2ë²ˆì§¸ í¬ì§€ì…˜ë„ ì…‹íŒ… í•´ì£¼ê¸°
+                //lineStack.Push(currentLine);
+
             }
-            else if (hitObjCheck == nextObj)
-            {
-                startNodeObj = hitObjCheck.gameObject;
-
-                linerender.SetPosition(1, hitObjCheck.transform.position);
-                nextObj = circleObj.cdNode.next.next.data.circlePointObj;
-                // Debug.Log("@@ startNodeObj)" + startNodeObj);
-                //Debug.Log("@@ nextObj :" + nextObj);
-
-                if (linerender.GetPosition(0) == linerender.GetPosition(1))
-                {
-                    linerender.SetPosition(1, hitObjCheck.transform.position);
-                    Debug.Log("## N)µÎ°³ Æ÷Áö¼ÇÀÌ 0°ú 1ÀÌ °°À¸¸é");
-                }
-                InstPrticle(startNodeObj.transform.position);
-                Debug.Log("@@ ÀÓÆÑÆ® Ãâ·Â @@");
-                SoundManager.Inst.ConnectLineSFXPlay(); // È¿°úÀ½
-                linerender.SetPosCountTwo();
-                //Debug.Log("ClearCount : " + ClearCount);
-
-                lineStack.Push(currentLine);
-                Debug.Log("$$ N)Starck Count : " + lineStack.Count);
-            }
+            // ì´ì›ƒì ì„ í„°ì¹˜í•œ ê²ƒì´ ì•„ë‹ˆë¯€ë¡œ ì·¨ì†Œ
             else
             {
-                //if(linerender)
-                Debug.Log("Move Else ÀÏ¶§");
+                // ì´ì›ƒì ì€ ì•„ë‹ˆì§€ë§Œ ë‹¤ë¥¸ ì ì„ í„°ì¹˜í–ˆë‹¤ëŠ” ì–˜ê¸°
+                // ë‹¤ë¥¸ ì ì„ í„°ì¹˜í–ˆìœ¼ë¯€ë¡œ ì·¨ì†Œì²˜ë¦¬
+                if (startNodeObj != hitObjCheck &&
+                    circleObj.cdLinkedList.SearchObj(hitObjCheck) != null)
+                    MoveEnd(hitInfo);
             }
         }
     }
 
     void MoveEnd(RaycastHit2D hitInfo)
     {
+        Debug.Log("StackCount : " + lineStack.Count) ;
+        Debug.Log("line Stackì— ìˆë‹ˆ ? " + lineStack.Contains(currentLine));
+        //Debug.Log("End LineCount : " + linerender.GetPositionCount());
         if (startNodeObj == null) return;
-        
-        
-        // ==== end == start °°ÀºÁö Ã¼Å© ÇØº¸ÀÚ
-        //if(end)
 
-        //if (hitInfo)
-        //{
-        //    if (hitInfo.collider.name.Equals("Collider"))
-        //    {
-        //        Debug.Log("move end Äİ¶óÀÌ´õ¿´¾î");
-        //        DestroyLine();
-        //        StackPop();
-        //        linerender.PosReset();
-        //        // ==== Æ÷Áö¼Ç ¹Ù²ãÁÖ±â
-        //        //startNodeObj = endNodeObj;
-        //        Debug.Log(" Moev End : " + startNodeObj);
-        //        Debug.Log(" Moev End : " + endNodeObj);
-        //    }
+        // ê·¸ì–´ì§€ê³  ìˆëŠ” ë¼ì¸ì€ ì·¨ì†Œ
+        ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(currentLine);
+        linerender.PosReset();
+        //startNodeObj = null; // startNodeObj ê°€ null ì•„ë‹ˆë©´ ì„ ì„ ê¸‹ë˜ ë§ˆì§€ë§‰ ì ì¸ê±°ë‹¤. ì—¬ê¸°ì„œ nullì„ í•˜ë©´ ì•ˆëœë‹¤.
+        endNodeObj = null;
+        prevObj = null;
+        nextObj = null;
 
-        //}
-
-        if (startNodeObj != null)
-        {
-            //Debug.Log("### linePosCount : " + linerender.GetPositionCount());
-
-            if (startNodeObj == endNodeObj)
-            {
-                //Debug.Log("## Move End startNode == endNode ## ");
-                //linerender.SetPosition(1, startNodeObj.transform.position);
-                //linerender.SetPosCountTwo();
-                // Debug.Log("!! end StartNodeObj : " + startNodeObj);
-            }
-            if (linerender.GetPosition(0) == linerender.GetPosition(1))
-            {
-                //DestroyLine();
-                //StackPop();
-                //Debug.Log("Æ÷Áö¼ÇÀÌ µÎ°³°¡ °°¾Æ");
-            }
-            if (linerender.GetPositionCount() > 2)
-            {
-                //Debug.Log("SSSSSSSSS linePosCount : " + linerender.GetPositionCount());
-                //DestroyLine();
-                //Debug.Log("Æ÷Áö¼ÇÀÌ µÎ°³ ÀÌ»óÀÌ¾ß");
-            }
-
-            Invoke(nameof(ClearCheck), 0.5f);
-            //ClearCheck();
-        }
+        Invoke(nameof(ClearCheck), 0.5f);
     }
 
     void ClearCheck()
     {
-        // ==== ½Â¸® ÆÇÁ¤ ====
+        // ==== ìŠ¹ë¦¬ íŒì • ====
         if (lineStack.Count == ClearCount)
         {
-
             ObjSetFalse();
 
             choiceWordPanel.gameObject.SetActive(true);
@@ -282,7 +214,7 @@ public class DrawLineCurve : MonoBehaviour
                 ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(destoryLine);
             }
 
-            lineStack.Clear(); // ½ºÅÃ ºñ¿ì±â
+            lineStack.Clear(); // ìŠ¤íƒ ë¹„ìš°ê¸°
         }
         else if (lineStack.Count > clearCount)
         {
@@ -290,10 +222,11 @@ public class DrawLineCurve : MonoBehaviour
         }
     }
 
+
     void StackPop()
     {
         if (lineStack.Count == 0) return;
-        currentLine = lineStack.Pop(); // ½ºÅÃ ¿¡¼­ »©±â
+        currentLine = lineStack.Pop(); // ìŠ¤íƒ ì—ì„œ ë¹¼ê¸°
         Debug.Log("stackPop : " + lineStack.Count);
         currentLine.TryGetComponent<LineRender>(out linerender);
         linerender.PosReset();
@@ -303,7 +236,7 @@ public class DrawLineCurve : MonoBehaviour
     {
         checkObj.transform.gameObject.SetActive(false);
         revertBut.transform.gameObject.SetActive(false);
-        InGamePanelSet.Inst.LineColorAndSizeChange(false); // ÄÃ·¯ ÆÇ³Ú ºñÈ°¼ºÈ­
+        InGamePanelSet.Inst.LineColorAndSizeChange(false); // ì»¬ëŸ¬ íŒë„¬ ë¹„í™œì„±í™”
     }
 
     void InstLine()
@@ -312,8 +245,8 @@ public class DrawLineCurve : MonoBehaviour
         currentLine.transform.SetParent(lineClonePos);
         currentLine.TryGetComponent<LineRender>(out linerender);
 
-        GetColor(); // ÄÃ·¯ ÃÊ±â ¼ÂÆÃ ¹× »õ·Î¿î ÄÃ·¯ ¹Ş¾Æ¿À±â
-        SetLineSize();  // ¶óÀÎ »çÀÌÁö ¼ÂÆÃ ¹× º¯°æ
+        GetColor(); // ì»¬ëŸ¬ ì´ˆê¸° ì…‹íŒ… ë° ìƒˆë¡œìš´ ì»¬ëŸ¬ ë°›ì•„ì˜¤ê¸°
+        SetLineSize();  // ë¼ì¸ ì‚¬ì´ì§€ ì…‹íŒ… ë° ë³€ê²½
         linerender.SetColor(startColor);
         linerender.SetLineSize(lineSizeValue);
     }

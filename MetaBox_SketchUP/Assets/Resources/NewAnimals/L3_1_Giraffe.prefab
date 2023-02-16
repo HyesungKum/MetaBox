@@ -55,15 +55,13 @@ MonoBehaviour:
   choiceWordPanel: {fileID: 5555525357523210599}
   clearAnimation: {fileID: 4602396617976156299}
   clearCount: 23
-  objInex: 0
+  objInex: 1
   particles: {fileID: 1005828994335477059, guid: c40921314bf6c7a4ab965f06a36179e0, type: 3}
   startNodeObj: {fileID: 0}
   endNodeObj: {fileID: 0}
   prevObj: {fileID: 0}
   nextObj: {fileID: 0}
-  tempObj: {fileID: 0}
   startPos: {x: 0, y: 0, z: 0}
-  stackCount: 0
 --- !u!1 &466732815318683389
 GameObject:
   m_ObjectHideFlags: 0
@@ -2516,6 +2514,7 @@ MonoBehaviour:
   choiceThreeBut: {fileID: 4816676787695266968}
   choiceFourBut: {fileID: 3091017825914055617}
   audioIndex: 7
+  stageClearEffect: {fileID: 0}
   objIndex: 0
 --- !u!1 &5558269407006599554
 GameObject:
