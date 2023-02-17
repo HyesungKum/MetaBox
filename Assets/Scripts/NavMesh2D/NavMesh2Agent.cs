@@ -25,6 +25,8 @@ public class NavMesh2Agent : MonoBehaviour
 
     //===========================================State Flag==============================================
     [SerializeField] float agentSpeed = 1f;
+    public bool IsMove = false;
+    public bool IsLookRight = true;
     [SerializeField] bool MoveOrder = false;
     [field:SerializeField] public bool OnField { get; private set; }
 
@@ -77,15 +79,12 @@ public class NavMesh2Agent : MonoBehaviour
     //========================================Set Agent Moving Target Position======================================
     public void SetDestination(Vector3 position)
     {
-        //노드없는 구간에 인접하여 움직이고 있을 경우 연속 누를 시 현재 위치에서 노드를 받아오지 못해서 오류 발생쓰
-        //현재위치에서 바로 노드정보 받아올시 없다면 인접노드를 받을 수 있도록 기능 추가 필요
-        
-        //지속적으로 움직이는 물체에 대한 예외 처리 필요
-
         //targetting detail position
         detailPos = new Vector3(position.x, position.y, this.transform.position.z);
-        
+
         //initailizing
+        IsMove = true;
+
         StartNode = null;
         EndNode = null;
         pathNode = null;
@@ -245,7 +244,7 @@ public class NavMesh2Agent : MonoBehaviour
     {
         MoveOrder = false;
 
-        if (pathStack.Count == 0) yield break;
+        if (pathStack.Count == 1) yield break;
         Vector3 targetPos = pathStack.Pop();
 
         Vector3 dir = targetPos - this.transform.position;
@@ -253,6 +252,9 @@ public class NavMesh2Agent : MonoBehaviour
         //node move
         while (true)
         {
+            if (dir.normalized.x > 0) IsLookRight = true;
+            else IsLookRight = false;
+
             //new moving order
             if (MoveOrder == true) yield break;
 
@@ -285,6 +287,7 @@ public class NavMesh2Agent : MonoBehaviour
         {
             if (Vector3.Distance(this.transform.position, detailPos) < 0.2f)
             {
+                IsMove = false;
                 yield break;
             }
 
