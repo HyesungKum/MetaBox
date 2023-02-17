@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 public class UiManager : MonoBehaviour
 {
@@ -31,7 +32,7 @@ public class UiManager : MonoBehaviour
 
     [SerializeField] Fade fade = null;
     [SerializeField] ScriptableObj scriptableImg = null;
-
+    [SerializeField] List<ParticleSystem> gameClearEff = null;
     public float ReplayCoolTime { get; set; }
 
     private void Awake()
@@ -41,6 +42,7 @@ public class UiManager : MonoBehaviour
         myButtonNext.onClick.AddListener(OnClickNextStage);
         // observe game status 
         GameManager.Inst.myDelegateGameStatus += curGameStatus;
+        GameManager.Inst.DelegateCountDown = CountDown;
         GameManager.Inst.DelegateTimer = playTimer;
 
     }
@@ -74,11 +76,16 @@ public class UiManager : MonoBehaviour
             case GameStatus.GetAllQNotes:
                 {
                     myPanelNextStage.SetActive(true);
+                    for (int i = 0; i < gameClearEff.Count; i++)
+                    {
+                        gameClearEff[i].Play();
+                    }
                 }
                 break;
 
             case GameStatus.Fail:
                 {
+                    SoundManager.Inst.StopMusic();
                     myPanelGameOver.SetActive(true);
                 }
                 break;
@@ -86,6 +93,11 @@ public class UiManager : MonoBehaviour
             case GameStatus.GameClear:
                 {
                     myPanelGameClear.SetActive(true);
+                    for(int i = 0; i < gameClearEff.Count; i++)
+                    {
+                        gameClearEff[i].Play();
+                    }
+                    SoundManager.Inst.SFXPlay(SFX.GameSuccess);
                     playTime.text = string.Format("{0:D2} : {1:D2}", ((GameManager.Inst.MelodiaData.countDown - GameManager.Inst.MyPlayableTime) / 60), ((GameManager.Inst.MelodiaData.countDown - GameManager.Inst.MyPlayableTime) % 60));
                 }
                 break;
@@ -95,9 +107,6 @@ public class UiManager : MonoBehaviour
     public void StartGame()
     {
         
-        // text for ready 
-        myTimer.text = "";
-
         // to disable touch interaction 
         myPanelUntouchable.SetActive(true);
         myPanelNextStage.SetActive(false);
@@ -107,30 +116,30 @@ public class UiManager : MonoBehaviour
 
         myCountDown.gameObject.SetActive(false);
         myGameStart.SetActive(false);
+
+        myButtonReplay.interactable = true;
     }
 
-
+    void CountDown(int t)
+    {
+        if(t > 0)
+        {
+            myCountDown.gameObject.SetActive(false);
+            myCountDown.gameObject.SetActive(true);
+            myCountDown.sprite = scriptableImg.CountDownImg[t - 1];
+        }
+        else
+        {
+            myCountDown.gameObject.SetActive(false);
+            if (myGameStart.activeSelf) myGameStart.SetActive(false);
+            else myGameStart.SetActive(true);
+        }
+    }
 
     // timer for start
     void playTimer(int t)
     {
-        if (GameManager.Inst.CurStatus.Equals(GameStatus.Idle))
-        {
-            if(t > 0)
-            {
-                myCountDown.gameObject.SetActive(false);
-                myCountDown.gameObject.SetActive(true);
-                myCountDown.sprite = scriptableImg.CountDownImg[t - 1];
-            }
-            else
-            {
-                myCountDown.gameObject.SetActive(false);
-                if (myGameStart.activeSelf) myGameStart.SetActive(false);
-                else myGameStart.SetActive(true);
-            }
-            
-        }
-        else myTimer.text = string.Format("{0:D2} : {1:D2}", (t / 60), (t % 60));
+        myTimer.text = string.Format("{0:D2} : {1:D2}", (t / 60), (t % 60));
     }
 
 
@@ -140,8 +149,7 @@ public class UiManager : MonoBehaviour
         SoundManager.Inst.SFXPlay(SFX.ReplayTouch);
 
         StartCoroutine(nameof(BirdShow));
-        SoundManager.Inst.RePlay();
-
+        
         myButtonReplay.interactable = false;
 
         Invoke(nameof(readyReplay), ReplayCoolTime);
@@ -160,6 +168,7 @@ public class UiManager : MonoBehaviour
             Vector3 birdOriPos = myButtonReplay.transform.position;
             Vector3 birdCurPos = myButtonReplay.transform.position;
 
+            if (i.Equals(1)) SoundManager.Inst.RePlay();
             while (BirdPosCurve.keys[BirdPosCurve.keys.Length - 1].time >= startTime)
             {
                 birdCurPos.y = birdOriPos.y + BirdPosCurve.Evaluate(startTime);
@@ -168,7 +177,7 @@ public class UiManager : MonoBehaviour
                 startTime += Time.deltaTime;
                 yield return null;
             }
-
+            
             if (GameManager.Inst.CurStatus.Equals(GameStatus.GetAllQNotes) ||
                     GameManager.Inst.CurStatus.Equals(GameStatus.Pause) ||
                     GameManager.Inst.CurStatus.Equals(GameStatus.Fail)) yield break;
@@ -186,6 +195,7 @@ public class UiManager : MonoBehaviour
     public void OnClickOption()
     {
         GameManager.Inst.UpdateCurProcess(GameStatus.Pause);
+        SoundManager.Inst.StopMusic();
         myPanelOption.SetActive(true);
     }
 

@@ -39,6 +39,7 @@ public class GameManager : DataLoader
     }
     #endregion
 
+    public Action<int> DelegateCountDown;
     public Action<int> DelegateTimer;
     public Action<int> gameClearRecord;
     public delegate void DelegateGameStatus(GameStatus curStatue);
@@ -88,11 +89,10 @@ public class GameManager : DataLoader
                     gameClear = false;
                     CurStatus = GameStatus.Idle;
 
+                    DelegateTimer(MyPlayableTime);
+
                     // let all know idle status 
                     myDelegateGameStatus(GameStatus.Idle);
-
-                    // set current audio clip
-                    SoundManager.Inst.SetStageMusic(CurStage, 1);
 
                     StartCoroutine(nameof(CountDown3));
                 }
@@ -126,7 +126,7 @@ public class GameManager : DataLoader
 
             case GameStatus.MusicStop:
                 {
-                    if (gameClear) break;
+                    if (gameClear) myDelegateGameStatus(GameStatus.GameClear);
                     else if (stageClear && CurStage.Equals(MyStageData.Keys.Count)) UpdateCurProcess(GameStatus.GameClear);
                     else if(stageClear) myDelegateGameStatus(GameStatus.GetAllQNotes);
                     else UpdateCurProcess(GameStatus.GamePlaying);
@@ -158,12 +158,10 @@ public class GameManager : DataLoader
                 {
                     CurStatus = GameStatus.GameClear;
                     gameClear = true;
-                    SoundManager.Inst.SetStageMusic(MyStageData.Keys.Count +1, 1);
-                    SoundManager.Inst.SFXPlay(SFX.GameSuccess);
+                    CurStage++;
+                    
                     Invoke(nameof(ClearMusic), 1f);
                     gameClearRecord(MelodiaData.countDown - MyPlayableTime);
-                    myDelegateGameStatus(GameStatus.GameClear);
-
                 }
                 break;
 
@@ -182,15 +180,13 @@ public class GameManager : DataLoader
         yield return wait1;
         yield return wait1;
 
-        for (int i = 3; i > 0; i--)
+        for (int i = 3; i >= 0; i--)
         {
-            DelegateTimer(i);
+            DelegateCountDown(i);
             yield return wait1;
         }
 
-        DelegateTimer(0);
-        yield return wait1;
-        DelegateTimer(0);
+        DelegateCountDown(0);
 
         SoundManager.Inst.PlayStageMusic();
     }

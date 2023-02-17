@@ -1,9 +1,10 @@
-using UnityEngine;
-using UnityEngine.Audio;
+using ObjectPoolCP;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.UI;
+using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public enum SFX
 {
@@ -50,10 +51,12 @@ public class SoundManager : MonoBehaviour
     [Header("Audio Sources")]
     [SerializeField] AudioSource mySFX;
     [SerializeField] AudioSource myBGM;
-    [SerializeField] AudioSource myStageMusic;
 
     [Header("Audio Volume Control")]
     [SerializeField] AudioMixer myAudioMixer;
+
+    [Header("Button")]
+    [SerializeField] GameObject touchEff;
 
     public bool MasterMute { get; private set; } = false;
     public bool BGMMute { get; private set; } = false;
@@ -89,6 +92,8 @@ public class SoundManager : MonoBehaviour
     }
 
 
+
+
     #region Button
     public void AddButtonListener() //각 씬매니저에서 호출
     {
@@ -101,6 +106,7 @@ public class SoundManager : MonoBehaviour
             foreach (Button button in buttons)
             {
                 button.onClick.AddListener(() => mySFX.PlayOneShot(mySFXSound.MyClipList.myDictionary[(int)SFX.Button]));
+                button.onClick.AddListener(delegate { OnClickButton(button.transform.position); });
             }
         }
     }
@@ -110,6 +116,10 @@ public class SoundManager : MonoBehaviour
         return curscene.GetRootGameObjects();
     }
 
+    void OnClickButton(Vector3 pos)
+    {
+        PoolCp.Inst.BringObjectCp(touchEff).transform.position = pos;
+    }
     #endregion
 
     public void LoadMusicData(SceneMode targetMusic)
@@ -156,15 +166,6 @@ public class SoundManager : MonoBehaviour
 
 
 
-
-    // play music 
-    public void SetStageMusic(int targetMusic, float pitch)
-    {
-        myStageMusic.clip = myMusicSound.MyClipList.myDictionary[targetMusic];
-        myStageMusic.pitch = pitch;
-    }
-
-
     public void PlayStageMusic()
     {
         GameManager.Inst.UpdateCurProcess(GameStatus.MusicPlaying);
@@ -172,43 +173,42 @@ public class SoundManager : MonoBehaviour
         StartCoroutine(nameof(playMyMusic));
     }
 
-    public void RePlay()
-    {
-        myStageMusic.Play();
-    }
-
-    public void BGMPlay(int scene) //0 - title, 1 - ingame
-    {
-        if (myStageMusic.isPlaying) myStageMusic.Stop();
-
-        myBGM.clip = myBGMSound.MyClipList.myDictionary[scene];
-        myBGM.Play();
-    }
-
     IEnumerator playMyMusic()
     {
         isCoroutineRunning = true;
 
-        myStageMusic.Play();
-
+        RePlay();
 
         yield return musicPlaying;
 
         isCoroutineRunning = false;
         GameManager.Inst.UpdateCurProcess(GameStatus.MusicStop);
+        if(myMusicSound.MyClipList.myDictionary.Keys.Count.Equals(GameManager.Inst.CurStage)) yield break;
+
         BGMPlay(2);
     }
 
+    public void RePlay()
+    {
+        myBGM.clip = myMusicSound.MyClipList.myDictionary[GameManager.Inst.CurStage];
+        myBGM.volume = 1;
+        myBGM.Play();
+    }
+
+    public void BGMPlay(int scene) //1 - title, 2 - ingame
+    {
+        if (myBGM.isPlaying) myBGM.Stop();
+
+        myBGM.clip = myBGMSound.MyClipList.myDictionary[scene];
+        myBGM.volume = 0.3f;
+        myBGM.Play();
+    }
 
 
     public void StopMusic()
     {
-        if (isCoroutineRunning)
-        {
-            StopCoroutine(nameof(playMyMusic));
-            myStageMusic.Stop();
-        }
-        
+        if (isCoroutineRunning) StopCoroutine(nameof(playMyMusic));
+        if (myBGM.isPlaying) myBGM.Stop();
     }
 
 

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayableNote : MonoBehaviour
 {
-    public delegate void DelegatePlayableNote(GameObject myPos, bool destory);
-    public static DelegatePlayableNote myDelegatePlayableNote;
+    public delegate void DelegatePlayableNote(PlayableNote note, bool destory);
+    public DelegatePlayableNote myDelegatePlayableNote;
 
     [SerializeField] CapsuleCollider2D myCollider = null;
 
@@ -47,13 +47,13 @@ public class PlayableNote : MonoBehaviour
     // destroy note! 
     public void DestroyNote()
     {
-        myDelegatePlayableNote(this.gameObject, true);
+        myDelegatePlayableNote(this, true);
     }
       
     // use note!
     public void UseNote()
     {
-        myDelegatePlayableNote(this.gameObject, false);
+        myDelegatePlayableNote(this, false);
     }
 
 

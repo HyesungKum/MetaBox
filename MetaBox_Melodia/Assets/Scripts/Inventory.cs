@@ -1,13 +1,14 @@
-
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using ObjectPoolCP;
 
-public class Inventory : MonoBehaviour
+public class Inventory : ObjectPool<PlayableNote>
 {
-    [SerializeField] List<GameObject> playableNoteList = new List<GameObject>();
-    [SerializeField] List<GameObject> usedNoteList = new List<GameObject>();
-    [SerializeField] GameObject playableNote;
+    [SerializeField] List<PlayableNote> playableNoteList = new List<PlayableNote>();
+    [SerializeField] List<PlayableNote> usedNoteList = new List<PlayableNote>();
+    [SerializeField] PlayableNote playableNotePref;
+
+    [SerializeField] TextMeshProUGUI noteNumber;
 
     int PlayableNoteCount;
 
@@ -15,6 +16,12 @@ public class Inventory : MonoBehaviour
     {
         // observe game status 
         GameManager.Inst.myDelegateGameStatus += curGameStatus;
+    }
+
+    public override PlayableNote CreatePool()
+    {
+        if (playableNotePref == null) playableNotePref = Resources.Load<PlayableNote>(nameof(PlayableNote));
+        return playableNotePref;
     }
 
     void curGameStatus(GameStatus curStatus)
@@ -31,7 +38,7 @@ public class Inventory : MonoBehaviour
         {
             for (int i = 0; i < playableNoteList.Count; ++i)
             {
-                PoolCp.Inst.DestoryObjectCp(playableNoteList[i]);
+                Release(playableNoteList[i]);
             }
 
             playableNoteList.Clear();
@@ -42,47 +49,53 @@ public class Inventory : MonoBehaviour
         {
             for (int i = 0; i < usedNoteList.Count; ++i)
             {
-                PoolCp.Inst.DestoryObjectCp(usedNoteList[i]);
+                Release(usedNoteList[i]);
             }
 
             usedNoteList.Clear();
         }
 
-        PlayableNote.myDelegatePlayableNote = null;
         generatePlayableNote();
     }
 
     void generatePlayableNote()
     {
-        float xPos = -11f;
+        float xPos = 0f;
  
-        float distance = 25f / (PlayableNoteCount - 1);
+        //float distance = 25f / (PlayableNoteCount - 1);
 
 
-        for (int i = 0; i < PlayableNoteCount; ++i)
+        for (int i = 0; i < 5; ++i)
         {
-            GameObject newNote = PoolCp.Inst.BringObjectCp(playableNote);
+            PlayableNote playableNote = Get();
 
-            newNote.transform.position = new Vector2(xPos, this.transform.position.y - 0.2f);
-            PlayableNote.myDelegatePlayableNote += StatusPlayableNote;
-            playableNoteList.Add(newNote);
+            playableNote.transform.position = new Vector2(xPos, -7.5f);
+            playableNote.myDelegatePlayableNote = StatusPlayableNote;
+            playableNoteList.Add(playableNote);
 
-            xPos += distance;
+            xPos += 3;
         }
+
+        PlayableNoteCount -= 5;
+        noteNumber.text = (PlayableNoteCount + playableNoteList.Count).ToString();
     }
 
 
-    public void StatusPlayableNote(GameObject note, bool destory)
+    public void StatusPlayableNote(PlayableNote note, bool destory)
     {
         playableNoteList.Remove(note);
         usedNoteList.Add(note);
 
-        if(destory)PoolCp.Inst.DestoryObjectCp(note);
+        if(destory) Release(note);
 
+        noteNumber.text = (PlayableNoteCount + playableNoteList.Count).ToString();
 
         if (playableNoteList.Count <= 0)
         {
-            GameManager.Inst.UpdateCurProcess(GameStatus.Fail);
+            if(PlayableNoteCount >= 5) generatePlayableNote();
+            else GameManager.Inst.UpdateCurProcess(GameStatus.Fail);
         }
     }
+
+    
 }

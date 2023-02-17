@@ -20,7 +20,7 @@ public class QNote : MonoBehaviour
 
     public void Setting()
     {
-        if (hightlightFX != null) hightlightFX.transform.position = new Vector2(this.transform.position.x, -1.25f);
+        if (hightlightFX != null) hightlightFX.transform.position = new Vector2(this.transform.position.x, -5.5f);
 
         textPitch.transform.position = new Vector2(this.transform.position.x, 4.8f);
         switch (myPitchNum)

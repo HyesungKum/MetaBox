@@ -182,6 +182,9 @@ public class MusicSheet : MonoBehaviour
 
                     SoundManager.Inst.PlayNote(myQNote.MyPitchNum, 1);
                     myQNote.Correct();
+
+                    target.UseNote();
+
                     // check how many Qnotes are left
                     if (qNoteList.Count == 0)
                     {
@@ -190,8 +193,7 @@ public class MusicSheet : MonoBehaviour
                         return;
                     }
 
-                    // if Qnote remains more than 0
-                    target.UseNote();
+                    
 
                     return;
                 }
