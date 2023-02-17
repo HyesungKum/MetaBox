@@ -41,6 +41,7 @@ public class Police : MonoBehaviour
     {
         yield return null; //If police change direction while moving, terminate the previous coroutine.
         isMoving = true;
+        SoundManager.Instance.PlaySFX(SFX.MovePC);
         animatorPC.SetBool("Move", true);
         while (isMoving && Time.timeScale != 0)
         {

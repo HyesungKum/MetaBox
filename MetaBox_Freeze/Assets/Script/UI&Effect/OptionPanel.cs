@@ -55,6 +55,7 @@ public class OptionPanel : MonoBehaviour
     {
         Time.timeScale = 1f;
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
+        SoundManager.Instance.MusicStart(0);
         SceneManager.LoadScene("Start");
     }
 

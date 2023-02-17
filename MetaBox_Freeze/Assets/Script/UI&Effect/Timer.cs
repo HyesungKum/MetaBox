@@ -43,6 +43,7 @@ public class Timer : MonoBehaviour
         else if (GameManager.Instance.PlayTime <= hurryUp)
         {
             alarm.SetActive(true);
+            SoundManager.Instance.PlaySFX(SFX.Alarm);
             timer.color = Color.red;
             StartCoroutine(nameof(AlarmShow));
         }

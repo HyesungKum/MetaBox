@@ -6,11 +6,16 @@ using UnityEngine.Audio;
 
 public enum SFX
 {
-    Button = 0,
-    Catch = 1,
-    Penalty = 2,
-    WaveClear = 3,
-    WaveFail = 4
+    Button,
+    Siren,
+    HideNPC,
+    MovePC,
+    Catch,
+    Penalty,
+    Alarm,
+    WaveClear,
+    GameClear,
+    Fail
 }
 
 [RequireComponent(typeof(AudioSource))]
@@ -100,27 +105,20 @@ public class SoundManager : MonoBehaviour
         audioMixer.SetFloat(target, volume);
     }
 
-    public void MusicStart(int musicindex)
+    public void MusicStart(int musicindex) //0-title, 1-main
     {
         if (audioBGM.isPlaying) audioBGM.Stop();
-        audioBGM.clip = scriptableSound.BGM[0];
+        audioBGM.clip = scriptableSound.BGM[musicindex];
         audioBGM.Play();
     }
-    public void CatchSFX()
+
+    public void PlaySFX(SFX mode)
     {
-        audioSFX.PlayOneShot(scriptableSound.SFX[(int)SFX.Catch]);
-    }
-    public void PenaltySFX()
-    {
-        audioSFX.PlayOneShot(scriptableSound.SFX[(int)SFX.Penalty]);
-    }
-    public void WaveClearSFX()
-    {
-        audioSFX.PlayOneShot(scriptableSound.SFX[(int)SFX.WaveClear]);
-    }
-    public void WaveFailSFX()
-    {
-        audioSFX.PlayOneShot(scriptableSound.SFX[(int)SFX.WaveFail]);
+        audioSFX.PlayOneShot(scriptableSound.SFX[(int)mode]);
     }
 
+    public void StopSFX()
+    {
+        audioSFX.Stop();
+    }
 }

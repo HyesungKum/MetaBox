@@ -127,6 +127,7 @@ public class UIManager : MonoBehaviour
     public void Win()
     {
         clearPanel.SetActive(true);
+        SoundManager.Instance.PlaySFX(SFX.GameClear);
     }
 
     public void Lose()

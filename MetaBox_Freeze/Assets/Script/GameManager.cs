@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviour
         if (postPrefab == null) postPrefab = (GameObject)Resources.Load(nameof(postPrefab));
         wait1 = new WaitForSeconds(1f);
         waitWaveStart = new WaitForSeconds(4f);
+        SoundManager.Instance.MusicStart(1);
     }
 
     public void LevelSetting(int level)
@@ -125,6 +126,7 @@ public class GameManager : MonoBehaviour
         IsGaming = true; 
         StartCoroutine(nameof(PlayTimer));
         hideThief?.Invoke();
+        SoundManager.Instance.PlaySFX(SFX.HideNPC);
     }
 
     public void WaveClear()
@@ -135,7 +137,7 @@ public class GameManager : MonoBehaviour
         if (CurStage == StageDatas.Count-1) GameOver(true);
         else
         {
-            SoundManager.Instance.WaveClearSFX();
+            SoundManager.Instance.PlaySFX(SFX.WaveClear);
             for(int i = 0; i < wantedPostList.Count; i++)
             {
                 PoolCp.Inst.DestoryObjectCp(wantedPostList[i]);
@@ -215,7 +217,7 @@ public class GameManager : MonoBehaviour
     public void Catch()
     {
         CatchNumber++;
-        SoundManager.Instance.CatchSFX();
+        SoundManager.Instance.PlaySFX(SFX.Catch);
         UIManager.Instance.Catch();
         if (CatchNumber == StageDatas[CurStage].wantedCount) WaveClear();
     }
@@ -223,7 +225,7 @@ public class GameManager : MonoBehaviour
     public void Penalty()
     {
         PlayTime -= StageDatas[CurStage].penaltyPoint;
-        SoundManager.Instance.PenaltySFX();
+        SoundManager.Instance.PlaySFX(SFX.Penalty);
         penaltyEvent?.Invoke();
     }
 
@@ -239,7 +241,7 @@ public class GameManager : MonoBehaviour
                 {
                     IsGaming = false;
                     GameOver(false);
-                    SoundManager.Instance.WaveFailSFX();
+                    SoundManager.Instance.PlaySFX(SFX.Fail);
                 }
             }
             yield return wait1;

@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -29,6 +28,7 @@ public class Loading : MonoBehaviour
     {
         asyncLoad = SceneManager.LoadSceneAsync("Freeze");
         asyncLoad.allowSceneActivation = false;
+        SoundManager.Instance.PlaySFX(SFX.Siren);
         while (!asyncLoad.allowSceneActivation)
         {
             yield return StartCoroutine(nameof(LoadingShow));
@@ -51,7 +51,11 @@ public class Loading : MonoBehaviour
             startTime += Time.deltaTime;
             yield return null;
         }
-        if (fade) asyncLoad.allowSceneActivation = true;
+        if (fade)
+        {
+            asyncLoad.allowSceneActivation = true;
+            SoundManager.Instance.StopSFX();
+        }
         if (asyncLoad.progress >= 0.85) fade = true; 
     }
 }

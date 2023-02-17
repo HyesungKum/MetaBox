@@ -23,7 +23,8 @@ public class ClearPanel : MonoBehaviour
 
     void Awake()
     {
-        if(testMode == false) home.onClick.AddListener(() => SceneManager.LoadScene("Start"));
+        if (testMode == false) home.onClick.AddListener(() => SoundManager.Instance.MusicStart(0));
+        if (testMode == false) home.onClick.AddListener(() => SceneManager.LoadScene("Start"));
     }
     
 
