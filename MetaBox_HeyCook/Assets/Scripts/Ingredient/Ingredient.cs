@@ -43,6 +43,12 @@ public class Ingredient : MonoBehaviour
     //============================Caching==================================
     WaitForSeconds waitSec = new(0.2f);
 
+    public void Reset()
+    {
+        this.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+        this.transform.localScale = Vector3.one * 0.3f;
+    }
+
     private void Awake()
     {
         //bring component
