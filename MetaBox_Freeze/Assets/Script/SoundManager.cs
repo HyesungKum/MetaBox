@@ -4,6 +4,20 @@ using UnityEngine.SceneManagement;
 
 using UnityEngine.Audio;
 
+public enum SFX
+{
+    Button,
+    Siren,
+    HideNPC,
+    MovePC,
+    Catch,
+    Penalty,
+    Alarm,
+    WaveClear,
+    GameClear,
+    Fail
+}
+
 [RequireComponent(typeof(AudioSource))]
 public class SoundManager : MonoBehaviour
 {
@@ -31,10 +45,18 @@ public class SoundManager : MonoBehaviour
 
     public bool BGMMute { get; private set; } = false;
     public bool SFXMute { get; private set; } = false;
+
     private void Awake()
     {
+        if (instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        instance = this;
+
+
         Application.targetFrameRate = 60;
-        if (FindObjectOfType<SoundManager>().gameObject != this.gameObject) Destroy(this.gameObject);
         DontDestroyOnLoad(this.gameObject);
         AddButtonListener();
     }
@@ -50,7 +72,7 @@ public class SoundManager : MonoBehaviour
             Component[] buttons = go.transform.GetComponentsInChildren(typeof(Button), true);
             foreach (Button button in buttons)
             {
-                button.onClick.AddListener(() => audioSFX.PlayOneShot(scriptableSound.SFX[0]));
+                button.onClick.AddListener(() => audioSFX.PlayOneShot(scriptableSound.SFX[(int)SFX.Button]));
             }
         }
     }
@@ -83,27 +105,20 @@ public class SoundManager : MonoBehaviour
         audioMixer.SetFloat(target, volume);
     }
 
-    public void MusicStart(int musicindex)
+    public void MusicStart(int musicindex) //0-title, 1-main
     {
         if (audioBGM.isPlaying) audioBGM.Stop();
-        audioBGM.clip = scriptableSound.BGM[0];
+        audioBGM.clip = scriptableSound.BGM[musicindex];
         audioBGM.Play();
     }
-    public void CatchSFX()
+
+    public void PlaySFX(SFX mode)
     {
-        audioSFX.PlayOneShot(scriptableSound.SFX[1]);
-    }
-    public void PenaltySFX()
-    {
-        audioSFX.PlayOneShot(scriptableSound.SFX[2]);
-    }
-    public void WaveClearSFX()
-    {
-        audioSFX.PlayOneShot(scriptableSound.SFX[3]);
-    }
-    public void WaveFailSFX()
-    {
-        audioSFX.PlayOneShot(scriptableSound.SFX[4]);
+        audioSFX.PlayOneShot(scriptableSound.SFX[(int)mode]);
     }
 
+    public void StopSFX()
+    {
+        audioSFX.Stop();
+    }
 }

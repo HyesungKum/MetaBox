@@ -23,12 +23,12 @@ public class UserData : MonoBehaviour
         // MongoDB collection name
         collection = dataBase.GetCollection<BsonDocument>("RankingCollection");
 
-        GameManager.Instance.gameClearRecord += Record;
+        GameManager.Instance.gameClearRecord = Record;
     }
     
     void Start()
     {
-        //InGame();
+        InGame();
     }
 
     void InGame()
@@ -47,16 +47,17 @@ public class UserData : MonoBehaviour
     void Record()
     {
         if (user == false || userID == null) return;
-        DataProcess(GameManager.Instance.FreezeData.playTime - GameManager.Instance.PlayTime);
+        DataProcess(GameManager.Instance.PlayTime);
     }
 
     void DataProcess(int playtime)
     {
+        string nowDate = DateTime.Now.ToString("yyyyMMddHHmm");
+        long time = long.Parse(nowDate);
+
         BsonDocument filter = new BsonDocument { { "id", userID }, { "gameGroup", gameGroup }, { "gameLevel", level } };
         BsonDocument targetData = collection.Find(filter).FirstOrDefault();
 
-        string nowDate = DateTime.Now.ToString("yyyyMMddHHmm");
-        long time = long.Parse(nowDate);
 
         if (targetData != null) //±‚∑œ¿Ø
         {

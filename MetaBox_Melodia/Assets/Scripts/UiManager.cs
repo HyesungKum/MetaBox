@@ -1,231 +1,56 @@
-
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
-
+using TMPro;
+using System.Collections;
+using System.Collections.Generic;
 
 public class UiManager : MonoBehaviour
 {
-    public static DelegateAudioControl myDelegateAudioControl;
-
-
-    public delegate void DelegateUiManager(string myText);
-    public static DelegateUiManager myDelegateUiManager;
-
-    [SerializeField] TextMeshProUGUI myTextCountdown;    // play time countdown
-    [SerializeField] TextMeshProUGUI myTextTimer;       // ready time countdown
-    [SerializeField] TextMeshProUGUI myTextCorrectedNote;    // text whether get correct answer or not
-    [SerializeField] TextMeshProUGUI myTextGameOver;       // GameResult panel
-    [SerializeField] TextMeshProUGUI myTextResult;       // GameResult panel
-    [SerializeField] TextMeshProUGUI myTextClear;
-
     [Header("Panel")]
-    [SerializeField] GameObject myPaneUntouchable;
-    [SerializeField] GameObject myPanelPause;
-    [SerializeField] GameObject myPanelGameResult;
+    [SerializeField] GameObject myPanelUntouchable;
     [SerializeField] GameObject myPanelNextStage;
-    [SerializeField] GameObject myPanelStageClear;
-
-
-    [Header("Audio Volume Control")]
-    [SerializeField] Slider myAudioSliderMaster;
-    [SerializeField] Slider myAudioSliderBGM;
-    [SerializeField] Slider myAudioSliderSFX;
-
+    [SerializeField] GameObject myPanelGameClear;
+    [SerializeField] GameObject myPanelGameOver;
+    [SerializeField] GameObject myPanelOption;
 
     [Header("Buttons")]
+    [SerializeField] Button myButtonOption;
     [SerializeField] Button myButtonReplay;
-    [SerializeField] Button myButtonQuitGame;
-    [SerializeField] Button myButtonResult;
+    [SerializeField] Button myButtonNext;
 
+    [Header("Image")]
+    [SerializeField] Image myCountDown;
+    [SerializeField] GameObject myGameStart;
 
+    [Header("Text")]
+    [SerializeField] TextMeshProUGUI myTimer;
+    [SerializeField] TextMeshProUGUI playTime;
 
+    [Header("bird Control")]
+    [SerializeField] AnimationCurve BirdPosCurve; // = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(0.5f, 0.2f), new Keyframe(0.7f, 0f) });
 
-    [SerializeField] float replayCoolTime;
-    public float ReplayCoolTime { set { replayCoolTime = value; } }
+    [SerializeField] Fade fade = null;
+    [SerializeField] ScriptableObj scriptableImg = null;
+    [SerializeField] List<ParticleSystem> gameClearEff = null;
+    public float ReplayCoolTime { get; set; }
 
+    private void Awake()
+    {
+        myButtonOption.onClick.AddListener(OnClickOption);
+        myButtonReplay.onClick.AddListener(OnClickReplay);
+        myButtonNext.onClick.AddListener(OnClickNextStage);
+        // observe game status 
+        GameManager.Inst.myDelegateGameStatus += curGameStatus;
+        GameManager.Inst.DelegateCountDown = CountDown;
+        GameManager.Inst.DelegateTimer = playTimer;
 
-
-    float curTime;
-    bool isPaused = false;
-
-
+    }
 
     private void Start()
     {
-        // observe game status 
-        GameManager.myDelegateGameStatus += curGameStatus;
-
-        // delegate chain
-        myDelegateUiManager = correctedNote;
+        ReplayCoolTime = GameManager.Inst.MelodiaData.replayCooltime;
     }
-
-    public void StartGame()
-    {
-        PlayTimer.DelegateTimer = playTimer;
-
-        // text whether get correct answer or not
-        myTextCorrectedNote.enabled = false;
-
-        // text for time countdown
-        myTextCountdown.text = "";
-        myTextCountdown.enabled = false;
-
-        // text for time count 
-        myTextTimer.enabled = true;
-
-        // text for ready 
-        myTextTimer.text = "Ready";
-
-        // to disable touch interaction 
-        Touchable(false);
-
-
-        // all panel off
-        // no show pause panel
-        myPanelPause.SetActive(false);
-
-        // Game result panel 
-        myPanelGameResult.SetActive(false);
-
-        // stage clear panel
-        myPanelStageClear.SetActive(false);
-
-        // Next stage panel 
-        myPanelNextStage.SetActive(false);
-
-
-        myTextResult.enabled = false;
-    }
-
-
-
-    // timer for start
-    void playTimer(float t)
-    {
-        if (t <= 1)
-        {
-            myTextTimer.text = "Go!";
-            PlayTimer.DelegateTimer += playCountDown;
-            PlayTimer.DelegateTimer -= playTimer;
-            return;
-        }
-
-        myTextTimer.text = Mathf.Round(t).ToString();
-    }
-
-
-    // time count down for play time 
-    public void playCountDown(float t)
-    {
-        curTime = t;
-
-
-        if (myTextTimer.isActiveAndEnabled == true)
-        {
-            myTextTimer.enabled = false;
-
-            myTextCountdown.enabled = true;
-        }
-
-        myTextCountdown.text = Mathf.Round(t).ToString();
-    }
-
-
-    public void Touchable(bool status)
-    {
-        // touchable false == panel on
-        // touchable true == panel off
-        myPaneUntouchable.SetActive(!status);
-    }
-
-
-
-    // text whether get correct answer or not
-    void correctedNote(string text)
-    {
-        // show text 
-        correctedNote(true);
-
-        myTextCorrectedNote.text = text;
-
-        // change color
-        switch (text)
-        {
-            case "잘했어요!":
-                {
-                    myTextCorrectedNote.color = new Color(0, 1, 0.3f);
-                }
-                break;
-
-
-            case "다시 생각해봐요":
-                {
-                    myTextCorrectedNote.color = new Color(1, 0, 0.8f);
-                }
-                break;                
-        }
-
-        calledTime = curTime;
-        hideText();
-    }
-
-
-    void correctedNote(bool onOff)
-    {
-        myTextCorrectedNote.enabled = onOff;
-    }
-
-    float calledTime;
-    void hideText()
-    {
-        if (calledTime - curTime <= 0.4f)
-        {
-            Invoke(nameof(hideText), 0.4f);
-            return;
-        }
-
-        correctedNote(false);
-    }
-
-
-    void resultText()
-    {
-        myTextResult.enabled = true;
-        myTextResult.text = "와 다 맞췄어요!";
-    }
-
-
-
-    public void GameOver(string text)
-    {
-        myPanelGameResult.SetActive(true);
-
-        myButtonResult.GetComponentInChildren<TextMeshProUGUI>().text = "다시 할래";
-        myTextGameOver.text = text;
-    }
-
-
-    public void NextStage()
-    {
-        myTextResult.enabled = false;
-
-
-        myPanelNextStage.SetActive(true);
-    }
-
-    public void StageClear(string text)
-    {
-        myTextResult.enabled = false;
-
-
-        myPanelStageClear.SetActive(true);
-        myTextClear.text = text;
-    }
-
-
 
     void curGameStatus(GameStatus curStatus)
     {
@@ -237,76 +62,130 @@ public class UiManager : MonoBehaviour
                 }
                 break;
 
-            case GameStatus.Ready:
+            case GameStatus.GamePlaying:
                 {
-                    ReplayCoolTime = GameManager.Inst.MyCoolTime;
+                    myPanelUntouchable.SetActive(false);
                 }
                 break;
-
-            case GameStatus.StartGame:
+            case GameStatus.Pause:
                 {
-                    Touchable(true);
-                }
-                break;
-
-            case GameStatus.TimeOver:
-                {
-                    GameOver("시간이 없어요");
+                    myPanelUntouchable.SetActive(true);
                 }
                 break;
 
             case GameStatus.GetAllQNotes:
                 {
-                    NextStage();
+                    myPanelNextStage.SetActive(true);
+                    for (int i = 0; i < gameClearEff.Count; i++)
+                    {
+                        gameClearEff[i].Play();
+                    }
+                    SoundManager.Inst.SFXPlay(SFX.StageClear);
                 }
                 break;
 
-            case GameStatus.NoMorePlayableNote:
+            case GameStatus.Fail:
                 {
-                    GameOver("음표가 더이상 없어요");
+                    SoundManager.Inst.StopMusic();
+                    myPanelGameOver.SetActive(true);
                 }
                 break;
 
-
-            case GameStatus.GameResult:
+            case GameStatus.GameClear:
                 {
-                    // myPaneUntouchable is activated 
-                    Touchable(false);
-
-                    // hide correct text
-                    correctedNote(false);
-
-                    resultText();
-                }
-                break;
-
-            case GameStatus.ClearStage:
-                {
-                    Touchable(true);
-
-                    StageClear("와! 성공했어요!");
+                    myPanelGameClear.SetActive(true);
+                    for(int i = 0; i < gameClearEff.Count; i++)
+                    {
+                        gameClearEff[i].Play();
+                    }
+                    SoundManager.Inst.SFXPlay(SFX.GameSuccess);
+                    playTime.text = string.Format("{0:D2} : {1:D2}", (GameManager.Inst.MelodiaData.countDown - GameManager.Inst.MyPlayableTime) / 60, (GameManager.Inst.MelodiaData.countDown - GameManager.Inst.MyPlayableTime) % 60);
                 }
                 break;
         }
     }
 
+    public void StartGame()
+    {
+        
+        // to disable touch interaction 
+        myPanelUntouchable.SetActive(true);
+        myPanelNextStage.SetActive(false);
+        myPanelGameClear.SetActive(false);
+        myPanelGameOver.SetActive(false);
+        myPanelOption.SetActive(false);
 
+        myCountDown.gameObject.SetActive(false);
+        myGameStart.SetActive(false);
+
+        myButtonReplay.interactable = true;
+    }
+
+    void CountDown(int t)
+    {
+        if(t > 0)
+        {
+            myCountDown.gameObject.SetActive(false);
+            myCountDown.gameObject.SetActive(true);
+            myCountDown.sprite = scriptableImg.CountDownImg[t - 1];
+        }
+        else
+        {
+            myCountDown.gameObject.SetActive(false);
+            if (myGameStart.activeSelf) myGameStart.SetActive(false);
+            else myGameStart.SetActive(true);
+        }
+    }
+
+    // timer for start
+    void playTimer(int t)
+    {
+        myTimer.text = string.Format("{0:D2} : {1:D2}", (t / 60), (t % 60));
+    }
 
 
     // Replay Music ==========================================================
     public void OnClickReplay()
     {
-        SoundManager.Inst.PlayStageMusic();
+        SoundManager.Inst.SFXPlay(SFX.ReplayTouch);
 
+        StartCoroutine(nameof(BirdShow));
+        
         myButtonReplay.interactable = false;
 
-        Invoke("readyReplay", replayCoolTime);
+        Invoke(nameof(readyReplay), ReplayCoolTime);
     }
 
     void readyReplay()
     {
         myButtonReplay.interactable = true;
     }
+
+    IEnumerator BirdShow()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            float startTime = 0;
+            Vector3 birdOriPos = myButtonReplay.transform.position;
+            Vector3 birdCurPos = myButtonReplay.transform.position;
+
+            if (i.Equals(1)) SoundManager.Inst.RePlay();
+            while (BirdPosCurve.keys[BirdPosCurve.keys.Length - 1].time >= startTime)
+            {
+                birdCurPos.y = birdOriPos.y + BirdPosCurve.Evaluate(startTime);
+                myButtonReplay.transform.position = birdCurPos;
+
+                startTime += Time.deltaTime;
+                yield return null;
+            }
+            
+            if (GameManager.Inst.CurStatus.Equals(GameStatus.GetAllQNotes) ||
+                    GameManager.Inst.CurStatus.Equals(GameStatus.Pause) ||
+                    GameManager.Inst.CurStatus.Equals(GameStatus.Fail)) yield break;
+        }
+        
+    }
+
     // Replay Music ==========================================================
 
 
@@ -314,56 +193,27 @@ public class UiManager : MonoBehaviour
 
 
 
-    public void OnClickPause()
+    public void OnClickOption()
     {
-        CurrentVolume();
-
-        if (isPaused == false)
-        {
-            GameManager.Inst.UpdateCurProcess(GameStatus.Pause);
-            myPanelPause.SetActive(true);
-            isPaused = true;
-
-            return;
-        }
-
-        myPanelPause.SetActive(false);
-
-        isPaused = false;
         GameManager.Inst.UpdateCurProcess(GameStatus.Pause);
+        myPanelOption.SetActive(true);
     }
 
 
-
-    // Exit game and return to level select scene ===========================================
-    public void OnClickQuitGame()
+    // Move to next stage ==========================================================
+    void OnClickNextStage()
     {
-        SoundManager.Inst.StopMusic();
-
-        SceneManager.LoadScene("MelodiaLobby");
-        Time.timeScale = 1;
-
-        // back to start scene
-        SceneModeController.MySceneMode = SceneModeController.SceneMode.StartScene;      // turn start panel on, turn lobby panel off
+        GameManager.Inst.UpdateCurProcess(GameStatus.Idle);
     }
-
-
 
 
     // Exit game and return to start scene ===========================================
-    public void OnClickExitStage()
+    public void OnClickHome()
     {
         SoundManager.Inst.StopMusic();
 
-        Time.timeScale = 1;
-        SceneManager.LoadScene("MelodiaLobby");
-
-        // re-select mode 
-        SceneModeController.MySceneMode = SceneModeController.SceneMode.LobbyScene;      // turn start panel off, turn lobby panel on
-
+        fade.FadeOut();
     }
-
-
 
 
     // Restart stage from beginning =================================================
@@ -371,74 +221,7 @@ public class UiManager : MonoBehaviour
     {
         SoundManager.Inst.StopMusic();
 
-        Time.timeScale = 0;
-
-        PlayTimer.DelegateTimer -= playCountDown;
-
-        readyReplay();
-
         GameManager.Inst.UpdateCurProcess(GameStatus.Restart);
     }
-
-
-    // Move to next stage ==========================================================
-    public void OnClickNextStage()
-    {
-        Time.timeScale = 0;
-
-        PlayTimer.DelegateTimer -= playCountDown;
-
-        readyReplay();
-
-        GameManager.Inst.UpdateCurProcess(GameStatus.Idle);
-    }
-
-    
-
-
-    // Option panel ==========================================================
-    #region ### Audio Related functions ###
-    public void MasterAudioControl()
-    {
-        float volume = myAudioSliderMaster.value;
-
-        myDelegateAudioControl("Master", volume);
-    }
-
-    public void BGMAudioControl()
-    {
-        float volume = myAudioSliderBGM.value;
-
-        myDelegateAudioControl("BGM", volume);
-    }
-
-    public void SFXAudioControl()
-    {
-        float volume = myAudioSliderSFX.value;
-
-        myDelegateAudioControl("SFX", volume);
-    }
-
-
-    void CurrentVolume()
-    {
-        float masterVolume;
-        float bGMVolume;
-        float sFXVolume;
-
-        SoundManager.Inst.MyAudioMixer.GetFloat("Master", out masterVolume);
-        SoundManager.Inst.MyAudioMixer.GetFloat("BGM", out bGMVolume);
-        SoundManager.Inst.MyAudioMixer.GetFloat("SFX", out sFXVolume);
-
-        myAudioSliderMaster.value = masterVolume;
-        myAudioSliderBGM.value = bGMVolume;
-        myAudioSliderSFX.value = sFXVolume;
-    }
-    #endregion
-
-
-
-
-
 
 }
