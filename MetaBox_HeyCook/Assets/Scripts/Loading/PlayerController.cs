@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     //==========================pc settings=============================
     [Header("player Settings")]
     [SerializeField] AudioClip jumpSfx;
+    [SerializeField] AudioClip fallSfx;
     [Space]
     [SerializeField] float jumpFoce = 10f;
     [SerializeField] float mass = 1f;
@@ -116,6 +117,7 @@ public class PlayerController : MonoBehaviour
 
             if (isBuiltIn)
             {
+                SoundManager.Inst.CallSfx(fallSfx);
                 builtInAimator.SetTrigger("Die");
                 builtInAimator.SetBool("Idle", false);
             }
