@@ -133,10 +133,10 @@ public class RandomChoiceKeyWord : MonoBehaviour
             if (randomThree == -1) randomFour += 3;
         }
 
-        Debug.Log("$$ random : " + random);
-        Debug.Log("$$ randomtwo : " + randomtwo);
-        Debug.Log("$$ randomThree : " + randomThree);
-        Debug.Log("$$ RandomFour : " + randomFour);
+        //Debug.Log("$$ random : " + random);
+        //Debug.Log("$$ randomtwo : " + randomtwo);
+        //Debug.Log("$$ randomThree : " + randomThree);
+        //Debug.Log("$$ RandomFour : " + randomFour);
 
         for (int i = 0; i < 4; i++)
         {

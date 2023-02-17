@@ -327,14 +327,14 @@ public class InGamePanelSet : MonoBehaviour
         DrawLineCurve drawLine = null;
         QOne.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
         ObjIndexs = drawLine.ObjIndex;
-        Debug.Log("ObjIndexs : " + ObjIndexs);
+        //Debug.Log("ObjIndexs : " + ObjIndexs);
         QTwo.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
         int ObjTwoIndex = drawLine.ObjIndex;
-        Debug.Log("ObjTwoIndex : " + ObjTwoIndex);
+        //Debug.Log("ObjTwoIndex : " + ObjTwoIndex);
 
         QThree.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
         int ObjThreeIndex = drawLine.ObjIndex;
-        Debug.Log("ObjThreeIndex : " + ObjThreeIndex);
+        //Debug.Log("ObjThreeIndex : " + ObjThreeIndex);
 
         SelectPanelSet(true);
 

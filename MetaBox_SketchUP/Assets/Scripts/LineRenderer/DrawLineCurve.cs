@@ -76,7 +76,7 @@ public class DrawLineCurve : MonoBehaviour
         revertBut.onClick.AddListener(delegate
         {
             OnClickRevertBut();
-            SoundManager.Inst.ButtonSFXPlay(); 
+            SoundManager.Inst.ButtonSFXPlay();
             SoundManager.Inst.ButtonEffect(revertBut.transform.position);
         });
     }
@@ -182,8 +182,8 @@ public class DrawLineCurve : MonoBehaviour
 
     void MoveEnd(RaycastHit2D hitInfo)
     {
-        Debug.Log("StackCount : " + lineStack.Count) ;
-        Debug.Log("line Stack에 있니 ? " + lineStack.Contains(currentLine));
+        //Debug.Log("StackCount : " + lineStack.Count);
+        //Debug.Log("line Stack에 있니 ? " + lineStack.Contains(currentLine));
         //Debug.Log("End LineCount : " + linerender.GetPositionCount());
         if (startNodeObj == null) return;
 
@@ -195,7 +195,7 @@ public class DrawLineCurve : MonoBehaviour
         prevObj = null;
         nextObj = null;
 
-        Invoke(nameof(ClearCheck), 0.5f);
+        Invoke(nameof(ClearCheck), 0.2f);
     }
 
     void ClearCheck()
@@ -204,7 +204,6 @@ public class DrawLineCurve : MonoBehaviour
         if (lineStack.Count == ClearCount)
         {
             ObjSetFalse();
-
             choiceWordPanel.gameObject.SetActive(true);
 
             int childCount = lineClonePos.transform.childCount;

@@ -1,9 +1,6 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
-using System;
-using System.Reflection;
 
 public class ChoicePanel : MonoBehaviour
 {
@@ -29,7 +26,7 @@ public class ChoicePanel : MonoBehaviour
     [Header("[stage Clear Effect]")]
     [SerializeField] GameObject stageClearEffect = null;
 
-    [SerializeField] private int objIndex;
+    private int objIndex;
     GameObject instEffect = null;
 
     public int AudioIndex { get { return audioIndex; } }
@@ -46,6 +43,9 @@ public class ChoicePanel : MonoBehaviour
 
     void Awake()
     {
+        if (stageClearEffect == null)
+            stageClearEffect = Resources.Load<GameObject>("Particle/01.AnimalClear_Particles");
+
         clearAnimation.gameObject.SetActive(true);
         InGamePanelSet.Inst.StageClearPanelSet(false);
         clearAnimation.TryGetComponent<ClearAnimation>(out clearAnimaition);
@@ -89,10 +89,9 @@ public class ChoicePanel : MonoBehaviour
     int SetObjIndex(int objIndex)
     {
         drawline.ObjIndex = objIndex;
-
         if (obj.gameObject.active == false)
         {
-            Debug.Log("objIndex : " + objIndex);
+            //Debug.Log("objIndex : " + objIndex);
             return drawline.ObjIndex;
         }
         else
