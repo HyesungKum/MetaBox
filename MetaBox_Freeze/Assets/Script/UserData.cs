@@ -47,7 +47,7 @@ public class UserData : MonoBehaviour
     void Record()
     {
         if (user == false || userID == null) return;
-        DataProcess(GameManager.Instance.FreezeData.playTime - GameManager.Instance.PlayTime);
+        DataProcess(GameManager.Instance.PlayTime);
     }
 
     void DataProcess(int playtime)

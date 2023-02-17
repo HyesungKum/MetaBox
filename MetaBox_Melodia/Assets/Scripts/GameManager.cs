@@ -137,7 +137,7 @@ public class GameManager : DataLoader
                 {
                     stageClear = true;
                     CurStatus = GameStatus.GetAllQNotes;
-                    SoundManager.Inst.SFXPlay(SFX.StageClear);
+                    
                     Invoke(nameof(ClearMusic), 1f);
                 }
                 break;
@@ -147,7 +147,7 @@ public class GameManager : DataLoader
                     SoundManager.Inst.StopMusic();
 
                     SoundManager.Inst.SFXPlay(SFX.GameFail);
-
+                    stageClear = true;
                     CurStatus = GameStatus.Fail;
 
                     myDelegateGameStatus(GameStatus.Fail);
@@ -203,7 +203,7 @@ public class GameManager : DataLoader
         DelegateTimer(MyPlayableTime);
         yield return wait1;
 
-        while (MyPlayableTime > 0)
+        while (MyPlayableTime > 0 && !stageClear)
         {
             MyPlayableTime--;
             DelegateTimer(MyPlayableTime);

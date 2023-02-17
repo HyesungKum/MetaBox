@@ -19,6 +19,10 @@ public class PlayableNote : MonoBehaviour
         myCollider.enabled = true;
     }
 
+    private void OnDisable()
+    {
+        myDelegatePlayableNote = null;
+    }
     public void StartToMove()
     {
         originPos = this.transform.position;

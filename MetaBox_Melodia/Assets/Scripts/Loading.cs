@@ -31,7 +31,8 @@ public class Loading : MonoBehaviour
         while (!asyncLoad.isDone)
         {
             loadingBar.value = asyncLoad.progress;
-            loadingprogress.text = $"{asyncLoad.progress * 100}%";
+            loadingprogress.text = string.Format("{0}%", (int)(asyncLoad.progress * 100));
+
             if (asyncLoad.progress >= 0.89)
             {
                 yield return StartCoroutine(nameof(_FadeOut));

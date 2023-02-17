@@ -30,7 +30,7 @@ public class ClearPanel : MonoBehaviour
 
     void Start()
     {
-        if(testMode == false) clearPlayTime.text = (GameManager.Instance.FreezeData.playTime - GameManager.Instance.PlayTime).ToString();
+        if(testMode == false) clearPlayTime.text = (GameManager.Instance.PlayTime).ToString();
         for(int i = 0; i < gameClearEff.Count; i++)
         {
             gameClearEff[i].gameObject.SetActive(true);

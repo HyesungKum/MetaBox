@@ -191,6 +191,7 @@ public class SoundManager : MonoBehaviour
     public void RePlay()
     {
         myBGM.clip = myMusicSound.MyClipList.myDictionary[GameManager.Inst.CurStage];
+        myBGM.loop = false;
         myBGM.volume = 1;
         myBGM.Play();
     }
@@ -200,6 +201,7 @@ public class SoundManager : MonoBehaviour
         if (myBGM.isPlaying) myBGM.Stop();
 
         myBGM.clip = myBGMSound.MyClipList.myDictionary[scene];
+        myBGM.loop = true;
         myBGM.volume = 0.3f;
         myBGM.Play();
     }

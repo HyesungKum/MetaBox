@@ -80,6 +80,7 @@ public class UiManager : MonoBehaviour
                     {
                         gameClearEff[i].Play();
                     }
+                    SoundManager.Inst.SFXPlay(SFX.StageClear);
                 }
                 break;
 
@@ -98,7 +99,7 @@ public class UiManager : MonoBehaviour
                         gameClearEff[i].Play();
                     }
                     SoundManager.Inst.SFXPlay(SFX.GameSuccess);
-                    playTime.text = string.Format("{0:D2} : {1:D2}", ((GameManager.Inst.MelodiaData.countDown - GameManager.Inst.MyPlayableTime) / 60), ((GameManager.Inst.MelodiaData.countDown - GameManager.Inst.MyPlayableTime) % 60));
+                    playTime.text = string.Format("{0:D2} : {1:D2}", (GameManager.Inst.MelodiaData.countDown - GameManager.Inst.MyPlayableTime) / 60, (GameManager.Inst.MelodiaData.countDown - GameManager.Inst.MyPlayableTime) % 60);
                 }
                 break;
         }
@@ -195,7 +196,6 @@ public class UiManager : MonoBehaviour
     public void OnClickOption()
     {
         GameManager.Inst.UpdateCurProcess(GameStatus.Pause);
-        SoundManager.Inst.StopMusic();
         myPanelOption.SetActive(true);
     }
 
