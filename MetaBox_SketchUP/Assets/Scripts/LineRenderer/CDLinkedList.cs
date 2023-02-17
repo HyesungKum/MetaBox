@@ -7,11 +7,10 @@ public delegate void DelegateTraversalCDNode(CDLinkedList.CDNode node);
 
 public class CDLinkedList
 {
-
     public class CDNodeData
     {
-        public int index;
         public Vector3 nodePos;
+        public GameObject circlePointObj;
     }
 
     public class CDNode
@@ -28,13 +27,13 @@ public class CDLinkedList
         CDNode tail = null;
 
         // Head 다음에 추가
-        public void InsertHead(Vector3 nodePos, int index)
+        public void InsertHead(Vector3 nodePos, GameObject cirPointObj)
         {
             CDNodeData newData = new CDNodeData();
             newData.nodePos = nodePos;
-            newData.index = index;
+            newData.circlePointObj = cirPointObj;
             //Debug.Log("newData.nodePos :  " + newData.nodePos);
-            //Debug.Log("newData.index :  " + newData.index);
+            //Debug.Log("newData.index :  " + newData.circlePointObj.name);
 
             // 새 데이터를 담는 새 노드
             CDNode newNode = new CDNode();
@@ -86,46 +85,109 @@ public class CDLinkedList
             }
         }
 
-        public CDNode Search(Vector3 nodePos, int index)
+        public GameObject SearchObjs(GameObject cirPointObj)
         {
             CDNodeData nodeData = new CDNodeData();
-            nodeData.nodePos = nodePos;
-            nodeData.index = index;
-            //Debug.Log("## 있나 ? newData.nodePos :  " + nodeData.nodePos);
-            //Debug.Log("## 있니 ? newData.index :  " + nodeData.index);
+            nodeData.circlePointObj = cirPointObj;
+
             CDNode temp = head;
 
             do
             {
-                if (temp.data.index.CompareTo(nodeData.index) == 0)
+                if (temp.data.circlePointObj.name.CompareTo(nodeData.circlePointObj.name) == 0)
                 {
                     #region Debug
-                    //Debug.Log("temp check 1: " + temp.data.nodePos);
-                    //Debug.Log("temp check 2: " + temp.data.index);
-                    //Debug.Log("temp check (next) 1: " + temp.next.data.nodePos);
-                    //Debug.Log("temp check (next) 2: " + temp.next.data.index);  
-                    //Debug.Log("temp check (prev) 1: " + temp.prev.data.nodePos);
-                    //Debug.Log("temp check (prev) 2: " + temp.prev.data.index);
+                    //Debug.Log("SearchObj : " + temp.data.nodePos);
+                    //Debug.Log("SearchObj : " + temp.data.circlePointObj.name);
+                    //Debug.Log("SearchObj (next) : " + temp.next.data.nodePos);
+                    //Debug.Log("SearchObj (next) : " + temp.next.data.circlePointObj.name);
+                    //Debug.Log("SearchObj (prev) : " + temp.prev.data.nodePos);
+                    //Debug.Log("SearchObj (prev) : " + temp.prev.data.circlePointObj.name);
+                    #endregion
+                    return temp.data.circlePointObj;
+                }
+
+                temp = temp.next;
+
+                #region
+                //Debug.Log("temp check 1: " + temp.next.data.nodePos);
+                //Debug.Log("temp check 2: " + temp.next.data.index);
+                //Debug.Log("temp check 2: " + temp.next.data.circlePointObj.name);
+                #endregion
+
+            } while (temp != head);
+
+            return null;
+        }
+
+        public CDNode SearchObj(GameObject cirPointObj)
+        {
+            CDNodeData nodeData = new CDNodeData();
+            nodeData.circlePointObj = cirPointObj;
+
+            CDNode temp = head;
+
+            do
+            {
+                if (temp.data.circlePointObj.name.CompareTo(nodeData.circlePointObj.name) == 0)
+                {
+                    #region Debug
+                    //Debug.Log("SearchObj : " + temp.data.nodePos);
+                    //Debug.Log("SearchObj : " + temp.data.circlePointObj.name);
+                    //Debug.Log("SearchObj (next) : " + temp.next.data.nodePos);
+                    //Debug.Log("SearchObj (next) : " + temp.next.data.circlePointObj.name);
+                    //Debug.Log("SearchObj (prev) : " + temp.prev.data.nodePos);
+                    //Debug.Log("SearchObj (prev) : " + temp.prev.data.circlePointObj.name);
                     #endregion
                     return temp;
                 }
+
                 temp = temp.next;
+
+                #region
                 //Debug.Log("temp check 1: " + temp.next.data.nodePos);
                 //Debug.Log("temp check 2: " + temp.next.data.index);
+                //Debug.Log("temp check 2: " + temp.next.data.circlePointObj.name);
+                #endregion
+
             } while (temp != head);
 
             return null;
         }
 
         // 데이터를 순방향으로 탐색하기
-        public void TraversalForWard(Vector3 nodePos, int index)
+        public void TraversalForWard(GameObject cirPointObj)
         {
-            CDNode startNode = Search(nodePos, index);
+            CDNode startNode = SearchObj(cirPointObj);
             #region
-            //Debug.Log("temp.Pos 00 ##  " + startNode.data.nodePos);
-            //Debug.Log("temp.index 00 ## " + startNode.data.index);
+            Debug.Log("SearchObj  ##  " + startNode.data.nodePos);
+            Debug.Log("SearchObj 00 ## " + startNode.data.circlePointObj);
             #endregion
             CDNode temp = startNode.next;
+            #region
+            //Debug.Log("temp.Pos ##  " + temp.data.nodePos);
+            //Debug.Log("temp.circlePointObj ## " + temp.data.circlePointObj);
+            #endregion
+
+            while (temp != startNode)
+            {
+                #region
+                Debug.Log("temp.Pos  ## " + temp.data.nodePos);
+                Debug.Log("temp.index ## " + temp.data.circlePointObj);
+                #endregion
+                temp = temp.next;
+            }
+        }
+
+        public void TraversalBackWard(GameObject cirPointObj)
+        {
+            CDNode startNode = SearchObj(cirPointObj);
+
+        #region
+        //Debug.Log("temp.Pos 00 ##  " + startNode.data.nodePos);
+        //Debug.Log("temp.index 00 ## " + startNode.data.index);
+        #endregion
+        CDNode temp = startNode.prev;
             #region
             //Debug.Log("temp.Pos 0##  " + temp.data.nodePos);
             //Debug.Log("temp.index 0## " + temp.data.index);
@@ -134,109 +196,11 @@ public class CDLinkedList
             while (temp != startNode)
             {
                 #region
-                //Debug.Log("temp.Pos 1 ## " + temp.data.nodePos);
-                //Debug.Log("temp.index 1 ## " + temp.data.index);
-                #endregion
-                temp = temp.next;
-            }
-        }
-
-        public void TraversalBackWard(Vector3 nodePos, int index)
-        {
-            CDNode startNode = Search(nodePos, index);
-            #region
-            //Debug.Log("temp.Pos 00 ##  " + startNode.data.nodePos);
-            //Debug.Log("temp.index 00 ## " + startNode.data.index);
-            #endregion
-            CDNode temp = startNode.prev;
-            #region
-            //Debug.Log("temp.Pos 0##  " + temp.data.nodePos);
-            //Debug.Log("temp.index 0## " + temp.data.index);
-            #endregion
-
-            while (temp != startNode)
-            {
-                #region
-                //Debug.Log("temp.Pos 1 ## " + temp.data.nodePos);
-                //Debug.Log("temp.index 1 ## " + temp.data.index);
+                Debug.Log("temp.Pos 1 ## " + temp.data.nodePos);
+                Debug.Log("temp.index 1 ## " + temp.data.circlePointObj);
                 #endregion
                 temp = temp.prev;
             }
-        }
-
-        // 데이터를 순방향으로 탐색하기
-        public void TraversalForwarld(DelegateTraversalCDNode doSomething)
-        {
-            CDNode temp = head.next;
-
-            while (temp != tail)
-            {
-                doSomething(temp);
-
-                temp = temp.next;
-            }
-        }
-
-        public void TraversalForward(CDNode startNode, DelegateTraversalCDNode doSomething)
-        {
-            CDNode temp = startNode.next;
-            while (temp != startNode)
-            {
-                doSomething(temp);
-                temp = temp.next;
-            }
-        }
-
-
-        // 데이터를 지정된 노드 순방향으로 탐색하기
-        public void TraversalForward(CDNode startNode, CDNode endNode, DelegateTraversalCDNode doSomething)
-        {
-            CDNode temp = startNode;
-
-            while (temp != null)
-            {
-                doSomething(temp);
-
-                if (temp == endNode)
-                    break;
-
-                temp = temp.next;
-            }
-        }
-
-        // 데이터를 역방향으로 탐색하기
-        public void TraversalBackward(DelegateTraversalCDNode doSomething)
-        {
-            CDNode temp = tail.prev;
-            while (temp != head)
-            {
-                doSomething(temp);
-                temp = temp.prev;
-            }
-        }
-
-        // 데이터를 역방향으로 탐색하기
-        public void TraversalBackward(CDNode startNode, DelegateTraversalCDNode doSomething)
-        {
-            CDNode temp = startNode.prev;
-            while (temp != startNode)
-            {
-                doSomething(temp);
-                temp = temp.prev;
-            }
-        }
-
-        // 데이터를 역방향으로 탐색하기
-        public void TraversalBackward(CDNode startNode, CDNode endNode, DelegateTraversalCDNode doSomething)
-        {
-            CDNode temp = startNode;
-            while (temp != null)
-            {
-                doSomething(temp);
-                if (temp == endNode)
-                    break;
-                temp = temp.prev;
-            }
-        }
+}
     }
 }
