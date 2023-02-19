@@ -1075,7 +1075,6 @@ MonoBehaviour:
   choiceFourBut: {fileID: 2803281545746700002}
   audioIndex: 2
   stageClearEffect: {fileID: 5081905892664921335, guid: fadd40f78beec254daadc5d65e2ff592, type: 3}
-  objIndex: 0
 --- !u!1 &2395235104973672785
 GameObject:
   m_ObjectHideFlags: 0
@@ -2264,16 +2263,16 @@ MonoBehaviour:
   lineClonePos: {fileID: 2660453987743845711}
   choiceWordPanel: {fileID: 1556630766040151206}
   clearAnimation: {fileID: 7134222645234575679}
-  clearCount: 27
+  clearCount: 2
   objInex: 2
   particles: {fileID: 1005828994335477059, guid: c40921314bf6c7a4ab965f06a36179e0, type: 3}
+  lineClearParticle: {fileID: 0}
   startNodeObj: {fileID: 0}
   endNodeObj: {fileID: 0}
   prevObj: {fileID: 0}
   nextObj: {fileID: 0}
-  tempObj: {fileID: 0}
+  checkPopObj: {fileID: 0}
   startPos: {x: 0, y: 0, z: 0}
-  stackCount: 0
 --- !u!1 &5349102167077564928
 GameObject:
   m_ObjectHideFlags: 0

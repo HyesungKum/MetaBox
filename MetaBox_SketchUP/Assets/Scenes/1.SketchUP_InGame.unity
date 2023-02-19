@@ -2655,7 +2655,6 @@ MonoBehaviour:
   threeBrushBut: {fileID: 1485809480}
   character: {fileID: 1342904555}
   selectPanelImg: {fileID: 11400000, guid: 09b459363e116f54bbd6f6ed8f63f131, type: 2}
-  startSceneLevelIndex: {fileID: 1890112722954857816, guid: d906a7fa1e6c1a54fbb5a45bfa08e83a, type: 3}
   animalQPrefabData: {fileID: 11400000, guid: 3894f2e866ad24e4aac5f27ab0e24b2d, type: 2}
   characterPos: {x: 0, y: 0}
 --- !u!1 &1092450626
@@ -4704,7 +4703,7 @@ MonoBehaviour:
   winReStartBut: {fileID: 1611714516}
   goSelectPanelBut: {fileID: 1092450628}
   optionBut: {fileID: 1790807629}
-  CloseSelectPanelBut: {fileID: 106088453}
+  closePanelBut: {fileID: 106088453}
   quitBut: {fileID: 847934406}
   resumeBut: {fileID: 368223500}
   waitTimeObjs: {fileID: 194626961}
@@ -4717,6 +4716,8 @@ MonoBehaviour:
   ColorPanel: {fileID: 0}
   LineSize: {fileID: 0}
   ObjIndexs: 0
+  totalPlayTime: 0
+  SavePalyTime: 0
 --- !u!1 &1729044868
 GameObject:
   m_ObjectHideFlags: 0
@@ -5524,7 +5525,7 @@ RectTransform:
   m_GameObject: {fileID: 1928458958}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0000001, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 496745630}

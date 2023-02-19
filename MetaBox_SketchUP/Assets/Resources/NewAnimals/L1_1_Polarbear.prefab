@@ -1873,11 +1873,14 @@ MonoBehaviour:
   lineClonePos: {fileID: 1715289768026661827}
   choiceWordPanel: {fileID: 4292431165682422322}
   clearAnimation: {fileID: 1710736943896320895}
-  clearCount: 25
+  clearCount: 3
   objInex: 1
   particles: {fileID: 1005828994335477059, guid: c40921314bf6c7a4ab965f06a36179e0, type: 3}
+  lineClearParticle: {fileID: 7867500053493033058, guid: ac2c3bd6fdef67b41b9982869dec25c2, type: 3}
   startNodeObj: {fileID: 0}
   endNodeObj: {fileID: 0}
+  prevEndNodeObj: {fileID: 0}
+  nextEndNodeObj: {fileID: 0}
   prevObj: {fileID: 0}
   nextObj: {fileID: 0}
   startPos: {x: 0, y: 0, z: 0}
@@ -1900,7 +1903,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6206854429366850929
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2009,7 +2012,6 @@ MonoBehaviour:
   choiceFourBut: {fileID: 7050972864824677492}
   audioIndex: 1
   stageClearEffect: {fileID: 5081905892664921335, guid: fadd40f78beec254daadc5d65e2ff592, type: 3}
-  objIndex: 0
 --- !u!1 &4789218030008805024
 GameObject:
   m_ObjectHideFlags: 0

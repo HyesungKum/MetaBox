@@ -17,7 +17,6 @@ public class SelectPanelSet : MonoBehaviour
 
     [Header("[Select Image Data]")]
     [SerializeField] SelectPanelImgData selectPanelImg = null;
-    [SerializeField] LevelPanelSet startSceneLevelIndex;
     [SerializeField] AnimalQPrefabData animalQPrefabData = null;
 
     public Vector2 characterPos;
@@ -34,7 +33,6 @@ public class SelectPanelSet : MonoBehaviour
             animalQPrefabData = Resources.Load<AnimalQPrefabData>("Data/AnimalQPrefabData");
 
         levelIndexCheck = SoundManager.Inst.LevelIndex;
-        //Debug.Log("CharacterPos : " + character.transform.localPosition);
         characterPos = new Vector2(915f, 400f);
         character.transform.localPosition = characterPos;
 
@@ -161,8 +159,6 @@ public class SelectPanelSet : MonoBehaviour
     public void PlayGameObjSet(bool objOneSet, bool objTwoSet, bool objThreeSet)
     {
         InGamePanelSet.Inst.InGameSet(true);
-        InGamePanelSet.Inst.LineColorAndSizeChange(true);
-
         InGamePanelSet.Inst.QOneSet(objOneSet);
         InGamePanelSet.Inst.QTwoSet(objTwoSet);
         InGamePanelSet.Inst.QThreeSet(objThreeSet);

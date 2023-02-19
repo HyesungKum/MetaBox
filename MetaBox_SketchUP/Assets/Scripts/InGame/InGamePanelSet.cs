@@ -1,9 +1,7 @@
 using System.Collections;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 public class InGamePanelSet : MonoBehaviour
@@ -58,7 +56,7 @@ public class InGamePanelSet : MonoBehaviour
 
     [Header("[InGame Button]")]
     [SerializeField] Button optionBut = null;
-    [SerializeField] Button CloseSelectPanelBut = null;
+    [SerializeField] Button closePanelBut = null;
 
     [Header("[Option Button Setting]")]
     [SerializeField] Button quitBut = null;
@@ -97,6 +95,9 @@ public class InGamePanelSet : MonoBehaviour
     private int clearCount = 3;
     public int ClearCount { get { return clearCount; } set { clearCount = value; } }
     public int ObjIndexs;
+
+    public int totalPlayTime;
+    public int SavePalyTime;
 
     bool isOptionPanelOpen = false;
 
@@ -151,13 +152,15 @@ public class InGamePanelSet : MonoBehaviour
             SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(resumeBut.transform.position);
         });
 
-        CloseSelectPanelBut.onClick.AddListener(delegate
+        closePanelBut.onClick.AddListener(delegate
         {
             OnClickInGameGoSelectPanel();
-            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(CloseSelectPanelBut.transform.position);
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(closePanelBut.transform.position);
         });
 
-        goSelectPanelBut.onClick.AddListener(delegate { OnClickInGameGoSelectPanel();
+        goSelectPanelBut.onClick.AddListener(delegate
+        {
+            OnClickInGameGoSelectPanel();
             SoundManager.Inst.ButtonSFXPlay();
             SoundManager.Inst.ButtonEffect(goSelectPanelBut.transform.position);
         });
@@ -179,7 +182,8 @@ public class InGamePanelSet : MonoBehaviour
         CountDown countDown = null;
         waitTimeObjs.TryGetComponent<CountDown>(out countDown);
 
-        int waitTime = 3;
+        // == waitTime 3 = 
+        int waitTime = 1;
         for (int i = waitTime; i > 0; i--)
         {
             countDown.ShowWaitTime(waitTime);
@@ -233,6 +237,11 @@ public class InGamePanelSet : MonoBehaviour
 
             if (instEffect == null)
                 InstGameClearEffect();
+
+            totalPlayTime = 1000;
+
+            string checkTimt = Minute.ToString() + (int)seconds; 
+            SavePalyTime = int.Parse(checkTimt);
         }
     }
 
@@ -294,7 +303,6 @@ public class InGamePanelSet : MonoBehaviour
         {
             InGameOptionSet(true);
             OneBrushPlayPanelSet(false);
-            //SelectPanelSet(false);
             InGameSet(false);
             LineColorAndSizeChange(false);
             Time.timeScale = 0;
@@ -302,6 +310,7 @@ public class InGamePanelSet : MonoBehaviour
         }
         else if (isOptionPanelOpen == true)
         {
+
             InGameOptionSet(false);
             LineColorAndSizeChange(true);
 
@@ -320,6 +329,7 @@ public class InGamePanelSet : MonoBehaviour
         }
     }
 
+
     void OnClickInGameGoSelectPanel()
     {
         SelectPanelSet selectPanelSet = null;
@@ -327,14 +337,14 @@ public class InGamePanelSet : MonoBehaviour
         DrawLineCurve drawLine = null;
         QOne.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
         ObjIndexs = drawLine.ObjIndex;
-        //Debug.Log("ObjIndexs : " + ObjIndexs);
+        //Debug.Log("ObjIndexs :" + ObjIndexs);
         QTwo.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
         int ObjTwoIndex = drawLine.ObjIndex;
-        //Debug.Log("ObjTwoIndex : " + ObjTwoIndex);
+        //Debug.Log("ObjTwoIndex :" + ObjTwoIndex);
 
         QThree.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
         int ObjThreeIndex = drawLine.ObjIndex;
-        //Debug.Log("ObjThreeIndex : " + ObjThreeIndex);
+        //Debug.Log("ObjThreeIndex :" + ObjThreeIndex);
 
         SelectPanelSet(true);
 

@@ -13,7 +13,7 @@ public class DrawLineCurve : MonoBehaviour
     [SerializeField] Transform lineClonePos = null;
 
     [Header("[Clear Draw]")]
-    [SerializeField] GameObject choiceWordPanel = null;
+    [SerializeField] public GameObject choiceWordPanel = null;
     [SerializeField] GameObject clearAnimation = null;
 
     [Header("[Clear Count]")]
@@ -25,8 +25,8 @@ public class DrawLineCurve : MonoBehaviour
 
     [Header("[Particle]")]
     [SerializeField] GameObject particles = null;
+    [SerializeField] GameObject lineClearParticle = null;
 
-    GameObject instParticles = null;
 
     public int ClearCount { get { return clearCount; } set { clearCount = value; } }
 
@@ -40,6 +40,7 @@ public class DrawLineCurve : MonoBehaviour
     public GameObject endNodeObj = null;
     public GameObject prevObj = null;
     public GameObject nextObj = null;
+    public GameObject checkPopObj = null;
 
     Touch myTouch;
     private Vector3 touchPos;
@@ -62,15 +63,15 @@ public class DrawLineCurve : MonoBehaviour
     {
         mainCam = Camera.main;
         lineStack = new Stack<GameObject>();
-        InGamePanelSet.Inst.LineColorAndSizeChange(true);
         choiceWordPanel.gameObject.SetActive(false); // 선택 판넬 비활성화
+
+        InGamePanelSet.Inst.LineColorAndSizeChange(true);
         clearAnimation.gameObject.SetActive(false); // 애니메이션 이미지 비활성화
         GetObjIndex();
     }
 
     void Start()
     {
-
         checkObj.TryGetComponent<LinePosCDLinkedList>(out circleObj);
         circleObjCount = circleObj.circlePointArry.Length;
         revertBut.onClick.AddListener(delegate
@@ -128,9 +129,17 @@ public class DrawLineCurve : MonoBehaviour
             InstLine(); // 라인 생성
 
             startNodeObj = circleObj.cdNode.data.circlePointObj;// 첫 클릭 노드 예 :4
-            endNodeObj = startNodeObj;
             prevObj = circleObj.cdNode.prev.data.circlePointObj;  // 예: 5
             nextObj = circleObj.cdNode.next.data.circlePointObj; // 예: 3
+
+            if (endNodeObj == prevObj)
+            {
+                nextObj = null;
+            }
+            else if (endNodeObj == nextObj)
+            {
+                prevObj = null;
+            }
 
             startPos = startNodeObj.transform.position; // 첫 시작 Pos 정해주기
             linerender.SetPosition(0, startPos); // 라인렌더러 포지션 셋팅 해주기
@@ -144,29 +153,63 @@ public class DrawLineCurve : MonoBehaviour
         if (hitInfo)
         {
             GameObject hitObjCheck = hitInfo.transform.gameObject; // 다음 포지션 체크
+            //Debug.Log("hitObjCheck : "+ hitObjCheck);
             linerender.SetCurvePosition(touchPos); // 라인렌더러 포지션 고불 고불하게 그리게 해주기
 
-            if (hitObjCheck == prevObj || hitObjCheck == nextObj)
+            if (hitObjCheck == prevObj)
             {
-                linerender.SetPosition(1, hitObjCheck.transform.position);
+                linerender.SetPosition(1, prevObj.transform.position);
+                checkPopObj = startNodeObj;
+                endNodeObj = circleObj.cdNode.prev.prev.data.circlePointObj;
                 // 정상적으로 그어진 것이니 스택에 추가
                 lineStack.Push(currentLine);
+                Debug.Log("prevObj)lineStack Count : " + lineStack.Count);
                 // 효과 출력
-                InstPrticle(hitObjCheck.gameObject.transform.position); // 임펙트
+                InstPrticle(prevObj.gameObject.transform.position); // 임펙트
                 SoundManager.Inst.ConnectLineSFXPlay(); // 효과음
 
-                circleObj.cdNode = circleObj.cdLinkedList.SearchObj(hitObjCheck); // 원형 양방향 리스트에서 노드가 있는지 찾기
+                circleObj.cdNode = circleObj.cdLinkedList.SearchObj(prevObj); // 원형 양방향 리스트에서 노드가 있는지 찾기
 
                 startNodeObj = circleObj.cdNode.data.circlePointObj;// 첫 클릭 노드 예 :4
                 prevObj = circleObj.cdNode.prev.data.circlePointObj;  // 예: 5
-                nextObj = circleObj.cdNode.next.data.circlePointObj; // 예: 3
 
                 startPos = startNodeObj.transform.position; // 첫 시작 Pos 정해주기
+
                 InstLine(); // 라인 생성
+
                 linerender.SetPosition(0, startPos); // 라인렌더러 포지션 셋팅 해주기
                 linerender.SetPosition(1, startPos); // 라인렌더러 2번째 포지션도 셋팅 해주기
-                //lineStack.Push(currentLine);
 
+                // 이동 할때도 승리 체크 하기
+                ObjSetFalse();
+                Invoke(nameof(ClearCheck), 1f);
+            }
+            if (hitObjCheck == nextObj)
+            {
+                linerender.SetPosition(1, nextObj.transform.position);
+                checkPopObj = startNodeObj;
+                endNodeObj = circleObj.cdNode.next.data.circlePointObj;
+                // 정상적으로 그어진 것이니 스택에 추가
+                lineStack.Push(currentLine);
+                Debug.Log("nextObj)lineStack Count : " + lineStack.Count);
+                // 효과 출력
+                InstPrticle(nextObj.gameObject.transform.position); // 임펙트
+                SoundManager.Inst.ConnectLineSFXPlay(); // 효과음
+
+                circleObj.cdNode = circleObj.cdLinkedList.SearchObj(nextObj); // 원형 양방향 리스트에서 노드가 있는지 찾기
+
+                startNodeObj = circleObj.cdNode.data.circlePointObj;// 첫 클릭 노드 예 :4
+                nextObj = circleObj.cdNode.next.data.circlePointObj; // 예: 3
+                startPos = startNodeObj.transform.position; // 시작 Pos 정해주기
+
+                InstLine(); // 라인 생성
+
+                linerender.SetPosition(0, startPos); // 라인렌더러 포지션 셋팅 해주기
+                linerender.SetPosition(1, startPos); // 라인렌더러 2번째 포지션도 셋팅 해주기
+
+                // 이동 할때도 승리 체크 하기
+                ObjSetFalse();
+                Invoke(nameof(ClearCheck), 1f);
             }
             // 이웃점을 터치한 것이 아니므로 취소
             else
@@ -182,20 +225,13 @@ public class DrawLineCurve : MonoBehaviour
 
     void MoveEnd(RaycastHit2D hitInfo)
     {
-        //Debug.Log("StackCount : " + lineStack.Count);
-        //Debug.Log("line Stack에 있니 ? " + lineStack.Contains(currentLine));
-        //Debug.Log("End LineCount : " + linerender.GetPositionCount());
         if (startNodeObj == null) return;
 
         // 그어지고 있는 라인은 취소
-        ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(currentLine);
-        linerender.PosReset();
+        DestroyLine();
         //startNodeObj = null; // startNodeObj 가 null 아니면 선을 긋던 마지막 점인거다. 여기서 null을 하면 안된다.
-        endNodeObj = null;
         prevObj = null;
         nextObj = null;
-
-        Invoke(nameof(ClearCheck), 0.2f);
     }
 
     void ClearCheck()
@@ -203,7 +239,6 @@ public class DrawLineCurve : MonoBehaviour
         // ==== 승리 판정 ====
         if (lineStack.Count == ClearCount)
         {
-            ObjSetFalse();
             choiceWordPanel.gameObject.SetActive(true);
 
             int childCount = lineClonePos.transform.childCount;
@@ -221,6 +256,17 @@ public class DrawLineCurve : MonoBehaviour
         }
     }
 
+    void ObjSetFalse()
+    {
+        // ==== 승리 판정 오브젝트 비활성화 ====
+        if (lineStack.Count == ClearCount)
+        {
+            checkObj.transform.gameObject.SetActive(false);
+            revertBut.transform.gameObject.SetActive(false);
+            InGamePanelSet.Inst.LineColorAndSizeChange(false); // 컬러 판넬 비활성화
+            //InstLineClearPrticle();
+        }
+    }
 
     void StackPop()
     {
@@ -231,12 +277,6 @@ public class DrawLineCurve : MonoBehaviour
         linerender.PosReset();
     }
 
-    void ObjSetFalse()
-    {
-        checkObj.transform.gameObject.SetActive(false);
-        revertBut.transform.gameObject.SetActive(false);
-        InGamePanelSet.Inst.LineColorAndSizeChange(false); // 컬러 판넬 비활성화
-    }
 
     void InstLine()
     {
@@ -254,14 +294,15 @@ public class DrawLineCurve : MonoBehaviour
     {
         ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(currentLine);
         linerender.PosReset();
-
-        StackCountZeroNull();
     }
 
     void OnClickRevertBut()
     {
         StackPop();
         DestroyLine();
+        //== startObj 바꿔 주기
+        startNodeObj = checkPopObj;
+        endNodeObj = null;
         StackCountZeroNull();
     }
 
@@ -272,13 +313,15 @@ public class DrawLineCurve : MonoBehaviour
         else
             return 0;
     }
-
+    
+    // 스택이 비면 노드 초기화
     void StackCountZeroNull()
     {
         if (lineStack.Count == 0)
         {
             startNodeObj = null;
             endNodeObj = null;
+            checkPopObj = null;
             prevObj = null;
             nextObj = null;
         }
@@ -286,8 +329,14 @@ public class DrawLineCurve : MonoBehaviour
 
     void InstPrticle(Vector3 instPos)
     {
-        instParticles = ObjectPoolCP.PoolCp.Inst.BringObjectCp(particles);
+        GameObject instParticles = ObjectPoolCP.PoolCp.Inst.BringObjectCp(particles);
         instParticles.transform.position = instPos;
+    }
+
+    void InstLineClearPrticle()
+    {
+        GameObject instLineClearPriticle = ObjectPoolCP.PoolCp.Inst.BringObjectCp(lineClearParticle);
+        instLineClearPriticle.transform.position = Vector3.zero;
     }
 
     RaycastHit2D RayCheck()
