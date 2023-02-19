@@ -4,12 +4,22 @@ using UnityEngine;
 
 public delegate void CallbackArrest(Thief me);
 
+public enum Mode
+{
+    Silhouette = 0,
+    Citizen = 1,
+    Thief = 2
+}
 public class Thief : MonoBehaviour
 {
     public CallbackArrest callbackArrest = null;
 
-    [SerializeField] ScriptableObj thiefImages = null;
-    [SerializeField] SpriteRenderer spriteRenderer = null;
+    [SerializeField] CapsuleCollider2D npcCollider = null;
+    [SerializeField] List<GameObject> npcMode = null;
+    [SerializeField] List<Animator> npsAnimator = null;
+    [SerializeField] ParticleSystem hideEff = null;
+
+    Vector3 policeStation = new Vector3(7.6f, -2.4f, 0f);
 
     Police police = null;
     WaitUntil runnigTime = null;
@@ -22,41 +32,26 @@ public class Thief : MonoBehaviour
     bool wantedThief;
     bool runningAway;
     bool arrest;
+    Mode myMode;
     Vector3 dir;
+    Vector3 rightFlip = new Vector3(-1, 1, 1);
+    Vector3 leftFlip = new Vector3(1, 1, 1);
 
-
-    void OnEnable()
-    {
-        runnigTime = new WaitUntil(() => (police.transform.position - this.transform.position).magnitude > 2f);
-        GameStart = new WaitUntil(() => GameManager.Instance.IsGaming);
-        runningAway = false;
-        arrest = false;
-        dir = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0).normalized;
-        StartCoroutine(nameof(RandomDir));
-        StartCoroutine(nameof(RandomMove));
-    }
-    
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         police = FindObjectOfType<Police>();
-        if (spriteRenderer == null) spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
+
+        runnigTime = new WaitUntil(() => (police.transform.position - this.transform.position).magnitude > 1.5f);
+        GameStart = new WaitUntil(() => GameManager.Instance.IsGaming);
+        waitArrestTime = new WaitForSeconds(1.5f);
     }
 
-    public void OpenImage()
+    private void OnEnable()
     {
-        spriteRenderer.sprite = thiefImages.Thief[id];
-    }
-
-    public void HideImage()
-    {
-        spriteRenderer.sprite = thiefImages.Thief[0];
-    }
-
-    public void Remove()
-    {
-        if (callbackArrest != null) callbackArrest(this);
-        callbackArrest = null;
+        for (int i = 0; i < npcMode.Count; i++)
+        {
+            npcMode[i].SetActive(false);
+        }
     }
 
     public void Setting(bool wantedThief, int id, int movespeed, int movetime)
@@ -65,7 +60,47 @@ public class Thief : MonoBehaviour
         this.speed = movespeed * 0.4f;
         this.wantedThief = wantedThief;
         waitMoveTime = new WaitForSeconds(movetime);
-        waitArrestTime = new WaitForSeconds(3f);
+
+        if (wantedThief) myMode = Mode.Thief;
+        else myMode = Mode.Citizen;
+        npcMode[(int)myMode].SetActive(true);
+        npsAnimator[(int)myMode].SetTrigger("Init");
+
+
+        GameManager.Instance.openThief += OpenImg;
+        GameManager.Instance.hideThief += Hide;
+        GameManager.Instance.removeThief += () => callbackArrest?.Invoke(this);
+        GameManager.Instance.hideEff += () => hideEff.Play();
+
+        npcCollider.enabled = true;
+        runningAway = false;
+        arrest = false;
+        dir = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0).normalized;
+
+        StartCoroutine(nameof(RandomDir));
+        StartCoroutine(nameof(RandomMove));
+    }
+
+    void OpenImg()
+    {
+        npcMode[(int)Mode.Silhouette].SetActive(false);
+
+        if (wantedThief) myMode = Mode.Thief;
+        else myMode = Mode.Citizen;
+
+        npcMode[(int)myMode].SetActive(true);
+        if (arrest) npsAnimator[(int)myMode].SetInteger("Arrest", (int)myMode); //thief == 2 or citizen == 1
+        else npsAnimator[(int)myMode].SetBool("Move", true);
+    }
+
+    void Hide()
+    {
+        npcMode[(int)myMode].SetActive(false); //thief or citizen
+
+        myMode = Mode.Silhouette;
+
+        npcMode[(int)myMode].SetActive(true); //silhouette
+        npsAnimator[(int)myMode].SetBool("Move", true);
     }
 
     IEnumerator RandomDir()
@@ -85,7 +120,16 @@ public class Thief : MonoBehaviour
         yield return GameStart;
         while (GameManager.Instance.IsGaming)
         {
-            transform.Translate(dir * speed * Time.deltaTime);
+            if (arrest)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, policeStation, speed);
+            }
+            else
+            {
+                transform.Translate(dir * speed * Time.deltaTime);
+                if (dir.x >= 0) this.transform.localScale = rightFlip;
+                else this.transform.localScale = leftFlip;
+            }
             yield return null;
         }
     }
@@ -98,20 +142,18 @@ public class Thief : MonoBehaviour
 
     IEnumerator Destroy()
     {
-        UIManager.Instance.Catch(id);
         yield return waitArrestTime;
-        if (callbackArrest != null) callbackArrest(this);
+        callbackArrest?.Invoke(this);
         callbackArrest = null;
 
-        if (wantedThief) GameManager.Instance.Catch(id);
+        if (wantedThief) GameManager.Instance.Catch();
         else GameManager.Instance.Penalty();
     }
 
     private void OnCollisionEnter2D(Collision2D collision) //npc끼리 충돌시
     {
-        if (collision.rigidbody)
+        if (collision.rigidbody && runningAway == false)
         {
-            if (runningAway) return;
             dir.x = Random.Range(-1f, 1f);
             dir.y = Random.Range(-1f, 1f);
             dir.Normalize();
@@ -130,23 +172,22 @@ public class Thief : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Prison")
+        if (collision.gameObject.name == "Prison")
         {
-            Debug.Log("나는 함정에 빠졌다");
             if (runningAway)
             {
-                Debug.Log("나는 결국...");
                 arrest = true;
-                dir = (collision.transform.position - this.transform.position).normalized;
-                if (dir.x > 0) transform.localScale = new Vector3(-1, 1);
-                speed *= 0.7f;
+                npcCollider.enabled = false;
+                StopCoroutine(nameof(RunAwayMode));
+                speed *= 0.01f;
+                this.transform.localScale = rightFlip;
                 GameManager.Instance.ShowImg();
+                if (wantedThief) GameManager.Instance.CatchShow();
                 StartCoroutine(nameof(Destroy));
             }
             else
             {
-                Debug.Log("나는 잘 튀었다");
-                dir.y = 1f;
+                dir.x = -1f;
                 dir.Normalize();
             }
         }
@@ -159,13 +200,43 @@ public class Thief : MonoBehaviour
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if(collision.tag == "Prison")
+        if(collision.gameObject.name == "Prison")
         {
-            if(arrest == false) dir.y = 1f;
+            if (arrest == false && runningAway)
+            {
+                arrest = true;
+                npcCollider.enabled = false;
+                StopCoroutine(nameof(RunAwayMode));
+                speed *= 0.01f;
+                this.transform.localScale = rightFlip;
+                GameManager.Instance.ShowImg();
+                if (wantedThief) GameManager.Instance.CatchShow();
+                StartCoroutine(nameof(Destroy));
+            }
+            else if(arrest == false && runningAway == false)
+            {
+                dir.x = -1f;
+                dir.Normalize();
+            }
         }
         else
         {
+            if(runningAway == false)
+            {
+                runningAway = true;
+                StartCoroutine(nameof(RunAwayMode));
+            }
             dir = (this.transform.position - collision.transform.position).normalized;
         }
     }
+
+#if UNITY_EDITOR
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.matrix = this.transform.localToWorldMatrix;
+        Gizmos.DrawSphere(Vector3.zero + new Vector3(npcCollider.offset.x, npcCollider.offset.y, 0), (float)(this.transform.localScale.x*0.5));
+    }
+#endif
+
 }

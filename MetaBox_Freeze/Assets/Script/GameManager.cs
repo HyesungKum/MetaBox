@@ -1,17 +1,12 @@
+using ObjectPoolCP;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public delegate void Notice();
+public delegate void CallBackFunction();
 
 public class GameManager : MonoBehaviour
 {
-    public Notice FreezeDataSetting = null;
-    public Notice GameClearEvent = null;
-    public Notice WaveClearEvent = null;
-    public Notice PlayTimerEvent = null;
-    public Notice PenaltyEvent = null;
-
     static private GameManager instance;
     static public GameManager Instance
     {
@@ -20,7 +15,7 @@ public class GameManager : MonoBehaviour
             if (instance == null)
             {
                 instance = FindObjectOfType<GameManager>();
-                if(instance == null)
+                if (instance == null)
                 {
                     instance = new GameObject(nameof(GameManager), typeof(GameManager)).GetComponent<GameManager>();
                 }
@@ -29,30 +24,50 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    [SerializeField] ThiefSpawner thiefSpawner = null;
+    public CallBackFunction freezeDataSetting = null; //police set data according to game level.
+    public CallBackFunction gameClearRecord = null; //When the game is cleared, records are updated in the DB.
+    public CallBackFunction playTimerEvent = null; //play time that changes every second is applied to the UI.
+    public CallBackFunction penaltyEvent = null; //directing a penalty when arresting a citizen.
+    public CallBackFunction policeReset = null; //police animator set - idle
+
+
+    [Header("Thief Control")]
+    public CallBackFunction spawnThief = null;
+    public CallBackFunction openThief = null;
+    public CallBackFunction hideThief = null;
+    public CallBackFunction removeThief = null;
+    public CallBackFunction hideEff = null;
+
+    
+    [SerializeField] GameObject postPrefab = null;
+    List<GameObject> wantedPostList = new List<GameObject>();
+
+    [SerializeField] ParticleSystem catchEff = null;
+    [SerializeField] List<ParticleSystem> waveClearEff = null;
+
+
+    public GameData FreezeData { get; private set; }
+    public List<StageData> StageDatas { get; private set; }
+    public bool IsGaming { get; private set; } = false;
+    public bool IsPreparing { get; private set; } = false; //wave Ready
+    public int CurStage { get; private set; } = -1;
+    public int PlayTime { get; private set; } = 0;
+    public int CatchNumber { get; private set; } = 0;
+
     WaitForSeconds wait1 = null;
-    WaitForSeconds waitNextWave = null;
+    WaitForSeconds waitWaveStart = null;
+    
+    bool imgShowTime = false;
 
-    public GameData FreezeData { get; set; }
-    public List<StageData> StageDatas { get; set; }
-    public bool IsGaming { get; set; } = false;
-    public int PlayTime { get; set; }
-    int stage;
-    int penalty;
-    int catchNumber;
-
-
-    private void Awake()
+    void Awake()
     {
         DataManager.Instance.LoadGameData();
-        LevelSetting(PlayerPrefs.GetInt("level"));
-    }
-
-    private void Start()
-    {
+        SoundManager.Instance.AddButtonListener();
+        LevelSetting(StartUI.MyLevel);
+        if (postPrefab == null) postPrefab = (GameObject)Resources.Load(nameof(postPrefab));
         wait1 = new WaitForSeconds(1f);
-        waitNextWave = new WaitForSeconds(3f);
-        UIManager.Instance.WaveStart();
+        waitWaveStart = new WaitForSeconds(4f);
+        SoundManager.Instance.MusicStart(1);
     }
 
     public void LevelSetting(int level)
@@ -60,13 +75,9 @@ public class GameManager : MonoBehaviour
         FreezeData = DataManager.Instance.FindGameDataByLevel(level);
         StageDatas = DataManager.Instance.FindStageDatasByStageGroup(FreezeData.stageGroup, FreezeData.stageCount);
         ShuffleList(StageDatas);
-        stage = 0;
+        freezeDataSetting?.Invoke(); //police세팅
         PlayTime = FreezeData.playTime;
-        UIManager.Instance.PlayTime = FreezeData.playTime;
-        if (FreezeDataSetting != null) FreezeDataSetting();
-        WaveSetting();
     }
-
     List<T> ShuffleList<T>(List<T> list)
     {
         for (int i = list.Count -1; i > 0; i--)
@@ -80,93 +91,160 @@ public class GameManager : MonoBehaviour
         return list;
     }
 
+    private void Start()
+    {
+        StartCoroutine(nameof(WaveReady));
+    }
+
+    IEnumerator WaveReady()
+    {
+        UIManager.Instance.Option(false);
+        yield return wait1;
+        WaveSetting();
+        playTimerEvent?.Invoke();
+        yield return wait1;
+        UIManager.Instance.Countdown();
+        yield return waitWaveStart;
+        WaveStart();
+        UIManager.Instance.Option(true);
+    }
 
     public void WaveSetting()
     {
-        thiefSpawner.Spawn(StageDatas[stage]);
-        thiefSpawner.Open();
-        penalty = StageDatas[stage].penaltyPoint;
-        catchNumber = 0;
-        UIManager.Instance.DataSetting(StageDatas[stage].wantedCount, StageDatas[stage].startCountdown);
-        if(stage != 0) UIManager.Instance.WaveStart();
-        stage++;
+        CurStage++;
+        CatchNumber = 0;
+        openThief = null;
+        hideThief = null;
+        removeThief = null;
+        hideEff = null;
+        spawnThief();
+        UIManager.Instance.DataSetting();
     }
 
     public void WaveStart()
     {
+        IsGaming = true; 
         StartCoroutine(nameof(PlayTimer));
-        IsGaming = true;
-        thiefSpawner.Hide();
+        hideThief?.Invoke();
+        SoundManager.Instance.PlaySFX(SFX.HideNPC);
     }
 
     public void WaveClear()
     {
-        StopCoroutine(nameof(PlayTimer));
         IsGaming = false;
-        thiefSpawner.Remove();
-        if (stage == StageDatas.Count) GameOver(true);
+        removeThief?.Invoke();
+        
+        if (CurStage == StageDatas.Count-1) GameOver(true);
         else
         {
+            SoundManager.Instance.PlaySFX(SFX.WaveClear);
+            for(int i = 0; i < wantedPostList.Count; i++)
+            {
+                PoolCp.Inst.DestoryObjectCp(wantedPostList[i]);
+            }
+            wantedPostList.Clear();
+
+            for (int i = 0; i < waveClearEff.Count; i++)
+            {
+                waveClearEff[i].Play();
+            }
+            
             UIManager.Instance.WaveClear();
-            StartCoroutine(nameof(NextWave));
+            StartCoroutine(nameof(WaveReady));
         }
+    }
+
+    public void ReStart()
+    {
+        IsGaming = false;
+        policeReset?.Invoke();
+        removeThief?.Invoke();
+        PlayTime = FreezeData.playTime;
+        CurStage = -1;
+        for (int i = 0; i < wantedPostList.Count; i++)
+        {
+            PoolCp.Inst.DestoryObjectCp(wantedPostList[i]);
+        }
+        wantedPostList.Clear();
+        StartCoroutine(nameof(WaveReady));
     }
 
     public void GameOver(bool win)
     {
         if (win)
         {
-            UIManager.Instance.Win();
-            GameClearEvent();
+            UIManager.Instance.Invoke("Win", 1f);
+            gameClearRecord?.Invoke();
+            for (int i = 0; i < wantedPostList.Count; i++)
+            {
+                PoolCp.Inst.DestoryObjectCp(wantedPostList[i]);
+            }
+            wantedPostList.Clear();
         }
         else UIManager.Instance.Lose();
     }
 
     public void ShowImg()
     {
-        thiefSpawner.Open();
+        imgShowTime = false;
+        StartCoroutine(nameof(ImgShow));
     }
 
-    public void Catch(int id)
+    IEnumerator ImgShow()
     {
-        thiefSpawner.Hide();
-        catchNumber++;
-        UIManager.Instance.Arrest(id);
-        if (catchNumber == StageDatas[stage-1].wantedCount)
+        yield return null;
+        openThief?.Invoke();
+        float showTime = StageDatas[CurStage].startCountdown;
+        imgShowTime = true;
+        while (showTime > 0f && imgShowTime)
         {
-            WaveClear();
+            showTime -= Time.deltaTime;
+            if(IsGaming == false) yield break; //If the last thief is apprehended, the function to hide the image is not executed.
+            yield return null;
         }
+        if(imgShowTime) hideThief?.Invoke();
+    }
+    
+    public void CatchShow()
+    {
+        if(catchEff.isPlaying) catchEff.Stop();
+        catchEff.Play();
+        wantedPostList.Add(PoolCp.Inst.BringObjectCp(postPrefab));
+        if (wantedPostList.Count > 1) wantedPostList[wantedPostList.Count - 2].SendMessage("SetImg", SendMessageOptions.DontRequireReceiver);
+        if(wantedPostList.Count > 2) wantedPostList[wantedPostList.Count - 3].SendMessage("HideImg", SendMessageOptions.DontRequireReceiver);
+    }
+    
+    public void Catch()
+    {
+        CatchNumber++;
+        SoundManager.Instance.PlaySFX(SFX.Catch);
+        UIManager.Instance.Catch();
+        if (CatchNumber == StageDatas[CurStage].wantedCount) WaveClear();
     }
 
     public void Penalty()
     {
-        thiefSpawner.Hide();
-        PlayTime -= penalty;
-        PenaltyEvent();
+        PlayTime -= StageDatas[CurStage].penaltyPoint;
+        SoundManager.Instance.PlaySFX(SFX.Penalty);
+        penaltyEvent?.Invoke();
     }
 
     IEnumerator PlayTimer()
     {
-        while (PlayTime > 0)
+        while (PlayTime > 0 && IsGaming)
         {
             PlayTime--;
-            PlayTimerEvent();
-            if (GameManager.Instance.PlayTime <= 0)
+            playTimerEvent();
+            if (PlayTime <= 0)
             {
-                if (catchNumber < StageDatas[stage - 1].wantedCount)
+                if (CatchNumber < StageDatas[CurStage].wantedCount)
                 {
                     IsGaming = false;
                     GameOver(false);
+                    SoundManager.Instance.PlaySFX(SFX.Fail);
                 }
             }
             yield return wait1;
         }
-    }
-
-    IEnumerator NextWave()
-    {
-        WaveClearEvent?.Invoke(); //스테이지클리어 연출
-        yield return waitNextWave;
-        WaveSetting();
     }
 }

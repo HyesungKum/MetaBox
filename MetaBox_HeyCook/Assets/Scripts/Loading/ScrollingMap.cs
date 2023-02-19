@@ -19,6 +19,8 @@ public class ScrollingMap : MonoBehaviour
     [SerializeField] float rockSpeed;
 
     //=============================inner variables==============================
+    BoxCollider2D[] rockColl;
+
     float leftLimit;
     float rightLimit;
     Vector3 newBackPos;
@@ -27,14 +29,42 @@ public class ScrollingMap : MonoBehaviour
     private void Awake()
     {
         //initailizing
+        rockColl = new BoxCollider2D[Rock.Length];
+
+        for (int i = 0; i < Rock.Length; i++)
+        {
+            Rock[i].TryGetComponent(out rockColl[i]);
+        }
+
         leftLimit = mainCam.ViewportToWorldPoint(new Vector3(-0.5f, 0f)).x;
         rightLimit = mainCam.ViewportToWorldPoint(new Vector3(0.5f, 0f)).x;
         newBackPos = new Vector3(backRenderer.bounds.size.x * 3f, 0f);
         newRockPos[0] = RockSpawnTr[0].position;
         newRockPos[1] = RockSpawnTr[1].position;
 
+        //delegate chain
+        EventReceiver.PlayerFall += StopScroll;
+        EventReceiver.PlayerRise += StartScroll;
+
         //scroll routine
+        StartScroll();
+    }
+
+    private void OnDisable()
+    {
+        //delegate unchain
+        EventReceiver.PlayerFall -= StopScroll;
+        EventReceiver.PlayerRise -= StartScroll;
+    }
+
+    //===========================Scrolling Controll==============================
+    private void StartScroll()
+    {
         StartCoroutine(nameof(Scrolling));
+    }
+    private void StopScroll()
+    {
+        StopCoroutine(nameof(Scrolling));
     }
 
     //==========================map image scrolling==============================
@@ -54,7 +84,11 @@ public class ScrollingMap : MonoBehaviour
             for(int i =0; i< Rock.Length; i++)
             {
                 Rock[i].Translate(rockSpeed * Time.deltaTime * Vector3.left);
-                if (Rock[i].position.x < -11f) Rock[i].position = newRockPos[Random.Range(0, 2)];
+                if (Rock[i].position.x < -11f)
+                {
+                    rockColl[i].enabled = true;
+                    Rock[i].position = newRockPos[Random.Range(0, 2)];
+                }
             }
             
             yield return null;

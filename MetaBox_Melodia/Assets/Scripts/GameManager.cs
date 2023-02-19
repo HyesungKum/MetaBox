@@ -1,24 +1,20 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-
-
 
 public enum GameStatus
 {
     Idle,
-    StartGame,
-    Ready,
-    TimeOver,
+    GamePlaying,
+    Pause,
+    MusicPlaying,
+    MusicStop,
     GetAllQNotes,
-    NoMorePlayableNote,
-    Restart,
-    ClearStage,
+    Fail,
+    GameClear,
+    Restart
 }
-
-
-
-
 
 public class GameManager : DataLoader
 {
@@ -43,232 +39,180 @@ public class GameManager : DataLoader
     }
     #endregion
 
-    public delegate void DelegateIsGameOver(bool isOver);
-    public static DelegateIsGameOver myDelegateIsGameOver;
-
+    public Action<int> DelegateCountDown;
+    public Action<int> DelegateTimer;
+    public Action<int> gameClearRecord;
     public delegate void DelegateGameStatus(GameStatus curStatue);
-    public static DelegateGameStatus myDelegateGameStatus;
+    public DelegateGameStatus myDelegateGameStatus;
+
+    public GameStatus CurStatus { get; private set; }
+    public GameData MelodiaData { get; private set; }
+    public List<StageData> StageDatas { get; private set; }
+    public Dictionary<int, List<int>> MyStageData { get; private set; }
 
 
-    bool isGameOver = false;
+    public int CurStage { get; private set; }
+    public int MyPlayableTime { get; private set; }
 
-    int curStage = 1;
-    public int CurState { get { return curStage; } set { curStage = value; } }
-
-
-    [Header("Play Time")]
-    [SerializeField] float myPlayableTime;
-    public float MyPlayableTime { get { return myPlayableTime; } }
-
-    [SerializeField] float myCoolTime;
-    public float MyCoolTime { get { return myCoolTime; } }
-
-
-    [SerializeField] float countDown;
-
-
-    static Dictionary<int, List<int>> myStageData = new();
-    public Dictionary<int, List<int>> MyStageData { get { return myStageData; } }
-
+    WaitForSeconds wait1 = null;
+    bool stageClear = false;
+    bool gameClear = false;
 
     private void Awake()
     {
-        myDelegateGameStatus = UpdateGameStatus;
+        LoadGameData();
+        MelodiaData = FindGameDataByLevel(StartUI.Level);
+        StageDatas = FindStageDatasByStageGroup(MelodiaData.stageGroup);
+        MyStageData = StageData(StartUI.MySceneMode);
+        SoundManager.Inst.LoadMusicData(StartUI.MySceneMode);
+        SoundManager.Inst.AddButtonListener();
+        SoundManager.Inst.BGMPlay(2);
     }
-
 
     private void Start()
     {
-        Time.timeScale = 0;
-
-        myDelegateGameStatus(GameStatus.Idle);
+        CurStage = 0;
+        MyPlayableTime = MelodiaData.countDown;
+        wait1 = new WaitForSeconds(1);
+        UpdateCurProcess(GameStatus.Idle);
     }
 
-
-    public void CheckStage()
+    // receive game status 
+    public void UpdateCurProcess(GameStatus targetStatus)
     {
-        if (MyStageData.Keys.Count == curStage)
-        { 
-            myDelegateGameStatus(GameStatus.ClearStage);
-            return;
-        }
-
-
-        myDelegateGameStatus(GameStatus.GetAllQNotes);
-    }
-
-
-
-
-
-
-    public void UpdateGameStatus(GameStatus targetStatus)
-    {
-
         switch (targetStatus)
         {
-            case GameStatus.Idle:
+            case GameStatus.Idle: //스테이지 세팅
                 {
-                    isGameOver = false;
+                    CurStage++;
+                    stageClear = false;
+                    gameClear = false;
+                    CurStatus = GameStatus.Idle;
 
-                    Debug.Log("Idle_GM");
+                    DelegateTimer(MyPlayableTime);
 
-                    checkStageLevel();
+                    // let all know idle status 
+                    myDelegateGameStatus(GameStatus.Idle);
+
+                    StartCoroutine(nameof(CountDown3));
                 }
                 break;
 
-            case GameStatus.Ready:
+            case GameStatus.GamePlaying:
                 {
-                    Debug.Log("준비_GM");
-                    startStage();
+                    CurStatus = GameStatus.GamePlaying;
+                    myDelegateGameStatus(GameStatus.GamePlaying);
+                    StartCoroutine(nameof(PlayTimer));
+                    //Time.timeScale = 1;
+                    //Time.fixedDeltaTime = 0.02f * Time.timeScale;
                 }
                 break;
 
-            case GameStatus.StartGame:
+            case GameStatus.Pause:
                 {
-                    Debug.Log("시작!!_GM");
-                    Time.timeScale = 1;
+                    CurStatus = GameStatus.Pause;
+                    myDelegateGameStatus(GameStatus.Pause);
+                    StopCoroutine(nameof(PlayTimer));
+                    //Time.timeScale = 0;
+                    //Time.fixedDeltaTime = 0.02f * Time.timeScale;
                 }
                 break;
 
-
-            case GameStatus.TimeOver:
+            case GameStatus.MusicPlaying:
                 {
-                    Debug.Log("Time is over!_GM");
-                    isGameOver = true;
+                    UpdateCurProcess(GameStatus.Pause);
                 }
                 break;
 
-            case GameStatus.GetAllQNotes:       // go to next round
+            case GameStatus.MusicStop:
                 {
-                    Debug.Log("Great sucess!_GM");
-
-                    Debug.Log($"현재 {curStage}스테이지 성공 {MyStageData.Keys.Count} 스테이지!");
-
-                    curStage++;
-
-                    isGameOver = true;
+                    if (gameClear) myDelegateGameStatus(GameStatus.GameClear);
+                    else if (stageClear && CurStage.Equals(MyStageData.Keys.Count)) UpdateCurProcess(GameStatus.GameClear);
+                    else if(stageClear) myDelegateGameStatus(GameStatus.GetAllQNotes);
+                    else UpdateCurProcess(GameStatus.GamePlaying);
                 }
                 break;
 
-            case GameStatus.NoMorePlayableNote:
+            case GameStatus.GetAllQNotes:
                 {
-                    Debug.Log("Too bad, so sad!_GM");
-                    isGameOver = true;
+                    stageClear = true;
+                    CurStatus = GameStatus.GetAllQNotes;
+                    
+                    Invoke(nameof(ClearMusic), 1f);
                 }
                 break;
 
-            case GameStatus.ClearStage:
+            case GameStatus.Fail:
                 {
-                    Debug.Log("스테이지 클리어!");
-                    curStage = 1;
-                    isGameOver = true;
+                    SoundManager.Inst.StopMusic();
+
+                    SoundManager.Inst.SFXPlay(SFX.GameFail);
+                    stageClear = true;
+                    CurStatus = GameStatus.Fail;
+
+                    myDelegateGameStatus(GameStatus.Fail);
                 }
                 break;
 
+            case GameStatus.GameClear:
+                {
+                    CurStatus = GameStatus.GameClear;
+                    gameClear = true;
+                    CurStage++;
+                    
+                    Invoke(nameof(ClearMusic), 1f);
+                    gameClearRecord(MelodiaData.countDown - MyPlayableTime);
+                }
+                break;
 
+            case GameStatus.Restart:
+                {
+                    CurStage = 0;
+                    MyPlayableTime = MelodiaData.countDown;
+                    UpdateCurProcess(GameStatus.Idle);
+                }
+                break;
         }
-
-
-        if (!isGameOver)
-            return;
-
-
-        myDelegateIsGameOver(true);
     }
 
-
-
-    void startStage()
+    IEnumerator CountDown3()
     {
-        PlayTimer.DelegateTimer += timeCountDown;
+        yield return wait1;
+        yield return wait1;
 
-        Time.timeScale = 0;
-
-        Debug.Log("쿨타임!" + myCoolTime);
-    }
-
-
-
-    void checkStageLevel()
-    {
-        Debug.Log("무슨 모드?");
-
-
-
-
-        switch (SceneModeController.MySceneMode)
+        for (int i = 3; i >= 0; i--)
         {
-            case SceneModeController.SceneMode.EasyMode:
-                {
-                    Debug.Log("쉬운 모드!");
-                    myPlayableTime = 180f;
-                    myCoolTime = 15;
-
-                    if (MyStageData.Count == 0)
-                    {
-                        Debug.Log("데이터 불러와!");
-                        GetStageInfo("EasyMode");
-                    }
-                }
-                break;
-
-            case SceneModeController.SceneMode.NormalMode:
-                {
-                    //depends on mode
-                    //countDown = 180f;
-                }
-                break;
-
-            case SceneModeController.SceneMode.DifficultMode:
-                {
-                    //depends on mode
-                    //countDown = 180f;
-
-                }
-                break;
-
-            case SceneModeController.SceneMode.ExtremeMode:
-                {
-                    //depends on mode
-                    //countDown = 180f;
-
-                }
-                break;
+            DelegateCountDown(i);
+            yield return wait1;
         }
 
-        Debug.Log("무슨 모드? " + SceneModeController.MySceneMode);
+        DelegateCountDown(0);
 
+        SoundManager.Inst.PlayStageMusic();
+    }
+
+    void ClearMusic()
+    {
+        // play current stage music 
+        SoundManager.Inst.PlayStageMusic();
     }
 
 
-
-    void timeCountDown(float t)
+    IEnumerator PlayTimer()
     {
-        if (t <= 0)
+        DelegateTimer(MyPlayableTime);
+        yield return wait1;
+
+        while (MyPlayableTime > 0 && !stageClear)
         {
-            myDelegateGameStatus(GameStatus.TimeOver);
-            Debug.Log("시간이 없어요");
+            MyPlayableTime--;
+            DelegateTimer(MyPlayableTime);
+            if (MyPlayableTime.Equals(30)) SoundManager.Inst.SFXPlay(SFX.TimeLimit);
+            if (MyPlayableTime <= 0)
+            {
+                UpdateCurProcess(GameStatus.Fail);
+            }
+            yield return wait1;
         }
     }
-
-
-
-    // stage info ================================================================
-
-    void GetStageInfo(string targetStage)
-    {
-        myStageData = StageData(targetStage);
-    }
-
-
-    public Dictionary<int, List<int>> CurStageInfo()
-    {
-        return MyStageData;
-    }
-
-    // stage info ================================================================
-
-
-
 }

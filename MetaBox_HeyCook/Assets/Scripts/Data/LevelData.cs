@@ -5,23 +5,23 @@ using UnityEngine;
 [Serializable]
 public class LevelTable
 {
-    //game setting data
     [SerializeField] public int level;
+    //game setting data
+    [Header("Level Value Settings")]
     [SerializeField] public int countDown;
     [SerializeField] public float beltSpeed;
+    [SerializeField] public float spawnTime;
+
+    [Header("Data Reference Sttings")]
     [SerializeField] public FoodGroup foodDataGroup;
     [SerializeField] public IngredGroup ingredGroup;
-
-    //guest table data
     [SerializeField] public GuestGroup guestGroup;
 
     //image data
-    [SerializeField] public Sprite conveyorBeltImage;
-    [SerializeField] public Sprite submissionImage;
+    [Header("Image Settings")]
     [SerializeField] public Sprite orderImage;
     [SerializeField] public Sprite kitchenImage;
-    [SerializeField] public Sprite backGroundImage1;
-    [SerializeField] public Sprite backGroundImage2;
+    [SerializeField] public Sprite backGroundImage;
 }
 
 [CreateAssetMenu(menuName = "ScriptableObj/LevelData", fileName = "LevelData")]

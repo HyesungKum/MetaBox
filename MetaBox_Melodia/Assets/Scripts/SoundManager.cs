@@ -1,29 +1,23 @@
-using UnityEngine;
-using UnityEngine.Audio;
+using ObjectPoolCP;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public enum PitchName
+public enum SFX
 {
-    LoDo,
-    LoRe,
-    LoMi,
-    LoFa,
-    LoSol,
-    LoRa,
-    LoSi,
-
-    HiDo,
-    HiRe,
-    HiMi,
-    HiFa,
-    HiSol,
-    HiRa,
+    Button = 1,
+    Flower,
+    ReplayTouch,
+    TimeLimit,
+    StageClear,
+    GameSuccess,
+    GameFail
 }
 
-
 public delegate void DelegateAudioControl(string target, float volume);
-
 
 public class SoundManager : MonoBehaviour
 {
@@ -42,167 +36,182 @@ public class SoundManager : MonoBehaviour
                     instance = new GameObject("SoundManager", typeof(SoundManager)).GetComponent<SoundManager>();
                 }
             }
-
-            DontDestroyOnLoad(instance.gameObject);
             return instance;
         }
     }
     #endregion
 
-
     [Header("Note Sound ScriptableObject")]
-    [SerializeField]
-    private NoteSoundIndex myNoteSound;
-    public NoteSoundIndex MyNoteSound { set { myNoteSound = value; } }
-
-
-
+    [SerializeField] private MySoundIndex myNoteSound;
+    [SerializeField] private MySoundIndex myMusicSound;
+    [SerializeField] private MySoundIndex myBGMSound;
+    [SerializeField] private MySoundIndex mySFXSound;
 
 
     [Header("Audio Sources")]
-    [SerializeField] AudioSource myNoteAudioSource;
-    [SerializeField] AudioSource myBGMAudioSource;
-    [SerializeField] AudioClip tempClip;
-
-
-
+    [SerializeField] AudioSource mySFX;
+    [SerializeField] AudioSource myBGM;
 
     [Header("Audio Volume Control")]
     [SerializeField] AudioMixer myAudioMixer;
-    public AudioMixer MyAudioMixer { get { return myAudioMixer; } }
 
+    [Header("Button")]
+    [SerializeField] GameObject touchEff;
 
-    [SerializeField] bool isStopped;
-    public bool IsStopped { get { return isStopped; } set { isStopped = value; } }
+    public bool MasterMute { get; private set; } = false;
+    public bool BGMMute { get; private set; } = false;
+    public bool SFXMute { get; private set; } = false;
 
-    Coroutine curCoroutine;
-    public Coroutine CurCoroutine { get { return curCoroutine; } set { curCoroutine = value; } }
+    bool isStopped = false;
+    bool isGameStart = false;
+    bool isCoroutineRunning = false;
 
+    Coroutine runningCoroutine = null;
+    WaitUntil musicPlaying = null;
     List<int> clipList = new();
 
 
-    private void Awake()
+    void Awake()
     {
         //==============================================
-        if (instance == null)
-            instance = this;
-
-        else if (instance != this)
+        if (instance != null)
+        {
             Destroy(gameObject);
+            return;
+        }
+        instance = this;
 
-        DontDestroyOnLoad(instance.gameObject);
+        DontDestroyOnLoad(this.gameObject);
         //==============================================
 
-        myBGMAudioSource.clip = tempClip;
 
-        SceneModeController.myDelegateAudioControl = AudioVolumeControl;
-        UiManager.myDelegateAudioControl = AudioVolumeControl;
+        Option.myDelegateAudioControl = AudioVolumeControl;
+        AddButtonListener();
+        BGMPlay(1);
+        musicPlaying = new WaitUntil(() => myBGM.isPlaying.Equals(false));
     }
 
 
 
+
+    #region Button
+    public void AddButtonListener() //°¢ ¾À¸Å´ÏÀú¿¡¼­ È£Ãâ
+    {
+        GameObject[] rootObj = GetSceneRootObject();
+
+        for (int i = 0; i < rootObj.Length; i++)
+        {
+            GameObject go = (GameObject)rootObj[i] as GameObject;
+            Component[] buttons = go.transform.GetComponentsInChildren(typeof(Button), true);
+            foreach (Button button in buttons)
+            {
+                button.onClick.AddListener(() => mySFX.PlayOneShot(mySFXSound.MyClipList.myDictionary[(int)SFX.Button]));
+                button.onClick.AddListener(delegate { OnClickButton(button.transform.position); });
+            }
+        }
+    }
+    GameObject[] GetSceneRootObject()
+    {
+        Scene curscene = SceneManager.GetActiveScene();
+        return curscene.GetRootGameObjects();
+    }
+
+    void OnClickButton(Vector3 pos)
+    {
+        PoolCp.Inst.BringObjectCp(touchEff).transform.position = pos;
+    }
+    #endregion
+
+    public void LoadMusicData(SceneMode targetMusic)
+    {
+        myMusicSound = Resources.Load<MySoundIndex>($"ScriptableObject/{targetMusic}");
+    }
+
+    public float GetVolume(string target)
+    {
+        myAudioMixer.GetFloat(target, out float volume);
+        return volume;
+    }
 
     void AudioVolumeControl(string target, float volume)
     {
-        if (volume == -40f)
-            myAudioMixer.SetFloat(target, -80f);
+        if (volume == -40f) myAudioMixer.SetFloat(target, -80f);
+        else myAudioMixer.SetFloat(target, volume);
+    }
 
-        else
-            myAudioMixer.SetFloat(target, volume);
+    void AudioMute(string target, float value)
+    {
+        myAudioMixer.GetFloat(target, out float volume);
+        volume = volume == -80 ? value : -80; 
+        if (target.Equals("Master")) MasterMute = volume == -80 ? true : false;
+        else if (target.Equals("BGM")) BGMMute = volume == -80 ? true : false;
+        else SFXMute = volume == -80 ? true : false;
+
+        myAudioMixer.SetFloat(target, volume);
     }
 
 
+
+
+    // play note sound 
     public void PlayNote(int targetPitch, float pitch)
     {
-        AudioClip changeClip;
-
-        // change audio clip as targeted pitch note 
-        changeClip = myNoteSound.MyPitchClips.myDictionary[targetPitch];
-
-        myNoteAudioSource.pitch = pitch;
-
-        myNoteAudioSource.clip = changeClip;
-
-        myNoteAudioSource.Play();
+        mySFX.PlayOneShot(myNoteSound.MyClipList.myDictionary[targetPitch]);
     }
 
-
-    public void PlayBGM(string target)
+    public void SFXPlay(SFX sfx)
     {
-        //AudioClip changeClip;
-
-        // change audio clip as targeted pitch note 
-
-        //myBGMAudioSource.clip = changeClip;
-
-        myBGMAudioSource.Play();
-
-        Debug.Log($"³ª´Â {target} ¾ß~! ");
+        mySFX.PlayOneShot(mySFXSound.MyClipList.myDictionary[(int)sfx]);
     }
 
-
-    // play music before start game 
-    public void FirstPlay(List<int> TargetNotes)
-    {
-        isStopped = false;
-        clipList = TargetNotes;
-
-        PlayStageMusic();
-    }
 
 
     public void PlayStageMusic()
     {
-        CurCoroutine = StartCoroutine("playMusic");
+        GameManager.Inst.UpdateCurProcess(GameStatus.MusicPlaying);
 
+        StartCoroutine(nameof(playMyMusic));
     }
 
-
-    IEnumerator playMusic()
+    IEnumerator playMyMusic()
     {
-        foreach (int targetNote in clipList)
-        {
-            if (isStopped)
-                break;
+        isCoroutineRunning = true;
 
+        RePlay();
 
-            PlayNote(targetNote, 1);
+        yield return musicPlaying;
 
-            Debug.Log("³ë·¡ Æ²¾î! " + targetNote);
-            Debug.Log("¸ØÃã? " + isStopped);
+        isCoroutineRunning = false;
+        GameManager.Inst.UpdateCurProcess(GameStatus.MusicStop);
+        if(myMusicSound.MyClipList.myDictionary.Keys.Count.Equals(GameManager.Inst.CurStage)) yield break;
 
-            yield return new WaitUntil(() => myNoteAudioSource.isPlaying == false);
-        }
-
-
-        Debug.Log("¸ØÃç" + isStopped);
-
-        if (!IsStopped)
-        {
-            GameManager.myDelegateGameStatus(GameStatus.StartGame);
-        }
-
-        // for test =============================================================
-
-        //PlayNote(clipList[0], 1);
-
-        //Debug.Log("³ë·¡ Æ²¾î! " + clipList[0]);
-
-        //yield return new WaitUntil(() => myNoteAudioSource.isPlaying == false);
-
-
-        // for test =============================================================
+        BGMPlay(2);
     }
 
+    public void RePlay()
+    {
+        myBGM.clip = myMusicSound.MyClipList.myDictionary[GameManager.Inst.CurStage];
+        myBGM.loop = false;
+        myBGM.volume = 1;
+        myBGM.Play();
+    }
+
+    public void BGMPlay(int scene) //1 - title, 2 - ingame
+    {
+        if (myBGM.isPlaying) myBGM.Stop();
+
+        myBGM.clip = myBGMSound.MyClipList.myDictionary[scene];
+        myBGM.loop = true;
+        myBGM.volume = 0.3f;
+        myBGM.Play();
+    }
 
 
     public void StopMusic()
     {
-        Debug.Log("¸ØÃç!");
-
-        if (CurCoroutine != null)
-            StopCoroutine(CurCoroutine);
-
+        if (isCoroutineRunning) StopCoroutine(nameof(playMyMusic));
+        if (myBGM.isPlaying) myBGM.Stop();
     }
+
 
 }

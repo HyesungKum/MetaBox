@@ -23,7 +23,7 @@ public class UserData : MonoBehaviour
         // MongoDB collection name
         collection = dataBase.GetCollection<BsonDocument>("RankingCollection");
 
-        GameManager.Instance.GameClearEvent += Record;
+        GameManager.Instance.gameClearRecord = Record;
     }
     
     void Start()
@@ -47,36 +47,35 @@ public class UserData : MonoBehaviour
     void Record()
     {
         if (user == false || userID == null) return;
-        DataProcess(GameManager.Instance.FreezeData.playTime - GameManager.Instance.PlayTime);
+        DataProcess(GameManager.Instance.PlayTime);
     }
 
     void DataProcess(int playtime)
     {
+        string nowDate = DateTime.Now.ToString("yyyyMMddHHmm");
+        long time = long.Parse(nowDate);
+
         BsonDocument filter = new BsonDocument { { "id", userID }, { "gameGroup", gameGroup }, { "gameLevel", level } };
         BsonDocument targetData = collection.Find(filter).FirstOrDefault();
 
-        string nowDate = DateTime.Now.ToString("yyyyMMddHHmm");
-        long time = long.Parse(nowDate);
 
         if (targetData != null) //기록유
         {
             int prevTime = (int)targetData.GetValue("playtime");
             if (prevTime > playtime) //기록갱신
             {
-                Debug.Log("기록을 업데이트합니다");
-
                 UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update.Set("playtime", playtime);
                 //collection.FindOneAndUpdate(filter, update);
                 collection.UpdateOne(filter,update);
             }
             else
             {
-                Debug.Log("이전 기록이 더 좋습니다");
+                //Debug.Log("이전 기록이 더 좋습니다");
             }
         }
         else //기록무
         {
-            Debug.Log("새로운 기록을 추가합니다");
+            //Debug.Log("새로운 기록을 추가합니다");
             SaveScoreToDataBase(playtime, time);
         }
     }

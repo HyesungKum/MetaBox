@@ -35,7 +35,7 @@ public class LinePosCDLinkedList : MonoBehaviour
     {
         Vector3 nodePos;
 
-        // Æ÷Áö¼Ç ¿¬°á
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         for (int i = 0; i < linePosCount; ++i)
         {
             nodePos = linePos.GetPosition(i);

@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class TouchManager : MonoBehaviour
 {
@@ -17,8 +14,7 @@ public class TouchManager : MonoBehaviour
 
     RaycastHit2D hitPoint2D;
 
-
-    private void Update()
+    void Update()
     {
         if (Input.touchCount <= 0)
             return;
@@ -36,7 +32,7 @@ public class TouchManager : MonoBehaviour
 
 
         // touch ended => drop object 
-        if (isDragging && Input.GetTouch(0).phase == TouchPhase.Ended)
+        if (isDragging && myTouch.phase == TouchPhase.Ended)
         {
             dropObject();
             return;
@@ -48,13 +44,17 @@ public class TouchManager : MonoBehaviour
             return;
         }
 
-        // ray hit resptect to world space point of touch point
-        hitPoint2D = shootRay(touchedToScreen);
+        if(myTouch.phase == TouchPhase.Began)
+        {
+            // ray hit resptect to world space point of touch point
+            hitPoint2D = shootRay(touchedToScreen);
 
-        if (!hitPoint2D)
-            return;
+            if (!hitPoint2D)
+                return;
 
-        isMyNote(hitPoint2D);
+            isMyNote(hitPoint2D);
+        }
+        
 
     }
 
@@ -74,17 +74,33 @@ public class TouchManager : MonoBehaviour
 
     void isMyNote(RaycastHit2D hitPoint)
     {
-        // if ray hits playablenote 
-        PlayableNote isMyNote = hitPoint.transform.gameObject.GetComponent<PlayableNote>();
-
-        if (isMyNote != null)
+        if(hitPoint.transform.gameObject.layer == 6)
         {
-            myNote = isMyNote;
+            PlayableNote target = null;
 
-            // disable collider 
-            hitPoint2D.collider.enabled = false;
-            startDragging();
+            // if ray hits playablenote 
+            hitPoint.transform.gameObject.TryGetComponent(out target);
+
+            if (target != null)
+            {
+                myNote = target;
+
+                // disable collider 
+                hitPoint2D.collider.enabled = false;
+                startDragging();
+                SoundManager.Inst.SFXPlay(SFX.Flower);
+            }
         }
+        else
+        {
+            QNote note = null;
+
+            hitPoint.transform.TryGetComponent(out note);
+            if(note != null) SoundManager.Inst.PlayNote(note.MyPitchNum, 1);
+        }
+
+        
+
     }
 
 

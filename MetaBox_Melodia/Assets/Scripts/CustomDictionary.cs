@@ -5,14 +5,14 @@ using UnityEngine;
 
 
 
-
+#if UNITY_EDITOR
 [CustomPropertyDrawer(typeof(EditingGenericClass), true)]
+
 class CustomDictionaryEditor : PropertyDrawer
 {
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
         SerializedProperty keys = property.FindPropertyRelative("keys");
-        SerializedProperty values = property.FindPropertyRelative("value");
 
         int totalCount = keys.arraySize;
 
@@ -43,12 +43,12 @@ class CustomDictionaryEditor : PropertyDrawer
     }
 
 }
-
+#endif
 
 public abstract class EditingGenericClass { }
 
 [Serializable]
-public class DictionaryView<Tkey, Tvalue> :  EditingGenericClass
+public class DictionaryView<Tkey, Tvalue> : EditingGenericClass
 {
     public List<Tkey> keys = new();
     public List<Tvalue> values = new();
@@ -62,13 +62,10 @@ public class CustomDictionary<Tkey, Tvalue> : ISerializationCallbackReceiver
 {
     public Dictionary<Tkey, Tvalue> myDictionary;
 
-
     public DictionaryView<Tkey, Tvalue> myDictionaryView = new();
 
     [HideInInspector] public Tkey inputKey = default;
     [HideInInspector] public Tvalue inputValue = default;
-
-
 
     public void OnBeforeSerialize()
     {
@@ -156,3 +153,4 @@ public class CustomDictionary<Tkey, Tvalue> : ISerializationCallbackReceiver
 
 
 }
+

@@ -1,76 +1,43 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public delegate void ChangeThief();
-
 public class ThiefSpawner : ObjectPool<Thief>
 {
-    public ChangeThief OpenImage = null;
-    public ChangeThief HideImage = null;
-    public ChangeThief RemoveThief = null;
+    [SerializeField] ScriptableObj scriptableNPC = null;
 
-    [SerializeField] Thief thiefPref = null;
-    public List<ThiefData> ThiefDatas { get; private set; }
-    List<int> wantedlist = new List<int>();
+    List<ThiefData> ThiefDatas = null;
 
     public override Thief CreatePool()
     {
-        if (thiefPref == null) thiefPref = Resources.Load<Thief>(nameof(Thief));
-        return thiefPref;
+        return scriptableNPC.NPC[0];
     }
 
     private void Awake()
     {
+        GameManager.Instance.spawnThief = Spawn;
         PoolInit();
     }
     
-    public void Spawn(StageData stage)
+    public void Spawn()
     {
-        ThiefDatas = DataManager.Instance.FindThiefDatasByThiefGroup(stage.thiefGroup);
-        wantedlist.Clear();
-        OpenImage = null;
-        HideImage = null;
-        RemoveThief = null;
+        StageData CurStage = GameManager.Instance.StageDatas[GameManager.Instance.CurStage];
+        ThiefDatas = DataManager.Instance.FindThiefDatasByThiefGroup(CurStage.thiefGroup);
 
-        int wantedCount = stage.wantedCount;
-        Debug.Log($"{stage.wantedCount} // {stage.thiefCount}");
+        int wantedCount = CurStage.wantedCount;
         bool wanted = true;
 
-        for (int i = 0; i < stage.thiefCount; i++)
+        for (int i = 0; i < CurStage.thiefCount; i++)
         {
             if (wantedCount <= 0) wanted = false; 
             int random = Random.Range(0, ThiefDatas.Count);
+
             Thief thief = Get();
-            thief.transform.position = new Vector3(Random.Range(-5f, 8f), Random.Range(-3f, 3f), 0);
-            if (thief.transform.parent == null) thief.transform.parent = this.transform;
+            thief.transform.position = new Vector3(Random.Range(-7.5f, 4f), Random.Range(-3.5f, 1.8f), 0);
             thief.Setting(wanted, ThiefDatas[random].id, ThiefDatas[random].moveSpeed, ThiefDatas[random].moveTime);
-            if (wanted)
-            {
-                wantedlist.Add(ThiefDatas[random].id);
-            }
             thief.callbackArrest = Release;
-            OpenImage += thief.OpenImage;
-            HideImage += thief.HideImage;
-            RemoveThief += thief.Remove;
+
             ThiefDatas.RemoveAt(random);
             wantedCount--;
         }
-        UIManager.Instance.WantedListSetting(wantedlist);
     }
-
-    public void Open()
-    {
-        if(OpenImage != null) OpenImage();
-    }
-    public void Hide()
-    {
-        if(HideImage != null) HideImage(); 
-    }
-    public void Remove()
-    {
-        if(RemoveThief != null) RemoveThief();
-    }
-
-    
 }

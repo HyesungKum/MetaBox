@@ -2,14 +2,7 @@ using ObjectPoolCP;
 using System.Collections;
 using UnityEngine;
 
-//Different Cook and Trimable Ways Enum
-public enum TrimType
-{
-    Pressing,
-    Touching,
-    Slicing,
-    Max
-}
+//Different Cook Ways Enum
 public enum CookType
 {
     Pressing,
@@ -35,7 +28,7 @@ public class Ingredient : MonoBehaviour
     [SerializeField] private SpriteRenderer Renderer = null;
 
     //============================Flag=====================================
-    [Header("Flag")]
+    [Header("Setting")]
     [SerializeField] private float Lifetimer = 0;
     [Space]
     public bool IsCliked;
@@ -43,13 +36,18 @@ public class Ingredient : MonoBehaviour
     public bool IsCooked;
     public bool IsCookReady;
 
-    //============================trimControll=============================
+    //============================CookControll=============================
     [Header("[CookControll]")]
     public float curTask = 0;
-    public TrimType TrimType;
 
-    //==================================cookControll========================
-    public CookType CookType;
+    //============================Caching==================================
+    WaitForSeconds waitSec = new(0.2f);
+
+    public void Reset()
+    {
+        this.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+        this.transform.localScale = Vector3.one * 0.3f;
+    }
 
     private void Awake()
     {
@@ -88,7 +86,7 @@ public class Ingredient : MonoBehaviour
         Renderer.color = Color.white;
         Renderer.sortingOrder = 4;
 
-        Collider.size = Renderer.sprite.bounds.size;
+        Collider.size = Renderer.sprite.bounds.size * IngredData.interDistance;
         Collider.enabled = true;
 
         curTask = 0;
@@ -137,7 +135,9 @@ public class Ingredient : MonoBehaviour
         }
     }
     IEnumerator FadeOut()
-    { 
+    {
+        yield return waitSec;
+
         float timer = 0f;
         Collider.enabled = false;
 
@@ -150,5 +150,16 @@ public class Ingredient : MonoBehaviour
         }
 
         PoolCp.Inst.DestoryObjectCp(this.gameObject);
+    }
+
+    //===========================================public contact===============================================
+    public void DoFadeOut()
+    {
+        StartCoroutine(nameof(FadeOut));
+    }
+    public void SetImage(Sprite sprite, int order)
+    {
+        Renderer.sprite = sprite;
+        Renderer.sortingOrder = order;
     }
 }
