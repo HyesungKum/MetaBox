@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -8,7 +6,6 @@ using UnityEngine;
 #endif
 public class MySoundIndex : ScriptableObject
 {
-
     [SerializeField] CustomDictionary<int, AudioClip> myClipList = new();
     public CustomDictionary<int, AudioClip> MyClipList { get { return myClipList; } }
 

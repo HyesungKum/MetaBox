@@ -16,11 +16,20 @@ public class StartPanelSet : MonoBehaviour
 
     void Awake()
     {
-        gameStartBut.onClick.AddListener(delegate { OnClickStartBut(); SoundManager.Inst.ButtonSFXPlay(); }); 
-        optionBut.onClick.AddListener(delegate { OnClickOption(); SoundManager.Inst.ButtonSFXPlay(); }); 
-        tutorial.onClick.AddListener(delegate { OnClickTutorial(); SoundManager.Inst.ButtonSFXPlay(); });
-        gotoTownBut.onClick.AddListener(delegate { MoveTown(mainPackName); SoundManager.Inst.ButtonSFXPlay(); }); 
-        exitBut.onClick.AddListener(delegate{ OnClickQuitBut(); SoundManager.Inst.ButtonSFXPlay(); });
+        gameStartBut.onClick.AddListener(delegate {  OnClickStartBut(); 
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(gameStartBut.transform.position); }); 
+
+        optionBut.onClick.AddListener(delegate { OnClickOption(); 
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(optionBut.transform.position); }); 
+
+        tutorial.onClick.AddListener(delegate { OnClickTutorial(); 
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(tutorial.transform.position);});
+
+        gotoTownBut.onClick.AddListener(delegate { MoveTown(mainPackName); 
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(gotoTownBut.transform.position);});
+
+        exitBut.onClick.AddListener(delegate{ OnClickQuitBut(); 
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(exitBut.transform.position);});
     }
 
     public void OnClickStartBut()

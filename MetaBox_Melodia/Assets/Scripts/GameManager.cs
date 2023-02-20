@@ -1,25 +1,20 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-
 
 public enum GameStatus
 {
     Idle,
-    StartGame,
-    Ready,
+    GamePlaying,
+    Pause,
     MusicPlaying,
     MusicStop,
-    Pause,
-    TimeOver,
     GetAllQNotes,
-    NoMorePlayableNote,
-    GameResult,
-    Restart,
-    ClearStage,
+    Fail,
+    GameClear,
+    Restart
 }
-
-
 
 public class GameManager : DataLoader
 {
@@ -44,402 +39,180 @@ public class GameManager : DataLoader
     }
     #endregion
 
-    public delegate void DelegateIsGameOver();
-    public static DelegateIsGameOver myDelegateIsGameOver;
-
+    public Action<int> DelegateCountDown;
+    public Action<int> DelegateTimer;
+    public Action<int> gameClearRecord;
     public delegate void DelegateGameStatus(GameStatus curStatue);
-    public static DelegateGameStatus myDelegateGameStatus;
+    public DelegateGameStatus myDelegateGameStatus;
+
+    public GameStatus CurStatus { get; private set; }
+    public GameData MelodiaData { get; private set; }
+    public List<StageData> StageDatas { get; private set; }
+    public Dictionary<int, List<int>> MyStageData { get; private set; }
 
 
-    bool isGameOver = false;
-    bool isGameStart = false;
-    bool isGameCleared = false;
-    bool isStageCleared = false;
+    public int CurStage { get; private set; }
+    public int MyPlayableTime { get; private set; }
 
-    bool isMusicPlaying = false;
-
-    bool isPaused = false;
-
-
-
-    [Header("Game Status Info")]
-    [SerializeField] int curStage = 1;
-    public int CurStage { get { return curStage; } set { curStage = value; } }
-
-    [SerializeField]
-    GameStatus curStatus;
-    public GameStatus CurStatus { get { return curStatus; } set { curStatus = value; } }
-
-
-
-
-    [Header("Play Time")]
-    [SerializeField] float myPlayableTime;
-    public float MyPlayableTime { get { return myPlayableTime; } }
-
-    [SerializeField] float stagePlayTime;
-
-
-
-
-    [SerializeField] float myCoolTime;
-    public float MyCoolTime { get { return myCoolTime; } }
-
-
-    [SerializeField] float countDown;
-
-
-    static Dictionary<int, List<int>> myStageData = new();
-    public Dictionary<int, List<int>> MyStageData { get { return myStageData; } }
-
-
+    WaitForSeconds wait1 = null;
+    bool stageClear = false;
+    bool gameClear = false;
 
     private void Awake()
     {
-        myDelegateGameStatus = UpdateGameStatus;
+        LoadGameData();
+        MelodiaData = FindGameDataByLevel(StartUI.Level);
+        StageDatas = FindStageDatasByStageGroup(MelodiaData.stageGroup);
+        MyStageData = StageData(StartUI.MySceneMode);
+        SoundManager.Inst.LoadMusicData(StartUI.MySceneMode);
+        SoundManager.Inst.AddButtonListener();
+        SoundManager.Inst.BGMPlay(2);
     }
-
 
     private void Start()
     {
-        Time.timeScale = 0;
-
+        CurStage = 0;
+        MyPlayableTime = MelodiaData.countDown;
+        wait1 = new WaitForSeconds(1);
         UpdateCurProcess(GameStatus.Idle);
     }
 
     // receive game status 
     public void UpdateCurProcess(GameStatus targetStatus)
     {
-
         switch (targetStatus)
         {
-            case GameStatus.Restart:
+            case GameStatus.Idle: //스테이지 세팅
                 {
-
-                    CurStage = 1;
-                    myPlayableTime = stagePlayTime;
-
-                    myDelegateGameStatus(GameStatus.Restart);
-                    UpdateCurProcess(GameStatus.Idle);
-                }
-                break;
-
-
-
-            case GameStatus.Idle:
-                {
+                    CurStage++;
+                    stageClear = false;
+                    gameClear = false;
                     CurStatus = GameStatus.Idle;
 
-                    isGameStart = false;
-                    isGameOver = false;
-
-                    checkStageLevel();
-
-                    myPlayableTime = stagePlayTime;
-
+                    DelegateTimer(MyPlayableTime);
 
                     // let all know idle status 
                     myDelegateGameStatus(GameStatus.Idle);
 
-                    // set current audio clip
-                    SoundManager.Inst.SetStageMusic(curStage, 1);
+                    StartCoroutine(nameof(CountDown3));
                 }
                 break;
 
-            case GameStatus.Ready:
+            case GameStatus.GamePlaying:
                 {
-                    CurStatus = GameStatus.Ready;
-
-                    addDelegateChainStageTimer();
-
-
-                    myDelegateGameStatus(GameStatus.Ready);
-
-                    // play Music 
-                    SoundManager.Inst.PlayStageMusic();
+                    CurStatus = GameStatus.GamePlaying;
+                    myDelegateGameStatus(GameStatus.GamePlaying);
+                    StartCoroutine(nameof(PlayTimer));
+                    //Time.timeScale = 1;
+                    //Time.fixedDeltaTime = 0.02f * Time.timeScale;
                 }
                 break;
-
 
             case GameStatus.Pause:
                 {
                     CurStatus = GameStatus.Pause;
-
-                    if (isPaused)
-                    {
-                        // at Ready or ClearStage status, stop countdown
-                        if (curStatus == GameStatus.Ready || curStatus == GameStatus.ClearStage)
-                        {
-                            Time.timeScale = 0;
-                        }
-
-                        else
-                        {
-                            Time.timeScale = 1;
-                        }
-
-                        isPaused = false;
-                        break;
-                    }
-
-                    isPaused = true;
-                    Time.timeScale = 0;
-
+                    myDelegateGameStatus(GameStatus.Pause);
+                    StopCoroutine(nameof(PlayTimer));
+                    //Time.timeScale = 0;
+                    //Time.fixedDeltaTime = 0.02f * Time.timeScale;
                 }
                 break;
-
 
             case GameStatus.MusicPlaying:
                 {
-                    // if music played before start game, stop timer
-                    if (!isGameStart)
-                    {
-                        isMusicPlaying = true;
-                        Time.timeScale = 0;
-                    }
+                    UpdateCurProcess(GameStatus.Pause);
                 }
                 break;
-
 
             case GameStatus.MusicStop:
                 {
-                    isMusicPlaying = false;
-
-
-                    // if music played before start game, stop timer
-                    if (!isGameStart)
-                    {
-                        myDelegateGameStatus(GameStatus.StartGame);
-                    }
-
-
-
-                    else if (isGameOver == true)
-                    {
-                        // cleared last stage 
-                        if (isStageCleared)
-                        {
-                            myDelegateGameStatus(GameStatus.ClearStage);
-                            break;
-                        }
-
-                        myDelegateGameStatus(GameStatus.GetAllQNotes);
-
-                    }
-                }
-                break;
-            // Game over ============================================================
-
-
-
-            // failed ============================================================
-            case GameStatus.TimeOver:
-                {
-                    isGameOver = true;
-                    isGameCleared = false;
-
-                    myDelegateGameStatus(GameStatus.TimeOver);
-
+                    if (gameClear) myDelegateGameStatus(GameStatus.GameClear);
+                    else if (stageClear && CurStage.Equals(MyStageData.Keys.Count)) UpdateCurProcess(GameStatus.GameClear);
+                    else if(stageClear) myDelegateGameStatus(GameStatus.GetAllQNotes);
+                    else UpdateCurProcess(GameStatus.GamePlaying);
                 }
                 break;
 
-            case GameStatus.NoMorePlayableNote:
+            case GameStatus.GetAllQNotes:
                 {
-                    isGameOver = true;
-                    isGameCleared = false;
-
-                    CurStatus = GameStatus.NoMorePlayableNote;
-                    Time.timeScale = 0;
-
-                    myDelegateGameStatus(GameStatus.NoMorePlayableNote);
-                }
-                break;
-            // failed ============================================================
-
-
-            // sucess ============================================================
-            case GameStatus.GetAllQNotes:       // go to next round
-                {
-                    isGameOver = true;
-                    isGameCleared = true;
-
+                    stageClear = true;
                     CurStatus = GameStatus.GetAllQNotes;
-                    myDelegateGameStatus(GameStatus.GameResult);
-
-                    if (isGameOver)
-                    {
-                        Invoke(nameof(ClearMusic), 1f);
-                    }
-
-                    curStage++;
+                    
+                    Invoke(nameof(ClearMusic), 1f);
                 }
                 break;
-                // sucess ============================================================
+
+            case GameStatus.Fail:
+                {
+                    SoundManager.Inst.StopMusic();
+
+                    SoundManager.Inst.SFXPlay(SFX.GameFail);
+                    stageClear = true;
+                    CurStatus = GameStatus.Fail;
+
+                    myDelegateGameStatus(GameStatus.Fail);
+                }
+                break;
+
+            case GameStatus.GameClear:
+                {
+                    CurStatus = GameStatus.GameClear;
+                    gameClear = true;
+                    CurStage++;
+                    
+                    Invoke(nameof(ClearMusic), 1f);
+                    gameClearRecord(MelodiaData.countDown - MyPlayableTime);
+                }
+                break;
+
+            case GameStatus.Restart:
+                {
+                    CurStage = 0;
+                    MyPlayableTime = MelodiaData.countDown;
+                    UpdateCurProcess(GameStatus.Idle);
+                }
+                break;
         }
     }
 
-
-
-
-    // broadcasting current game status 
-    void UpdateGameStatus(GameStatus targetStatus)
+    IEnumerator CountDown3()
     {
+        yield return wait1;
+        yield return wait1;
 
-        switch (targetStatus)
+        for (int i = 3; i >= 0; i--)
         {
-
-            case GameStatus.StartGame:
-                {
-                    CurStatus = GameStatus.StartGame;
-
-                    isGameStart = true;
-
-
-                    Time.timeScale = 1;
-                }
-                break;
-
-
-            case GameStatus.TimeOver:
-                {
-                    isGameOver = true;
-                    CurStatus = GameStatus.TimeOver;
-
-                    SoundManager.Inst.StopMusic();
-                }
-                break;
-
-
-            case GameStatus.NoMorePlayableNote:
-                {
-                    SoundManager.Inst.StopMusic();
-
-                    CurStatus = GameStatus.NoMorePlayableNote;
-
-                }
-                break;
-
-            case GameStatus.ClearStage:
-                {
-                    CurStatus = GameStatus.ClearStage;
-
-                }
-                break;
+            DelegateCountDown(i);
+            yield return wait1;
         }
 
+        DelegateCountDown(0);
 
-        if (!isGameOver)
-            return;
-
-
-        myDelegateIsGameOver();
+        SoundManager.Inst.PlayStageMusic();
     }
-
 
     void ClearMusic()
     {
-        // is last stage cleared ? 
-        if (curStage == MyStageData.Keys.Count)
-        {
-            curStatus = GameStatus.ClearStage;
-
-            isStageCleared = true;
-
-            Time.timeScale = 0;
-
-            // Set Audio Clip 
-            SoundManager.Inst.SetStageMusic(5, 1);
-        }
-
-
         // play current stage music 
         SoundManager.Inst.PlayStageMusic();
     }
 
 
-
-
-    // time count ================================================================
-    void timeCountdown(float t)
+    IEnumerator PlayTimer()
     {
-        myPlayableTime = t;
+        DelegateTimer(MyPlayableTime);
+        yield return wait1;
 
-        if (MyPlayableTime <= 0)
+        while (MyPlayableTime > 0 && !stageClear)
         {
-            UpdateCurProcess(GameStatus.TimeOver);
+            MyPlayableTime--;
+            DelegateTimer(MyPlayableTime);
+            if (MyPlayableTime.Equals(30)) SoundManager.Inst.SFXPlay(SFX.TimeLimit);
+            if (MyPlayableTime <= 0)
+            {
+                UpdateCurProcess(GameStatus.Fail);
+            }
+            yield return wait1;
         }
     }
-    // time count ================================================================
-
-
-
-    // stage info ================================================================
-
-    void GetStageInfo(string targetStage)
-    {
-        myStageData = StageData(targetStage);
-    }
-
-
-    public Dictionary<int, List<int>> CurStageInfo()
-    {
-        return MyStageData;
-    }
-
-
-    void addDelegateChainStageTimer()
-    {
-        PlayTimer.DelegateTimer += timeCountdown;
-
-        Time.timeScale = 0;
-    }
-
-
-
-    void checkStageLevel()
-    {
-        switch (SceneModeController.MySceneMode)
-        {
-            case SceneModeController.SceneMode.EasyMode:
-                {
-                    stagePlayTime = 180f;
-                    myCoolTime = 15;
-
-                    if (MyStageData.Count == 0)
-                    {
-                        GetStageInfo("EasyMode");
-                    }
-                }
-                break;
-
-            case SceneModeController.SceneMode.NormalMode:
-                {
-                    //depends on mode
-                    //countDown = 180f;
-                }
-                break;
-
-            case SceneModeController.SceneMode.DifficultMode:
-                {
-                    //depends on mode
-                    //countDown = 180f;
-
-                }
-                break;
-
-            case SceneModeController.SceneMode.ExtremeMode:
-                {
-                    //depends on mode
-                    //countDown = 180f;
-
-                }
-                break;
-        }
-
-    }
-
-    // stage info ================================================================
-
-
-
 }
