@@ -1873,16 +1873,15 @@ MonoBehaviour:
   lineClonePos: {fileID: 1715289768026661827}
   choiceWordPanel: {fileID: 4292431165682422322}
   clearAnimation: {fileID: 1710736943896320895}
-  clearCount: 3
+  clearCount: 25
   objInex: 1
   particles: {fileID: 1005828994335477059, guid: c40921314bf6c7a4ab965f06a36179e0, type: 3}
-  lineClearParticle: {fileID: 7867500053493033058, guid: ac2c3bd6fdef67b41b9982869dec25c2, type: 3}
   startNodeObj: {fileID: 0}
   endNodeObj: {fileID: 0}
-  prevEndNodeObj: {fileID: 0}
-  nextEndNodeObj: {fileID: 0}
   prevObj: {fileID: 0}
   nextObj: {fileID: 0}
+  checkPopObj: {fileID: 0}
+  firstObj: {fileID: 0}
   startPos: {x: 0, y: 0, z: 0}
 --- !u!1 &4292431165682422322
 GameObject:
@@ -2708,7 +2707,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 8a16ccbaaa8223c4e9ed03cc3a71d153, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e63e7047a8e85014d8aa42ceeb4d7566, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

@@ -43,7 +43,7 @@ public class InGamePanelSet : MonoBehaviour
     [SerializeField] GameObject QThree = null;
 
     [Header("[Line Color and Size Change]")]
-    [SerializeField] private Canvas lineChangedPanel = null;
+    [SerializeField] GameObject lineChangedPanel = null;
     [SerializeField] GameObject colorPanelObj = null;
     [SerializeField] GameObject LineSizeObj = null;
 
@@ -82,6 +82,8 @@ public class InGamePanelSet : MonoBehaviour
     public int Minute { get { return minute; } set { minute = value; } }
     #endregion
 
+    [SerializeField] ClearAnimalImgData clearAnimalImgData = null;
+
     GameObject instClock = null;
     GameObject instEffect = null;
 
@@ -94,7 +96,11 @@ public class InGamePanelSet : MonoBehaviour
     // === ClearCount ===
     private int clearCount = 3;
     public int ClearCount { get { return clearCount; } set { clearCount = value; } }
+
+    // === Object Index ===
     public int ObjIndexs;
+    public int ObjTwoIndex;
+    public int ObjThreeIndex;
 
     public int totalPlayTime;
     public int SavePalyTime;
@@ -104,6 +110,9 @@ public class InGamePanelSet : MonoBehaviour
 
     void Awake()
     {
+        if (clearAnimalImgData == null)
+            clearAnimalImgData = Resources.Load<ClearAnimalImgData>("Data/ClearAnimalImgData");
+
         waitHalf = new WaitForSeconds(0.5f);
         waitOnSceonds = new WaitForSeconds(1f);
 
@@ -143,19 +152,22 @@ public class InGamePanelSet : MonoBehaviour
         optionBut.onClick.AddListener(delegate
         {
             OnClickOptionBut();
-            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(optionBut.transform.position);
+            SoundManager.Inst.ButtonSFXPlay(); 
+            SoundManager.Inst.ButtonEffect(optionBut.transform.position);
         });
 
         resumeBut.onClick.AddListener(delegate
         {
             OnClickOptionBut();
-            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(resumeBut.transform.position);
+            SoundManager.Inst.ButtonSFXPlay(); 
+            SoundManager.Inst.ButtonEffect(resumeBut.transform.position);
         });
 
         closePanelBut.onClick.AddListener(delegate
         {
             OnClickInGameGoSelectPanel();
-            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(closePanelBut.transform.position);
+            SoundManager.Inst.ButtonSFXPlay(); 
+            SoundManager.Inst.ButtonEffect(closePanelBut.transform.position);
         });
 
         goSelectPanelBut.onClick.AddListener(delegate
@@ -213,7 +225,10 @@ public class InGamePanelSet : MonoBehaviour
         if (Minute == 0 && (int)Secondes == 30)
         {
             if (instClock == null)
+            {
                 instClock = ObjectPoolCP.PoolCp.Inst.BringObjectCp(clockPrefab);
+                SoundManager.Inst.AlarmClockSFXPlay();
+            }
         }
 
         if (Minute == 0 && (int)Secondes == 29)
@@ -232,17 +247,22 @@ public class InGamePanelSet : MonoBehaviour
         {
             LineColorAndSizeChange(false);
             OneBrushPlayPanelSet(false);
-            //StageClearPanelSet(false);
-            WinPanelSet(true);
 
-            if (instEffect == null)
-                InstGameClearEffect();
+            Invoke(nameof(WinPanelSet), 0.3f);
 
             totalPlayTime = 1000;
 
-            string checkTimt = Minute.ToString() + (int)seconds; 
+            string checkTimt = Minute.ToString() + (int)seconds;
             SavePalyTime = int.Parse(checkTimt);
         }
+    }
+
+    void WinPanelSet()
+    {
+        WinPanelSet(true);
+
+        if (instEffect == null)
+            InstGameClearEffect();
     }
 
     void FirstSet(bool selectPanel)
@@ -287,8 +307,6 @@ public class InGamePanelSet : MonoBehaviour
 
     public void StageClearPanelSet(bool active) => stageClearPanel.gameObject.SetActive(active);
 
-    public GameObject stageClearPanelObj() => stageClearPanel.gameObject;
-
     public void LineColorAndSizeChange(bool active) => lineChangedPanel.gameObject.SetActive(active);
 
     public void OnClickGoStartPanel()
@@ -310,9 +328,7 @@ public class InGamePanelSet : MonoBehaviour
         }
         else if (isOptionPanelOpen == true)
         {
-
             InGameOptionSet(false);
-            LineColorAndSizeChange(true);
 
             if (selectPanel.active == true)
             {
@@ -322,6 +338,7 @@ public class InGamePanelSet : MonoBehaviour
             {
                 OneBrushPlayPanelSet(true);
                 InGameSet(true);
+                LineColorAndSizeChange(true);
             }
 
             Time.timeScale = 1;
@@ -329,42 +346,121 @@ public class InGamePanelSet : MonoBehaviour
         }
     }
 
-
     void OnClickInGameGoSelectPanel()
     {
         SelectPanelSet selectPanelSet = null;
         selectPanel.TryGetComponent<SelectPanelSet>(out selectPanelSet);
         DrawLineCurve drawLine = null;
+
         QOne.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
         ObjIndexs = drawLine.ObjIndex;
-        //Debug.Log("ObjIndexs :" + ObjIndexs);
+        //Debug.Log("ObjIndexs : " + ObjIndexs);
+
         QTwo.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
-        int ObjTwoIndex = drawLine.ObjIndex;
-        //Debug.Log("ObjTwoIndex :" + ObjTwoIndex);
+        ObjTwoIndex = drawLine.ObjIndex;
+        //Debug.Log("ObjTwoIndex : " + ObjTwoIndex);
 
         QThree.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
-        int ObjThreeIndex = drawLine.ObjIndex;
-        //Debug.Log("ObjThreeIndex :" + ObjThreeIndex);
+        ObjThreeIndex = drawLine.ObjIndex;
+        //Debug.Log("ObjThreeIndex : " + ObjThreeIndex);
 
         SelectPanelSet(true);
-
-        if (ObjIndexs == 5)
-        {
-            selectPanelSet.oneBrushBut.transform.gameObject.SetActive(false);
-        }
-        if (ObjTwoIndex == 5)
-        {
-            selectPanelSet.twoBrushBut.transform.gameObject.SetActive(false);
-        }
-        if (ObjThreeIndex == 5)
-        {
-            selectPanelSet.threeBrushBut.transform.gameObject.SetActive(false);
-        }
+        SelectPanelClearImgSet(selectPanelSet);
 
         selectPanelSet.character.transform.localPosition = new Vector2(915f, 400f);
         OneBrushPlayPanelSet(false);
         StageClearPanelSet(false);
         InGameSet(false);
-        LineColorAndSizeChange(false);
+    }
+
+    void SelectPanelClearImgSet(SelectPanelSet selectPanelSet)
+    {
+        Image selectImage = null;
+        Button button = null;
+
+        if (SoundManager.Inst.LevelIndex == 1 && ObjIndexs == 5)
+        {
+            selectPanelSet.oneBrushBut.TryGetComponent<Image>(out selectImage);
+            selectImage.sprite = clearAnimalImgData.LevelOneClearAniamlImg[0];
+            selectPanelSet.oneBrushBut.TryGetComponent<Button>(out button);
+            button.enabled = false;
+        }
+        if (SoundManager.Inst.LevelIndex == 1 && ObjTwoIndex == 5)
+        {
+            selectPanelSet.twoBrushBut.TryGetComponent<Image>(out selectImage);
+            selectImage.sprite = clearAnimalImgData.LevelOneClearAniamlImg[1];
+            selectPanelSet.twoBrushBut.TryGetComponent<Button>(out button);
+            button.enabled = false;
+        }
+        if (SoundManager.Inst.LevelIndex == 1 && ObjThreeIndex == 5)
+        {
+            selectPanelSet.threeBrushBut.TryGetComponent<Image>(out selectImage);
+            selectImage.sprite = clearAnimalImgData.LevelOneClearAniamlImg[2];
+            selectPanelSet.threeBrushBut.TryGetComponent<Button>(out button);
+            button.enabled = false;
+        }
+        if (SoundManager.Inst.LevelIndex == 2 && ObjIndexs == 5)
+        {
+            selectPanelSet.oneBrushBut.TryGetComponent<Image>(out selectImage);
+            selectImage.sprite = clearAnimalImgData.LevelTwoClearAniamlImg[0];
+            selectPanelSet.oneBrushBut.TryGetComponent<Button>(out button);
+            button.enabled = false;
+        }
+        if (SoundManager.Inst.LevelIndex == 2 && ObjTwoIndex == 5)
+        {
+            selectPanelSet.twoBrushBut.TryGetComponent<Image>(out selectImage);
+            selectImage.sprite = clearAnimalImgData.LevelTwoClearAniamlImg[1];
+            selectPanelSet.twoBrushBut.TryGetComponent<Button>(out button);
+            button.enabled = false;
+        }
+        if (SoundManager.Inst.LevelIndex == 2 && ObjThreeIndex == 5)
+        {
+            selectPanelSet.threeBrushBut.TryGetComponent<Image>(out selectImage);
+            selectImage.sprite = clearAnimalImgData.LevelTwoClearAniamlImg[2];
+            selectPanelSet.threeBrushBut.TryGetComponent<Button>(out button);
+            button.enabled = false;
+        }
+        if (SoundManager.Inst.LevelIndex == 3 && ObjIndexs == 5)
+        {
+            selectPanelSet.oneBrushBut.TryGetComponent<Image>(out selectImage);
+            selectImage.sprite = clearAnimalImgData.LevelThreeClearAniamlImg[0];
+            selectPanelSet.oneBrushBut.TryGetComponent<Button>(out button);
+            button.enabled = false;
+        }
+        if (SoundManager.Inst.LevelIndex == 3 && ObjTwoIndex == 5)
+        {
+            selectPanelSet.twoBrushBut.TryGetComponent<Image>(out selectImage);
+            selectImage.sprite = clearAnimalImgData.LevelThreeClearAniamlImg[1];
+            selectPanelSet.twoBrushBut.TryGetComponent<Button>(out button);
+            button.enabled = false;
+        }
+        if (SoundManager.Inst.LevelIndex == 3 && ObjThreeIndex == 5)
+        {
+            selectPanelSet.threeBrushBut.TryGetComponent<Image>(out selectImage);
+            selectImage.sprite = clearAnimalImgData.LevelThreeClearAniamlImg[2];
+            selectPanelSet.threeBrushBut.TryGetComponent<Button>(out button);
+            button.enabled = false;
+        }
+        if (SoundManager.Inst.LevelIndex == 4 && ObjIndexs == 5)
+        {
+            selectPanelSet.oneBrushBut.TryGetComponent<Image>(out selectImage);
+            selectImage.sprite = clearAnimalImgData.LevelFourClearAniamlImg[0];
+            selectPanelSet.oneBrushBut.TryGetComponent<Button>(out button);
+            button.enabled = false;
+        }
+        if (SoundManager.Inst.LevelIndex == 4 && ObjTwoIndex == 5)
+        {
+            selectPanelSet.twoBrushBut.TryGetComponent<Image>(out selectImage);
+            selectImage.sprite = clearAnimalImgData.LevelFourClearAniamlImg[1];
+            selectPanelSet.twoBrushBut.TryGetComponent<Button>(out button);
+            button.enabled = false;
+        }
+        if (SoundManager.Inst.LevelIndex == 4 && ObjThreeIndex == 5)
+        {
+            selectPanelSet.threeBrushBut.TryGetComponent<Image>(out selectImage);
+            selectImage.sprite = clearAnimalImgData.LevelFourClearAniamlImg[2];
+            selectPanelSet.threeBrushBut.TryGetComponent<Button>(out button);
+            button.enabled = false;
+        }
     }
 }

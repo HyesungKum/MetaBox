@@ -1,9 +1,7 @@
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
-public delegate int LevelIndes(int index);
+using System.Collections.Generic;
 
 public class SelectPanelSet : MonoBehaviour
 {
@@ -43,21 +41,24 @@ public class SelectPanelSet : MonoBehaviour
         {
             OnClickQustion(oneBrushBut, true, false, false);
             CharacterMoves(1);
-            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(oneBrushBut.transform.position);
+            SoundManager.Inst.ButtonSFXPlay();
+            SoundManager.Inst.ButtonEffect(oneBrushBut.transform.position);
         });
 
         twoBrushBut.onClick.AddListener(delegate
         {
             OnClickQustion(twoBrushBut, false, true, false);
             CharacterMoves(2);
-            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(twoBrushBut.transform.position);
+            SoundManager.Inst.ButtonSFXPlay();
+            SoundManager.Inst.ButtonEffect(twoBrushBut.transform.position);
         });
 
         threeBrushBut.onClick.AddListener(delegate
         {
             OnClickQustion(threeBrushBut, false, false, true);
             CharacterMoves(3);
-            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(threeBrushBut.transform.position);
+            SoundManager.Inst.ButtonSFXPlay();
+            SoundManager.Inst.ButtonEffect(threeBrushBut.transform.position);
         });
         #endregion 
     }
@@ -67,7 +68,7 @@ public class SelectPanelSet : MonoBehaviour
         if (levelIndexCheck == 1)
         {
             SelecetImgOne(oneBrushBut, selectPanelImg.LevelOneSelectPanelImg, 0);
-            InstQPrefab(0,InGamePanelSet.Inst.QOneObj());
+            InstQPrefab(0, InGamePanelSet.Inst.QOneObj());
             SelecetImgOne(twoBrushBut, selectPanelImg.LevelOneSelectPanelImg, 1);
             InstQPrefab(1, InGamePanelSet.Inst.QTwoObj());
             SelecetImgOne(threeBrushBut, selectPanelImg.LevelOneSelectPanelImg, 2);
@@ -153,7 +154,6 @@ public class SelectPanelSet : MonoBehaviour
     {
         this.gameObject.SetActive(false);
         InGamePanelSet.Inst.OneBrushPlayPanelSet(true);
-        //button.gameObject.SetActive(butSet);
     }
 
     public void PlayGameObjSet(bool objOneSet, bool objTwoSet, bool objThreeSet)
