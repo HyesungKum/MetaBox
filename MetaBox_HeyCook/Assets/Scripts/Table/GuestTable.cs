@@ -14,49 +14,70 @@ public enum Side
 public class GuestTable : MonoBehaviour
 {
     //=====================================Reference Data======================================
-    [Header("Reference Data")]
+    [Header("[Guest Data]")]
     public GuestGroup guestGroup;
+    
+    [Header("Current Guest")]
+    [SerializeField] Guest curGuest = null;
+
+    [Header("Guest Reference")]
+    [SerializeField] GameObject guestObj;
+    [SerializeField] SpriteRenderer guestImage;
+    [SerializeField] GameObject     orderObj;
+    [SerializeField] SpriteRenderer orderImage;
+    [SerializeField] TextMeshProUGUI guestText;
+    [SerializeField] TextMeshProUGUI scoreText;
+    
+    [Header("Guest Move Production")]
+    [SerializeField] AnimationCurve moveCurve;
+
+    [Header("[Require Food List]")]
     public List<FoodData> FoodList;
     private List<FoodData> TempTable;
 
-    [Header("Current Recipe")]
+    [Header("[Current Recipe]")]
     public FoodData requireFood;
-    public List<IngredData> requireIngreds;
 
+    [Header("[TablePostion]")]
     public Side side;
-
-    //=====================================Reference Obj=======================================
-    [Header("Guest")]
-    [SerializeField] Guest curGuest = null;
-    [SerializeField] GameObject guestObj;
-    [SerializeField] SpriteRenderer guestImage;
-    [SerializeField] SpriteRenderer talkBubble;
-    [SerializeField] AnimationCurve moveCurve;
-    [SerializeField] TextMeshProUGUI guestText;
-
-    [Header("Food Particle")]
-    [SerializeField] public GameObject foodParticle;
-
-    //=======================================Component=========================================
-    [SerializeField] SpriteRenderer spriteRenderer;
-
-    //====================================inner variables======================================
-    [SerializeField] int count;
+    //===================================inner variables=======================================
+    private bool FirstToken { get; set; }
 
     //=======================================caching===========================================
-    [SerializeField] float waitCallSec;
+    [SerializeField] float delayNewGuest;
     private WaitForSeconds waitSec;
     private WaitUntil waitGetData;
 
     private void Awake()
     {
         //caching
-        waitSec = new WaitForSeconds(waitCallSec);
+        waitSec = new WaitForSeconds(delayNewGuest);
         waitGetData = new WaitUntil(() => FoodList != null);
+
+        //innver var init
+        FirstToken = true;
 
         StartCoroutine(nameof(GettingData));
     }
 
+    private void OnDestroy()
+    {
+        //delegate unchain
+        if (side == Side.Right)
+        {
+            EventReceiver.ScoreModiR -= SocreModi;
+            EventReceiver.NewGuestR -= NewGuestPord;
+            EventReceiver.DoSubmissionR -= DoSubmission;
+        }
+        else
+        {
+            EventReceiver.ScoreModiL -= SocreModi;
+            EventReceiver.NewGuestL -= NewGuestPord;
+            EventReceiver.DoSubmissionL -= DoSubmission;
+        }
+    }
+
+    //==================================Guest require recipe getting routine=============================
     IEnumerator GettingData()
     {
         yield return waitGetData;
@@ -70,35 +91,23 @@ public class GuestTable : MonoBehaviour
         //delegate chain
         if (side == Side.Right)
         {
-            EventReciver.NewCostomerR += NewCostomerPord;
-            EventReciver.DoSubmissionR += DoSubmission;
+            EventReceiver.ScoreModiR += SocreModi;
+            EventReceiver.NewGuestR += NewGuestPord;
+            EventReceiver.DoSubmissionR += DoSubmission;
         }
         else
         {
-            EventReciver.NewCostomerL += NewCostomerPord;
-            EventReciver.DoSubmissionL += DoSubmission;
+            EventReceiver.ScoreModiL += SocreModi;
+            EventReceiver.NewGuestL += NewGuestPord;
+            EventReceiver.DoSubmissionL += DoSubmission;
         }
 
-        if (side == Side.Right) EventReciver.CallNewComstomerR();
-        else EventReciver.CallNewComstomerL();
+
+        if (side == Side.Right) EventReceiver.CallNewGuestR();
+        else EventReceiver.CallNewGuestL();
     }
 
-    private void OnDestroy()
-    {
-        //delegate unchain
-        if (side == Side.Right)
-        {
-            EventReciver.NewCostomerR -= NewCostomerPord;
-            EventReciver.DoSubmissionR -= DoSubmission;
-        }
-        else
-        {
-            EventReciver.NewCostomerL -= NewCostomerPord;
-            EventReciver.DoSubmissionL -= DoSubmission;
-        }
-    }
-
-    //=====================================Submission==========================================
+    //============================================Submission=============================================
     void DoSubmission()
     {
         StartCoroutine(nameof(FoodReset));
@@ -107,25 +116,29 @@ public class GuestTable : MonoBehaviour
     {
         yield return waitSec;
 
-        PoolCp.Inst.DestoryObjectCp(foodParticle);
+        //score sum modify
+        if (side == Side.Right) EventReceiver.CallScoreModiR(requireFood.Score);
+        else EventReceiver.CallScoreModiL(requireFood.Score);
 
-        EventReciver.CallScoreModi(requireFood.Score);
+        //call guest eat sfx
+        SoundManager.Inst.CallSfx("GuestEat");
 
-        if(side == Side.Right) EventReciver.CallNewComstomerR();
-        else EventReciver.CallNewComstomerL();
+        //call new guest event
+        if(side == Side.Right) EventReceiver.CallNewGuestR();
+        else EventReceiver.CallNewGuestL();
     }
 
-    //==============================Customer Move Production===================================
-    void NewCostomerPord()
+    //====================================Customer Move Production=======================================
+    void NewGuestPord()
     {
-        StartCoroutine(nameof(CustomerMove));
+        StartCoroutine(nameof(GuestMove));
     }
-    IEnumerator CustomerMove()
+    IEnumerator GuestMove()
     {
         Vector3 tempPos = guestObj.transform.position;
         float timer = 0f;
         bool token = true;
-        talkBubble.gameObject.SetActive(false);
+        orderObj.SetActive(false);
 
         //talk text out
         if (curGuest != null)
@@ -139,21 +152,34 @@ public class GuestTable : MonoBehaviour
             Vector3 fixedPos = tempPos + Vector3.left * moveCurve.Evaluate(timer);
             guestObj.transform.position = fixedPos;
 
-            //customer image change
+            //Guest Move Out -> point of Guest Leave
             if (token && timer >= 0.5)
             {
                 token = false;
+
+                //Guest Data Change
                 curGuest = guestGroup.Guests[Random.Range(0,4)];
+
+                //Guest image change
                 guestImage.sprite = curGuest.guestImage;
+
+                //Guest Chang Sfx
+                if(FirstToken) FirstToken = false;
+                else SoundManager.Inst.CallSfx("GuestLeave");
             }
 
-            //recipe pick
+            //Guest Move Finish -> point of Guest arrive
             if (timer > moveCurve.keys[^1].time)
             {
+                //recipe pick
                 PickRecipe();
-                talkBubble.gameObject.SetActive(true);
-                talkBubble.sprite = curGuest.talkBubbleImage;
+
+                //talk bubble change
+                orderObj.SetActive(true);
+                
+                //Guest Text disable
                 guestText.gameObject.SetActive(false);
+
                 yield break;
             }
 
@@ -161,7 +187,8 @@ public class GuestTable : MonoBehaviour
             yield return null;
         }
     }
-    //=================================picking Controll=========================================
+
+    //========================================picking Controll===========================================
     void PickRecipe()
     {
         //pick index
@@ -172,12 +199,19 @@ public class GuestTable : MonoBehaviour
         TempTable.RemoveAt(index);
 
         //show combine hint Image
-        spriteRenderer.sprite = requireFood.combineImage;
+        orderImage.sprite = requireFood.combineImage;
 
         //call new order
-        if (side == Side.Right) EventReciver.CallNewOrderR();
-        else EventReciver.CallNewOrderL();
+        if (side == Side.Right) EventReceiver.CallNewOrderR();
+        else EventReceiver.CallNewOrderL();
 
         if (TempTable.Count == 0) TempTable = FoodList.ToArray().ToList();
+    }
+
+    //========================================Score Modifiy==============================================
+    void SocreModi(int value)
+    {
+        scoreText.gameObject.SetActive(true);
+        scoreText.text = $"+{value}";
     }
 }

@@ -33,13 +33,17 @@ public class LoadingManager : MonoSingleTon<LoadingManager>
     {
         secPerFrame = Time.deltaTime;
         StartButton.onClick.AddListener(()=> SceneOutReady());
-        StartButton.onClick.AddListener(()=> EventReciver.CallButtonClicked());
+        StartButton.onClick.AddListener(()=> EventReceiver.CallButtonClicked());
     }
 
     private void Start()
     {
-        StartCoroutine(nameof(Progressing));
         StartCoroutine(nameof(SceneIncome));
+    }
+    IEnumerator SceneIncome()
+    {
+        yield return StartCoroutine(nameof(ViewHallExtension));
+        yield return StartCoroutine(nameof(Progressing));
     }
 
     //============================UI Object Controll====================================
@@ -49,12 +53,6 @@ public class LoadingManager : MonoSingleTon<LoadingManager>
 
         curUI = targetUIObj;
         curUI.SetActive(true);
-    }
-
-    //==============================Scene Incomming=====================================
-    void SceneIncome()
-    {
-        StartCoroutine(nameof(ViewHallExtension));
     }
     IEnumerator ViewHallExtension()
     {

@@ -1,28 +1,36 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(BoxCollider2D))]
 public class PlayerController : MonoBehaviour
 {
     //=========================components===============================
     private Rigidbody2D rigidbody2d;
-    private SimpleAnimator animator;
+    [SerializeField] SimpleAnimator customAnimator;
+    [SerializeField] Animator builtInAimator;
 
     //==========================pc settings=============================
     [Header("player Settings")]
+    [SerializeField] AudioClip jumpSfx;
+    [SerializeField] AudioClip fallSfx;
+    [Space]
     [SerializeField] float jumpFoce = 10f;
     [SerializeField] float mass = 1f;
     [SerializeField] float gravity = 1f;
     [Space]
     [SerializeField] float playerLastSpeed;
+
     //=======================inner variables============================
     private bool isGrounded;
     private bool isFall;
     private bool isDone;
+    private bool isBuiltIn;
 
     private void Awake()
     {
         //component
         TryGetComponent(out rigidbody2d);
-        TryGetComponent(out animator);
+        if(customAnimator == null) isBuiltIn = true;
 
         //apply player settings
         rigidbody2d.mass = mass;
@@ -37,19 +45,7 @@ public class PlayerController : MonoBehaviour
         TouchEventGenerator.Inst.touchBegan[0] += Jump;
         TouchEventGenerator.Inst.touchBegan[0] += Run;
 
-        EventReciver.ButtonClicked += MoveRight;
-    }
-
-    private void OnDisable()
-    {
-        //application quit exception
-        if (TouchEventGenerator.Inst == null) return;
-
-        //delegate unchain
-        TouchEventGenerator.Inst.touchBegan[0] -= Jump;
-        TouchEventGenerator.Inst.touchBegan[0] -= Run;
-
-        EventReciver.ButtonClicked -= MoveRight;
+        EventReceiver.ButtonClicked += MoveRight;
     }
     
     //============================player Controll==============================
@@ -57,8 +53,16 @@ public class PlayerController : MonoBehaviour
     {
         if (!isGrounded || isFall) return;
 
+        //state controll
         isGrounded = false;
-        animator.ChangeAnimation("Jump");
+
+        //jump sound out
+        SoundManager.Inst.CallSfx(jumpSfx);
+
+        //apply jump animation
+        if (isBuiltIn) builtInAimator.SetTrigger("Jump");
+        else customAnimator.ChangeAnimation("Jump");
+
         rigidbody2d.AddForce(Vector3.up * jumpFoce, ForceMode2D.Impulse);
     }
     void Run(int index, Vector3 pos)
@@ -66,8 +70,10 @@ public class PlayerController : MonoBehaviour
         if (!isFall) return;
 
         isFall = false;
-        animator.ChangeAnimation("Idle");
-        EventReciver.CallPlayerRise();
+
+        if (isBuiltIn) builtInAimator.SetBool("Idle", true);
+        else customAnimator.ChangeAnimation("Idle");
+        EventReceiver.CallPlayerRise();
     }
 
     //============================End Scene Move===============================
@@ -76,8 +82,15 @@ public class PlayerController : MonoBehaviour
         isDone = true;
         isFall = false;
         isGrounded = true;
-        rigidbody2d.velocity = Vector2.right * playerLastSpeed; 
-        animator.ChangeAnimation("Idle");
+        rigidbody2d.velocity = Vector2.right * playerLastSpeed;
+        if (isBuiltIn) builtInAimator.SetBool("Idle", true);
+        else customAnimator.ChangeAnimation("Idle");
+
+        //delegate unchain
+        TouchEventGenerator.Inst.touchBegan[0] -= Jump;
+        TouchEventGenerator.Inst.touchBegan[0] -= Run;
+
+        EventReceiver.ButtonClicked -= MoveRight;
     }
 
     //===========================platform & obstacle===========================
@@ -87,7 +100,9 @@ public class PlayerController : MonoBehaviour
 
         if (isFall) return;
 
-        animator.ChangeAnimation("Idle");
+        if (isBuiltIn) builtInAimator.SetBool("Idle",true);
+        else customAnimator.ChangeAnimation("Idle");
+
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -98,8 +113,15 @@ public class PlayerController : MonoBehaviour
             isFall = true;
             collision.enabled = false;
 
-            EventReciver.CallPlayerFall();
-            animator.ChangeAnimation("Die");
+            EventReceiver.CallPlayerFall();
+
+            if (isBuiltIn)
+            {
+                SoundManager.Inst.CallSfx(fallSfx);
+                builtInAimator.SetTrigger("Die");
+                builtInAimator.SetBool("Idle", false);
+            }
+            else customAnimator.ChangeAnimation("Die");
         }
     }
 }

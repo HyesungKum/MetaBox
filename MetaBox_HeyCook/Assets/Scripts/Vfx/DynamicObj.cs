@@ -1,13 +1,21 @@
-using System.Collections;
-using UnityEngine;
-using TMPro;
 using System;
+using System.Collections;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 [Serializable]
 public enum ColorControll
 {
     CURVE,
     LERP
+}
+
+public enum RenderType
+{
+    Text,
+    Sprite,
+    Image
 }
 
 [Serializable]
@@ -18,44 +26,65 @@ public class DynamicObj : MonoBehaviour
     //===========================components==============================
     private TextMeshProUGUI _textMesh;
     private SpriteRenderer _renderer;
+    private Image _image;
+
+    private RenderType renderType;
 
     //===================Position Production Controll====================
     public bool editXpos;
-    [SerializeField] public AnimationCurve xCurve;
+    public AnimationCurve xCurve;
     [Space]
     public bool editYpos;
-    [SerializeField] public AnimationCurve yCurve;
+    public AnimationCurve yCurve;
+    [Space]
+
+    //====================Rotation Production Controll===================
+    public bool editXrot;
+    public AnimationCurve xRotCurve;
+    [Space]
+    public bool editYrot;
+    public AnimationCurve yRotCurve;
+    [Space]
+    public bool editZrot;
+    public AnimationCurve zRotCurve;
     [Space]
 
     //====================Scale Production Controll======================
     public bool editScale;
-    [SerializeField] public AnimationCurve scaleCurve;
+    public AnimationCurve scaleCurve;
 
-    //===================Position Production Controll====================
+    //===================Color Production Controll====================
     [Space]
     public bool editColor;
     public ColorControll colorControll;
 
     //color curve
-    [SerializeField] public AnimationCurve colorRCurve;
-    [SerializeField] public AnimationCurve colorGCurve;
-    [SerializeField] public AnimationCurve colorBCurve;
-    [SerializeField] public AnimationCurve colorACurve;
+    public AnimationCurve colorRCurve;
+    public AnimationCurve colorGCurve;
+    public AnimationCurve colorBCurve;
+    public AnimationCurve colorACurve;
 
     //between color lerp
-    [SerializeField] public float lerpTime;
-    [SerializeField] public Color startColor;
-    [SerializeField] public Color endColor;
+    public float lerpTime;
+    public Color startColor;
+    public Color endColor;
     private float lerpCal;
+
+    //=========================influenced about frame=====================
+    [Space]
+    public bool OnAwake;
+    public bool DontCareTime;
 
     //===========================init state==============================
     private Vector3 tempVec;
+    private Quaternion tempRot;
     private Vector3 tempScale;
 
     private Color tempCol;
 
     //==========================fixed state==============================
     private Vector3 fixedPos;
+    private Quaternion fixedRot;
     private Vector3 fixedScale;
 
     private Color fixedCol;
@@ -71,11 +100,14 @@ public class DynamicObj : MonoBehaviour
         //local delegate chain
         if (editXpos) doDynamic += ChangeX;
         if (editYpos) doDynamic += ChangeY;
+        if (editXrot) doDynamic += ChangeXRot;
+        if (editYrot) doDynamic += ChangeYRot;
+        if (editZrot) doDynamic += ChangeZRot;
         if (editScale) doDynamic += ChangeScale;
         if (editColor && colorControll == ColorControll.CURVE) doDynamic += ChangeCurveColor;
         if (editColor && colorControll == ColorControll.LERP) doDynamic += ChangeLerpColor;
 
-        StartCoroutine(nameof(Production));
+        if(OnAwake) StartCoroutine(nameof(Production));
     }
     private void OnDisable()
     {
@@ -93,9 +125,17 @@ public class DynamicObj : MonoBehaviour
         //textMeshProUGUI
         TryGetComponent(out _textMesh);
         TryGetComponent(out _renderer);
+        TryGetComponent(out _image);
+
+        if (_textMesh != null) renderType = RenderType.Text;
+        if (_renderer != null) renderType = RenderType.Sprite;
+        if (_image != null) renderType = RenderType.Image;
 
         //position
         tempVec = fixedPos = this.transform.localPosition;
+
+        //rotation
+        tempRot = fixedRot = this.transform.localRotation;
 
         //scale
         tempScale = fixedScale = this.transform.localScale;
@@ -112,17 +152,24 @@ public class DynamicObj : MonoBehaviour
     //================================Production============================================
     IEnumerator Production()
     {
+        timer = 0;
         while (this.gameObject.activeSelf)
         {
-            timer += Time.deltaTime;
+            if (DontCareTime) timer += Time.fixedDeltaTime;
+            else timer += Time.deltaTime;
 
             this.transform.localPosition = fixedPos;
+            this.transform.localRotation = fixedRot;
             this.transform.localScale = fixedScale;
 
             doDynamic?.Invoke();
 
-            if (_textMesh != null) _textMesh.color = fixedCol;
-            if (_renderer != null) _renderer.color = fixedCol;
+            switch (renderType)
+            {
+                case RenderType.Text:   _textMesh.color = fixedCol; break;
+                case RenderType.Sprite: _renderer.color = fixedCol; break;
+                case RenderType.Image:  _image.color    = fixedCol; break;
+            }
 
             yield return null;
         }
@@ -136,6 +183,18 @@ public class DynamicObj : MonoBehaviour
     void ChangeY()
     {
         fixedPos.y = yCurve.Evaluate(timer);
+    }
+    void ChangeXRot()
+    {
+        fixedRot.x = xRotCurve.Evaluate(timer);
+    }
+    void ChangeYRot()
+    {
+        fixedRot.y = yRotCurve.Evaluate(timer);
+    }
+    void ChangeZRot()
+    {
+        fixedRot.z = zRotCurve.Evaluate(timer);
     }
     void ChangeScale()
     {
@@ -151,5 +210,12 @@ public class DynamicObj : MonoBehaviour
 
         fixedCol = Color.Lerp(startColor, endColor, lerpCal);
         lerpCal += Time.deltaTime / lerpTime;
+    }
+
+    //==============================Production Call=========================================
+    public void CallDoDynamic()
+    {
+        StopCoroutine(nameof(Production));
+        StartCoroutine(nameof(Production));
     }
 }

@@ -11,10 +11,7 @@ public class IngredientSpawner : MonoBehaviour
     public List<GameObject> SpawnTable;
     public List<GameObject> TempTable;
 
-    //================moving belt=======================
-    [Header("Ref Up Belt Scroll")]
-    [SerializeField] BeltZone BeltZone;
-
+    [Header("Spawn Setting")]
     public float spawnTime;
 
     //===============init spawn=========================
@@ -31,20 +28,20 @@ public class IngredientSpawner : MonoBehaviour
     {
         waitDateGet = new WaitUntil(()=> SpawnTable != null);
 
-        StartCoroutine(nameof(SpawnerInit));
+        StartCoroutine(nameof(SpawnerAwake));
     }
 
     private void OnDisable()
     {
         //delegate unchain
-        EventReciver.GameStart -= SpawnStart;
+        EventReceiver.GameStart -= SpawnStart;
     }
     //======================================spawn Timing Controll=================================================
     /// <summary>
     /// spawner Initializing routine
     /// </summary>
     /// <returns> until wait spawning routine when data getting done </returns>
-    IEnumerator SpawnerInit()
+    IEnumerator SpawnerAwake()
     {
         yield return waitDateGet;
 
@@ -71,7 +68,7 @@ public class IngredientSpawner : MonoBehaviour
         timer = spawnTime;
 
         //delegate chain
-        EventReciver.GameStart += SpawnStart;
+        EventReceiver.GameStart += SpawnStart;
     }
 
     //=====================================Spawn Reference Object using ObjPool===================================
@@ -83,40 +80,42 @@ public class IngredientSpawner : MonoBehaviour
     {
         while (this.gameObject.activeSelf)
         {
+            yield return null;
+
             timer += Time.deltaTime;
 
             if (timer > spawnTime)
             {
+                //refill temp Table
+                if (TempTable.Count == 0) TempTable = SpawnTable.ToArray().ToList();
+
                 //random index
                 int index = Random.Range(0, TempTable.Count);
 
                 //spawn gameobj
-                Spawn(index);
+                if(Spawn(index) == null) continue;
 
                 //spawn table controll
                 TempTable.RemoveAt(index);
-                if (TempTable.Count == 0) TempTable = SpawnTable.ToArray().ToList();
 
                 //timer reset
                 timer = 0f;
             }
-
-            yield return null;
         }
     }
     private GameObject Spawn(int index)
     {
-        //try
-        //{
+        try
+        {
             GameObject instObj = PoolCp.Inst.BringObjectCp(TempTable[index]);
             instObj.transform.SetPositionAndRotation(this.transform.position, Quaternion.identity);
             return instObj;
-        //}
-        //catch
-        //{
-        //    Debug.LogError("##Spawner Error : Cannot Found any spawning target");
-        //    return null;
-        //}
+        }
+        catch
+        {
+            Debug.Log("##Spawner Error : Cannot Found any spawning target");
+            return null;
+        }
     }
 
     #region Editor
