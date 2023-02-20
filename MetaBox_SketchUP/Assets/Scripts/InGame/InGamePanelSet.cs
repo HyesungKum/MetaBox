@@ -1,8 +1,8 @@
-using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class InGamePanelSet : MonoBehaviour
 {
@@ -78,10 +78,12 @@ public class InGamePanelSet : MonoBehaviour
     [Header("[Play Time Setting]")]
     [SerializeField] private int minute;
     [SerializeField] private float seconds;
+
     public float Secondes { get { return seconds; } set { seconds = value; } }
     public int Minute { get { return minute; } set { minute = value; } }
-    #endregion
 
+    #endregion
+    [Header("[Others]")]
     [SerializeField] ClearAnimalImgData clearAnimalImgData = null;
 
     GameObject instClock = null;
@@ -106,7 +108,6 @@ public class InGamePanelSet : MonoBehaviour
     public int SavePalyTime;
 
     bool isOptionPanelOpen = false;
-
 
     void Awake()
     {
@@ -134,19 +135,22 @@ public class InGamePanelSet : MonoBehaviour
         loseReStartBut.onClick.AddListener(delegate
         {
             OnClickGoStartPanel();
-            SoundManager.Inst.GameLoseSFXPlay(); SoundManager.Inst.ButtonEffect(loseReStartBut.transform.position);
+            SoundManager.Inst.GameLoseSFXPlay(); 
+            SoundManager.Inst.ButtonEffect(loseReStartBut.transform.position);
         });
 
         winReStartBut.onClick.AddListener(delegate
         {
             OnClickGoStartPanel();
-            SoundManager.Inst.GameClearSFXPlay(); SoundManager.Inst.ButtonEffect(winReStartBut.transform.position);
+            SoundManager.Inst.GameClearSFXPlay(); 
+            SoundManager.Inst.ButtonEffect(winReStartBut.transform.position);
         });
 
         quitBut.onClick.AddListener(delegate
         {
             OnClickGoStartPanel();
-            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(quitBut.transform.position);
+            SoundManager.Inst.ButtonSFXPlay(); 
+            SoundManager.Inst.ButtonEffect(quitBut.transform.position);
         });
 
         optionBut.onClick.AddListener(delegate
@@ -194,8 +198,7 @@ public class InGamePanelSet : MonoBehaviour
         CountDown countDown = null;
         waitTimeObjs.TryGetComponent<CountDown>(out countDown);
 
-        // == waitTime 3 = 
-        int waitTime = 1;
+        int waitTime = 3;
         for (int i = waitTime; i > 0; i--)
         {
             countDown.ShowWaitTime(waitTime);
