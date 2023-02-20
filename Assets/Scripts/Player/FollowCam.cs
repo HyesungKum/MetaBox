@@ -29,7 +29,6 @@ public class FollowCam : MonoBehaviour
     {
         StartCoroutine(nameof(Follow));
     }
-
     IEnumerator Follow()
     {
         yield return waitSec;
