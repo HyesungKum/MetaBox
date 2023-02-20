@@ -3,7 +3,7 @@ using UnityEngine;
 using ObjectPoolCP;
 
 
-public class MusicSheet : MonoBehaviour
+public class MusicSheet : ObjectPool<QNote>
 {
     //  Quiz Note List 
     [SerializeField] List<GameObject> qNoteList = new();
@@ -15,7 +15,7 @@ public class MusicSheet : MonoBehaviour
     [SerializeField] List<Transform> mySoundLines = new();
 
     [SerializeField] GameObject qNotePrefab;
-    [SerializeField] GameObject normalNotePrefab;
+    [SerializeField] GameObject nNotePrefab;
 
     Dictionary<int, List<int>> myStageData = new();
     public Dictionary<int, List<int>> MyStageData { get { return myStageData; } set { myStageData = value; } }
@@ -24,6 +24,10 @@ public class MusicSheet : MonoBehaviour
     {
         // observe game status 
         GameManager.Inst.myDelegateGameStatus += curGameStatus;
+    }
+    public override QNote CreatePool()
+    {
+        throw new System.NotImplementedException();
     }
 
     void curGameStatus(GameStatus curStatus)
@@ -113,7 +117,7 @@ public class MusicSheet : MonoBehaviour
         for (int idx = 0; idx < noteIdx; ++idx)
         {
             GameObject newNote;
-            GameObject prefab = normalNotePrefab;
+            GameObject prefab = nNotePrefab;
 
             // if it's qnote index, change prefab 
             if (emptyNoteIdx.Contains(idx))
@@ -180,20 +184,19 @@ public class MusicSheet : MonoBehaviour
 
                     note.TryGetComponent<QNote>(out QNote myQNote);
 
-                    SoundManager.Inst.PlayNote(myQNote.MyPitchNum, 1);
+                    SoundManager.Inst.PlayNote(myQNote.MyPitchNum);
                     myQNote.Correct();
 
-                    target.UseNote();
+                    
 
                     // check how many Qnotes are left
                     if (qNoteList.Count == 0)
                     {
                         SoundManager.Inst.StopMusic();
                         GameManager.Inst.UpdateCurProcess(GameStatus.GetAllQNotes);
-                        return;
                     }
 
-                    
+                    target.UseNote();
 
                     return;
                 }
@@ -236,8 +239,8 @@ public class MusicSheet : MonoBehaviour
 
         closestSoundLine.TryGetComponent<SoundLine>(out SoundLine targetLine);
 
-        SoundManager.Inst.PlayNote(targetLine.MyPitchNum, 1);
+        SoundManager.Inst.PlayNote(targetLine.MyPitchNum);
     }
 
-
+    
 }

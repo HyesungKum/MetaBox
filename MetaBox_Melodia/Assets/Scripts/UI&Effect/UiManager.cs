@@ -1,9 +1,8 @@
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class UiManager : MonoBehaviour
 {
@@ -27,11 +26,12 @@ public class UiManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI myTimer;
     [SerializeField] TextMeshProUGUI playTime;
 
-    [Header("bird Control")]
+    [Header("bird Button Control")]
     [SerializeField] AnimationCurve BirdPosCurve; // = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(0.5f, 0.2f), new Keyframe(0.7f, 0f) });
+    Transform birdTransform;
 
-    [SerializeField] Fade fade = null;
     [SerializeField] ScriptableObj scriptableImg = null;
+    [SerializeField] Fade fade = null;
     [SerializeField] List<ParticleSystem> gameClearEff = null;
     public float ReplayCoolTime { get; set; }
 
@@ -40,16 +40,17 @@ public class UiManager : MonoBehaviour
         myButtonOption.onClick.AddListener(OnClickOption);
         myButtonReplay.onClick.AddListener(OnClickReplay);
         myButtonNext.onClick.AddListener(OnClickNextStage);
+
         // observe game status 
         GameManager.Inst.myDelegateGameStatus += curGameStatus;
         GameManager.Inst.DelegateCountDown = CountDown;
         GameManager.Inst.DelegateTimer = playTimer;
-
     }
 
     private void Start()
     {
         ReplayCoolTime = GameManager.Inst.MelodiaData.replayCooltime;
+        birdTransform = myButtonReplay.transform;
     }
 
     void curGameStatus(GameStatus curStatus)
@@ -67,6 +68,7 @@ public class UiManager : MonoBehaviour
                     myPanelUntouchable.SetActive(false);
                 }
                 break;
+
             case GameStatus.Pause:
                 {
                     myPanelUntouchable.SetActive(true);
@@ -87,7 +89,9 @@ public class UiManager : MonoBehaviour
             case GameStatus.Fail:
                 {
                     SoundManager.Inst.StopMusic();
+                    
                     myPanelGameOver.SetActive(true);
+                    SoundManager.Inst.SFXPlay(SFX.GameFail);
                 }
                 break;
 
@@ -144,6 +148,7 @@ public class UiManager : MonoBehaviour
     }
 
 
+    #region Replay
     // Replay Music ==========================================================
     public void OnClickReplay()
     {
@@ -166,14 +171,14 @@ public class UiManager : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
             float startTime = 0;
-            Vector3 birdOriPos = myButtonReplay.transform.position;
-            Vector3 birdCurPos = myButtonReplay.transform.position;
+            Vector3 birdOriPos = birdTransform.position;
+            Vector3 birdCurPos = birdTransform.position;
 
             if (i.Equals(1)) SoundManager.Inst.RePlay();
             while (BirdPosCurve.keys[BirdPosCurve.keys.Length - 1].time >= startTime)
             {
                 birdCurPos.y = birdOriPos.y + BirdPosCurve.Evaluate(startTime);
-                myButtonReplay.transform.position = birdCurPos;
+                birdTransform.position = birdCurPos;
 
                 startTime += Time.deltaTime;
                 yield return null;
@@ -187,10 +192,7 @@ public class UiManager : MonoBehaviour
     }
 
     // Replay Music ==========================================================
-
-
-
-
+    #endregion
 
 
     public void OnClickOption()

@@ -54,7 +54,7 @@ public class StartUI : MonoBehaviour
     [SerializeField] Button extreme;
     [SerializeField] Button backMusic;
 
-    [Header("Exit Panel")]
+    [Header("Tutorial Panel")]
     [SerializeField] Button endTutorial;
 
     [Header("Exit Panel")]
@@ -73,7 +73,7 @@ public class StartUI : MonoBehaviour
         exit.onClick.AddListener(() => myExitPanel.SetActive(true));
 
         musicImg.sprite = scriptableImg.MusicImg[(int)MySceneMode];
-        selectMusic.onClick.AddListener(OnClickSelectMusic);
+        selectMusic.onClick.AddListener(() => SetPanel(Panel.Level));
         prev.onClick.AddListener(OnClickPrev);
         next.onClick.AddListener(OnClickNext);
         backStart.onClick.AddListener(() => SetPanel(Panel.Start));
@@ -114,11 +114,6 @@ public class StartUI : MonoBehaviour
                 myOptionPanel.SetActive(false);
                 break;
         }
-    }
-
-    void OnClickSelectMusic()
-    {
-        SetPanel(Panel.Level);
     }
 
     void OnClickPrev()

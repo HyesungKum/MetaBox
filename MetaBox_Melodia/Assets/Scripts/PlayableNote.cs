@@ -1,10 +1,10 @@
 using System.Collections;
 using UnityEngine;
 
+public delegate void DelegatePlayableNote(PlayableNote note, bool destory);
 
 public class PlayableNote : MonoBehaviour
 {
-    public delegate void DelegatePlayableNote(PlayableNote note, bool destory);
     public DelegatePlayableNote myDelegatePlayableNote;
 
     [SerializeField] CapsuleCollider2D myCollider = null;

@@ -16,6 +16,8 @@ public enum GameStatus
     Restart
 }
 
+public delegate void DelegateGameStatus(GameStatus curStatue);
+
 public class GameManager : DataLoader
 {
     #region Singleton
@@ -42,7 +44,6 @@ public class GameManager : DataLoader
     public Action<int> DelegateCountDown;
     public Action<int> DelegateTimer;
     public Action<int> gameClearRecord;
-    public delegate void DelegateGameStatus(GameStatus curStatue);
     public DelegateGameStatus myDelegateGameStatus;
 
     public GameStatus CurStatus { get; private set; }
@@ -103,8 +104,6 @@ public class GameManager : DataLoader
                     CurStatus = GameStatus.GamePlaying;
                     myDelegateGameStatus(GameStatus.GamePlaying);
                     StartCoroutine(nameof(PlayTimer));
-                    //Time.timeScale = 1;
-                    //Time.fixedDeltaTime = 0.02f * Time.timeScale;
                 }
                 break;
 
@@ -113,8 +112,6 @@ public class GameManager : DataLoader
                     CurStatus = GameStatus.Pause;
                     myDelegateGameStatus(GameStatus.Pause);
                     StopCoroutine(nameof(PlayTimer));
-                    //Time.timeScale = 0;
-                    //Time.fixedDeltaTime = 0.02f * Time.timeScale;
                 }
                 break;
 
@@ -144,9 +141,6 @@ public class GameManager : DataLoader
 
             case GameStatus.Fail:
                 {
-                    SoundManager.Inst.StopMusic();
-
-                    SoundManager.Inst.SFXPlay(SFX.GameFail);
                     stageClear = true;
                     CurStatus = GameStatus.Fail;
 
@@ -156,12 +150,12 @@ public class GameManager : DataLoader
 
             case GameStatus.GameClear:
                 {
-                    CurStatus = GameStatus.GameClear;
                     gameClear = true;
+                    CurStatus = GameStatus.GameClear;
                     CurStage++;
                     
                     Invoke(nameof(ClearMusic), 1f);
-                    gameClearRecord(MelodiaData.countDown - MyPlayableTime);
+                    gameClearRecord(MyPlayableTime);
                 }
                 break;
 

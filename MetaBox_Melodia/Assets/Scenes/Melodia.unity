@@ -1809,7 +1809,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99ecfbcfc7dcdcb4185396788c6e824b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bird: {fileID: 53451683}
+  bird: {fileID: 53451685}
   FadeInCurve:
     serializedVersion: 2
     m_Curve:
@@ -2244,6 +2244,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e430b28aa80391a40a0d941137c6cb9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myCam: {fileID: 247417235}
 --- !u!4 &662096630
 Transform:
   m_ObjectHideFlags: 0
@@ -4598,7 +4599,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -110, y: 80}
+  m_AnchoredPosition: {x: -110, y: 50}
   m_SizeDelta: {x: 150, y: 100}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &1530809151
@@ -4966,8 +4967,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  fade: {fileID: 516721833}
   scriptableImg: {fileID: 11400000, guid: 72cb4068045129d44b5bf495bc8110b9, type: 2}
+  fade: {fileID: 516721833}
   gameClearEff:
   - {fileID: 1529284177}
   - {fileID: 1008184363}
