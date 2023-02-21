@@ -1,5 +1,4 @@
 using Kum;
-using KumTool.AppTransition;
 using System;
 using UnityEngine;
 
@@ -25,11 +24,5 @@ public class GameManager : MonoSingleTon<GameManager>
         SoundManager.Inst.SetBGM("VillageBgm");
         SoundManager.Inst.SetBGMLoop();
         SoundManager.Inst.PlayBGM();
-    }
-
-
-    public void AppMove()
-    {
-        //AppTrans.MoveScene($"com.MetaBox.{nameof(gameName)}");
     }
 }
