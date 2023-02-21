@@ -1,22 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class LineRender : MonoBehaviour
 {
     private LineRenderer lineRender = null;
-    [SerializeField] private BoxCollider2D collider = null;
+    private EdgeCollider2D edgeCollider = null;
+    Transform edge = null;
     public const float resolutio = 0.1f;
 
-    public Stack<Vector3> posStack;
-
-    void Awake()
-    {
-        posStack = new Stack<Vector3>();
-        TryGetComponent<LineRenderer>(out lineRender);
-    }
+    void Awake() => TryGetComponent<LineRenderer>(out lineRender);
 
     public void SetPosition(int index, Vector3 pos)
     {
@@ -25,23 +18,31 @@ public class LineRender : MonoBehaviour
         lineRender.SetPosition(index, pos);
     }
 
-    public Vector3 GetPosition(int index) => lineRender.GetPosition(index);
+    public Vector3 GetPosition(int index)
+    {
+        lineRender.positionCount = 2;
+        return lineRender.GetPosition(index);
+    }
 
     public int GetPositionCount() => lineRender.positionCount;
 
     public int SetPositionCountDown() => lineRender.positionCount -= 1;
 
+    public int PosReset() => lineRender.positionCount = 0;
+    
+    public int SetPosCountTwo() => lineRender.positionCount = 2;
+
     public void SetCurvePosition(Vector3 pos)
     {
         if (!CanAppend(pos)) return;
         lineRender.positionCount += 1;
-        lineRender.SetPosition(lineRender.positionCount -1, pos);
+        lineRender.SetPosition(lineRender.positionCount - 1, pos);
     }
 
-    public void GetPositions()
+    public void SetLineSize(float value)
     {
-        Vector3[] vector3s = new Vector3[lineRender.positionCount];
-        lineRender.GetPositions(vector3s);
+        lineRender.startWidth = value;
+        lineRender.endWidth = value;
     }
 
     private bool CanAppend(Vector3 pos)
@@ -50,4 +51,27 @@ public class LineRender : MonoBehaviour
         return Vector2.Distance(lineRender.GetPosition(lineRender.positionCount - 1), pos) > resolutio;
     }
 
+    public void SetColor(Color newColors)
+    {
+        lineRender.startColor = newColors;
+        lineRender.endColor = newColors;
+    }
+
+    public void setEdgeCollider()
+    {
+        edge = this.transform.GetChild(0);
+
+        if (edge != null)
+            edge.TryGetComponent<EdgeCollider2D>(out edgeCollider);
+
+        List<Vector2> edges = new List<Vector2>();
+
+        for (int point = 0; point < lineRender.positionCount; point++)
+        {
+            Vector3 lineRendererPoint = lineRender.GetPosition(point);
+            edges.Add(Vector2.right * lineRendererPoint.x + Vector2.up * lineRendererPoint.y);
+        }
+
+        edgeCollider.SetPoints(edges);
+    }
 }

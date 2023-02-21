@@ -323,7 +323,7 @@ public class NavMesh2D : MonoBehaviour
             }
         }
 
-        Gizmos.color = new(0f, 0f, 1f, 0.4f);
+        Gizmos.color = new(0f, 0f, 1f, 0.15f);
         Gizmos.matrix = this.transform.localToWorldMatrix;
         Gizmos.DrawCube(Vector3.zero, this.transform.GetComponent<BoxCollider2D>().size);
     }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class StartSceneManager : MonoBehaviour
 {
@@ -34,9 +35,22 @@ public class StartSceneManager : MonoBehaviour
     [Header("[Option Close Button]")]
     [SerializeField] Button optionBackBut = null;
 
+    [Header("[Production]")]
+    [SerializeField] GameObject production;
+    [SerializeField] GameObject viewHall;
+
     void Awake()
     {
-        optionBackBut.onClick.AddListener(delegate { OnClickOptionClosebut(); SoundManager.Inst.ButtonSFXPlay(); });
+        //=== screen setting ===
+        Application.targetFrameRate = 60;
+
+        Screen.autorotateToPortrait = true;
+        Screen.autorotateToPortraitUpsideDown = true;
+        Screen.autorotateToLandscapeLeft = true;
+        Screen.autorotateToLandscapeRight = true;
+
+        optionBackBut.onClick.AddListener(delegate { OnClickOptionClosebut(); 
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(optionBackBut.transform.position); });
     }
 
     void Start()
@@ -46,6 +60,8 @@ public class StartSceneManager : MonoBehaviour
         LevelPanelSet(false);
         TutorialPanelSet(false);
         QuitPanelSet(false);
+
+        Production();
     }
 
     public void StartPanelSet(bool active) => startPanel.gameObject.SetActive(active);
@@ -57,6 +73,54 @@ public class StartSceneManager : MonoBehaviour
     public void TutorialPanelSet(bool active) => tutorialPanel.gameObject.SetActive(active);
 
     public void QuitPanelSet(bool active) => quitPanel.gameObject.SetActive(active);
+
+    public void ProductionSet(bool active) => production.gameObject.SetActive(active);
+
+    void Production()
+    {
+        StartCoroutine(ViewHallExtension());
+    }
+
+    IEnumerator ViewHallExtension()
+    {
+        ProductionSet(true);
+        float timer = 0f;
+        Time.timeScale = 1;
+
+        while (viewHall.transform.localScale.x <= 30)
+        {
+            timer += Time.deltaTime / 15f;
+
+            viewHall.transform.localScale = Vector3.Lerp(viewHall.transform.localScale, Vector3.one * 35f, timer);
+            yield return null;
+        }
+
+        viewHall.transform.localScale = Vector3.one * 30f;
+
+        ProductionSet(false);
+    }
+
+    public void MoveScene(int sceneIndex)
+    {
+        StartCoroutine(ViewHallShrink(sceneIndex));
+    }
+
+    IEnumerator ViewHallShrink(int sceneIndex)
+    {
+        ProductionSet(true);
+
+        float timer = 0f;
+        while (viewHall.transform.localScale.x >= 0.8f)
+        {
+            timer += Time.deltaTime / 15f;
+
+            viewHall.transform.localScale = Vector3.Lerp(viewHall.transform.localScale, Vector3.zero, timer);
+            yield return null;
+        }
+
+        viewHall.transform.localScale = Vector3.zero;
+        SceneManager.LoadScene(sceneIndex);
+    }
 
     public void OnClickOptionClosebut()
     {

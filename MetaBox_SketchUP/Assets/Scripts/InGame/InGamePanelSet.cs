@@ -1,6 +1,9 @@
+using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 
 public class InGamePanelSet : MonoBehaviour
@@ -33,121 +36,203 @@ public class InGamePanelSet : MonoBehaviour
     [SerializeField] GameObject losePanel = null;
     [SerializeField] GameObject winPanel = null;
     [SerializeField] GameObject optionPanel = null;
+    [SerializeField] GameObject stageClearPanel = null;
 
     [Header("[OneBrush Paly Obj]")]
     [SerializeField] GameObject onBushObj = null;
-    [SerializeField] GameObject clearImgPanel = null;
+    [SerializeField] GameObject QOne = null;
+    [SerializeField] GameObject QTwo = null;
+    [SerializeField] GameObject QThree = null;
 
-    [Header("[ClearImg Set]")]
-    [SerializeField] GameObject ImgOne = null;
-    [SerializeField] GameObject ImgTwo = null;
-    [SerializeField] GameObject ImgThree = null;
+    [Header("[Line Color and Size Change]")]
+    [SerializeField] private Canvas lineChangedPanel = null;
+    [SerializeField] GameObject colorPanelObj = null;
+    [SerializeField] GameObject LineSizeObj = null;
 
     [Header("[ReStart]")]
     [SerializeField] Button loseReStartBut = null;
     [SerializeField] Button winReStartBut = null;
+
+    [Header("[Go SelectPanel]")]
+    [SerializeField] Button goSelectPanelBut = null;
+
+    [Header("[InGame Button]")]
     [SerializeField] Button optionBut = null;
+    [SerializeField] Button CloseSelectPanelBut = null;
 
     [Header("[Option Button Setting]")]
     [SerializeField] Button quitBut = null;
     [SerializeField] Button resumeBut = null;
 
+    [Header("[Wait Time Img]")]
+    [SerializeField] GameObject waitTimeObjs = null;
+
     [Header("[Timer Text]")]
     [SerializeField] TextMeshProUGUI playTimeText = null;
-    [SerializeField] TextMeshProUGUI startWaitTime = null;
+    [SerializeField] GameObject clockPrefab = null;
 
+    [Header("[Character Move]")]
+    [SerializeField] GameObject characterMove = null;
+
+    [Header("[Game Clear Effect ]")]
+    [SerializeField] GameObject gameClearEffect = null;
+
+    [Header("[Play Time Setting]")]
+    [SerializeField] private int minute;
+    [SerializeField] private float seconds;
+    public float Secondes { get { return seconds; } set { seconds = value; } }
+    public int Minute { get { return minute; } set { minute = value; } }
     #endregion
 
-    // === wait 3 seconds ===
-    //float waitTime = 3f;
-    float waitTime = 1f;
-    bool wait = false;
+    GameObject instClock = null;
+    GameObject instEffect = null;
 
-    // === play time total 10 seconds === 
-    float playTime = 600;
-    float curTime = 0;
-    // === test ===
-    //float playTime = 6;
+    public LineColorChanged ColorPanel;
+    public LineSizeChange LineSize;
+
+    WaitForSeconds waitHalf = null;
+    WaitForSeconds waitOnSceonds = null;
+
+    // === ClearCount ===
+    private int clearCount = 3;
+    public int ClearCount { get { return clearCount; } set { clearCount = value; } }
+    public int ObjIndexs;
 
     bool isOptionPanelOpen = false;
-    bool isTimeStop = false;
+
 
     void Awake()
     {
+        waitHalf = new WaitForSeconds(0.5f);
+        waitOnSceonds = new WaitForSeconds(1f);
+
         Time.timeScale = 1;
-        startWaitTime.text = $"Start";
+        colorPanelObj.TryGetComponent<LineColorChanged>(out ColorPanel);
+        LineSizeObj.TryGetComponent<LineSizeChange>(out LineSize);
+
         // === changed (true) ===
-        startWaitTime.gameObject.SetActive(true);
+        waitTimeObjs.gameObject.SetActive(true);
+        StartCoroutine(CountDowns());
         playTimeText.gameObject.SetActive(false);
 
         // === changed (false) ===
         FirstSet(false);
+        optionBut.gameObject.SetActive(false);
         OneBrushPlayPanelSet(false);
-        ClearPanelSet(false);
 
-        // === button event Set ===
-        #region
-        loseReStartBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.FailSFXPlay(); });
-        winReStartBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.ClearSFXPlay(); });
-        optionBut.onClick.AddListener(delegate { OnClickOptionBut(); SoundManager.Inst.ButtonSFXPlay(); });
-        resumeBut.onClick.AddListener(delegate { OnClickOptionBut(); SoundManager.Inst.ButtonSFXPlay(); });
-        quitBut.onClick.AddListener(delegate { OnClickGoStartPanel(); SoundManager.Inst.ButtonSFXPlay(); });
+        #region Button Event Setting
+        loseReStartBut.onClick.AddListener(delegate
+        {
+            OnClickGoStartPanel();
+            SoundManager.Inst.GameLoseSFXPlay(); SoundManager.Inst.ButtonEffect(loseReStartBut.transform.position);
+        });
+
+        winReStartBut.onClick.AddListener(delegate
+        {
+            OnClickGoStartPanel();
+            SoundManager.Inst.GameClearSFXPlay(); SoundManager.Inst.ButtonEffect(winReStartBut.transform.position);
+        });
+
+        quitBut.onClick.AddListener(delegate
+        {
+            OnClickGoStartPanel();
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(quitBut.transform.position);
+        });
+
+        optionBut.onClick.AddListener(delegate
+        {
+            OnClickOptionBut();
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(optionBut.transform.position);
+        });
+
+        resumeBut.onClick.AddListener(delegate
+        {
+            OnClickOptionBut();
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(resumeBut.transform.position);
+        });
+
+        CloseSelectPanelBut.onClick.AddListener(delegate
+        {
+            OnClickInGameGoSelectPanel();
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(CloseSelectPanelBut.transform.position);
+        });
+
+        goSelectPanelBut.onClick.AddListener(delegate { OnClickInGameGoSelectPanel();
+            SoundManager.Inst.ButtonSFXPlay();
+            SoundManager.Inst.ButtonEffect(goSelectPanelBut.transform.position);
+        });
         #endregion
     }
 
     void Update()
     {
         #region Timer Setting
-        if (startWaitTime.gameObject.active == true)
-        {
-            SetWaitTime();
-        }
-        else if (playTimeText.gameObject.active == true)
+        if (playTimeText.gameObject.active == true)
         {
             PlayTimeDown();
         }
         #endregion
     }
 
-    void SetWaitTime()
+    IEnumerator CountDowns()
     {
-        if (waitTime > 0)
-        {
-            waitTime -= 1 * Time.deltaTime;
-            startWaitTime.text = $"Time : {Mathf.Round(waitTime).ToString()}";
+        CountDown countDown = null;
+        waitTimeObjs.TryGetComponent<CountDown>(out countDown);
 
-            if (Mathf.Round(waitTime) == 0)
-            {
-                startWaitTime.text = "Go".ToString();
-            }
-        }
-        else if (waitTime < 0)
+        int waitTime = 3;
+        for (int i = waitTime; i > 0; i--)
         {
-            startWaitTime.gameObject.SetActive(false);
-            FirstSet(true);
-            InGameSet(false);
-            playTimeText.gameObject.SetActive(true);
-            return;
+            countDown.ShowWaitTime(waitTime);
+            waitTime--;
+            yield return waitOnSceonds;
         }
+
+        waitTimeObjs.gameObject.SetActive(false);
+        yield return waitHalf;
+        FirstSet(true);
+        optionBut.gameObject.SetActive(true);
+        playTimeText.gameObject.SetActive(true);
     }
 
     void PlayTimeDown()
     {
-        playTime -= 1 * Time.deltaTime;
-        curTime = playTime;
+        if (clearCount != 0) seconds -= 1 * Time.deltaTime;
 
-        playTimeText.text = $" Time : {Mathf.Round(playTime).ToString()}";
+        playTimeText.text = string.Format("{0:D2} : {1:D2}", Minute, (int)Secondes);
 
-        if (Mathf.Round(playTime) <= 0)
+        if ((int)Secondes < 0)
         {
-            playTime = 0;
-            playTimeText.text = $" Time : {Mathf.Round(playTime).ToString()}";
+            Secondes = 59;
+            Minute -= 1;
+        }
+
+        if (Minute == 0 && (int)Secondes == 30)
+        {
+            if (instClock == null)
+                instClock = ObjectPoolCP.PoolCp.Inst.BringObjectCp(clockPrefab);
+        }
+
+        if (Minute == 0 && (int)Secondes == 29)
+            ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(instClock);
+
+        else if (Minute == 0 && (int)Secondes <= 0)
+        {
+            playTimeText.text = $"00 : 00";
             playTimeText.gameObject.SetActive(false);
+            OneBrushPlayPanelSet(false);
+            LineColorAndSizeChange(false);
             LosePanelSet(true);
         }
-        else if (playTimeText.gameObject.active == false)
+
+        if (clearCount == 0)
         {
-            playTime = 0;
+            LineColorAndSizeChange(false);
+            OneBrushPlayPanelSet(false);
+            //StageClearPanelSet(false);
+            WinPanelSet(true);
+
+            if (instEffect == null)
+                InstGameClearEffect();
         }
     }
 
@@ -155,15 +240,33 @@ public class InGamePanelSet : MonoBehaviour
     {
         inGameCanvas.gameObject.SetActive(true);
         SelectPanelSet(selectPanel);
+        CharacterMoveSet(selectPanel);
+        LineColorAndSizeChange(false);
         InGameSet(false);
         InGameOptionSet(false);
         WinPanelSet(false);
         LosePanelSet(false);
     }
 
+    public void QOneSet(bool active) => QOne.gameObject.SetActive(active);
+
+    public GameObject QOneObj() => QOne.gameObject;
+
+    public void QTwoSet(bool active) => QTwo.gameObject.SetActive(active);
+
+    public GameObject QTwoObj() => QTwo.gameObject;
+
+    public void QThreeSet(bool active) => QThree.gameObject.SetActive(active);
+
+    public GameObject QThreeObj() => QThree.gameObject;
+
+    void InstGameClearEffect() => instEffect = ObjectPoolCP.PoolCp.Inst.BringObjectCp(gameClearEffect);
+
     public void SelectPanelSet(bool active) => selectPanel.gameObject.SetActive(active);
 
     public void InGameSet(bool active) => closePlayOneBrush.gameObject.SetActive(active);
+
+    public void CharacterMoveSet(bool active) => characterMove.gameObject.SetActive(active);
 
     public void InGameOptionSet(bool active) => optionPanel.gameObject.SetActive(active);
 
@@ -171,18 +274,19 @@ public class InGamePanelSet : MonoBehaviour
 
     public void LosePanelSet(bool active) => losePanel.gameObject.SetActive(active);
 
-    public void ClearPanelSet(bool active) => clearImgPanel.gameObject.SetActive(active);
-
     public void WinPanelSet(bool active) => winPanel.gameObject.SetActive(active);
 
-    public void ClearImgSet(bool oneSet, bool twoSet, bool threeSet)
-    {
-        ImgOne.gameObject.SetActive(oneSet);
-        ImgTwo.gameObject.SetActive(twoSet);
-        ImgThree.gameObject.SetActive(threeSet);
-    }
+    public void StageClearPanelSet(bool active) => stageClearPanel.gameObject.SetActive(active);
 
-    void OnClickGoStartPanel() => SceneManager.LoadScene(SceneName.StartScene);
+    public GameObject stageClearPanelObj() => stageClearPanel.gameObject;
+
+    public void LineColorAndSizeChange(bool active) => lineChangedPanel.gameObject.SetActive(active);
+
+    public void OnClickGoStartPanel()
+    {
+        SceneManager.LoadScene(SceneName.StartScene);
+        SoundManager.Inst.TitleBGMPlay(); // 타이틀 BGM 바꿔주기
+    }
 
     public void OnClickOptionBut()
     {
@@ -190,13 +294,17 @@ public class InGamePanelSet : MonoBehaviour
         {
             InGameOptionSet(true);
             OneBrushPlayPanelSet(false);
+            //SelectPanelSet(false);
             InGameSet(false);
+            LineColorAndSizeChange(false);
             Time.timeScale = 0;
             isOptionPanelOpen = true;
         }
         else if (isOptionPanelOpen == true)
         {
             InGameOptionSet(false);
+            LineColorAndSizeChange(true);
+
             if (selectPanel.active == true)
             {
                 OneBrushPlayPanelSet(false);
@@ -210,5 +318,43 @@ public class InGamePanelSet : MonoBehaviour
             Time.timeScale = 1;
             isOptionPanelOpen = false;
         }
+    }
+
+    void OnClickInGameGoSelectPanel()
+    {
+        SelectPanelSet selectPanelSet = null;
+        selectPanel.TryGetComponent<SelectPanelSet>(out selectPanelSet);
+        DrawLineCurve drawLine = null;
+        QOne.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
+        ObjIndexs = drawLine.ObjIndex;
+        //Debug.Log("ObjIndexs : " + ObjIndexs);
+        QTwo.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
+        int ObjTwoIndex = drawLine.ObjIndex;
+        //Debug.Log("ObjTwoIndex : " + ObjTwoIndex);
+
+        QThree.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
+        int ObjThreeIndex = drawLine.ObjIndex;
+        //Debug.Log("ObjThreeIndex : " + ObjThreeIndex);
+
+        SelectPanelSet(true);
+
+        if (ObjIndexs == 5)
+        {
+            selectPanelSet.oneBrushBut.transform.gameObject.SetActive(false);
+        }
+        if (ObjTwoIndex == 5)
+        {
+            selectPanelSet.twoBrushBut.transform.gameObject.SetActive(false);
+        }
+        if (ObjThreeIndex == 5)
+        {
+            selectPanelSet.threeBrushBut.transform.gameObject.SetActive(false);
+        }
+
+        selectPanelSet.character.transform.localPosition = new Vector2(915f, 400f);
+        OneBrushPlayPanelSet(false);
+        StageClearPanelSet(false);
+        InGameSet(false);
+        LineColorAndSizeChange(false);
     }
 }

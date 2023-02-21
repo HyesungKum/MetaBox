@@ -9,7 +9,8 @@ public class TutorialPanelSet : MonoBehaviour
 
     void Awake()
     {
-        closeBut.onClick.AddListener(delegate { OnClickCloseBut(); SoundManager.Inst.ButtonSFXPlay(); });
+        closeBut.onClick.AddListener(delegate { OnClickCloseBut(); 
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(closeBut.transform.position);});
     }
 
     public void OnClickCloseBut()

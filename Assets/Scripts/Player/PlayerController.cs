@@ -1,4 +1,7 @@
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using static PlayerController;
 
 
@@ -7,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Camera mainCam;
     private NavMesh2Agent agent;
     public Animator animator;
+    [SerializeField] GameObject playerModel;
 
     //플레이어 이동 명령 이벤트
     public delegate void MoveOrder();
@@ -25,27 +29,63 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        LookRight = this.transform.localScale;
+        //init
+        LookRight = playerModel.transform.localScale;
         LookLeft = new Vector3(LookRight.x * -1, LookRight.y, LookRight.z);
         this.TryGetComponent(out agent);
+
+        //delegate chain
+        TouchEventGenerator.Inst.touchBegan[0] += PlayerMove;
+        agent.moveEvent += PlayerMoveAct;
+        agent.stopEvent += PlayerStopAct;
     }
 
-    void Update()
+    void OnDisable()
     {
-        if (Input.GetMouseButtonDown(0))
+        //delegate unchain
+        if (TouchEventGenerator.Inst != null)
         {
-            Vector3 worldPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
-            agent.SetDestination(worldPos);
-            animator.SetBool("IsMove", agent.IsMove);
-            CallMoveOrder();
+            TouchEventGenerator.Inst.touchBegan[0] -= PlayerMove;
+            agent.moveEvent -= PlayerMoveAct;
+            agent.stopEvent -= PlayerStopAct;
         }
+    }
 
-        if (!agent.IsLookRight) this.transform.localScale = LookRight;
-        else this.transform.localScale = LookLeft;
 
-        if (!agent.IsMove)
+    //=================================Player Movement Animator & Sfx===========================================
+    void PlayerMoveAct() => StartCoroutine(nameof(MoveRoutine));
+    void PlayerStopAct() => StartCoroutine(nameof(StopRoutine));
+
+    IEnumerator MoveRoutine()
+    {
+        animator.SetBool("IsMove", agent.IsMove);
+        SoundManager.Inst.LoopSfx("WalkingSfx");
+
+        while (true)
         {
-            animator.SetBool("IsMove", agent.IsMove);
+            if (!agent.IsLookRight) playerModel.transform.localScale = LookRight;
+            else playerModel.transform.localScale = LookLeft;
+
+            yield return null;
         }
+    }
+    IEnumerator StopRoutine()
+    {
+        StopCoroutine(nameof(MoveRoutine));
+
+        animator.SetBool("IsMove", agent.IsMove);
+        SoundManager.Inst.StopLoopSfx();
+
+        yield return null;  
+    }
+
+    //==========================================player position move=============================================
+    private void PlayerMove(int id, Vector3 pos)
+    {
+        if (EventSystem.current.IsPointerOverGameObject(id)) return;
+
+        Vector3 worldPos = mainCam.ScreenToWorldPoint(pos);
+        agent.SetDestination(worldPos);
+        CallMoveOrder();
     }
 }

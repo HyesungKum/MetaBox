@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Audio;
 using UnityEngine.UI;
 
 public class StartOption : MonoBehaviour
@@ -19,13 +16,7 @@ public class StartOption : MonoBehaviour
         startButSfxSlider.onValueChanged.AddListener(OnChangedSFXControl);
     }
 
-    void OnChangedBGMControl(float sound)
-    {
-        SoundManager.Inst.BGMControl(startBgmSlider);
-    }
+    void OnChangedBGMControl(float sound) => SoundManager.Inst.BGMControl(startBgmSlider);
 
-    void OnChangedSFXControl(float sound)
-    {
-        SoundManager.Inst.SFXControl(startButSfxSlider);
-    }
+    void OnChangedSFXControl(float sound) => SoundManager.Inst.SFXControl(startButSfxSlider);
 }

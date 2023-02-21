@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class QuitPanelSet : MonoBehaviour
 {
     [Header("[Quit Panel Button]")]
@@ -12,8 +11,13 @@ public class QuitPanelSet : MonoBehaviour
 
     void Awake()
     {
-        quitPanelOkBut.onClick.AddListener(delegate { AppQuit(); SoundManager.Inst.ButtonSFXPlay(); });
-        quitPanelQuitBut.onClick.AddListener(delegate { OnClickQuitBut();  SoundManager.Inst.ButtonSFXPlay(); });
+        quitPanelOkBut.onClick.AddListener(delegate { AppQuit(); 
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(quitPanelOkBut.transform.position);
+        });
+
+        quitPanelQuitBut.onClick.AddListener(delegate { OnClickQuitBut();  
+            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(quitPanelQuitBut.transform.position);
+        });
     }
 
     void OnClickQuitBut()
@@ -22,8 +26,5 @@ public class QuitPanelSet : MonoBehaviour
         this.gameObject.SetActive(false);
     }
 
-    private void AppQuit()
-    {
-        Application.Quit();
-    }
+    private void AppQuit() => Application.Quit();
 }
