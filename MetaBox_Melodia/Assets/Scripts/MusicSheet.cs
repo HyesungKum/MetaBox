@@ -3,32 +3,28 @@ using UnityEngine;
 using ObjectPoolCP;
 
 
-public class MusicSheet : ObjectPool<QNote>
+public class MusicSheet : MonoBehaviour
 {
+    [SerializeField] GameObject qNotePrefab;
+    [SerializeField] GameObject nNotePrefab;
+
     //  Quiz Note List 
     [SerializeField] List<GameObject> qNoteList = new();
 
     // Normal Note List 
-    [SerializeField] List<GameObject> noteList = new();
+    [SerializeField] List<GameObject> nNoteList = new();
 
     // Sound Line List 
     [SerializeField] List<Transform> mySoundLines = new();
 
-    [SerializeField] GameObject qNotePrefab;
-    [SerializeField] GameObject nNotePrefab;
-
     Dictionary<int, List<int>> myStageData = new();
-    public Dictionary<int, List<int>> MyStageData { get { return myStageData; } set { myStageData = value; } }
 
     private void Awake()
     {
         // observe game status 
         GameManager.Inst.myDelegateGameStatus += curGameStatus;
     }
-    public override QNote CreatePool()
-    {
-        throw new System.NotImplementedException();
-    }
+    
 
     void curGameStatus(GameStatus curStatus)
     {
@@ -37,14 +33,11 @@ public class MusicSheet : ObjectPool<QNote>
             // clear lists 
             ReadyGame();
 
-            // ask game manager for current stage number
-            int curStage = GameManager.Inst.CurStage;
-
             // get stage data from game manager 
-            MyStageData = GameManager.Inst.MyStageData;
+            myStageData = GameManager.Inst.MyStageData;
 
             // generate notes 
-            buildStage(curStage);
+            buildStage();
         }
     }
 
@@ -52,24 +45,21 @@ public class MusicSheet : ObjectPool<QNote>
     public void ReadyGame()
     {
 
-        if (noteList.Count > 0)
+        if (nNoteList.Count > 0)
         {
-            for (int i = 0; i < noteList.Count; ++i)
+            for (int i = 0; i < nNoteList.Count; ++i)
             {
-                PoolCp.Inst.DestoryObjectCp(noteList[i]);
+                PoolCp.Inst.DestoryObjectCp(nNoteList[i]);
             }
         }
 
-        noteList.Clear();
+        nNoteList.Clear();
 
         if (qNoteList.Count > 0)
         {
             for (int i = 0; i < qNoteList.Count; ++i)
             {
-                if (qNoteList.Count > 0)
-                {
-                    PoolCp.Inst.DestoryObjectCp(qNoteList[i]);
-                }
+                PoolCp.Inst.DestoryObjectCp(qNoteList[i]);
             }
         }
 
@@ -77,26 +67,27 @@ public class MusicSheet : ObjectPool<QNote>
 
     }
 
-    void buildStage(int stage)
+
+    void buildStage()
     {
-        // total length of music sheet == 26 (-13 ~ 13)
+        // ask game manager for current stage number
+        int stage = GameManager.Inst.CurStage;
 
         // A number of notes of current stage  
         int noteIdx = myStageData[stage].Count;
 
         // note generate from this position
+        // total length of music sheet == 26 (-13 ~ 13)
         float xPos = -13f;
 
         // get average distance between notes 
         float distance = 26f / (noteIdx -1);
-
 
         // how many empty note ? <= should get from data sheet 
         int emptyNote = GameManager.Inst.StageDatas[stage - 1].emptyNote;
 
 
         List<int> emptyNoteIdx = new();
-
 
         // get random index of note to hide to use as quiz note 
         for (int i = 0; i < emptyNote; ++i)
@@ -117,13 +108,10 @@ public class MusicSheet : ObjectPool<QNote>
         for (int idx = 0; idx < noteIdx; ++idx)
         {
             GameObject newNote;
-            GameObject prefab = nNotePrefab;
+            GameObject prefab;
 
-            // if it's qnote index, change prefab 
-            if (emptyNoteIdx.Contains(idx))
-            {
-                prefab = qNotePrefab;
-            }
+            if (emptyNoteIdx.Contains(idx)) prefab = qNotePrefab;
+            else prefab = nNotePrefab;
 
             int note = myStageData[stage][idx] % 100;
 
@@ -136,31 +124,14 @@ public class MusicSheet : ObjectPool<QNote>
             targetQNote.MyPitchNum = myStageData[stage][idx];
             targetQNote.Setting();
 
-            // if code runs in unity editor, ===========================
-#if UNITY_EDITOR
 
-            newNote.transform.SetParent(this.transform);
-#endif
-            // if code runs in unity editor, ===========================
-
-
-
-            if (emptyNoteIdx.Contains(idx))
-            {
-                qNoteList.Add(newNote);
-            }
-
-            else
-            {
-                noteList.Add(newNote);
-            }
-
+            if (emptyNoteIdx.Contains(idx)) qNoteList.Add(newNote);
+            else nNoteList.Add(newNote);
 
             xPos += distance;
         }
 
     }
-
 
 
     // check if playable note is match with Qnote
@@ -170,24 +141,20 @@ public class MusicSheet : ObjectPool<QNote>
         foreach (GameObject note in qNoteList)
         {
             // check position and compare with QNote position 
-            if (Mathf.Abs(note.transform.position.x - target.transform.position.x) < 1f)
+            if (Mathf.Abs(note.transform.position.x - target.transform.position.x) < 1)
             {
                 if (Mathf.Abs(note.transform.position.y - target.transform.position.y) < 0.3f)
                 {
-
                     // move playable note torwards to Qnote
                     target.MoveNote(note.transform.position, 3f);
 
                     // remove Qnote from list
                     qNoteList.Remove(note);
-                    noteList.Add(note);
+                    nNoteList.Add(note);
 
                     note.TryGetComponent<QNote>(out QNote myQNote);
-
-                    SoundManager.Inst.PlayNote(myQNote.MyPitchNum);
                     myQNote.Correct();
-
-                    
+                    SoundManager.Inst.PlayNote(myQNote.MyPitchNum);
 
                     // check how many Qnotes are left
                     if (qNoteList.Count == 0)
@@ -196,7 +163,8 @@ public class MusicSheet : ObjectPool<QNote>
                         GameManager.Inst.UpdateCurProcess(GameStatus.GetAllQNotes);
                     }
 
-                    target.UseNote();
+                    //don't destroy
+                    target.UseNote(false);
 
                     return;
                 }
@@ -210,32 +178,21 @@ public class MusicSheet : ObjectPool<QNote>
 
 
         // is not touched Qnote, destroy it. 
-        target.DestroyNote();
+        target.UseNote(true);
     }
 
 
     void isThisTouchedSoundLine(PlayableNote target)
     {
-        float closestDistance = float.MaxValue;
         Transform closestSoundLine = null;
 
         foreach (Transform line in mySoundLines)
         {
-            float tempDistance = Mathf.Abs(line.transform.position.y - target.transform.position.y);
-
-            if (tempDistance < 0.8f)
-            {
-
-                if (tempDistance < closestDistance)
-                {
-                    closestDistance = tempDistance;     // closest distance 
-                    closestSoundLine = line;            // cloesest line
-                }
-            }
+            if (Mathf.Abs(line.transform.position.y - target.transform.position.y) < 0.8f)
+                closestSoundLine = line;// cloesest line
         }
 
-        if (closestSoundLine == null)
-        { return; }
+        if (closestSoundLine == null) return;
 
         closestSoundLine.TryGetComponent<SoundLine>(out SoundLine targetLine);
 
