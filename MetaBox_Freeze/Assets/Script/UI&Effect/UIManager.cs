@@ -122,7 +122,7 @@ public class UIManager : MonoBehaviour
     public void WaveClear()
     {
         gameClear.gameObject.SetActive(true);
-        gameClear.text = "☆성공☆";
+        gameClear.text = "성공!";
     }
     public void Win()
     {
