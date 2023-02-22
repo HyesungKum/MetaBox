@@ -1,6 +1,5 @@
 using ObjectPoolCP;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
@@ -41,12 +40,11 @@ public class SoundManager : MonoBehaviour
     }
     #endregion
 
-    [Header("Note Sound ScriptableObject")]
+    [Header("Sound ScriptableObject")]
     [SerializeField] private MySoundIndex myNoteSound;
     [SerializeField] private MySoundIndex myMusicSound;
     [SerializeField] private MySoundIndex myBGMSound;
     [SerializeField] private MySoundIndex mySFXSound;
-
 
     [Header("Audio Sources")]
     [SerializeField] AudioSource mySFX;
@@ -55,20 +53,17 @@ public class SoundManager : MonoBehaviour
     [Header("Audio Volume Control")]
     [SerializeField] AudioMixer myAudioMixer;
 
-    [Header("Button")]
+    [Header("Button Eff")]
     [SerializeField] GameObject touchEff;
-
-    public bool MasterMute { get; private set; } = false;
-    public bool BGMMute { get; private set; } = false;
-    public bool SFXMute { get; private set; } = false;
+    WaitForSeconds playEff = new WaitForSeconds(2f);
 
     bool isStopped = false;
     bool isGameStart = false;
     bool isCoroutineRunning = false;
+    int stageNum;
 
     Coroutine runningCoroutine = null;
     WaitUntil musicPlaying = null;
-    List<int> clipList = new();
 
 
     void Awake()
@@ -86,12 +81,8 @@ public class SoundManager : MonoBehaviour
 
 
         Option.myDelegateAudioControl = AudioVolumeControl;
-        AddButtonListener();
-        BGMPlay(1);
         musicPlaying = new WaitUntil(() => myBGM.isPlaying.Equals(false));
     }
-
-
 
 
     #region Button
@@ -118,14 +109,19 @@ public class SoundManager : MonoBehaviour
 
     void OnClickButton(Vector3 pos)
     {
-        PoolCp.Inst.BringObjectCp(touchEff).transform.position = pos;
+        StartCoroutine(TouchEff(pos));
+    }
+
+    IEnumerator TouchEff(Vector3 movepoint)
+    {
+        GameObject effect = PoolCp.Inst.BringObjectCp(touchEff);
+        effect.transform.position = movepoint;
+
+        yield return playEff;
+
+        if(effect != null) PoolCp.Inst.DestoryObjectCp(effect);
     }
     #endregion
-
-    public void LoadMusicData(SceneMode targetMusic)
-    {
-        myMusicSound = Resources.Load<MySoundIndex>($"ScriptableObject/{targetMusic}");
-    }
 
     public float GetVolume(string target)
     {
@@ -139,22 +135,15 @@ public class SoundManager : MonoBehaviour
         else myAudioMixer.SetFloat(target, volume);
     }
 
-    void AudioMute(string target, float value)
-    {
-        myAudioMixer.GetFloat(target, out float volume);
-        volume = volume == -80 ? value : -80; 
-        if (target.Equals("Master")) MasterMute = volume == -80 ? true : false;
-        else if (target.Equals("BGM")) BGMMute = volume == -80 ? true : false;
-        else SFXMute = volume == -80 ? true : false;
 
-        myAudioMixer.SetFloat(target, volume);
+    public void LoadMusicData(SceneMode targetMusic)
+    {
+        myMusicSound = Resources.Load<MySoundIndex>($"ScriptableObject/{targetMusic}");
+        stageNum = myMusicSound.MyClipList.myDictionary.Keys.Count;
     }
 
-
-
-
     // play note sound 
-    public void PlayNote(int targetPitch, float pitch)
+    public void PlayNote(int targetPitch)
     {
         mySFX.PlayOneShot(myNoteSound.MyClipList.myDictionary[targetPitch]);
     }
@@ -183,7 +172,7 @@ public class SoundManager : MonoBehaviour
 
         isCoroutineRunning = false;
         GameManager.Inst.UpdateCurProcess(GameStatus.MusicStop);
-        if(myMusicSound.MyClipList.myDictionary.Keys.Count.Equals(GameManager.Inst.CurStage)) yield break;
+        if(GameManager.Inst.CurStage.Equals(stageNum)) yield break;
 
         BGMPlay(2);
     }
@@ -209,9 +198,7 @@ public class SoundManager : MonoBehaviour
 
     public void StopMusic()
     {
-        if (isCoroutineRunning) StopCoroutine(nameof(playMyMusic));
         if (myBGM.isPlaying) myBGM.Stop();
     }
-
 
 }

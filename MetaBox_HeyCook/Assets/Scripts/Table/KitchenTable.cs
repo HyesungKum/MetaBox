@@ -30,8 +30,6 @@ public class KitchenTable : MonoBehaviour
     [SerializeField] float ingredMoveSpeed;
     [SerializeField] Side side;
 
-    private WaitForSeconds waitServing;
-
     //=======================================Slider==========================================
     [Header("Slider Obj")]
     [SerializeField] GameObject cookSliderObj = null;
@@ -67,8 +65,6 @@ public class KitchenTable : MonoBehaviour
 
         //init inner variables 
         Initailizing();
-
-        waitServing = new WaitForSeconds(0.5f);
     }
 
     private void OnDisable()
@@ -334,8 +330,6 @@ public class KitchenTable : MonoBehaviour
     /// <returns> null </returns>
     IEnumerator FoodSubmission(GameObject target)
     {
-        yield return waitServing;
-
         while (target.activeSelf)
         {
             if (target == null) yield break;
