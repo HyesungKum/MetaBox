@@ -26,6 +26,10 @@ public class UiManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI myTimer;
     [SerializeField] TextMeshProUGUI playTime;
 
+    [Header("NextStage")]
+    [SerializeField] Slider stageNum = null;
+    [SerializeField] TextMeshProUGUI stageCount = null;
+
     [Header("bird Button Control")]
     [SerializeField] AnimationCurve BirdPosCurve; // = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(0.5f, 0.2f), new Keyframe(0.7f, 0f) });
     Transform birdTransform;
@@ -83,6 +87,8 @@ public class UiManager : MonoBehaviour
                         gameClearEff[i].Play();
                     }
                     SoundManager.Inst.SFXPlay(SFX.StageClear);
+                    stageNum.value = (float)(GameManager.Inst.CurStage + 1) / (GameManager.Inst.StageDatas.Count);
+                    stageCount.text = $"{GameManager.Inst.CurStage + 1}/{GameManager.Inst.StageDatas.Count}";
                 }
                 break;
 

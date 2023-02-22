@@ -6,7 +6,7 @@ public class ThiefSpawner : ObjectPool<Thief>
     [SerializeField] ScriptableObj scriptableNPC = null;
 
     List<ThiefData> ThiefDatas = null;
-
+    
     public override Thief CreatePool()
     {
         return scriptableNPC.NPC[0];

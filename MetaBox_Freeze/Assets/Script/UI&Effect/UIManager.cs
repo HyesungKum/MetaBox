@@ -1,7 +1,7 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class UIManager : MonoBehaviour
 {
@@ -22,21 +22,24 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    [Header("Panel Control")]
     [SerializeField] GameObject optionPanel = null;
-    [SerializeField] GameObject clearPanel = null;
+    [SerializeField] GameObject gameClearPanel = null;
+    [SerializeField] GameObject gameFailPanel = null;
 
     [SerializeField] Button option = null;
-    [SerializeField] TextMeshProUGUI catchNumber = null;
-    [SerializeField] TextMeshProUGUI gameClear = null;
     [SerializeField] CountDown countDown = null;
     [SerializeField] Image gameStart = null;
 
-    
+    [Header("StageClear Control")]
+    [SerializeField] GameObject stageClear = null;
+    [SerializeField] Slider stageNum = null;
+    [SerializeField] TextMeshProUGUI stageCount = null;
+
+    [SerializeField] Fade fade = null;
+
     WaitForSeconds waitHalf = null;
     WaitForSeconds wait1 = null;
-
-    int wantedCount;
-    int countdown;
 
     void Awake()
     {
@@ -44,54 +47,21 @@ public class UIManager : MonoBehaviour
         waitHalf = new WaitForSeconds(0.5f);
         wait1 = new WaitForSeconds(1f);
 
-        clearPanel.SetActive(false);
-        catchNumber.gameObject.SetActive(false);
-        gameClear.gameObject.SetActive(false);
+        optionPanel.SetActive(false);
+        gameClearPanel.SetActive(false);
+        gameFailPanel.SetActive(false);
+
+
         countDown.gameObject.SetActive(false);
         gameStart.gameObject.SetActive(false);
+        stageClear.SetActive(false);
     }
     
     public void DataSetting()
     {
-        this.wantedCount = GameManager.Instance.StageDatas[GameManager.Instance.CurStage].wantedCount;
-        this.countdown = GameManager.Instance.StageDatas[GameManager.Instance.CurStage].startCountdown;
-        gameClear.gameObject.SetActive(false);
-        catchNumber.gameObject.SetActive(true);
-        catchNumber.text = $"{GameManager.Instance.CatchNumber} / {wantedCount}";
+        stageClear.SetActive(false);
     }
 
-    /* [Obsolete]
-    public void WantedListSetting(List<int> list)
-    {
-        wantedDic.Clear();
-        wantedList.gameObject.SetActive(true);
-        for (int i = 0; i < list.Count; i++)
-        {
-            Wanted inst = Instantiate<Wanted>(wantedListImage, wantedList.content.transform);
-            inst.Init(list[i]);
-            wantedDic.Add(list[i], inst);
-            //범죄자 목록이 많을 경우 위 아래 투터치 드래그로 목록 변경 가능
-        }
-    }
-    public void Catch(int id)
-    {
-        if (wantedDic.TryGetValue(id, out Wanted value)) value.Catch();
-    }
-    public void WaveClear()
-    {
-        for (int i = 0; i < wantedList.content.childCount; i++)
-        {
-            Destroy(wantedList.content.GetChild(i).gameObject);
-        }
-    }
-    */
-
-
-
-    public void Option(bool interact)
-    {
-        option.interactable = interact;
-    }
     public void Countdown()
     {
         StartCoroutine(nameof(RunCountdown));
@@ -101,7 +71,7 @@ public class UIManager : MonoBehaviour
     {
         countDown.gameObject.SetActive(true);
 
-        for (int i = countdown; i > 0; i--)
+        for (int i = 3; i > 0; i--)
         {
             countDown.Show(i);
             yield return wait1;
@@ -114,33 +84,39 @@ public class UIManager : MonoBehaviour
         GameManager.Instance.hideEff?.Invoke();
     }
 
-    public void Catch()
-    {
-        catchNumber.text = $"{GameManager.Instance.CatchNumber} / {wantedCount}";
-    }
-
     public void WaveClear()
     {
-        gameClear.gameObject.SetActive(true);
-        gameClear.text = "성공!";
+        stageClear.SetActive(true);
+        stageNum.value = (float)(GameManager.Instance.CurStage + 2) / (GameManager.Instance.StageDatas.Count);
+        stageCount.text = $"{GameManager.Instance.CurStage + 2}/{GameManager.Instance.StageDatas.Count}";
+        SoundManager.Instance.PlaySFX(SFX.WaveClear);
     }
     public void Win()
     {
-        clearPanel.SetActive(true);
+        gameClearPanel.SetActive(true);
         SoundManager.Instance.PlaySFX(SFX.GameClear);
     }
 
     public void Lose()
     {
-        gameClear.gameObject.SetActive(true);
-        gameClear.text = "아쉽네요 다시 도전해보세요";
+        gameFailPanel.SetActive(true);
+        SoundManager.Instance.PlaySFX(SFX.Fail);
     }
 
     void OnClick_Option()
     {
         Time.timeScale = 0f;
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
-        gameClear.gameObject.SetActive(false);
         optionPanel.SetActive(true);
+    }
+
+    public void OnClick_Quit() //move to start scene
+    {
+        GameManager.Instance.IsGaming = false;
+
+        Time.timeScale = 1f;
+        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+        
+        fade.FadeOut(0);
     }
 }

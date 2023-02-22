@@ -46,7 +46,6 @@ public class Loading : MonoBehaviour
         loadingBar.value = 1;
         loadingprogress.text = "100%";
         loadingBar.gameObject.SetActive(false);
-        loadingprogress.gameObject.SetActive(false);
 
         float startTime = 0;
         while (FadeOutCurve.keys[FadeOutCurve.keys.Length - 1].time >= startTime)

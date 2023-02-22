@@ -38,7 +38,9 @@ public class GameManager : MonoBehaviour
     public CallBackFunction removeThief = null;
     public CallBackFunction hideEff = null;
 
-    
+    [SerializeField] GameObject theifImgPref = null;
+    List<GameObject> wantedThiefs = new List<GameObject>();
+
     [SerializeField] GameObject postPrefab = null;
     List<GameObject> wantedPostList = new List<GameObject>();
 
@@ -48,7 +50,7 @@ public class GameManager : MonoBehaviour
 
     public GameData FreezeData { get; private set; }
     public List<StageData> StageDatas { get; private set; }
-    public bool IsGaming { get; private set; } = false;
+    public bool IsGaming { get; set; } = false;
     public bool IsPreparing { get; private set; } = false; //wave Ready
     public int CurStage { get; private set; } = -1;
     public int PlayTime { get; private set; } = 0;
@@ -98,7 +100,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator WaveReady()
     {
-        UIManager.Instance.Option(false);
+        if(CurStage.Equals(-1)) yield return wait1;
         yield return wait1;
         WaveSetting();
         playTimerEvent?.Invoke();
@@ -106,7 +108,6 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.Countdown();
         yield return waitWaveStart;
         WaveStart();
-        UIManager.Instance.Option(true);
     }
 
     public void WaveSetting()
@@ -119,6 +120,14 @@ public class GameManager : MonoBehaviour
         hideEff = null;
         spawnThief();
         UIManager.Instance.DataSetting();
+
+        float xPos = -7f;
+        for (int i = 0; i < StageDatas[CurStage].wantedCount; i++)
+        {
+            wantedThiefs.Add(PoolCp.Inst.BringObjectCp(theifImgPref));
+            wantedThiefs[i].transform.position = new Vector2(xPos, 3.7f);
+            xPos += 0.7f;
+        }
     }
 
     public void WaveStart()
@@ -137,7 +146,6 @@ public class GameManager : MonoBehaviour
         if (CurStage == StageDatas.Count-1) GameOver(true);
         else
         {
-            SoundManager.Instance.PlaySFX(SFX.WaveClear);
             for(int i = 0; i < wantedPostList.Count; i++)
             {
                 PoolCp.Inst.DestoryObjectCp(wantedPostList[i]);
@@ -218,7 +226,8 @@ public class GameManager : MonoBehaviour
     {
         CatchNumber++;
         SoundManager.Instance.PlaySFX(SFX.Catch);
-        UIManager.Instance.Catch();
+        PoolCp.Inst.DestoryObjectCp(wantedThiefs[^1]);
+        wantedThiefs.RemoveAt(wantedThiefs.Count-1);
         if (CatchNumber == StageDatas[CurStage].wantedCount) WaveClear();
     }
 
@@ -241,7 +250,6 @@ public class GameManager : MonoBehaviour
                 {
                     IsGaming = false;
                     GameOver(false);
-                    SoundManager.Instance.PlaySFX(SFX.Fail);
                 }
             }
             yield return wait1;
