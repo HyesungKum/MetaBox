@@ -83,6 +83,7 @@ public class InGamePanelSet : MonoBehaviour
     public int Minute { get { return minute; } set { minute = value; } }
 
     #endregion
+
     [Header("[Others]")]
     [SerializeField] ClearAnimalImgData clearAnimalImgData = null;
 
@@ -155,9 +156,9 @@ public class InGamePanelSet : MonoBehaviour
 
         optionBut.onClick.AddListener(delegate
         {
-            OnClickOptionBut();
-            SoundManager.Inst.ButtonSFXPlay(); 
             SoundManager.Inst.ButtonEffect(optionBut.transform.position);
+            Invoke(nameof(OnClickOptionBut),0.4f);
+            SoundManager.Inst.ButtonSFXPlay(); 
         });
 
         resumeBut.onClick.AddListener(delegate

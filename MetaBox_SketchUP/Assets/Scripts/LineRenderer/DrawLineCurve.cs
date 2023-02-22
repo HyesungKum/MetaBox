@@ -39,20 +39,15 @@ public class DrawLineCurve : MonoBehaviour
     public GameObject endNodeObj = null;
     public GameObject prevObj = null;
     public GameObject nextObj = null;
-    public GameObject checkPopObj = null;
     public GameObject firstObj = null;
 
-    Touch myTouch;
+    private Touch myTouch;
     private Vector3 touchPos;
-    public Vector3 startPos;
-    Vector3 startPosCheck;
-    LineRender linerender = null;
+    private Vector3 startPos;
+    private Vector3 startPosCheck;
 
-    LinePosCDLinkedList circleObj = null;
-
-    int circleObjCount;
-    int nodePosCount;
-    int linePosCount;
+    private LineRender linerender = null;
+    private LinePosCDLinkedList circleObj = null;
 
     Stack<GameObject> lineStack;
     public List<GameObject> lineVisitList;
@@ -75,7 +70,6 @@ public class DrawLineCurve : MonoBehaviour
     void Start()
     {
         checkObj.TryGetComponent<LinePosCDLinkedList>(out circleObj);
-        circleObjCount = circleObj.circlePointArry.Length;
         revertBut.onClick.AddListener(delegate
         {
             OnClickRevertBut();
@@ -140,28 +134,25 @@ public class DrawLineCurve : MonoBehaviour
             linerender.SetPosition(1, startPos); // 라인렌더러 2번째 포지션도 셋팅 해주기
 
             if (endNodeObj == prevObj)
-            {
                 nextObj = null;
-            }
             else if (endNodeObj == nextObj)
-            {
                 prevObj = null;
-            }
         }
     }
 
     void TouchMove(RaycastHit2D hitInfo)
     {
         if (startNodeObj == null) return;
+
         if (hitInfo)
         {
             GameObject hitObjCheck = hitInfo.transform.gameObject; // 다음 포지션 체크
             linerender.SetCurvePosition(touchPos); // 라인렌더러 포지션 고불 고불하게 그리게 해주기
-
+            
             if (hitObjCheck == prevObj)
             {
                 linerender.SetPosition(0, startPos); // 라인렌더러 포지션 셋팅 해주기
-                linerender.SetPosition(1, hitObjCheck.transform.position);
+                linerender.SetPosition(1, prevObj.transform.position);
                 endNodeObj = circleObj.cdNode.prev.prev.data.circlePointObj;
                 // 정상적으로 그어진 것이니 스택에 추가
                 lineStack.Push(currentLine);
@@ -175,7 +166,7 @@ public class DrawLineCurve : MonoBehaviour
                 startNodeObj = circleObj.cdNode.data.circlePointObj;// 첫 클릭 노드 예 :4
                 prevObj = circleObj.cdNode.prev.data.circlePointObj;  // 예: 5
                 nextObj = null;
-                startPos = hitObjCheck.transform.position; // 첫 시작 Pos 정해주기
+                startPos = startNodeObj.transform.position; // 첫 시작 Pos 정해주기
 
                 InstLine(startPos); // 라인 생성
                 linerender.SetPosition(0, startPos); // 라인렌더러 포지션 셋팅 해주기
@@ -184,12 +175,13 @@ public class DrawLineCurve : MonoBehaviour
             if (hitObjCheck == nextObj)
             {
                 linerender.SetPosition(0, startPos); // 라인렌더러 포지션 셋팅 해주기
-                linerender.SetPosition(1, hitObjCheck.transform.position);
+                linerender.SetPosition(1, nextObj.transform.position);
                 endNodeObj = circleObj.cdNode.next.data.circlePointObj;
                 // 정상적으로 그어진 것이니 스택에 추가
                 lineStack.Push(currentLine);
                 lineVisitList.Add(hitObjCheck);
                 //Debug.Log("nextObj)lineStack Count : " + lineStack.Count);
+                
                 // 효과 출력
                 InstPrticle(nextObj.gameObject.transform.position); // 임펙트
                 SoundManager.Inst.ConnectLineSFXPlay(); // 효과음
@@ -199,12 +191,16 @@ public class DrawLineCurve : MonoBehaviour
                 startNodeObj = circleObj.cdNode.data.circlePointObj;// 첫 클릭 노드 예 :4
                 nextObj = circleObj.cdNode.next.data.circlePointObj; // 예: 3
                 prevObj = null;
-                startPos = hitObjCheck.transform.position; // 시작 Pos 정해주기
+                startPos = startNodeObj.transform.position; // 시작 Pos 정해주기
 
                 InstLine(startPos); // 라인 생성
 
                 linerender.SetPosition(0, startPos); // 라인렌더러 포지션 셋팅 해주기
                 linerender.SetPosition(1, startPos); // 라인렌더러 2번째 포지션도 셋팅 해주기
+            }
+            if(linerender.GetPosition(1) != null && linerender.GetPosition(1) != prevObj.transform.position)
+            {
+                Debug.Log("라인 포지션 2");
             }
             if (hitObjCheck == firstObj)
             {
@@ -216,9 +212,19 @@ public class DrawLineCurve : MonoBehaviour
             {
                 // 이웃점은 아니지만 다른 점을 터치했다는 얘기
                 // 다른 점을 터치했으므로 취소처리
+
                 if (startNodeObj != hitObjCheck &&
                     circleObj.cdLinkedList.SearchObj(hitObjCheck) != null)
+                {
+                    //Debug.Log("언제 불리니??");
                     MoveEnd(hitInfo);
+                }
+                if (lineStack.Count > 1 && lineStack.Contains(currentLine) == false)
+                {
+                    //MoveEnd(hitInfo);
+                    //Debug.Log("여기 불려야함");
+                }
+
             }
         }
     }
@@ -226,9 +232,21 @@ public class DrawLineCurve : MonoBehaviour
     void MoveEnd(RaycastHit2D hitInfo)
     {
         if (startNodeObj == null) return;
-        if (lineStack.Count == 0) startNodeObj = null;
+        if (lineStack.Count == 0)
+            startNodeObj = null;
+
+        //Debug.Log("## linepos : " + linerender.GetPositionCount());
+
         if (lineStack.Contains(currentLine) == false)
+        {
             DestroyLine();
+        }
+        
+        if(linerender.GetPositionCount() > 3)
+        {
+            //Debug.Log("포지션이 너무 많아 삭제해");
+            DestroyLine();
+        }
 
         // 그어지고 있는 라인은 취소
         DestroyLine();
@@ -310,11 +328,22 @@ public class DrawLineCurve : MonoBehaviour
         DestroyLine();
         StackCountZeroNull();
 
-        if (lineVisitList.Count == 0) return;
+        if (lineVisitList.Count == 0)
+        {
+            int childCount = lineClonePos.transform.childCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                GameObject destoryLine = lineClonePos.transform.GetChild(i).gameObject;
+                ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(destoryLine);
+            }
+            return;
+        }
+
         GameObject check = lineVisitList[lineVisitList.Count - 1];
         circleObj.cdNode = circleObj.cdLinkedList.SearchObj(check); // 원형 양방향 리스트에서 노드가 있는지 찾기
         startNodeObj = circleObj.cdNode.data.circlePointObj;
         endNodeObj = null;
+
     }
 
     public int ChoicePanelObjIndex()
@@ -332,7 +361,7 @@ public class DrawLineCurve : MonoBehaviour
     {
         if (checkObj.gameObject.active == true)
             return ObjIndex;
-        else if(choiceWordPanel.gameObject.active == true)
+        else if (choiceWordPanel.gameObject.active == true)
         {
             ObjIndex = 9;
             return ObjIndex;
@@ -348,7 +377,6 @@ public class DrawLineCurve : MonoBehaviour
         {
             startNodeObj = null;
             endNodeObj = null;
-            checkPopObj = null;
             prevObj = null;
             nextObj = null;
         }
