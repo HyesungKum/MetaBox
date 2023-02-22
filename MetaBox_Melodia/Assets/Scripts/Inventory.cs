@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using TMPro;
 
 public class Inventory : ObjectPool<PlayableNote>
 {
@@ -61,15 +61,13 @@ public class Inventory : ObjectPool<PlayableNote>
     void generatePlayableNote()
     {
         float xPos = 0f;
- 
         //float distance = 25f / (PlayableNoteCount - 1);
-
 
         for (int i = 0; i < 5; ++i)
         {
             PlayableNote playableNote = Get();
 
-            playableNote.transform.position = new Vector2(xPos, -7.5f);
+            playableNote.transform.position = new Vector2(xPos, -8.2f);
             playableNote.myDelegatePlayableNote = StatusPlayableNote;
             playableNoteList.Add(playableNote);
 
@@ -84,18 +82,17 @@ public class Inventory : ObjectPool<PlayableNote>
     public void StatusPlayableNote(PlayableNote note, bool destory)
     {
         playableNoteList.Remove(note);
-        usedNoteList.Add(note);
 
         if(destory) Release(note);
+        else usedNoteList.Add(note);
 
         noteNumber.text = (PlayableNoteCount + playableNoteList.Count).ToString();
 
         if (playableNoteList.Count <= 0)
         {
             if(PlayableNoteCount >= 5) generatePlayableNote();
-            else GameManager.Inst.UpdateCurProcess(GameStatus.Fail);
+            else if(!GameManager.Inst.CurStatus.Equals(GameStatus.GetAllQNotes)) GameManager.Inst.UpdateCurProcess(GameStatus.Fail);
         }
     }
 
-    
 }

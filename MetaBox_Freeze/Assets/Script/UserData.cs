@@ -59,6 +59,8 @@ public class UserData : MonoBehaviour
         BsonDocument targetData = collection.Find(filter).FirstOrDefault();
 
 
+
+
         if (targetData != null) //±‚∑œ¿Ø
         {
             int prevTime = (int)targetData.GetValue("playtime");
