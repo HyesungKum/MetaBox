@@ -19,7 +19,7 @@ public class Thief : MonoBehaviour
     [SerializeField] List<Animator> npsAnimator = null;
     [SerializeField] ParticleSystem hideEff = null;
 
-    Vector3 policeStation = new Vector3(7.6f, -2.4f, 0f);
+    Vector3 policeStation = new Vector3(7f, -2.2f, 0f);
 
     Police police = null;
     WaitUntil runnigTime = null;

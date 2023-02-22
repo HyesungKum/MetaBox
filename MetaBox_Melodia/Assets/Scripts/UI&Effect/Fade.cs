@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class Fade : MonoBehaviour
 {
     [Header("bird Control")]
-    [SerializeField] GameObject bird = null; //a bird showing the game screen
+    [SerializeField] Transform bird = null; //a bird showing the game screen
     [SerializeField] AnimationCurve FadeInCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(1.8f, 1f)});
     [SerializeField] AnimationCurve FadeOutCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 1f), new Keyframe(1.8f, 0f)});
 
@@ -13,13 +13,13 @@ public class Fade : MonoBehaviour
 
     void Start()
     {
-        bird.transform.localScale = fadeScale;
+        bird.localScale = fadeScale;
         StartCoroutine(nameof(_FadeIn));
     }
 
     public void FadeOut()
     {
-        bird.transform.localScale = fadeScale;
+        bird.localScale = fadeScale;
         StartCoroutine(nameof(_FadeOut));
     }
 
@@ -28,7 +28,7 @@ public class Fade : MonoBehaviour
         float startTime = 0;
         while (FadeInCurve.keys[FadeInCurve.keys.Length - 1].time >= startTime)
         {
-            bird.transform.localScale = fadeScale * FadeInCurve.Evaluate(startTime);
+            bird.localScale = fadeScale * FadeInCurve.Evaluate(startTime);
 
             startTime += Time.deltaTime;
             yield return null;
@@ -40,7 +40,7 @@ public class Fade : MonoBehaviour
         float startTime = 0;
         while (FadeOutCurve.keys[FadeOutCurve.keys.Length - 1].time >= startTime)
         {
-            bird.transform.localScale = fadeScale * FadeOutCurve.Evaluate(startTime);
+            bird.localScale = fadeScale * FadeOutCurve.Evaluate(startTime);
 
             startTime += Time.deltaTime;
             yield return null;

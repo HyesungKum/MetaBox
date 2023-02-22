@@ -14,9 +14,9 @@ public class WantedPost : MonoBehaviour
     [SerializeField] AnimationCurve PostRotCurve;
     [SerializeField] AnimationCurve PostScaleCurve = new AnimationCurve(new Keyframe[] { new Keyframe(0f, 0f), new Keyframe(1.2f, 1f) });
 
-    Vector3 postPos = new Vector3(7.2f, -1f, 0);
+    Vector3 postPos = new Vector3(7f, 3f, 0);
     Vector3 postRot = Vector3.zero;
-    Vector3 postScale = new Vector3(0.6f, 0.5f, 0.5f);
+    Vector3 postScale = new Vector3(0.8f, 0.7f, 0.1f);
 
 
     private void OnEnable()
