@@ -55,7 +55,7 @@ public class SoundManager : MonoBehaviour
 
     [Header("Button Eff")]
     [SerializeField] GameObject touchEff;
-    WaitForSeconds playEff = null;
+    WaitForSeconds playEff = new WaitForSeconds(2f);
 
     bool isStopped = false;
     bool isGameStart = false;
@@ -81,10 +81,7 @@ public class SoundManager : MonoBehaviour
 
 
         Option.myDelegateAudioControl = AudioVolumeControl;
-        playEff = new WaitForSeconds(2f);
         musicPlaying = new WaitUntil(() => myBGM.isPlaying.Equals(false));
-        AddButtonListener();
-        BGMPlay(1);
     }
 
 

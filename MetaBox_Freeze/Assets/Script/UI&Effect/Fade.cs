@@ -49,6 +49,5 @@ public class Fade : MonoBehaviour
             yield return null;
         }
         SceneManager.LoadScene(scene);
-        if (scene.Equals(0)) SoundManager.Instance.MusicStart(0);
     }
 }

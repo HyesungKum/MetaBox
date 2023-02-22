@@ -61,7 +61,6 @@ public class StartUI : MonoBehaviour
     [SerializeField] Button yes;
     [SerializeField] Button no;
 
-    
 
     private void Awake()
     {
@@ -88,6 +87,13 @@ public class StartUI : MonoBehaviour
 
         yes.onClick.AddListener(() => Application.Quit());
         no.onClick.AddListener(() => myExitPanel.SetActive(false));
+
+    }
+
+    private void Start()
+    {
+        SoundManager.Inst.AddButtonListener();
+        SoundManager.Inst.BGMPlay(1);
     }
 
     void SetPanel(Panel setPanel)

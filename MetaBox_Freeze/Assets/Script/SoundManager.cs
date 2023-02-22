@@ -48,13 +48,12 @@ public class SoundManager : MonoBehaviour
 
     [SerializeField] GameObject touchEff = null;
 
-    WaitForSeconds playEff = null;
+    WaitForSeconds playEff = new WaitForSeconds(2f);
 
     private void Awake()
     {
         if (instance != null)
         {
-            MusicStart(0);
             Destroy(gameObject);
             return;
         }
@@ -62,8 +61,6 @@ public class SoundManager : MonoBehaviour
 
         Application.targetFrameRate = 60;
         DontDestroyOnLoad(this.gameObject);
-        playEff = new WaitForSeconds(2f);
-        AddButtonListener();
     }
 
     #region Button
@@ -123,11 +120,6 @@ public class SoundManager : MonoBehaviour
         if (audioBGM.isPlaying) audioBGM.Stop();
         audioBGM.clip = scriptableSound.BGM[musicindex];
         audioBGM.Play();
-    }
-
-    public void StopBGM()
-    {
-        audioBGM.Stop();
     }
 
     public void PlaySFX(SFX mode)

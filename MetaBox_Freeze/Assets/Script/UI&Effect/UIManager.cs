@@ -56,7 +56,7 @@ public class UIManager : MonoBehaviour
         gameStart.gameObject.SetActive(false);
         stageClear.SetActive(false);
     }
-    
+
     public void DataSetting()
     {
         stageClear.SetActive(false);

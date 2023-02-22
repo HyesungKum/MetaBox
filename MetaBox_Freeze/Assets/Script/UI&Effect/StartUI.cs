@@ -58,6 +58,13 @@ public class StartUI : MonoBehaviour
         quit.onClick.AddListener(() => Application.Quit());
         back_Game.onClick.AddListener(() => startPanel.SetActive(true));
         back_Game.onClick.AddListener(() => exitPanel.SetActive(false));
+
+    }
+
+    private void Start()
+    {
+        SoundManager.Instance.AddButtonListener();
+        SoundManager.Instance.MusicStart(0);
     }
 
     void SetPanel(bool panel)
