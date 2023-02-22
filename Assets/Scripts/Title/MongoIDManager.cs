@@ -58,8 +58,8 @@ public class MongoIDManager : MonoBehaviour
     [SerializeField] TMP_InputField inputID = null;
     [SerializeField] TextMeshProUGUI infoText = null;
     [SerializeField] Button saveId = null;
-    [SerializeField] ChangeCharacter changeCharacter = null;
-
+    [SerializeField] ChangeObject changeObject = null;
+    int GetCharIndex => changeObject.index;
     private string id;
     public string ID { get { return id; } set { id = value; } }
 
@@ -75,12 +75,9 @@ public class MongoIDManager : MonoBehaviour
         SketchUpCollection = dataBase.GetCollection<BsonDocument>("SketchUpRanking");
 
         // === Button Event Setting ===
-        saveId.interactable = false; // 버튼 비활성화서 ID 입력 후 활성화 해주기
+        saveId.interactable = false;
         inputID.onValueChanged.AddListener(delegate { CheckInputId(); });
-        saveId.onClick.AddListener(delegate { GetID(); });
-
-        // === setting ===
-        infoText.gameObject.SetActive(false);
+        saveId.onClick.AddListener(delegate { SaveID(); });
     }
 
     void CheckInputId()
@@ -94,7 +91,7 @@ public class MongoIDManager : MonoBehaviour
             saveId.interactable = true;
         }
     }
-    string GetID()
+    void SaveID()
     {
         ID = inputID.text;
 
@@ -118,15 +115,13 @@ public class MongoIDManager : MonoBehaviour
             SaveMelodiaDataBase(melodiaData, ID);
             SaveSketchUpDataBase(sketchUpData, ID);
 
-            EventReceiver.CallSelectDone();
-            EventReceiver.CallSave(ID, changeCharacter.index ,true);
+            EventReceiver.CallSaveEvent(ID, GetCharIndex, true);
         }
         else
         {
             infoText.gameObject.SetActive(true);
             saveId.interactable = false;
         }
-        return ID;
     }
 
     BsonDocument CheckFreezeID(string findId)
@@ -188,5 +183,4 @@ public class MongoIDManager : MonoBehaviour
         newData.id = id;
         await SketchUpCollection.InsertOneAsync(newData.ToBsonDocument());
     }
-
 }

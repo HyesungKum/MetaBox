@@ -10,12 +10,13 @@ public class TitleUIManager : MonoBehaviour
 
     [Header("[Title UI]")]
     [SerializeField] GameObject TitleUIGroup;
+    [SerializeField] GameObject TitleReadImage;
     [SerializeField] Button touchScreenButton;
 
     [Header("[First Init UI]")]
-    [SerializeField] GameObject FirstInitUIGroup;
+    [SerializeField] GameObject SelectUIGroup;
 
-    [SerializeField] ChangeCharacter changeCharacter;
+    [SerializeField] ChangeObject changeCharacter;
     [SerializeField] Button nextButton;
     [SerializeField] Button prevButton;
     [Space]
@@ -27,23 +28,15 @@ public class TitleUIManager : MonoBehaviour
         nextButton.onClick.AddListener(()=> changeCharacter.NextObj());
         prevButton.onClick.AddListener(()=> changeCharacter.PrevObj());
 
-        touchScreenButton.onClick.AddListener(()=> SceneClicked());
+        touchScreenButton.onClick.AddListener(()=> ScreenTouched());
 
         //delegate chain
-        EventReceiver.init += InitUISetting;
-        EventReceiver.selectDone += SelectDone;
+        EventReceiver.selectEvent += SelectUISetting;
+        EventReceiver.loadingDone += LoadingDone;
     }
 
-
-    void InitUISetting()
-    {
-        ShowUI(FirstInitUIGroup);
-    }
-
-    void SelectDone()
-    {
-        ShowUI(TitleUIGroup);
-    }
+    void SelectUISetting() => ShowUI(SelectUIGroup);
+    void LoadingDone() => ShowUI(TitleUIGroup);
 
     //============================UI Object Controll====================================
     void ShowUI(GameObject targetUIObj)
@@ -52,10 +45,10 @@ public class TitleUIManager : MonoBehaviour
         curUI = targetUIObj;
         curUI.SetActive(true);
     }
-
-    void SceneClicked()
+    void ScreenTouched()
     {
         touchScreenButton.interactable = false;
+        TitleReadImage.SetActive(false);
         EventReceiver.CallTouchScreen();
     }
 }

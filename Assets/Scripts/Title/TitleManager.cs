@@ -1,68 +1,105 @@
 using Kum;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Analytics;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using static Production;
 
 public class TitleManager : MonoSingleTon<TitleManager>
 {
-    //caching
-    WaitUntil waitUntil = null;
+    [SerializeField] Camera mainCam;
+    private AudioListener mainAudioListener;
 
     [Header("[Production]")]
-    [SerializeField] Production production;
+    [SerializeField] Production spreadProd;
+    [SerializeField] Production lerpProd;
+
+    //caching
+    WaitUntil waitSpreadProdEnd = null;
+    WaitUntil waitLerpProdEnd = null;
 
     private new void Awake()
     {
-        EventReceiver.saveCheck += AfterCheck;
-        EventReceiver.touchScreen += SceneMove;
+        //reference
+        mainCam.TryGetComponent(out mainAudioListener);
+
+        //caching
+        waitSpreadProdEnd = new WaitUntil(() => spreadProd.IsEnd);
+        waitLerpProdEnd = new WaitUntil(() => lerpProd.IsEnd);
+
+        //delegate chain
+        EventReceiver.initEvent += InitRoutine;
+        EventReceiver.mainEvnet += MainRoutine;
+        EventReceiver.touchScreen += UnLoadRoutine;
+
+        EventReceiver.saveDoneEvent += CallUndoProduction;
     }
 
-
-    //=================save data check routine==========================
-    void AfterCheck(bool exist)
+    private void OnDisable()
     {
-        Debug.Log("확인");
-        StartCoroutine(nameof(ProductionRoutine), exist);
-    }
-    IEnumerator ProductionRoutine(bool exist)
-    {
-        Debug.Log("연출");
-        production.DoProduction();
+        //delegate unchain
+        EventReceiver.initEvent -= InitRoutine;
+        EventReceiver.mainEvnet -= MainRoutine;
+        EventReceiver.touchScreen -= UnLoadRoutine;
 
-        yield return new WaitUntil(() => production.IsEnd); 
-
-        if (exist) StartCoroutine(nameof(TitleRoutine));
-        else StartCoroutine(nameof(InitRoutine));
-    }
-    //==================================================================
-
-
-    //=================init routine==============================
-    IEnumerator InitRoutine()
-    {
-        Debug.Log("초기설정!");
-        EventReceiver.CallInit();
-
-        yield return null;
+        EventReceiver.saveDoneEvent -= CallUndoProduction;
     }
 
-    void Title()
+    void InitRoutine() => StartCoroutine(nameof(InitProcess));
+    void MainRoutine() => StartCoroutine(nameof(LoadProcess));
+    void UnLoadRoutine() => StartCoroutine(nameof(UnloadSceneProcess));
+    void CallUndoProduction() => StartCoroutine(nameof(UndoProdRoutine));
+
+    IEnumerator InitProcess()
     {
-        Debug.Log("준비완료");
-        StartCoroutine(nameof(TitleRoutine));
+        spreadProd.DoProduction();
+
+        yield return waitSpreadProdEnd;
+
+        EventReceiver.CallSelectEvent();
     }
-    IEnumerator TitleRoutine()
+    IEnumerator LoadProcess()
     {
-        Debug.Log("메인씬!");
-        EventReceiver.CallSelectDone();
-        yield return null;
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync("TownScene", LoadSceneMode.Additive);
+        asyncOperation.allowSceneActivation = false;
+
+        mainAudioListener.enabled = false;
+
+        while (!asyncOperation.isDone)
+        {
+            if (asyncOperation.progress > 0.89f)
+            {
+                asyncOperation.allowSceneActivation = true;
+            }
+
+            yield return null;
+        }
+
+        if (!spreadProd.gameObject.activeSelf)
+        {
+            spreadProd.gameObject.SetActive(true);
+            spreadProd.IsEnd = true;
+        }
+        spreadProd.DoProduction();
+        
+        yield return waitSpreadProdEnd;
+
+        EventReceiver.CallLodingDone();
     }
-    //=====================scene move
-    void SceneMove()
+    IEnumerator UnloadSceneProcess()
     {
-        SceneManager.LoadSceneAsync("TownScene");
+        spreadProd.gameObject.SetActive(false);
+        lerpProd.DoProduction();
+        yield return waitLerpProdEnd;
+        EventReceiver.CallUnloadScene();
+        SceneManager.UnloadSceneAsync("TitleScene", UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
+    }
+    IEnumerator UndoProdRoutine()
+    {
+        spreadProd.gameObject.SetActive(true);
+        spreadProd.UndoProduction();
+
+        yield return waitSpreadProdEnd;
+
+        StartCoroutine(nameof(LoadProcess));
     }
 }

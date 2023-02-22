@@ -10,6 +10,7 @@ public abstract class Production : MonoBehaviour
     [SerializeField] protected float prodSpeed = 1f;
     [SerializeField] protected float prodTime = 1f;
     [SerializeField] protected bool OnAwake = false;
+    [SerializeField] protected bool DisableEnd = false;
 
     //===========================================inner variables=========================================
     protected float timer = 0f;
@@ -35,6 +36,7 @@ public abstract class Production : MonoBehaviour
     {
         IsEnd = true;
         prodEnd?.Invoke();
+        if (DisableEnd) this.gameObject.SetActive(false);
     }
 
     //============================================Need Implement=========================================

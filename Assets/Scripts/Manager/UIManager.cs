@@ -67,7 +67,7 @@ public class UIManager : MonoBehaviour
         optionExitButton.onClick.AddListener(()=>ShowUI(exitCheckUIGroup));
 
         //Exit UI Group button Listener
-        exitButton.onClick.AddListener(()=> Application.Quit());
+        exitButton.onClick.AddListener(()=> EventReceiver.CallAppQuit());
         resumeButton.onClick.AddListener(()=> ShowUI(mainUIGroup));
 
         //delegate chain

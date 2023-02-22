@@ -11,6 +11,7 @@ public class ViewHallProduction : Production
 
     IEnumerator ViewHallExtension()
     {
+        IsEnd = true;
         timer = 0f;
         while (viewHallObj.transform.localScale.x <= 45)
         {
@@ -24,6 +25,7 @@ public class ViewHallProduction : Production
     }
     IEnumerator ViewHallShrink()
     {
+        IsEnd = true;
         timer = 0f;
         while (viewHallObj.transform.localScale.x >= 0.8f)
         {

@@ -1,12 +1,8 @@
 using Kum;
-using Mono.Cecil.Cil;
 using Newtonsoft.Json;
 using System;
 using System.IO;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 
 [Serializable]
 struct UserData
@@ -26,7 +22,11 @@ public class DataCheckManager : MonoSingleTon<DataCheckManager>
     //====================================================save path===========================================================
     [SerializeField] string fileName = "saveData.json";
 
-    [SerializeField] private string defaultPath = "MetaBox/SaveData/";//"/storage/emulated/0/MetaBox/SaveData/";
+    #if UNITY_EDITOR
+    [SerializeField] private string defaultPath = "MetaBox/SaveData/";
+    #elif PLATFORM_ANDROID
+    private string defaultPath = "/storage/emulated/0/MetaBox/SaveData/";
+    #endif
 
     //======================================================Flag==============================================================
     public bool IsExist = false;
@@ -34,32 +34,30 @@ public class DataCheckManager : MonoSingleTon<DataCheckManager>
     protected override void Awake()
     {
         base.Awake();
-        EventReceiver.save += FileSave;
+
+        EventReceiver.saveEvent += FileSave;
+        EventReceiver.appQuit += AppQuit;
     }
 
-    private void Start()
-    {
-        FileCheck();
-    }
+    private void Start() => FileCheck();
 
     private void FileCheck()
     {
-        if (File.Exists(defaultPath + fileName)) //경로에 파일이 존재할때
+        if (File.Exists(defaultPath + fileName))
         {
-            IsExist = true; //변수 변경 후 
-            Debug.Log("바로 main Scene으로");
-
-            //읽어오기
+            IsExist = true;
             curUserData = ReadSaveData(defaultPath + fileName);
+
+            //call move main event
+            EventReceiver.CallMainEvent();
         }
         else//존재하지 않을때 
         {
             IsExist = false;
-            Debug.Log("Init Scene으로");
-        }
 
-        //세이브 확인 이벤트 발생
-        EventReceiver.CallSaveCheck(IsExist);
+            //call move Init event
+            EventReceiver.CallInitEvent();
+        }
     }
     private void FileSave(string id, int charIndex, bool troughTown)
     {
@@ -70,7 +68,11 @@ public class DataCheckManager : MonoSingleTon<DataCheckManager>
             troughTown = troughTown
         };
 
+        curUserData = userData;
+
         MakeSaveJson(userData, fileName, defaultPath);
+
+        EventReceiver.CallSaveDoneEvent();
     }
 
     /// <summary>
@@ -120,5 +122,12 @@ public class DataCheckManager : MonoSingleTon<DataCheckManager>
         {
             File.Delete(filePath);
         }
+    }
+
+    //====================================================Application Quit===============================================
+    private void AppQuit()
+    {
+        curUserData.troughTown = false;
+        MakeSaveJson(curUserData, fileName, defaultPath);
     }
 }

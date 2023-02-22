@@ -12,6 +12,7 @@ public class SpreadProduction : Production
     //objects spread to center
     IEnumerator Spread()
     {
+        IsEnd = true;
         timer = 0f;
 
         while (this.gameObject.activeSelf)
@@ -38,6 +39,7 @@ public class SpreadProduction : Production
     //objects store to center
     IEnumerator Store()
     {
+        IsEnd = true;
         timer = 0f;
 
         while (this.gameObject.activeSelf)
@@ -62,4 +64,13 @@ public class SpreadProduction : Production
         CallProdEnd();
     }
 
+    #region Editor gizmo
+    #if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(0.8f, 0f, 0f, 0.4f);
+        Gizmos.DrawCube(center, Vector3.one);
+    }
+    #endif
+    #endregion
 }

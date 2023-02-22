@@ -1,9 +1,7 @@
 using System.Collections;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using static PlayerController;
 
 
 public class PlayerController : MonoBehaviour
@@ -11,8 +9,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Camera mainCam;
     private NavMesh2Agent agent;
     private int charIndex;
-    public Animator animator;
     [SerializeField] GameObject[] playerModels;
+    private Animator animator;
     [SerializeField] TextMeshProUGUI IdText;
 
     //플레이어 이동 명령 이벤트
@@ -37,10 +35,11 @@ public class PlayerController : MonoBehaviour
         IdText.text = DataCheckManager.Inst.GetID();
         playerModels[charIndex].SetActive(true);
 
+        playerModels[charIndex].TryGetComponent(out animator);
+
         LookRight = playerModels[charIndex].transform.localScale;
         LookLeft = new Vector3(LookRight.x * -1, LookRight.y, LookRight.z);
         this.TryGetComponent(out agent);
-
 
         //delegate chain
         TouchEventGenerator.Inst.touchBegan[0] += PlayerMove;
