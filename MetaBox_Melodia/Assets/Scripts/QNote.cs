@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class QNote : MonoBehaviour
 {
-
     [SerializeField] int myPitchNum;
     public int MyPitchNum { get { return myPitchNum; } set { myPitchNum = value; } }
 

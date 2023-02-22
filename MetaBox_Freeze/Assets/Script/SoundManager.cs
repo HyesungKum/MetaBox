@@ -3,6 +3,8 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 using UnityEngine.Audio;
+using ObjectPoolCP;
+using System.Collections;
 
 public enum SFX
 {
@@ -39,12 +41,14 @@ public class SoundManager : MonoBehaviour
     }
 
     [SerializeField] ScriptableObj scriptableSound = null;
+
     [SerializeField] AudioMixer audioMixer = null;
     [SerializeField] AudioSource audioBGM = null;
     [SerializeField] AudioSource audioSFX = null;
 
-    public bool BGMMute { get; private set; } = false;
-    public bool SFXMute { get; private set; } = false;
+    [SerializeField] GameObject touchEff = null;
+
+    WaitForSeconds playEff = new WaitForSeconds(2f);
 
     private void Awake()
     {
@@ -55,10 +59,8 @@ public class SoundManager : MonoBehaviour
         }
         instance = this;
 
-
         Application.targetFrameRate = 60;
         DontDestroyOnLoad(this.gameObject);
-        AddButtonListener();
     }
 
     #region Button
@@ -72,10 +74,27 @@ public class SoundManager : MonoBehaviour
             Component[] buttons = go.transform.GetComponentsInChildren(typeof(Button), true);
             foreach (Button button in buttons)
             {
+                button.onClick.AddListener(delegate { OnClickButton(button.transform.position); });
                 button.onClick.AddListener(() => audioSFX.PlayOneShot(scriptableSound.SFX[(int)SFX.Button]));
             }
         }
     }
+
+    void OnClickButton(Vector3 pos)
+    {
+        StartCoroutine(TouchEff(pos));
+    }
+
+    IEnumerator TouchEff(Vector3 movepoint)
+    {
+        GameObject effect = PoolCp.Inst.BringObjectCp(touchEff);
+        effect.transform.position = movepoint;
+
+        yield return playEff;
+
+        if (effect != null) PoolCp.Inst.DestoryObjectCp(effect);
+    }
+
     GameObject[] GetSceneRootObject()
     {
         Scene curscene = SceneManager.GetActiveScene();
@@ -94,15 +113,6 @@ public class SoundManager : MonoBehaviour
     {
         audioMixer.GetFloat(target, out float volume);
         return volume;
-    }
-
-    public void AudioMute(string target, float value)
-    {
-        audioMixer.GetFloat(target, out float volume);
-        volume = volume == -80 ? value : -80;
-        if(target.Equals("BGM")) BGMMute = volume == -80 ? true : false;
-        else SFXMute = volume == -80 ? true : false;
-        audioMixer.SetFloat(target, volume);
     }
 
     public void MusicStart(int musicindex) //0-title, 1-main
