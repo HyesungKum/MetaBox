@@ -124,6 +124,7 @@ public class NavMesh2D : MonoBehaviour
 
 
     //======================================make nav mesh and reference========================================
+    #if UNITY_EDITOR
     public void Bake()
     {
         //Create Scriptable Assets Instance
@@ -206,6 +207,7 @@ public class NavMesh2D : MonoBehaviour
         //Nav Mesh Reference
         this.navMeshData = navMeshData;
     }
+    #endif
 
     //============================================Poisition Check Function=====================================
     /// <summary>

@@ -1,7 +1,7 @@
 public delegate void BasicCallBack();
 public delegate void BoolCallBack(bool exist);
 public delegate void SaveCallBack(string id, int CharIndex, bool throughTown);
-public delegate void GameInCallBack(GameName gameName);
+public delegate void GameInCallBack(string gameName);
 
 public delegate bool BoolEvent();
 
@@ -38,7 +38,7 @@ public class EventReceiver
 
     //Town Event Call Back
     static public void CallUnloadScene() => unloadScene?.Invoke();
-    static public void CallGameIn(GameName gameName) => gameIn?.Invoke(gameName);
+    static public void CallGameIn(string gameName) => gameIn?.Invoke(gameName);
     static public void CallGameOut() => gameOut?.Invoke();
 
     //application event

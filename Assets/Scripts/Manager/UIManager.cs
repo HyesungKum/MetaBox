@@ -1,5 +1,4 @@
 using KumTool.AppTransition;
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -42,22 +41,24 @@ public class UIManager : MonoBehaviour
     [SerializeField] Button exitButton;
     [SerializeField] Button resumeButton;
 
+    private const string defaultName = "com.MataBox.";
+
     private void Awake()
     {
         //main UI Button Listener
         optionButton.onClick.AddListener(()=> ShowUI(optionUIGrpoup));
 
         //Game UI Group button listener
-        heyCookStartButton.onClick.AddListener(() => AppTrans.MoveScene($"{GameName.HeyCook}"));
+        heyCookStartButton.onClick.AddListener(() => AppTrans.MoveScene("com.MetaBox.HeyCook"));
         heyCookExitButton.onClick.AddListener(()=> ShowUI(mainUIGroup));
 
-        freezeStartButton.onClick.AddListener(() => AppTrans.MoveScene($"{GameName.Freeze}"));
+        freezeStartButton.onClick.AddListener(() => AppTrans.MoveScene("com.MetaBox.Freeze"));
         freezeExitButton.onClick.AddListener(()=> ShowUI(mainUIGroup));
 
-        melodiaStartButton.onClick.AddListener(() => AppTrans.MoveScene($"{GameName.Melodia}"));
+        melodiaStartButton.onClick.AddListener(() => AppTrans.MoveScene("com.MetaBox.Melodia"));
         melodiaExitButton.onClick.AddListener(()=> ShowUI(mainUIGroup));
 
-        sketchUPStartButton.onClick.AddListener(() => AppTrans.MoveScene($"{GameName.SketchUP}"));
+        sketchUPStartButton.onClick.AddListener(() => AppTrans.MoveScene("com.MetaBox.SketchUP"));
         sketchUPExitButton.onClick.AddListener(()=> ShowUI(mainUIGroup));
 
         //option UI Group Listener
@@ -79,7 +80,7 @@ public class UIManager : MonoBehaviour
         EventReceiver.gameIn -= OpenGamePanel;
     }
 
-    void OpenGamePanel(GameName gameName)
+    void OpenGamePanel(string gameName)
     {
         switch (gameName)
         {
@@ -87,25 +88,45 @@ public class UIManager : MonoBehaviour
                 {
                     SoundManager.Inst.CallSfx("HeyCookSfx");
                     ShowUI(heyCookUIGroup);
-                } 
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+                    if (PackageChecker.IsAppInstalled($"com.MetaBox.HeyCook")) heyCookStartButton.interactable = true;
+                    else heyCookStartButton.interactable = false;
+#endif
+                }
                 break;
             case GameName.Freeze  :
                 {
                     SoundManager.Inst.CallSfx("FreezeSfx");
                     ShowUI(freezeUIGroup);
-                } 
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+                    if (PackageChecker.IsAppInstalled($"com.MetaBox.Freeze")) freezeStartButton.interactable = true;
+                    else freezeStartButton.interactable = false;
+#endif
+                }
                 break;
             case GameName.Melodia :
                 {
                     SoundManager.Inst.CallSfx("MelodiaSfx");
                     ShowUI(melodiaUIGroup);
-                } 
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+                    if (PackageChecker.IsAppInstalled("com.MetaBox.Melodia")) melodiaStartButton.interactable = true;
+                    else melodiaStartButton.interactable = false;
+#endif
+                }
                 break;
             case GameName.SketchUP :
                 { 
                     SoundManager.Inst.CallSfx("SketchUPSfx");
                     ShowUI(sketchUPUIGroup);
-                } 
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+                    if (PackageChecker.IsAppInstalled("com.MetaBox.SketchUP")) sketchUPStartButton.interactable = true;
+                    else melodiaStartButton.interactable = false;
+#endif
+                }
                 break;
         }
     }

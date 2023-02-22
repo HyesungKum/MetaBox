@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class GameBuilding : MonoBehaviour
 {
     [SerializeField] private Collider2D _collider;
-    [SerializeField] GameName _gameName;
+    [SerializeField] string _gameName;
 
     private void Reset()
     {

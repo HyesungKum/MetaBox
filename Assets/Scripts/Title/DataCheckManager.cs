@@ -23,8 +23,8 @@ public class DataCheckManager : MonoSingleTon<DataCheckManager>
     [SerializeField] string fileName = "saveData.json";
 
     #if UNITY_EDITOR
-    [SerializeField] private string defaultPath = "MetaBox/SaveData/";
-    #elif PLATFORM_ANDROID
+    [SerializeField] private string defaultPath = "/MetaBox/SaveData/";
+    #else
     private string defaultPath = "/storage/emulated/0/MetaBox/SaveData/";
     #endif
 
@@ -129,5 +129,6 @@ public class DataCheckManager : MonoSingleTon<DataCheckManager>
     {
         curUserData.troughTown = false;
         MakeSaveJson(curUserData, fileName, defaultPath);
+        Application.Quit();
     }
 }

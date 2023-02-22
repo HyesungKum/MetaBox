@@ -1000,8 +1000,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputID: {fileID: 585256336}
   infoText: {fileID: 699261693}
-  saveId: {fileID: 703884828}
+  IDSaveButton: {fileID: 703884828}
   changeObject: {fileID: 1437303194}
+  OnlineMode: 1
 --- !u!1 &609281330
 GameObject:
   m_ObjectHideFlags: 0
@@ -1285,7 +1286,7 @@ GameObject:
   - component: {fileID: 703884829}
   - component: {fileID: 703884828}
   m_Layer: 5
-  m_Name: SaveButton
+  m_Name: IDSaveButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3037,7 +3038,7 @@ MonoBehaviour:
     ID: 
     charIndex: 0
     troughTown: 0
-  fileName: saveData.json
+  fileName: TownSaveData.json
   defaultPath: /MetaBox/SaveData/
   IsExist: 0
 --- !u!1 &1729215920

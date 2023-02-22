@@ -4,6 +4,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 
 #region FreezeData
 [Serializable]
@@ -57,14 +58,22 @@ public class MongoIDManager : MonoBehaviour
     [Header("[Login UserID]")]
     [SerializeField] TMP_InputField inputID = null;
     [SerializeField] TextMeshProUGUI infoText = null;
-    [SerializeField] Button saveId = null;
+    [SerializeField] Button IDSaveButton = null;
     [SerializeField] ChangeObject changeObject = null;
+
+    public bool OnlineMode = true;
     int GetCharIndex => changeObject.index;
     private string id;
     public string ID { get { return id; } set { id = value; } }
 
     void Awake()
     {
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            OnlineMode = false;
+            return;
+        }
+
         // MongoDB database name
         dataBase = clientData.GetDatabase("RankingDB");
 
@@ -75,25 +84,31 @@ public class MongoIDManager : MonoBehaviour
         SketchUpCollection = dataBase.GetCollection<BsonDocument>("SketchUpRanking");
 
         // === Button Event Setting ===
-        saveId.interactable = false;
+        IDSaveButton.interactable = false;
         inputID.onValueChanged.AddListener(delegate { CheckInputId(); });
-        saveId.onClick.AddListener(delegate { SaveID(); });
+        IDSaveButton.onClick.AddListener(delegate { SaveID(); });
     }
 
     void CheckInputId()
     {
         if (string.IsNullOrEmpty(inputID.text)) // 입력 한게 없으면 버튼 비활성화
         {
-            saveId.interactable = false;
+            IDSaveButton.interactable = false;
         }
         else if (inputID.text.Length <= 10) // 입력한 길이가 10글자 이하 및 10 글자면 버튼 활성화
         {
-            saveId.interactable = true;
+            IDSaveButton.interactable = true;
         }
     }
     void SaveID()
     {
         ID = inputID.text;
+
+        if (!OnlineMode)
+        {
+            EventReceiver.CallSaveEvent(ID, GetCharIndex, true);
+            return;
+        }
 
         BsonDocument checkFreezeID = CheckFreezeID(ID);
         BsonDocument checkHeyCookID = CheckHeyCookID(ID);
@@ -103,7 +118,9 @@ public class MongoIDManager : MonoBehaviour
         if (checkFreezeID == null && checkHeyCookID == null &&
             checkMelodiaID == null && checkSketchUpID == null)
         {
-            saveId.interactable = true;
+            IDSaveButton.interactable = false;
+            inputID.interactable = false;
+            infoText.gameObject.SetActive(false);
 
             FreezeData freezeData = new();
             HeyCookData heyCookData = new();
@@ -120,7 +137,7 @@ public class MongoIDManager : MonoBehaviour
         else
         {
             infoText.gameObject.SetActive(true);
-            saveId.interactable = false;
+            IDSaveButton.interactable = false;
         }
     }
 

@@ -7,7 +7,9 @@ public class ObjEnable : MonoBehaviour
     #endif
     private void Awake()
     {
+        #if UNITY_EDITOR
         if (IsTest) return;
+        #endif
 
         EventReceiver.unloadScene += DoEnable;
         this.gameObject.SetActive(false);
