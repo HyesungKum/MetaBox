@@ -198,10 +198,6 @@ public class DrawLineCurve : MonoBehaviour
                 linerender.SetPosition(0, startPos); // 라인렌더러 포지션 셋팅 해주기
                 linerender.SetPosition(1, startPos); // 라인렌더러 2번째 포지션도 셋팅 해주기
             }
-            if(linerender.GetPosition(1) != null && linerender.GetPosition(1) != prevObj.transform.position)
-            {
-                Debug.Log("라인 포지션 2");
-            }
             if (hitObjCheck == firstObj)
             {
                 ObjSetFalse();
@@ -216,15 +212,9 @@ public class DrawLineCurve : MonoBehaviour
                 if (startNodeObj != hitObjCheck &&
                     circleObj.cdLinkedList.SearchObj(hitObjCheck) != null)
                 {
-                    //Debug.Log("언제 불리니??");
+                    Debug.Log("언제 불리니??");
                     MoveEnd(hitInfo);
                 }
-                if (lineStack.Count > 1 && lineStack.Contains(currentLine) == false)
-                {
-                    //MoveEnd(hitInfo);
-                    //Debug.Log("여기 불려야함");
-                }
-
             }
         }
     }
@@ -235,18 +225,14 @@ public class DrawLineCurve : MonoBehaviour
         if (lineStack.Count == 0)
             startNodeObj = null;
 
-        //Debug.Log("## linepos : " + linerender.GetPositionCount());
+        if(linerender.GetPosition(0) == linerender.GetPosition(1))
+            DestroyLine();
 
         if (lineStack.Contains(currentLine) == false)
-        {
             DestroyLine();
-        }
         
         if(linerender.GetPositionCount() > 3)
-        {
-            //Debug.Log("포지션이 너무 많아 삭제해");
             DestroyLine();
-        }
 
         // 그어지고 있는 라인은 취소
         DestroyLine();
