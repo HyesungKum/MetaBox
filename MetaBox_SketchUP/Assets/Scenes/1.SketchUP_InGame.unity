@@ -152,7 +152,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2108466362}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &66548842
 GameObject:
@@ -2442,7 +2442,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2108466362}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &960100299
 SpriteRenderer:
@@ -2525,7 +2525,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2108466362}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1019020186
 GameObject:
@@ -2556,7 +2556,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2108466362}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1047907459
 GameObject:
@@ -2655,7 +2655,6 @@ MonoBehaviour:
   threeBrushBut: {fileID: 1485809480}
   character: {fileID: 1342904555}
   selectPanelImg: {fileID: 11400000, guid: 09b459363e116f54bbd6f6ed8f63f131, type: 2}
-  startSceneLevelIndex: {fileID: 1890112722954857816, guid: d906a7fa1e6c1a54fbb5a45bfa08e83a, type: 3}
   animalQPrefabData: {fileID: 11400000, guid: 3894f2e866ad24e4aac5f27ab0e24b2d, type: 2}
   characterPos: {x: 0, y: 0}
 --- !u!1 &1092450626
@@ -4697,14 +4696,14 @@ MonoBehaviour:
   QOne: {fileID: 1019020186}
   QTwo: {fileID: 1008435109}
   QThree: {fileID: 5051740}
-  lineChangedPanel: {fileID: 1907476971}
+  lineChangedPanel: {fileID: 1907476968}
   colorPanelObj: {fileID: 2871094531393123642}
   LineSizeObj: {fileID: 8166088748956374920}
   loseReStartBut: {fileID: 1455349610}
   winReStartBut: {fileID: 1611714516}
   goSelectPanelBut: {fileID: 1092450628}
   optionBut: {fileID: 1790807629}
-  CloseSelectPanelBut: {fileID: 106088453}
+  closePanelBut: {fileID: 106088453}
   quitBut: {fileID: 847934406}
   resumeBut: {fileID: 368223500}
   waitTimeObjs: {fileID: 194626961}
@@ -4714,9 +4713,14 @@ MonoBehaviour:
   gameClearEffect: {fileID: 5076563371835118452, guid: 548f286e80304214cad6d894dc5d4f80, type: 3}
   minute: 9
   seconds: 60
+  clearAnimalImgData: {fileID: 0}
   ColorPanel: {fileID: 0}
   LineSize: {fileID: 0}
   ObjIndexs: 0
+  ObjTwoIndex: 0
+  ObjThreeIndex: 0
+  totalPlayTime: 0
+  SavePalyTime: 0
 --- !u!1 &1729044868
 GameObject:
   m_ObjectHideFlags: 0
@@ -5489,8 +5493,8 @@ RectTransform:
   m_Children:
   - {fileID: 1098733764}
   - {fileID: 251783960}
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_Father: {fileID: 2108466362}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -5524,7 +5528,7 @@ RectTransform:
   m_GameObject: {fileID: 1928458958}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0000001, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 496745630}
@@ -6081,12 +6085,13 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1907476972}
   - {fileID: 960100298}
   - {fileID: 1019020187}
   - {fileID: 1008435110}
   - {fileID: 5051741}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2871094531393123641
 PrefabInstance:
