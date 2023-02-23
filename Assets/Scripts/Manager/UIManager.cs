@@ -124,7 +124,7 @@ public class UIManager : MonoBehaviour
 
 #if UNITY_ANDROID && !UNITY_EDITOR
                     if (PackageChecker.IsAppInstalled("com.MetaBox.SketchUP")) sketchUPStartButton.interactable = true;
-                    else melodiaStartButton.interactable = false;
+                    else sketchUPStartButton.interactable = false;
 #endif
                 }
                 break;

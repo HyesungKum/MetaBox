@@ -66,12 +66,11 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
     public PlayData playData;
     public UserData curUserData;
 
-    [SerializeField] string fileName = "TownSaveData.json";
     #if UNITY_EDITOR
     [SerializeField] private string defaultPath = "/MetaBox/SaveData/";
-    #else
-    private string defaultPath = "/storage/emulated/0/MetaBox/SaveData/";
-    #endif
+#else
+    private string defaultPath = "/storage/emulated/0/MetaBox/SaveData/TownSaveData.json";
+#endif
 
     //===============================InternetConnection======================
     public bool OnlineMode;
@@ -95,16 +94,14 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
             collection = dataBase.GetCollection<BsonDocument>("HeyCookRank");
         }
 
-        //check local save file
-        FileCheck();
-
         //delegate chain
         EventReceiver.saveCallBack += SaveData;
     }
 
     private void Start()
     {
-        LoadData(playData.id);
+        FileCheck();
+        LoadData(curUserData.ID);
     }
 
     //===========================================Saving Data====================================================
@@ -237,9 +234,9 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
     //=============================================Check Local File===============================================
     private void FileCheck()
     {
-        if (File.Exists(defaultPath + fileName))
+        if (File.Exists(defaultPath))
         {
-            curUserData = ReadSaveData(defaultPath + fileName);
+            curUserData = ReadSaveData(defaultPath);
 
             playData.id = curUserData.ID;
         }

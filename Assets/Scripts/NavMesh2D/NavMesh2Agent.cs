@@ -28,7 +28,7 @@ public class NavMesh2Agent : MonoBehaviour
     public bool IsMove = false;
     public bool IsLookRight = true;
     [SerializeField] bool MoveOrder = false;
-    [field:SerializeField] public bool OnField { get; private set; }
+    [field: SerializeField] public bool OnField { get; private set; }
 
     //============================================delegate=============================================== 
     public delegate void CallBack();
@@ -49,6 +49,7 @@ public class NavMesh2Agent : MonoBehaviour
 
         //delegate chain
         navMesh2D.connectFinish += Initializing;
+        EventReceiver.gameIn += StopAgentMove;
     }
 
     private void OnEnable()
@@ -59,6 +60,7 @@ public class NavMesh2Agent : MonoBehaviour
     private void OnDisable()
     {
         navMesh2D.connectFinish -= Initializing;
+        EventReceiver.gameIn -= StopAgentMove;
     }
 
     //========================================Find Mesh Data & Position Init========================================
@@ -95,7 +97,7 @@ public class NavMesh2Agent : MonoBehaviour
         StartNode = null;
         EndNode = null;
         pathNode = null;
-        
+
         openQueue.Clear();
         closedList = new();
         pathStack = new();
@@ -114,9 +116,9 @@ public class NavMesh2Agent : MonoBehaviour
 
         if (StartNode == null || EndNode == null || EndNode.obstacle)
         {
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             Debug.Log("##NavMesh2Agent Error : cannot found path");
-            #endif
+#endif
             IsMove = false;
             CallStopEvent();
             return;
@@ -124,6 +126,15 @@ public class NavMesh2Agent : MonoBehaviour
 
         //a star path finding
         AstarPathFinding();
+    }
+
+    //=================================================StopAgentMoving==================================================
+    private void StopAgentMove(string game)
+    {
+        StopCoroutine(nameof(AgentNodeMove));
+        StopCoroutine(nameof(AgentDetailMove));
+        IsMove = false;
+        CallStopEvent();
     }
 
     //===================================================PathFinding====================================================
