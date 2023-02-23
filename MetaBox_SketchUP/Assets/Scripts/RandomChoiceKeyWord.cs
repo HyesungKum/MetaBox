@@ -1,7 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class RandomChoiceKeyWord : MonoBehaviour
 {
@@ -112,9 +111,9 @@ public class RandomChoiceKeyWord : MonoBehaviour
         }
         if(random == randomThree)
         {
-            random -= 2;
-            if (random == -1) random += 3;
-            if (random == -2) random += 4;
+            randomThree -= 2;
+            if (randomThree == -1) randomThree += 3;
+            if (randomThree == -2) randomThree += 4;
         }
         if(random == randomFour)
         {
@@ -126,11 +125,13 @@ public class RandomChoiceKeyWord : MonoBehaviour
         {
             randomtwo -= 2;
             if (randomtwo == -1) randomtwo += 3;
+            if(randomtwo == -2) randomtwo += 4;
         }
         if(randomThree == randomFour)
         {
             randomThree-= 2;
             if (randomThree == -1) randomFour += 3;
+            if(randomThree== -2) randomFour += 4;
         }
 
         //Debug.Log("$$ random : " + random);

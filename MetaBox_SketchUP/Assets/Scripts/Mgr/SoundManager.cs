@@ -107,8 +107,6 @@ public class SoundManager : MonoBehaviour
             MyAudioMixer.SetFloat("BGM", -80);
         else
             MyAudioMixer.SetFloat("BGM", BGMValue);
-
-        Debug.Log("BGMValue : " + BGMValue);
     }
 
     public void SFXControl(Slider ButSfxSlider)
@@ -129,11 +127,6 @@ public class SoundManager : MonoBehaviour
         InstButEffect.transform.position = instTrsnsform;
     }
 
-    public void BGMPlayStop()
-    {
-        BGMAudioSurce.Stop();
-    }
-
     public void BGMValueDown()
     {
         if (BGMValue == -40f)
@@ -145,20 +138,17 @@ public class SoundManager : MonoBehaviour
     public void TitleBGMPlay()
     {
         BGMAudioSurce.clip = titleAudioClip;
-        MyAudioMixer.SetFloat("BGM", 0);
         BGMAudioSurce.Play();
     }
 
     public void InGameBGMPlay()
     {
         BGMAudioSurce.clip = inGameAudioClip;
-        MyAudioMixer.SetFloat("BGM", 0);
         BGMAudioSurce.Play();
     }
 
     public void ButtonSFXPlay()
     {
-        MyAudioMixer.SetFloat("BGM", -10);
         SFXSource.clip = butSourceClip;
         SFXSource.Play();
     }
@@ -199,11 +189,6 @@ public class SoundManager : MonoBehaviour
         SFXSource.Play();
     }
 
-    public void ToggleAduioVolume()
-    {
-        AudioListener.volume = AudioListener.volume == 0 ? 1 : 0;
-    }
-
     public void AnimalAudioPlay(int index)
     {
         animalAudioDictionary.TryGetValue(index, out animalAudioPlayClip);
@@ -212,10 +197,14 @@ public class SoundManager : MonoBehaviour
         SFXSource.Play();
     }
 
-
     public void SelectPanelNoNameSFXPlay()
     {
         SFXSource.clip = sfxData.noName;
         SFXSource.Play();
+    }
+
+    public void ToggleAduioVolume()
+    {
+        AudioListener.volume = AudioListener.volume == 0 ? 1 : 0;
     }
 }

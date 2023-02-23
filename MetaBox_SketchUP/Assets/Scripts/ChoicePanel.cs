@@ -62,10 +62,17 @@ public class ChoicePanel : MonoBehaviour
 
     void Start()
     {
-        choiceOneBut.onClick.AddListener(delegate { CheckString(choiceOneBut, butOneText); });
-        choiceTwoBut.onClick.AddListener(delegate { CheckString(choiceTwoBut, butTwoText); });
-        choiceThreeBut.onClick.AddListener(delegate { CheckString(choiceThreeBut, butThreeText); });
-        choiceFourBut.onClick.AddListener(delegate { CheckString(choiceFourBut, butFourText); });
+        choiceOneBut.onClick.AddListener(delegate { CheckString(choiceOneBut, butOneText); 
+            SoundManager.Inst.ButtonEffect(choiceOneBut.transform.position); });
+
+        choiceTwoBut.onClick.AddListener(delegate { CheckString(choiceTwoBut, butTwoText); 
+            SoundManager.Inst.ButtonEffect(choiceTwoBut.transform.position); });
+
+        choiceThreeBut.onClick.AddListener(delegate { CheckString(choiceThreeBut, butThreeText);
+            SoundManager.Inst.ButtonEffect(choiceThreeBut.transform.position); });
+
+        choiceFourBut.onClick.AddListener(delegate { CheckString(choiceFourBut, butFourText); 
+            SoundManager.Inst.ButtonEffect(choiceFourBut.transform.position); });
     }
 
     void CheckString(Button butNum, TextMeshProUGUI butText)
@@ -131,5 +138,4 @@ public class ChoicePanel : MonoBehaviour
             InGamePanelSet.Inst.SelectPanelSet(false);
         }
     }
-
 }

@@ -61,7 +61,10 @@ MonoBehaviour:
   endNodeObj: {fileID: 0}
   prevObj: {fileID: 0}
   nextObj: {fileID: 0}
+  checkPopObj: {fileID: 0}
+  firstObj: {fileID: 0}
   startPos: {x: 0, y: 0, z: 0}
+  lineVisitList: []
 --- !u!1 &322711581060709329
 GameObject:
   m_ObjectHideFlags: 0
@@ -355,7 +358,7 @@ EdgeCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_EdgeRadius: 0.1
+  m_EdgeRadius: 0.15
   m_Points:
   - {x: -1.2022219, y: 2.685556}
   - {x: -2.4577773, y: 2.0077784}

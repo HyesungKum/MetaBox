@@ -30,11 +30,8 @@ public class LineRender : MonoBehaviour
 
     public int PosReset() => lineRender.positionCount = 0;
     
-    public int SetPosCountTwo() => lineRender.positionCount = 2;
-
     public void SetCurvePosition(Vector3 pos)
     {
-        if (!CanAppend(pos)) return;
         lineRender.positionCount += 1;
         lineRender.SetPosition(lineRender.positionCount - 1, pos);
     }
