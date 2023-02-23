@@ -1,16 +1,17 @@
 using System.Collections;
-using Unity.VisualScripting;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using static PlayerController;
 
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] Camera mainCam;
     private NavMesh2Agent agent;
-    public Animator animator;
-    [SerializeField] GameObject playerModel;
+    private int charIndex;
+    [SerializeField] GameObject[] playerModels;
+    private Animator animator;
+    [SerializeField] TextMeshProUGUI IdText;
 
     //플레이어 이동 명령 이벤트
     public delegate void MoveOrder();
@@ -30,7 +31,13 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         //init
-        LookRight = playerModel.transform.localScale;
+        charIndex = DataCheckManager.Inst.GetCharIndex();
+        IdText.text = DataCheckManager.Inst.GetID();
+        playerModels[charIndex].SetActive(true);
+
+        playerModels[charIndex].TryGetComponent(out animator);
+
+        LookRight = playerModels[charIndex].transform.localScale;
         LookLeft = new Vector3(LookRight.x * -1, LookRight.y, LookRight.z);
         this.TryGetComponent(out agent);
 
@@ -63,8 +70,8 @@ public class PlayerController : MonoBehaviour
 
         while (true)
         {
-            if (!agent.IsLookRight) playerModel.transform.localScale = LookRight;
-            else playerModel.transform.localScale = LookLeft;
+            if (!agent.IsLookRight) playerModels[charIndex].transform.localScale = LookRight;
+            else playerModels[charIndex].transform.localScale = LookLeft;
 
             yield return null;
         }

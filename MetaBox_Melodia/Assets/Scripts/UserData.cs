@@ -46,7 +46,7 @@ public class UserData : MonoBehaviour
 
     void Record(int playtime)
     {
-        if (user == false || userID == null) return;
+        if (user.Equals(false) || userID.Equals(null)) return;
         DataProcess(playtime);
     }
 
@@ -62,12 +62,15 @@ public class UserData : MonoBehaviour
         if (targetData != null) //기록유
         {
             int prevTime = (int)targetData.GetValue("playtime");
-            if (prevTime > playtime) //기록갱신
+            if (prevTime < playtime) //기록갱신
             {
                 UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update.Set("playtime", playtime);
                 //collection.FindOneAndUpdate(filter, update);
                 collection.UpdateOne(filter,update);
             }
+
+
+
             else
             {
                 //Debug.Log("이전 기록이 더 좋습니다");

@@ -107,7 +107,6 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
         //collection update
         collection.UpdateOne(filter, update);
     }
-
     /// <summary>
     /// New User Data Save in DB
     /// </summary>
@@ -130,7 +129,6 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
 
         await collection.InsertOneAsync(playerData);
     }
-
     private void SaveLocalDB(int gameLevel, int score)
     {
         switch (gameLevel)
@@ -161,7 +159,6 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
         playData.levelDatas[Level.HARD - 1].score     = PlayerPrefs.GetInt(ScoreType.HARD, 0);
         playData.levelDatas[Level.VERYHARD - 1].score = PlayerPrefs.GetInt(ScoreType.VERYHARD, 0);
     }
-
     /// <summary>
     /// Get User ScoreData in MongoDB
     /// </summary>

@@ -136,29 +136,23 @@ public class DataLoader : MonoBehaviour
 
         string line;
 
-        int stage = 0;
-
         while ((line = sr.ReadLine()) != null)
         {
             string[] data = line.Split(',');
 
             // if empty stage 
-            if (data[1] == "")  
-                continue;
+            if (string.IsNullOrEmpty(data[0])) break;
 
             List<int> notes = new List<int>();
 
             for (int i = 1; i < data.Length; ++i)
             {
-                if (data[i] == "")
-                    break;
+                if (string.IsNullOrEmpty(data[i])) break;
 
                 notes.Add(int.Parse(data[i]));
             }
 
             stageData.Add(int.Parse(data[0]), notes);
-
-            stage++;
 
         }
 

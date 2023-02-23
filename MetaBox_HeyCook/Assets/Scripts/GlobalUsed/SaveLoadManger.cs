@@ -1,11 +1,11 @@
+using Kum;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System;
 using System.Linq;
 using UnityEngine;
-using Kum;
-using System;
-using System.Collections;
-using UnityEngine.Timeline;
+using System.IO;
+using Newtonsoft.Json;
 
 public struct Level
 {
@@ -45,6 +45,15 @@ public class PlayData
     };
 }
 
+[Serializable]
+public struct UserData
+{
+    public string ID;
+    public int charIndex;
+    public bool troughTown;
+}
+
+
 public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
 {
     //==================================Database============================
@@ -55,6 +64,14 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
 
     //===================================CurData=============================
     public PlayData playData;
+    public UserData curUserData;
+
+    [SerializeField] string fileName = "TownSaveData.json";
+    #if UNITY_EDITOR
+    [SerializeField] private string defaultPath = "/MetaBox/SaveData/";
+    #else
+    private string defaultPath = "/storage/emulated/0/MetaBox/SaveData/";
+    #endif
 
     //===============================InternetConnection======================
     public bool OnlineMode;
@@ -77,7 +94,10 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
             // MongoDB collection name
             collection = dataBase.GetCollection<BsonDocument>("HeyCookRank");
         }
-        
+
+        //check local save file
+        FileCheck();
+
         //delegate chain
         EventReceiver.saveCallBack += SaveData;
     }
@@ -95,7 +115,6 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
 
         playData.levelDatas[level - 1].score = score;
     }
-
     private void SaveMongoDB(int gameLevel, int score)
     {
         //apply filter data setting
@@ -107,7 +126,6 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
         //collection update
         collection.UpdateOne(filter, update);
     }
-
     /// <summary>
     /// New User Data Save in DB
     /// </summary>
@@ -130,7 +148,6 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
 
         await collection.InsertOneAsync(playerData);
     }
-
     private void SaveLocalDB(int gameLevel, int score)
     {
         switch (gameLevel)
@@ -150,7 +167,6 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
         if (OnlineMode) LoadMongoDB(playerID);
         else LoadLocalDB();
     }
-
     /// <summary>
     /// Get User ScoreData in playerfrefs
     /// </summary>
@@ -161,7 +177,6 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
         playData.levelDatas[Level.HARD - 1].score     = PlayerPrefs.GetInt(ScoreType.HARD, 0);
         playData.levelDatas[Level.VERYHARD - 1].score = PlayerPrefs.GetInt(ScoreType.VERYHARD, 0);
     }
-
     /// <summary>
     /// Get User ScoreData in MongoDB
     /// </summary>
@@ -216,6 +231,28 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
     }
 
     //=============================================Getting Data===================================================
-    public string GetID() => string.IsNullOrEmpty(playData.id) ? "Guest" : playData.id;
+    public string GetID() => playData.id;
     public int GetOldScore(int level) => playData.levelDatas[level - 1].score;
+
+    //=============================================Check Local File===============================================
+    private void FileCheck()
+    {
+        if (File.Exists(defaultPath + fileName))
+        {
+            curUserData = ReadSaveData(defaultPath + fileName);
+
+            playData.id = curUserData.ID;
+        }
+        else//존재하지 않을때 
+        {
+            playData.id = "Guest";
+        }
+    }
+    private UserData ReadSaveData(string path)
+    {
+        string dataStr = File.ReadAllText(path);
+        UserData readData = JsonConvert.DeserializeObject<UserData>(dataStr);
+
+        return readData;
+    }
 }
