@@ -80,7 +80,19 @@ public class DrawLineCurve : MonoBehaviour
 
     void Update()
     {
-        if (Input.touchCount <= 0) return;
+        if (Input.touchCount <= 0)
+        {
+            // 선을 긋다가 취소된경우(마우스 클릭을 떼었다던가)에
+            // 긋던 선이 있다면(startNodeObj가 현재 긋던 선이므로)
+            // 취소가 된거라 판단하고 지운다.
+            if (startNodeObj != null)
+            {
+                MoveEnd();
+            }
+
+            return;
+        }
+
         myTouch = Input.GetTouch(0);
         RaycastHit2D hitInfo = RayCheck();
 
@@ -96,8 +108,9 @@ public class DrawLineCurve : MonoBehaviour
                     TouchMove(hitInfo);
                     break;
 
+                case TouchPhase.Canceled:
                 case TouchPhase.Ended:
-                    MoveEnd(hitInfo);
+                    MoveEnd();
                     break;
             }
         }
@@ -212,14 +225,13 @@ public class DrawLineCurve : MonoBehaviour
                 if (startNodeObj != hitObjCheck &&
                     circleObj.cdLinkedList.SearchObj(hitObjCheck) != null)
                 {
-                    Debug.Log("언제 불리니??");
-                    MoveEnd(hitInfo);
+                    MoveEnd();
                 }
             }
         }
     }
 
-    void MoveEnd(RaycastHit2D hitInfo)
+    void MoveEnd()
     {
         if (startNodeObj == null) return;
         if (lineStack.Count == 0)
