@@ -225,7 +225,7 @@ namespace RankingDB
             #endregion
 
             #region Get Each Collection All Data
-            GetSketchUpUserDatas("levelOne", "¾È³ç5", levelOneDict,topTenRank.instEasyPos);
+            GetSketchUpUserDatas("levelOne", "¾È³ç5", levelOneDict, topTenRank.instEasyPos);
             GetSketchUpUserDatas("levelTwo", "¾È³ç5", levelTwoDict,topTenRank.instNormalPos);
             GetSketchUpUserDatas("levelThree", "¾È³ç5", levelThreeDict, topTenRank.instHardPos);
             GetSketchUpUserDatas("levelFour", "¾È³ç5", levelFourDict, topTenRank.instExtremePos);
@@ -324,7 +324,7 @@ namespace RankingDB
             sortDict.Clear();
         }
 
-        public async void GetSketchUpUserDatas(string levelNum, string findId, Dictionary<string, long> dict,RectTransform pos)
+        public async void GetSketchUpUserDatas(string levelNum, string findId, Dictionary<string, long> dict, RectTransform pos)
         {
             BsonDocument find = new BsonDocument();
             var allDataTask = SketchUpCollection.FindAsync(find);

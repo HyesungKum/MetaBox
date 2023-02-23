@@ -14,6 +14,7 @@ public class TopTenRankMgr : MonoBehaviour
     [SerializeField] GameObject playerRanking = null;
 
     [Header("[SketchUP Inst Pos]")]
+    [SerializeField] public ScrollRect scrollRect = null;
     [SerializeField] public RectTransform instEasyPos = null;
     [SerializeField] public RectTransform instNormalPos = null;
     [SerializeField] public RectTransform instHardPos = null;
@@ -63,18 +64,22 @@ public class TopTenRankMgr : MonoBehaviour
         if (pos == instEasyPos)
         {
             PosCheck(true, false, false, false);
+            scrollRect.content = instEasyPos;
         }
         else if(pos == instNormalPos)
         {
             PosCheck(false, true, false, false);
+            scrollRect.content = instNormalPos;
         }
         else if(pos == instHardPos)
         {
             PosCheck(false, false, true, false);
+            scrollRect.content = instHardPos;
         }
         else if(pos == instExtremePos)
         {
             PosCheck(false, false, false, true);
+            scrollRect.content = instExtremePos;
         }
     }
 
