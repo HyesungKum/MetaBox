@@ -5,7 +5,7 @@ public delegate void IntCallBack(int value);
 public delegate void VectorCallBack(Vector3 pos);
 
 public delegate void LoadCallBack(string id);
-public delegate void SaveCallBack(int level, int score);
+public delegate void SaveCallBack(int level, long score);
 
 public class EventReceiver
 {
@@ -79,6 +79,6 @@ public class EventReceiver
     static public void CallPlayerRise() => PlayerRise?.Invoke();
 
     //save load event
-    static public void CallSaveCallBack(int level, int score) => saveCallBack?.Invoke(level,score);
+    static public void CallSaveCallBack(int level, long score) => saveCallBack?.Invoke(level,score);
     static public void CallLoadCallBack(string id) => loadCallBack?.Invoke(id);
 }

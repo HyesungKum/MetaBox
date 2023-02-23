@@ -4,45 +4,69 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Windows;
 
-#region FreezeData
+#region Data Structor
 [Serializable]
 public class FreezeData
 {
     public string id;
-    public int level;
-    public int point;
-    public long date;
+
+    public long[] levelOne = new long[2];
+    public long[] levelTwo = new long[2];
+    public long[] levelThree = new long[2];
+    public long[] levelFour = new long[2];
 }
-#endregion
-#region HeyCookData
 [Serializable]
 public class HeyCookData
 {
     public string id;
-    public int level;
-    public int point;
-    public long date;
+
+    public long[] levelOne = new long[2];
+    public long[] levelTwo = new long[2];
+    public long[] levelThree = new long[2];
+    public long[] levelFour = new long[2];
 }
-#endregion
-#region MelodiaData
 [Serializable]
 public class MelodiaData
 {
     public string id;
-    public string song;
-    public int[] songLevelArry;
+
+    public long[] songOneLevelOne = new long[2];
+    public long[] songOneLevelTwo = new long[2];
+    public long[] songOneLevelThree = new long[2];
+    public long[] songOneLevelFour = new long[2];
+
+    public long[] songTwoLevelOne = new long[2];
+    public long[] songTwoLevelTwo = new long[2];
+    public long[] songTwoLevelThree = new long[2];
+    public long[] songTwoLevelFour = new long[2];
+
+    public long[] songThreeLevelOne = new long[2];
+    public long[] songThreeLevelTwo = new long[2];
+    public long[] songThreeLevelThree = new long[2];
+    public long[] songThreeLevelFour = new long[2];
+
+    public long[] songFourLevelOne = new long[2];
+    public long[] songFourLevelTwo = new long[2];
+    public long[] songFourLevelThree = new long[2];
+    public long[] songFourLevelFour = new long[2];
 }
-#endregion
-#region SketchUpData
+public class MelodiaSongArry
+{
+    public long[] levelOne = new long[3];
+    public long[] levelTwo = new long[3];
+    public long[] levelThrrr = new long[3];
+    public long[] levelFour = new long[3];
+}
 [Serializable]
 public class SketchUpData
 {
     public string id;
-    public int level;
-    public int point;
-    public long date;
+
+    public long[] levelOne = new long[2];
+    public long[] levelTwo = new long[2];
+    public long[] levelThree = new long[2];
+    public long[] levelFour = new long[2];
 }
 #endregion
 
@@ -91,11 +115,11 @@ public class MongoIDManager : MonoBehaviour
 
     void CheckInputId()
     {
-        if (string.IsNullOrEmpty(inputID.text)) // 입력 한게 없으면 버튼 비활성화
+        if (string.IsNullOrEmpty(inputID.text))
         {
             IDSaveButton.interactable = false;
         }
-        else if (inputID.text.Length <= 10) // 입력한 길이가 10글자 이하 및 10 글자면 버튼 활성화
+        else if (inputID.text.Length <= 10)
         {
             IDSaveButton.interactable = true;
         }
@@ -127,10 +151,12 @@ public class MongoIDManager : MonoBehaviour
             MelodiaData melodiaData = new();
             SketchUpData sketchUpData = new();
 
-            SaveFreezeDataBase(freezeData, ID);
-            SaveHeyCookDataBase(heyCookData, ID);
-            SaveMelodiaDataBase(melodiaData, ID);
-            SaveSketchUpDataBase(sketchUpData, ID);
+            long curTime = TimeSetting();
+
+            SaveFreezeDataBase(freezeData, ID, 0, curTime);
+            SaveHeyCookDataBase(heyCookData, ID, 0, curTime);
+            SaveMelodiaDataBase(melodiaData, ID, 0, curTime);
+            SaveSketchUpDataBase(sketchUpData, ID, 0, curTime);
 
             EventReceiver.CallSaveEvent(ID, GetCharIndex, true);
         }
@@ -141,6 +167,7 @@ public class MongoIDManager : MonoBehaviour
         }
     }
 
+    //==============================================================Check ID Overlap on MongoDB===========================================================
     BsonDocument CheckFreezeID(string findId)
     {
         BsonDocument filter = new () { { "_id", findId } };
@@ -170,34 +197,104 @@ public class MongoIDManager : MonoBehaviour
         return targetData;
     }
 
-    public async void SaveFreezeDataBase(FreezeData newData , string id)
+    //==================================================================Save Default Data=================================================================
+    public async void SaveFreezeDataBase(FreezeData newData, string id, long point, long time)
     {
         newData.id = id;
+        newData.levelOne[0] = point;
+        newData.levelOne[1] = TimeSetting();
+
+        newData.levelTwo[0] = point;
+        newData.levelTwo[1] = TimeSetting();
+
+        newData.levelThree[0] = point;
+        newData.levelThree[1] = TimeSetting();
+
+        newData.levelFour[0] = point;
+        newData.levelFour[1] = TimeSetting();
         await FreezeCollection.InsertOneAsync(newData.ToBsonDocument());
     }
-    public async void SaveHeyCookDataBase(HeyCookData newData, string id)
+    public async void SaveHeyCookDataBase(HeyCookData newData, string id, long point, long time)
     {
         newData.id = id;
+        newData.levelOne[0] = point;
+        newData.levelOne[1] = TimeSetting();
+
+        newData.levelTwo[0] = point;
+        newData.levelTwo[1] = TimeSetting();
+
+        newData.levelThree[0] = point;
+        newData.levelThree[1] = TimeSetting();
+
+        newData.levelFour[0] = point;
+        newData.levelFour[1] = TimeSetting();
+
         await HeyCookCollection.InsertOneAsync(newData.ToBsonDocument());
     }
-    public async void SaveMelodiaDataBase(MelodiaData newData, string id)
+    public async void SaveMelodiaDataBase(MelodiaData newData, string id, long point, long time)
     {
         newData.id = id;
-        newData.song = "나비야";
-        int level = 1;
-        int point = 2;
-        int date = 3;
+        #region
+        newData.songOneLevelOne[0] = point;
+        newData.songOneLevelOne[1] = TimeSetting();
+        newData.songOneLevelTwo[0] = point;
+        newData.songOneLevelTwo[1] = TimeSetting();
+        newData.songOneLevelThree[0] = point;
+        newData.songOneLevelThree[1] = TimeSetting();
+        newData.songOneLevelFour[0] = point;
+        newData.songOneLevelFour[1] = TimeSetting();
 
-        newData.songLevelArry = new int[3];
-        newData.songLevelArry[0] = level;
-        newData.songLevelArry[1] = point;
-        newData.songLevelArry[2] = date;
+        newData.songTwoLevelOne[0] = point;
+        newData.songTwoLevelOne[1] = TimeSetting();
+        newData.songTwoLevelTwo[0] = point;
+        newData.songTwoLevelTwo[1] = TimeSetting();
+        newData.songTwoLevelThree[0] = point;
+        newData.songTwoLevelThree[1] = TimeSetting();
+        newData.songTwoLevelFour[0] = point;
+        newData.songTwoLevelFour[1] = TimeSetting();
 
+        newData.songThreeLevelOne[0] = point;
+        newData.songThreeLevelOne[1] = TimeSetting();
+        newData.songThreeLevelTwo[0] = point;
+        newData.songThreeLevelTwo[1] = TimeSetting();
+        newData.songThreeLevelThree[0] = point;
+        newData.songThreeLevelThree[1] = TimeSetting();
+        newData.songThreeLevelFour[0] = point;
+        newData.songThreeLevelFour[1] = TimeSetting();
+
+        newData.songFourLevelOne[0] = point;
+        newData.songFourLevelOne[1] = TimeSetting();
+        newData.songFourLevelTwo[0] = point;
+        newData.songFourLevelTwo[1] = TimeSetting();
+        newData.songFourLevelThree[0] = point;
+        newData.songFourLevelThree[1] = TimeSetting();
+        newData.songFourLevelFour[0] = point;
+        newData.songFourLevelFour[1] = TimeSetting();
+        #endregion
         await MelodiaCollection.InsertOneAsync(newData.ToBsonDocument());
     }
-    public async void SaveSketchUpDataBase(SketchUpData newData, string id)
+    public async void SaveSketchUpDataBase(SketchUpData newData, string id, long point , long time)
     {
         newData.id = id;
+        newData.levelOne[0] = point;
+        newData.levelOne[1] = TimeSetting();
+
+        newData.levelTwo[0] = point;
+        newData.levelTwo[1] = TimeSetting();
+
+        newData.levelThree[0] = point;
+        newData.levelThree[1] = TimeSetting();
+
+        newData.levelFour[0] = point;
+        newData.levelFour[1] = TimeSetting();
         await SketchUpCollection.InsertOneAsync(newData.ToBsonDocument());
+    }
+
+    //============================================== Play Game Time Setting : Year/Month/Day/Hour/Minute=================================================
+    public long TimeSetting()
+    {
+        string nowDate = DateTime.Now.ToString("yyyyMMddHHmm"); // 현재 시간
+        long time = long.Parse(nowDate);
+        return time;
     }
 }

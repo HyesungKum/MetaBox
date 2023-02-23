@@ -41,8 +41,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] Button exitButton;
     [SerializeField] Button resumeButton;
 
-    private const string defaultName = "com.MataBox.";
-
     private void Awake()
     {
         //main UI Button Listener
@@ -89,10 +87,10 @@ public class UIManager : MonoBehaviour
                     SoundManager.Inst.CallSfx("HeyCookSfx");
                     ShowUI(heyCookUIGroup);
 
-#if UNITY_ANDROID && !UNITY_EDITOR
+                    #if UNITY_ANDROID && !UNITY_EDITOR
                     if (PackageChecker.IsAppInstalled($"com.MetaBox.HeyCook")) heyCookStartButton.interactable = true;
                     else heyCookStartButton.interactable = false;
-#endif
+                    #endif
                 }
                 break;
             case GameName.Freeze  :
@@ -100,10 +98,10 @@ public class UIManager : MonoBehaviour
                     SoundManager.Inst.CallSfx("FreezeSfx");
                     ShowUI(freezeUIGroup);
 
-#if UNITY_ANDROID && !UNITY_EDITOR
+                    #if UNITY_ANDROID && !UNITY_EDITOR
                     if (PackageChecker.IsAppInstalled($"com.MetaBox.Freeze")) freezeStartButton.interactable = true;
                     else freezeStartButton.interactable = false;
-#endif
+                    #endif
                 }
                 break;
             case GameName.Melodia :
@@ -111,10 +109,10 @@ public class UIManager : MonoBehaviour
                     SoundManager.Inst.CallSfx("MelodiaSfx");
                     ShowUI(melodiaUIGroup);
 
-#if UNITY_ANDROID && !UNITY_EDITOR
+                    #if UNITY_ANDROID && !UNITY_EDITOR
                     if (PackageChecker.IsAppInstalled("com.MetaBox.Melodia")) melodiaStartButton.interactable = true;
                     else melodiaStartButton.interactable = false;
-#endif
+                    #endif
                 }
                 break;
             case GameName.SketchUP :
@@ -122,10 +120,10 @@ public class UIManager : MonoBehaviour
                     SoundManager.Inst.CallSfx("SketchUPSfx");
                     ShowUI(sketchUPUIGroup);
 
-#if UNITY_ANDROID && !UNITY_EDITOR
+                    #if UNITY_ANDROID && !UNITY_EDITOR
                     if (PackageChecker.IsAppInstalled("com.MetaBox.SketchUP")) sketchUPStartButton.interactable = true;
                     else sketchUPStartButton.interactable = false;
-#endif
+                    #endif
                 }
                 break;
         }

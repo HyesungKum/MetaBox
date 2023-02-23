@@ -75,6 +75,7 @@ public class DataCheckManager : MonoSingleTon<DataCheckManager>
         EventReceiver.CallSaveDoneEvent();
     }
 
+    //=======================================================SaveFile IO=================================================
     /// <summary>
     /// save any data in path to json,
     /// if u dont have path will be make,
@@ -97,8 +98,6 @@ public class DataCheckManager : MonoSingleTon<DataCheckManager>
 
         File.WriteAllText(path + fileName, jsonData);
     }
-
-    //=======================================================SaveFile IO=================================================
     /// <summary>
     /// read json file and transform saveData struct in path
     /// </summary>
