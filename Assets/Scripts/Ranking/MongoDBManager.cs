@@ -107,18 +107,29 @@ namespace RankingDB
         [SerializeField] SketchUpData sketchUpData = null;
         #endregion
 
-        Dictionary<string, long> freezeRankingDictionary;
-        Dictionary<string, long> heyCookRankingDictionary;
-        Dictionary<string, long> melodiaRankingDictionary;
-        Dictionary<string, long> sketchUpRankingDictionary;
-
+        #region Dictionary
+        // freeze
+        Dictionary<string, long> freezeLevelOneDict;
+        Dictionary<string, long> freezeLevelTwoDict;
+        Dictionary<string, long> freezeLevelThreeDict;
+        Dictionary<string, long> freezeLevelFourDict;
+        // sketchUP
         Dictionary<string, long> levelOneDict;
         Dictionary<string, long> levelTwoDict;
         Dictionary<string, long> levelThreeDict;
         Dictionary<string, long> levelFourDict;
+        #endregion
+
+        [Space]
+        [SerializeField] string id = null;
+        public string ID { get { return id; } }
+
+        string levelOne = "levelOne";
+        string levelTwo = "levelTwo";
+        string levelThree = "levelThree";
+        string levelFour = "levelFour";
 
         public Dictionary<string, long> sortDict;
-
         [Space]
         [SerializeField] TopTenRankMgr topTenRank = null;
 
@@ -143,15 +154,16 @@ namespace RankingDB
             #endregion
 
             #region User Ranking Data Dictionary Reset
-            freezeRankingDictionary = new Dictionary<string, long>();
-            heyCookRankingDictionary = new Dictionary<string, long>();
-            melodiaRankingDictionary = new Dictionary<string, long>();
-            sketchUpRankingDictionary = new Dictionary<string, long>();
+            freezeLevelOneDict = new Dictionary<string, long>();
+            freezeLevelTwoDict = new Dictionary<string, long>();
+            freezeLevelThreeDict = new Dictionary<string, long>();
+            freezeLevelFourDict = new Dictionary<string, long>();
 
             levelOneDict = new Dictionary<string, long>();
             levelTwoDict = new Dictionary<string, long>();
             levelThreeDict = new Dictionary<string, long>();
             levelFourDict = new Dictionary<string, long>();
+   
             #endregion
 
             #region Save Data to DB
@@ -225,15 +237,21 @@ namespace RankingDB
             #endregion
 
             #region Get Each Collection All Data
-            GetSketchUpUserDatas("levelOne", "¾È³ç5", levelOneDict, topTenRank.instEasyPos);
-            GetSketchUpUserDatas("levelTwo", "¾È³ç5", levelTwoDict,topTenRank.instNormalPos);
-            GetSketchUpUserDatas("levelThree", "¾È³ç5", levelThreeDict, topTenRank.instHardPos);
-            GetSketchUpUserDatas("levelFour", "¾È³ç5", levelFourDict, topTenRank.instExtremePos);
+            GetAllUserData(FreezeCollection, levelOne, ID, freezeLevelOneDict, topTenRank.freezeLevelShowRanking[0], 1);
+            GetAllUserData(FreezeCollection, levelTwo, ID, freezeLevelTwoDict, topTenRank.freezeLevelShowRanking[1], 2);
+            GetAllUserData(FreezeCollection, levelThree, ID, freezeLevelThreeDict, topTenRank.freezeLevelShowRanking[2], 3);
+            GetAllUserData(FreezeCollection, levelFour, ID, freezeLevelFourDict, topTenRank.freezeLevelShowRanking[3], 4);
+
+            GetAllUserData(SketchUpCollection, levelOne, ID, levelOneDict, topTenRank.sketchUPLevelShowRanking[0], 1);
+            GetAllUserData(SketchUpCollection, levelTwo, ID, levelTwoDict, topTenRank.sketchUPLevelShowRanking[1], 2);
+            GetAllUserData(SketchUpCollection, levelThree, ID, levelThreeDict, topTenRank.sketchUPLevelShowRanking[2], 3);
+            GetAllUserData(SketchUpCollection, levelFour, ID, levelFourDict, topTenRank.sketchUPLevelShowRanking[3], 4);
             #endregion
         }
 
-        #region
-        public async void GetAllUserData(IMongoCollection<BsonDocument> collection, string levelNum, string findId, Dictionary<string, long> dict, RectTransform pos)
+        #region GetAndSetUserData
+        public async void GetAllUserData(IMongoCollection<BsonDocument> collection, string levelNum, 
+            string findId, Dictionary<string, long> dict, RectTransform pos, int level)
         {
             BsonDocument find = new BsonDocument();
             var allDataTask = collection.FindAsync(find);
@@ -251,11 +269,12 @@ namespace RankingDB
                 dict.Add(id, point);
             }
 
-            CheckSorting(findId, dict, pos);
+            Debug.Log("Dict Count : " + dict.Count);
+            CheckSorting(level, findId, dict, pos);
             sortDict.Clear();
         }
-
-        public async void GetFreezeUserData(string levelNum, string findId,RectTransform pos)
+        #region
+        public async void GetFreezeUserData(string levelNum, string findId, RectTransform pos)
         {
             BsonDocument find = new BsonDocument();
             var allDataTask = FreezeCollection.FindAsync(find);
@@ -271,13 +290,12 @@ namespace RankingDB
                 id = (string)check.GetValue("_id");
                 levelArry = (BsonArray)check.GetValue(levelNum);
                 point = (long)levelArry[0];
-                freezeRankingDictionary.Add(id, point);
+                //freezeRankingDictionary.Add(id, point);
             }
 
-            CheckSorting(findId, freezeRankingDictionary, pos);
+            //CheckSorting(findId, freezeRankingDictionary, pos);
             sortDict.Clear();
         }
-
         public async void GetHeyCookUserData(string levelNum, string findId, RectTransform pos)
         {
             BsonDocument find = new BsonDocument();
@@ -294,13 +312,12 @@ namespace RankingDB
                 id = (string)check.GetValue("_id");
                 levelArry = (BsonArray)check.GetValue(levelNum);
                 point = (long)levelArry[0];
-                heyCookRankingDictionary.Add(id, point);
+                //heyCookRankingDictionary.Add(id, point);
             }
 
-            CheckSorting(findId, heyCookRankingDictionary, pos);
+            //CheckSorting(levelNum, findId, heyCookRankingDictionary, pos);
             sortDict.Clear();
         }
-
         public async void GetMelodiaUserData(string songLevelNum, string findId, RectTransform pos)
         {
             BsonDocument find = new BsonDocument();
@@ -317,14 +334,13 @@ namespace RankingDB
                 id = (string)check.GetValue("_id");
                 levelArry = (BsonArray)check.GetValue(songLevelNum);
                 point = (long)levelArry[0];
-                melodiaRankingDictionary.Add(id, point);
+                //melodiaRankingDictionary.Add(id, point);
             }
 
-            CheckSorting(findId, melodiaRankingDictionary, pos);
+            //CheckSorting(songLevelNum, findId, melodiaRankingDictionary, pos);
             sortDict.Clear();
         }
-
-        public async void GetSketchUpUserDatas(string levelNum, string findId, Dictionary<string, long> dict, RectTransform pos)
+        public async void GetSketchUpUserDatas(string levelNum, string findId, Dictionary<string, long> dict, RectTransform pos, int level)
         {
             BsonDocument find = new BsonDocument();
             var allDataTask = SketchUpCollection.FindAsync(find);
@@ -342,12 +358,12 @@ namespace RankingDB
                 dict.Add(id, point);
             }
 
-            Debug.Log("Dict Count : " + dict.Count);
-            CheckSorting(findId, dict, pos);
+            CheckSorting(level, findId, dict, pos);
             sortDict.Clear();
         }
+        #endregion
 
-        Dictionary<string, long> CheckSorting(string id, Dictionary<string, long> dict, RectTransform pos)
+        Dictionary<string, long> CheckSorting(int levelNum, string id, Dictionary<string, long> dict, RectTransform pos)
         {
             sortDict = new Dictionary<string, long>();
             sortDict = SortDictionary(dict);
@@ -357,13 +373,11 @@ namespace RankingDB
             foreach (KeyValuePair<string, long> item in sortDict)
             {
                 if (item.Key.Equals(id))
-                    topTenRank.ShowPlayerData(rank,item.Key, item.Value);
-                //else
-                //{
-                //    topTenRank.PlayerNoTopTenRank("Å¾ 10 ·©Å·¿¡ ¾ø½À´Ï´Ù !");
-                //}
+                {
+                    topTenRank.PlayerDataAdd(levelNum, rank, item.Key, item.Value, pos);
+                }
 
-                topTenRank.InstUserData(rank,item.Key, item.Value, pos);
+                topTenRank.InstUserData(rank, item.Key, item.Value, pos);
                 rank += 1;
 
                 if (rank == 11)
@@ -537,7 +551,7 @@ namespace RankingDB
         #endregion
 
         #region Changed Point
-        public void ChangedPoint(IMongoCollection<BsonDocument> collection, string id, string levelNum,long point)
+        public void ChangedPoint(IMongoCollection<BsonDocument> collection, string id, string levelNum, long point)
         {
             BsonDocument filter = new BsonDocument { { "_id", id } };
             BsonDocument targetData = collection.Find(filter).FirstOrDefault();
