@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
+using UnityEngine.Analytics;
 
 namespace RankingDB
 {
@@ -71,6 +73,14 @@ namespace RankingDB
     }
     #endregion
 
+    public class DataSorting
+    {
+        public int rank;
+        public string id;
+        public int point;
+        public long playtime;
+    }
+
     #region SketchUpData
     [Serializable]
     public class SketchUpData
@@ -96,38 +106,87 @@ namespace RankingDB
         #region Each Game Data
         [Header("[Freeze Data]")]
         [SerializeField] FreezeData freezeData = null;
-
         [Header("[HeyCook Data]")]
         [SerializeField] HeyCookData heyCookData = null;
-
         [Header("[Melodia Data]")]
         [SerializeField] MelodiaData melodiaData = null;
-
         [Header("[SketchUp Data]")]
         [SerializeField] SketchUpData sketchUpData = null;
         #endregion
 
-        #region Dictionary
-        // freeze
+        #region Freeze Dictionary
         Dictionary<string, long> freezeLevelOneDict;
         Dictionary<string, long> freezeLevelTwoDict;
         Dictionary<string, long> freezeLevelThreeDict;
         Dictionary<string, long> freezeLevelFourDict;
-        // sketchUP
-        Dictionary<string, long> levelOneDict;
-        Dictionary<string, long> levelTwoDict;
-        Dictionary<string, long> levelThreeDict;
-        Dictionary<string, long> levelFourDict;
+        #endregion
+
+        #region HeyCook Dictionary
+        Dictionary<string, long> heyCookLevelOneDict;
+        Dictionary<string, long> heyCookLevelTwoDict;
+        Dictionary<string, long> heyCookLevelThreeDict;
+        Dictionary<string, long> heyCookLevelFourDict;
+        #endregion
+
+        #region MelodiaDictionary
+        Dictionary<string, long> melodiaSongOneLevelOneDict;
+        Dictionary<string, long> melodiaSongOneLevelTwoDict;
+        Dictionary<string, long> melodiaSongOneLevelThreeDict;
+        Dictionary<string, long> melodiaSongTwoLevelFourDict;
+
+        Dictionary<string, long> melodiaSongTwoLevelOneDict;
+        Dictionary<string, long> melodiaSongTwoLevelTwoDict;
+        Dictionary<string, long> melodiaSongTwoLevelThreeDict;
+        Dictionary<string, long> melodiaSongOneLevelFourDict;
+
+        Dictionary<string, long> melodiaSongThreeLevelOneDict;
+        Dictionary<string, long> melodiaSongThreeLevelTwoDict;
+        Dictionary<string, long> melodiaSongThreeLevelThreeDict;
+        Dictionary<string, long> melodiaSongThreeLevelFourDict;      
+        
+        Dictionary<string, long> melodiaSongFourLevelOneDict;
+        Dictionary<string, long> melodiaSongFourLevelTwoDict;
+        Dictionary<string, long> melodiaSongFourLevelThreeDict;
+        Dictionary<string, long> melodiaSongFourLevelFourDict;
+        #endregion
+
+        #region SketchUP Dictionary
+        Dictionary<string, long> sketchUplevelOneDict;
+        Dictionary<string, long> sketchUplevelTwoDict;
+        Dictionary<string, long> sketchUplevelThreeDict;
+        Dictionary<string, long> sketchUplevelFourDict;
         #endregion
 
         [Space]
         [SerializeField] string id = null;
         public string ID { get { return id; } }
 
+        #region LevelString
         string levelOne = "levelOne";
         string levelTwo = "levelTwo";
         string levelThree = "levelThree";
         string levelFour = "levelFour";
+
+        string songOneLevelOne = "songOneLevelOne";
+        string songOneLevelTwo = "songOneLevelTwo";
+        string songOneLevelThree = "songOneLevelThree";
+        string songOneLevelFour = "songOneLevelFour";
+
+        string songTwoLevelOne = "songTwoLevelOne";
+        string songTwoLevelTwo = "songTwoLevelTwo";
+        string songTwoLevelThree = "songTwoLevelThree";
+        string songTwoLevelFour = "songTwoLevelFour";
+
+        string songThreeLevelOne = "songThreeLevelOne";
+        string songThreeLevelTwo = "songThreeLevelTwo";
+        string songThreeLevelThree = "songThreeLevelThree";
+        string songThreeLevelFour = "songThreeLevelFour";
+
+        string songFourLevelOne = "songFourLevelOne";
+        string songFourLevelTwo = "songFourLevelTwo";
+        string songFourLevelThree = "songFourLevelThree";
+        string songFourLevelFour = "songFourLevelFour";
+        #endregion
 
         public Dictionary<string, long> sortDict;
         [Space]
@@ -159,61 +218,40 @@ namespace RankingDB
             freezeLevelThreeDict = new Dictionary<string, long>();
             freezeLevelFourDict = new Dictionary<string, long>();
 
-            levelOneDict = new Dictionary<string, long>();
-            levelTwoDict = new Dictionary<string, long>();
-            levelThreeDict = new Dictionary<string, long>();
-            levelFourDict = new Dictionary<string, long>();
-   
+            heyCookLevelOneDict = new Dictionary<string, long>();
+            heyCookLevelTwoDict = new Dictionary<string, long>();
+            heyCookLevelThreeDict = new Dictionary<string, long>();
+            heyCookLevelFourDict = new Dictionary<string, long>();
+
+            melodiaSongOneLevelOneDict = new Dictionary<string, long>();
+            melodiaSongOneLevelTwoDict = new Dictionary<string, long>();
+            melodiaSongOneLevelThreeDict = new Dictionary<string, long>();
+            melodiaSongTwoLevelFourDict = new Dictionary<string, long>();
+
+            melodiaSongTwoLevelOneDict = new Dictionary<string, long>();
+            melodiaSongTwoLevelTwoDict = new Dictionary<string, long>();
+            melodiaSongTwoLevelThreeDict = new Dictionary<string, long>();
+            melodiaSongOneLevelFourDict = new Dictionary<string, long>();
+
+            melodiaSongThreeLevelOneDict = new Dictionary<string, long>();
+            melodiaSongThreeLevelTwoDict = new Dictionary<string, long>();
+            melodiaSongThreeLevelThreeDict = new Dictionary<string, long>();
+            melodiaSongThreeLevelFourDict = new Dictionary<string, long>();
+
+            melodiaSongFourLevelOneDict = new Dictionary<string, long>();
+            melodiaSongFourLevelTwoDict = new Dictionary<string, long>();
+            melodiaSongFourLevelThreeDict = new Dictionary<string, long>();
+            melodiaSongFourLevelFourDict = new Dictionary<string, long>();
+
+            sketchUplevelOneDict = new Dictionary<string, long>();
+            sketchUplevelTwoDict = new Dictionary<string, long>();
+            sketchUplevelThreeDict = new Dictionary<string, long>();
+            sketchUplevelFourDict = new Dictionary<string, long>();
             #endregion
 
             #region Save Data to DB
             //SaveFreezeData(freezeData, "¾È³ç1", 10);
             //SaveFreezeData(freezeData, "¾È³ç2", 20);
-            //SaveFreezeData(freezeData, "¾È³ç3", 30);
-            //SaveFreezeData(freezeData, "¾È³ç4", 40);
-            //SaveFreezeData(freezeData, "¾È³ç5", 50);
-            //SaveFreezeData(freezeData, "¾È³ç6", 60);
-            //SaveFreezeData(freezeData, "¾È³ç7", 70);
-            //SaveFreezeData(freezeData, "¾È³ç8", 80);
-            //SaveFreezeData(freezeData, "¾È³ç9", 90);
-            //SaveFreezeData(freezeData, "¾È³ç10", 100);
-            //SaveFreezeData(freezeData, "¾È³ç11", 200);
-
-            //SaveHeyCookData(heyCookData, "¾È³ç1", 10);
-            //SaveHeyCookData(heyCookData, "¾È³ç2", 20);
-            //SaveHeyCookData(heyCookData, "¾È³ç3", 30);
-            //SaveHeyCookData(heyCookData, "¾È³ç4", 40);
-            //SaveHeyCookData(heyCookData, "¾È³ç5", 50);
-            //SaveHeyCookData(heyCookData, "¾È³ç6", 60);
-            //SaveHeyCookData(heyCookData, "¾È³ç7", 70);
-            //SaveHeyCookData(heyCookData, "¾È³ç8", 80);
-            //SaveHeyCookData(heyCookData, "¾È³ç9", 90);
-            //SaveHeyCookData(heyCookData, "¾È³ç10", 100);
-            //SaveHeyCookData(heyCookData, "¾È³ç11", 200);
-
-            //SaveMelodiaDataBase(melodiaData, "¾È³ç1", 10);
-            //SaveMelodiaDataBase(melodiaData, "¾È³ç2", 20);
-            //SaveMelodiaDataBase(melodiaData, "¾È³ç3", 30);
-            //SaveMelodiaDataBase(melodiaData, "¾È³ç4", 40);
-            //SaveMelodiaDataBase(melodiaData, "¾È³ç5", 50);
-            //SaveMelodiaDataBase(melodiaData, "¾È³ç6", 60);
-            //SaveMelodiaDataBase(melodiaData, "¾È³ç7", 70);
-            //SaveMelodiaDataBase(melodiaData, "¾È³ç8", 80);
-            //SaveMelodiaDataBase(melodiaData, "¾È³ç9", 90);
-            //SaveMelodiaDataBase(melodiaData, "¾È³ç10", 100);
-            //SaveMelodiaDataBase(melodiaData, "¾È³ç11", 200);
-
-            //SaveSketchUpDataBase(sketchUpData, "¾È³ç1", 10);
-            //SaveSketchUpDataBase(sketchUpData, "¾È³ç2", 20);
-            //SaveSketchUpDataBase(sketchUpData, "¾È³ç3", 30);
-            //SaveSketchUpDataBase(sketchUpData, "¾È³ç4", 40);
-            //SaveSketchUpDataBase(sketchUpData, "¾È³ç5", 50);
-            //SaveSketchUpDataBase(sketchUpData, "¾È³ç6", 60);
-            //SaveSketchUpDataBase(sketchUpData, "¾È³ç7", 70);
-            //SaveSketchUpDataBase(sketchUpData, "¾È³ç8", 80);
-            //SaveSketchUpDataBase(sketchUpData, "¾È³ç9", 90);
-            //SaveSketchUpDataBase(sketchUpData, "¾È³ç10", 100);
-            //SaveSketchUpDataBase(sketchUpData, "¾È³ç11", 200);
             #endregion
 
             #region DB Data All Delete
@@ -224,10 +262,10 @@ namespace RankingDB
             #endregion
 
             #region Find ID Check
-            //CheckFreezeID("¾È³ç1");
-            //CheckHeyCookID("¾È³ç1");
-            //CheckMelodiaID("¾È³ç1");
-            //CheckSketchUPID("¾È³ç1");
+            //CheckFreezeID(ID);
+            //CheckHeyCookID(ID);
+            //CheckMelodiaID(ID);
+            //CheckSketchUPID(ID);
             #endregion
 
             #region Changed Point
@@ -237,21 +275,52 @@ namespace RankingDB
             #endregion
 
             #region Get Each Collection All Data
-            GetAllUserData(FreezeCollection, levelOne, ID, freezeLevelOneDict, topTenRank.freezeLevelShowRanking[0], 1);
-            GetAllUserData(FreezeCollection, levelTwo, ID, freezeLevelTwoDict, topTenRank.freezeLevelShowRanking[1], 2);
-            GetAllUserData(FreezeCollection, levelThree, ID, freezeLevelThreeDict, topTenRank.freezeLevelShowRanking[2], 3);
-            GetAllUserData(FreezeCollection, levelFour, ID, freezeLevelFourDict, topTenRank.freezeLevelShowRanking[3], 4);
+            #region Freeze
+            GetAllUserData(FreezeCollection, levelOne, ID, freezeLevelOneDict, topTenRank.freezeLevelShowRanking[0], 1, topTenRank.playerDataFreezeList);
+            GetAllUserData(FreezeCollection, levelTwo, ID, freezeLevelTwoDict, topTenRank.freezeLevelShowRanking[1], 2, topTenRank.playerDataFreezeList);
+            GetAllUserData(FreezeCollection, levelThree, ID, freezeLevelThreeDict, topTenRank.freezeLevelShowRanking[2], 3, topTenRank.playerDataFreezeList);
+            GetAllUserData(FreezeCollection, levelFour, ID, freezeLevelFourDict, topTenRank.freezeLevelShowRanking[3], 4, topTenRank.playerDataFreezeList);
+            #endregion
 
-            GetAllUserData(SketchUpCollection, levelOne, ID, levelOneDict, topTenRank.sketchUPLevelShowRanking[0], 1);
-            GetAllUserData(SketchUpCollection, levelTwo, ID, levelTwoDict, topTenRank.sketchUPLevelShowRanking[1], 2);
-            GetAllUserData(SketchUpCollection, levelThree, ID, levelThreeDict, topTenRank.sketchUPLevelShowRanking[2], 3);
-            GetAllUserData(SketchUpCollection, levelFour, ID, levelFourDict, topTenRank.sketchUPLevelShowRanking[3], 4);
+            #region HeyCook
+            GetAllUserData(HeyCookCollection, levelOne, ID, heyCookLevelOneDict, topTenRank.heyCookLevelShowPanking[0], 1, topTenRank.playerDataHeyCookList);
+            GetAllUserData(HeyCookCollection, levelTwo, ID, heyCookLevelTwoDict, topTenRank.heyCookLevelShowPanking[1], 2, topTenRank.playerDataHeyCookList);
+            GetAllUserData(HeyCookCollection, levelThree, ID, heyCookLevelThreeDict, topTenRank.heyCookLevelShowPanking[2], 3, topTenRank.playerDataHeyCookList);
+            GetAllUserData(HeyCookCollection, levelFour, ID, heyCookLevelFourDict, topTenRank.heyCookLevelShowPanking[3], 4, topTenRank.playerDataHeyCookList);
+            #endregion
+
+            GetAllUserData(MelodiaCollection, songOneLevelOne, ID, melodiaSongOneLevelOneDict, topTenRank.melodiaSongOneRanking[0], 1,topTenRank.playerMelodiaSongOneDataList);
+            GetAllUserData(MelodiaCollection, songOneLevelTwo, ID, melodiaSongOneLevelTwoDict, topTenRank.melodiaSongOneRanking[1], 2,topTenRank.playerMelodiaSongOneDataList);
+            GetAllUserData(MelodiaCollection, songOneLevelThree, ID, melodiaSongOneLevelThreeDict, topTenRank.melodiaSongOneRanking[2], 3,topTenRank.playerMelodiaSongOneDataList);
+            GetAllUserData(MelodiaCollection, songOneLevelFour, ID, melodiaSongOneLevelFourDict, topTenRank.melodiaSongOneRanking[3], 4,topTenRank.playerMelodiaSongOneDataList);
+
+            GetAllUserData(MelodiaCollection, songTwoLevelOne, ID, melodiaSongTwoLevelOneDict, topTenRank.melodiaSongTwoRanking[0], 1, topTenRank.playerMelodiaSongTwoDataList);
+            GetAllUserData(MelodiaCollection, songTwoLevelTwo, ID, melodiaSongTwoLevelTwoDict, topTenRank.melodiaSongTwoRanking[1], 2, topTenRank.playerMelodiaSongTwoDataList);
+            GetAllUserData(MelodiaCollection, songTwoLevelThree, ID, melodiaSongTwoLevelThreeDict, topTenRank.melodiaSongTwoRanking[2], 3, topTenRank.playerMelodiaSongTwoDataList);
+            GetAllUserData(MelodiaCollection, songTwoLevelFour, ID, melodiaSongTwoLevelFourDict, topTenRank.melodiaSongTwoRanking[3], 4, topTenRank.playerMelodiaSongTwoDataList);
+
+            GetAllUserData(MelodiaCollection, songThreeLevelOne, ID, melodiaSongThreeLevelOneDict, topTenRank.melodiaSongThreeRanking[0], 1, topTenRank.playerMelodiaSongThreeDataList);
+            GetAllUserData(MelodiaCollection, songThreeLevelTwo, ID, melodiaSongThreeLevelTwoDict, topTenRank.melodiaSongThreeRanking[1], 2, topTenRank.playerMelodiaSongThreeDataList);
+            GetAllUserData(MelodiaCollection, songThreeLevelThree, ID, melodiaSongThreeLevelThreeDict, topTenRank.melodiaSongThreeRanking[2], 3, topTenRank.playerMelodiaSongThreeDataList);
+            GetAllUserData(MelodiaCollection, songThreeLevelFour, ID, melodiaSongThreeLevelFourDict, topTenRank.melodiaSongThreeRanking[3], 4, topTenRank.playerMelodiaSongThreeDataList);
+
+            GetAllUserData(MelodiaCollection, songFourLevelOne, ID, melodiaSongFourLevelOneDict, topTenRank.melodiaSongFourRanking[0], 1, topTenRank.playerMelodiaSongFourDataList);
+            GetAllUserData(MelodiaCollection, songFourLevelTwo, ID, melodiaSongFourLevelTwoDict, topTenRank.melodiaSongFourRanking[1], 2, topTenRank.playerMelodiaSongFourDataList);
+            GetAllUserData(MelodiaCollection, songFourLevelThree, ID, melodiaSongFourLevelThreeDict, topTenRank.melodiaSongFourRanking[2], 3, topTenRank.playerMelodiaSongFourDataList);
+            GetAllUserData(MelodiaCollection, songFourLevelFour, ID, melodiaSongFourLevelFourDict, topTenRank.melodiaSongFourRanking[3], 4, topTenRank.playerMelodiaSongFourDataList);
+
+            #region SketchUp
+            GetAllUserData(SketchUpCollection, levelOne, ID, sketchUplevelOneDict, topTenRank.sketchUPLevelShowRanking[0], 1, topTenRank.playerDataSketchUPList);
+            GetAllUserData(SketchUpCollection, levelTwo, ID, sketchUplevelTwoDict, topTenRank.sketchUPLevelShowRanking[1], 2, topTenRank.playerDataSketchUPList);
+            GetAllUserData(SketchUpCollection, levelThree, ID, sketchUplevelThreeDict, topTenRank.sketchUPLevelShowRanking[2], 3, topTenRank.playerDataSketchUPList);
+            GetAllUserData(SketchUpCollection, levelFour, ID, sketchUplevelFourDict, topTenRank.sketchUPLevelShowRanking[3], 4, topTenRank.playerDataSketchUPList);
+            #endregion
             #endregion
         }
 
         #region GetAndSetUserData
         public async void GetAllUserData(IMongoCollection<BsonDocument> collection, string levelNum, 
-            string findId, Dictionary<string, long> dict, RectTransform pos, int level)
+            string findId, Dictionary<string, long> dict, RectTransform pos, int level, List<playerData> list)
         {
             BsonDocument find = new BsonDocument();
             var allDataTask = collection.FindAsync(find);
@@ -265,14 +334,17 @@ namespace RankingDB
             {
                 id = (string)check.GetValue("_id");
                 levelArry = (BsonArray)check.GetValue(levelNum);
+                //Debug.Log("levelArry : " + levelArry);
                 point = (long)levelArry[0];
+                //Debug.Log("point : " + point);
                 dict.Add(id, point);
             }
 
-            Debug.Log("Dict Count : " + dict.Count);
-            CheckSorting(level, findId, dict, pos);
+            //Debug.Log("Dict Count : " + dict.Count);
+            CheckSorting(list, level, findId, dict, pos);
             sortDict.Clear();
         }
+
         #region
         public async void GetFreezeUserData(string levelNum, string findId, RectTransform pos)
         {
@@ -358,12 +430,12 @@ namespace RankingDB
                 dict.Add(id, point);
             }
 
-            CheckSorting(level, findId, dict, pos);
+            //CheckSorting(level, findId, dict, pos);
             sortDict.Clear();
         }
         #endregion
 
-        Dictionary<string, long> CheckSorting(int levelNum, string id, Dictionary<string, long> dict, RectTransform pos)
+        Dictionary<string, long> CheckSorting(List<playerData> list,int levelNum, string id, Dictionary<string, long> dict, RectTransform pos)
         {
             sortDict = new Dictionary<string, long>();
             sortDict = SortDictionary(dict);
@@ -374,7 +446,7 @@ namespace RankingDB
             {
                 if (item.Key.Equals(id))
                 {
-                    topTenRank.PlayerDataAdd(levelNum, rank, item.Key, item.Value, pos);
+                    topTenRank.PlayerDataAdd(list, levelNum, rank, item.Key, item.Value, pos);
                 }
 
                 topTenRank.InstUserData(rank, item.Key, item.Value, pos);
@@ -386,6 +458,7 @@ namespace RankingDB
 
             return sortDict;
         }
+
         #endregion
 
         #region Dictipnary Sorting

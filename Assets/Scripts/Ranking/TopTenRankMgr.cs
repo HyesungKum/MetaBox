@@ -5,6 +5,7 @@ using RankingDB;
 using MongoDB.Bson;
 using UnityEngine.UI;
 using System;
+using Unity.VisualScripting;
 
 [Serializable]
 public class playerData
@@ -36,7 +37,10 @@ public class TopTenRankMgr : MonoBehaviour
     [SerializeField] GameObject userDataPrefab = null;
 
     [Header("[Player Ranking]")]
-    [SerializeField] GameObject playerRanking = null;
+    [SerializeField] GameObject freezePlayerRank = null;
+    [SerializeField] GameObject heyCookPlayerRank = null;
+    [SerializeField] GameObject melodiaPlayerRank = null;
+    [SerializeField] GameObject sketchUpPlayerRank = null;
 
     #region Freeze
     [Header("[Freeze]")]
@@ -56,10 +60,21 @@ public class TopTenRankMgr : MonoBehaviour
 
     #region Melodia
     [Header("[Melodia]")]
-    [SerializeField] public ScrollRect melodiaScrollRect = null;
-    [SerializeField] public RectTransform[] melodiaShowRanking = null;
+    [SerializeField] public ScrollRect melodiaSongOneScrollRect = null;
+    [SerializeField] public ScrollRect melodiaSongTwoScrollRect = null;
+    [SerializeField] public ScrollRect melodiaSongThreeScrollRect = null;
+    [SerializeField] public ScrollRect melodiaSongFourScrollRect = null;
     [Space]
-    [SerializeField] Button[] melodiaLevelButtons;
+    [SerializeField] public RectTransform[] melodiaSongOneRanking = null;
+    [SerializeField] public RectTransform[] melodiaSongTwoRanking = null;
+    [SerializeField] public RectTransform[] melodiaSongThreeRanking = null;
+    [SerializeField] public RectTransform[] melodiaSongFourRanking = null;
+    [Space]
+    [SerializeField] Button[] melodiaSongNumButton = null;
+    [SerializeField] Button[] melodiaSongOneLevelButtons = null;
+    [SerializeField] Button[] melodiaSongTwoLevelButtons = null;
+    [SerializeField] Button[] melodiaSongThreeLevelButtons = null;
+    [SerializeField] Button[] melodiaSongFourLevelButtons = null;
     #endregion
 
     #region SketchUP
@@ -76,56 +91,121 @@ public class TopTenRankMgr : MonoBehaviour
     GameObject instData = null;
     [Space]
     public playerData playerData = null;
+    #endregion
+
+    #region List
     [Space]
-    public List<playerData> playerDataList;
+    public List<playerData> playerDataFreezeList;
+    public List<playerData> playerDataHeyCookList;
+    public List<playerData> playerMelodiaSongOneDataList;
+    public List<playerData> playerMelodiaSongTwoDataList;
+    public List<playerData> playerMelodiaSongThreeDataList;
+    public List<playerData> playerMelodiaSongFourDataList;
+    public List<playerData> playerDataSketchUPList;
     #endregion
 
     void Awake()
     {
-        playerRanking.TryGetComponent<UserDatePrefab>(out userDataSet);
+        sketchUpPlayerRank.TryGetComponent<UserDatePrefab>(out userDataSet);
         playerData = new playerData();
         levelset = new levelSet();
-        playerDataList = new List<playerData>();
+
+
+        #region List ReSet
+        playerDataFreezeList = new List<playerData>();
+        playerDataHeyCookList = new List<playerData>();
+        playerMelodiaSongOneDataList = new List<playerData>();
+        playerMelodiaSongTwoDataList = new List<playerData>();
+        playerMelodiaSongThreeDataList = new List<playerData>();
+        playerMelodiaSongFourDataList = new List<playerData>();
+        playerDataSketchUPList = new List<playerData>();
+        #endregion
 
         #region Button Event Setting
         // freeze Button
         FirstSet(freezeLevelShowRanking);
-        freezeLevelButs[0].onClick.AddListener(delegate { ContentSetFalse(freezeLevelShowRanking[0]); });
-        freezeLevelButs[1].onClick.AddListener(delegate { ContentSetFalse(freezeLevelShowRanking[1]); });
-        freezeLevelButs[2].onClick.AddListener(delegate { ContentSetFalse(freezeLevelShowRanking[2]); });
-        freezeLevelButs[3].onClick.AddListener(delegate { ContentSetFalse(freezeLevelShowRanking[3]); });
+        freezeLevelButs[0].onClick.AddListener(delegate { CheckTruePos(freezeScrollRect, freezeLevelShowRanking, freezePlayerRank, playerDataFreezeList, 0); });
+        freezeLevelButs[1].onClick.AddListener(delegate { CheckTruePos(freezeScrollRect, freezeLevelShowRanking, freezePlayerRank, playerDataFreezeList, 1); });
+        freezeLevelButs[2].onClick.AddListener(delegate { CheckTruePos(freezeScrollRect, freezeLevelShowRanking, freezePlayerRank, playerDataFreezeList, 2); });
+        freezeLevelButs[3].onClick.AddListener(delegate { CheckTruePos(freezeScrollRect, freezeLevelShowRanking, freezePlayerRank, playerDataFreezeList, 3); });
+        #endregion
 
-        // sketchUP Button
+        #region heyCook Button
+        heyCookLevelButton[0].onClick.AddListener(delegate { CheckTruePos(heyCookScrollRect, heyCookLevelShowPanking, heyCookPlayerRank, playerDataHeyCookList, 0); });
+        heyCookLevelButton[1].onClick.AddListener(delegate { CheckTruePos(heyCookScrollRect, heyCookLevelShowPanking, heyCookPlayerRank, playerDataHeyCookList, 1); });
+        heyCookLevelButton[2].onClick.AddListener(delegate { CheckTruePos(heyCookScrollRect, heyCookLevelShowPanking, heyCookPlayerRank, playerDataHeyCookList, 2); });
+        heyCookLevelButton[3].onClick.AddListener(delegate { CheckTruePos(heyCookScrollRect, heyCookLevelShowPanking, heyCookPlayerRank, playerDataHeyCookList, 3); });
+        #endregion
+
+        #region MelodiaData Button
+        MelodiaFirstSet();
+        melodiaSongNumButton[0].onClick.AddListener(delegate { OnClickMoelidiaSongButton(true, false, false, false); MelidiaContentFirstSet(melodiaSongOneRanking); });
+        melodiaSongNumButton[1].onClick.AddListener(delegate { OnClickMoelidiaSongButton(false, true, false, false); MelidiaContentFirstSet(melodiaSongTwoRanking); });
+        melodiaSongNumButton[2].onClick.AddListener(delegate { OnClickMoelidiaSongButton(false, false, true, false); MelidiaContentFirstSet(melodiaSongThreeRanking); });
+        melodiaSongNumButton[3].onClick.AddListener(delegate { OnClickMoelidiaSongButton(false, false, false, true); MelidiaContentFirstSet(melodiaSongFourRanking); });
+
+        melodiaSongOneLevelButtons[0].onClick.AddListener(delegate { CheckTruePos(melodiaSongOneScrollRect, melodiaSongOneRanking, melodiaPlayerRank, playerMelodiaSongOneDataList, 0);});
+        melodiaSongOneLevelButtons[1].onClick.AddListener(delegate { CheckTruePos(melodiaSongOneScrollRect, melodiaSongOneRanking, melodiaPlayerRank, playerMelodiaSongOneDataList, 1); });
+        melodiaSongOneLevelButtons[2].onClick.AddListener(delegate { CheckTruePos(melodiaSongOneScrollRect, melodiaSongOneRanking, melodiaPlayerRank, playerMelodiaSongOneDataList, 2); });
+        melodiaSongOneLevelButtons[3].onClick.AddListener(delegate { CheckTruePos(melodiaSongOneScrollRect, melodiaSongOneRanking, melodiaPlayerRank, playerMelodiaSongOneDataList, 3); });
+
+        melodiaSongTwoLevelButtons[0].onClick.AddListener(delegate { CheckTruePos(melodiaSongTwoScrollRect, melodiaSongTwoRanking, melodiaPlayerRank, playerMelodiaSongTwoDataList, 0); });
+        melodiaSongTwoLevelButtons[1].onClick.AddListener(delegate { CheckTruePos(melodiaSongTwoScrollRect, melodiaSongTwoRanking, melodiaPlayerRank, playerMelodiaSongTwoDataList, 1); });
+        melodiaSongTwoLevelButtons[2].onClick.AddListener(delegate { CheckTruePos(melodiaSongTwoScrollRect, melodiaSongTwoRanking, melodiaPlayerRank, playerMelodiaSongTwoDataList, 2); });
+        melodiaSongTwoLevelButtons[3].onClick.AddListener(delegate { CheckTruePos(melodiaSongTwoScrollRect, melodiaSongTwoRanking, melodiaPlayerRank, playerMelodiaSongTwoDataList, 3); });
+         
+        melodiaSongThreeLevelButtons[0].onClick.AddListener(delegate { CheckTruePos(melodiaSongThreeScrollRect, melodiaSongThreeRanking, melodiaPlayerRank, playerMelodiaSongThreeDataList, 0); });
+        melodiaSongThreeLevelButtons[1].onClick.AddListener(delegate { CheckTruePos(melodiaSongThreeScrollRect, melodiaSongThreeRanking, melodiaPlayerRank, playerMelodiaSongThreeDataList, 1); });
+        melodiaSongThreeLevelButtons[2].onClick.AddListener(delegate { CheckTruePos(melodiaSongThreeScrollRect, melodiaSongThreeRanking, melodiaPlayerRank, playerMelodiaSongThreeDataList, 2); });
+        melodiaSongThreeLevelButtons[3].onClick.AddListener(delegate { CheckTruePos(melodiaSongThreeScrollRect, melodiaSongThreeRanking, melodiaPlayerRank, playerMelodiaSongThreeDataList, 3); });
+
+        melodiaSongFourLevelButtons[0].onClick.AddListener(delegate { CheckTruePos(melodiaSongFourScrollRect, melodiaSongFourRanking, melodiaPlayerRank, playerMelodiaSongFourDataList, 0); });
+        melodiaSongFourLevelButtons[1].onClick.AddListener(delegate { CheckTruePos(melodiaSongFourScrollRect, melodiaSongFourRanking, melodiaPlayerRank, playerMelodiaSongFourDataList, 1); });
+        melodiaSongFourLevelButtons[2].onClick.AddListener(delegate { CheckTruePos(melodiaSongFourScrollRect, melodiaSongFourRanking, melodiaPlayerRank, playerMelodiaSongFourDataList, 2); });
+        melodiaSongFourLevelButtons[3].onClick.AddListener(delegate { CheckTruePos(melodiaSongFourScrollRect, melodiaSongFourRanking, melodiaPlayerRank, playerMelodiaSongFourDataList, 3); });
+        #endregion
+
+        #region sketchUP Button
         FirstSet(sketchUPLevelShowRanking);
-        sketchUPLevelButtons[0].onClick.AddListener(delegate { ContentSetFalse(sketchUPLevelShowRanking[0]); });
-        sketchUPLevelButtons[1].onClick.AddListener(delegate { ContentSetFalse(sketchUPLevelShowRanking[1]); });
-        sketchUPLevelButtons[2].onClick.AddListener(delegate { ContentSetFalse(sketchUPLevelShowRanking[2]); });
-        sketchUPLevelButtons[3].onClick.AddListener(delegate { ContentSetFalse(sketchUPLevelShowRanking[3]); });
+        sketchUPLevelButtons[0].onClick.AddListener(delegate { CheckTruePos(sketchUPScrollRect, sketchUPLevelShowRanking, sketchUpPlayerRank, playerDataSketchUPList, 0); });
+        sketchUPLevelButtons[1].onClick.AddListener(delegate { CheckTruePos(sketchUPScrollRect, sketchUPLevelShowRanking, sketchUpPlayerRank, playerDataSketchUPList, 1); });
+        sketchUPLevelButtons[2].onClick.AddListener(delegate { CheckTruePos(sketchUPScrollRect, sketchUPLevelShowRanking, sketchUpPlayerRank, playerDataSketchUPList, 2); });
+        sketchUPLevelButtons[3].onClick.AddListener(delegate { CheckTruePos(sketchUPScrollRect, sketchUPLevelShowRanking, sketchUpPlayerRank, playerDataSketchUPList, 3); });
         #endregion
     }
 
-    private void OnDisable()
-    {
-        if (sketchUPScrollRect.gameObject.active == false)
-            Debug.Log("불림");
-    }
 
     void FirstSet(RectTransform[] transformObj)
     {
         transformObj[0].gameObject.SetActive(true);
-        transformObj[1].gameObject.SetActive(false);
-        transformObj[2].gameObject.SetActive(false);
-        transformObj[3].gameObject.SetActive(false);
+
+        for (int i = 1; i < 4; ++i)
+        {
+            transformObj[i].gameObject.SetActive(false);
+        }
     }
 
-    levelSet LevelSetActive(levelSet levelSet)
+    void MelodiaFirstSet()
     {
-        levelSet.easyPos.gameObject.SetActive(levelSet.easy);
-        levelSet.normalpos.gameObject.SetActive(levelSet.normal);
-        levelSet.hardpos.gameObject.SetActive(levelSet.hard);
-        levelSet.extremepos.gameObject.SetActive(levelSet.extreme);
+        OnClickMoelidiaSongButton(true, false, false, false);
+        MelidiaContentFirstSet(melodiaSongOneRanking);
+    }
 
-        return levelSet;
+    void OnClickMoelidiaSongButton(bool songOne, bool songTwo, bool songThree, bool songFour)
+    {
+        melodiaSongOneScrollRect.gameObject.SetActive(songOne);
+        melodiaSongTwoScrollRect.gameObject.SetActive(songTwo);
+        melodiaSongThreeScrollRect.gameObject.SetActive(songThree);
+        melodiaSongFourScrollRect.gameObject.SetActive(songFour);
+    }
+
+    void MelidiaContentFirstSet(RectTransform[] songRank)
+    {
+        songRank[0].gameObject.SetActive(true);
+        for(int i = 1; i <4; ++i)
+        {
+            songRank[i].gameObject.SetActive(false);
+        }
     }
 
     // 프로펩 생성
@@ -140,7 +220,7 @@ public class TopTenRankMgr : MonoBehaviour
         instData.transform.SetParent(pos, false);
     }
 
-    public List<playerData> PlayerDataAdd(int level, int rank, string id, long point, RectTransform pos)
+    public List<playerData> PlayerDataAdd(List<playerData> list, int level, int rank, string id, long point, RectTransform pos)
     {
         playerData newData = new playerData();
 
@@ -149,50 +229,53 @@ public class TopTenRankMgr : MonoBehaviour
         newData.id = id;
         newData.point = point;
 
-        playerDataList.Add(newData);
-        ContentSetFalse(pos);
-        return playerDataList;
+        list.Add(newData);
+        return list;
     }
 
-    public void ContentSetFalse(RectTransform pos)
+    void CheckTruePos(ScrollRect scroll, RectTransform[] pos, GameObject playerData, List<playerData> list, int index)
     {
-        if (pos == sketchUPLevelShowRanking[0])
+        if (index == 0)
         {
-            ShowPlayerData(playerDataList, 1);
-            PosCheck(true, false, false, false);
-            sketchUPScrollRect.content = sketchUPLevelShowRanking[0];
+            pos[index].gameObject.SetActive(true);
+            pos[1].gameObject.SetActive(false);
+            pos[2].gameObject.SetActive(false);
+            pos[3].gameObject.SetActive(false);
+            scroll.content = pos[index];
+            ShowPlayerData(playerData, list, 1);
         }
-        else if (pos == sketchUPLevelShowRanking[1])
+        else if (index == 1)
         {
-            ShowPlayerData(playerDataList, 2);
-            PosCheck(false, true, false, false);
-            sketchUPScrollRect.content = sketchUPLevelShowRanking[1];
+            pos[0].gameObject.SetActive(false);
+            pos[index].gameObject.SetActive(true);
+            pos[2].gameObject.SetActive(false);
+            pos[3].gameObject.SetActive(false);
+            scroll.content = pos[index];
+            ShowPlayerData(playerData, list, 2);
         }
-        else if (pos == sketchUPLevelShowRanking[2])
+        else if (index == 2)
         {
-            PosCheck(false, false, true, false);
-            sketchUPScrollRect.content = sketchUPLevelShowRanking[2];
-            ShowPlayerData(playerDataList, 3);
+            pos[0].gameObject.SetActive(false);
+            pos[1].gameObject.SetActive(false);
+            pos[index].gameObject.SetActive(true);
+            pos[3].gameObject.SetActive(false);
+            scroll.content = pos[index];
+            ShowPlayerData(playerData, list, 3);
         }
-        else if (pos == sketchUPLevelShowRanking[3])
+        else if (index == 3)
         {
-            PosCheck(false, false, false, true);
-            sketchUPScrollRect.content = sketchUPLevelShowRanking[3];
-            ShowPlayerData(playerDataList, 4);
+            pos[0].gameObject.SetActive(false);
+            pos[1].gameObject.SetActive(false);
+            pos[2].gameObject.SetActive(false);
+            pos[index].gameObject.SetActive(true);
+            scroll.content = pos[index];
+            ShowPlayerData(playerData, list, 4);
         }
     }
 
-    void PosCheck(bool easy, bool normal, bool hard, bool extreme)
+    public void ShowPlayerData(GameObject playerData, List<playerData> playerDataList, int levelNum)
     {
-        sketchUPLevelShowRanking[0].gameObject.SetActive(easy);
-        sketchUPLevelShowRanking[1].gameObject.SetActive(normal);
-        sketchUPLevelShowRanking[2].gameObject.SetActive(hard);
-        sketchUPLevelShowRanking[3].gameObject.SetActive(extreme);
-    }
-
-    public void ShowPlayerData(List<playerData> playerDataList, int levelNum)
-    {
-        playerRanking.TryGetComponent<UserDatePrefab>(out userDataSet);
+        playerData.TryGetComponent<UserDatePrefab>(out userDataSet);
         playerData newData = playerDataList.Find(x => x.level == levelNum);
 
         userDataSet.ShowRankSet(newData.rank);
@@ -202,7 +285,7 @@ public class TopTenRankMgr : MonoBehaviour
 
     public void PlayerNoTopTenRank(string info)
     {
-        playerRanking.TryGetComponent<UserDatePrefab>(out userDataSet);
+        sketchUpPlayerRank.TryGetComponent<UserDatePrefab>(out userDataSet);
         userDataSet.RankObjSet(false);
         userDataSet.ShowIDSet(info);
         userDataSet.PointObjSet(false);
