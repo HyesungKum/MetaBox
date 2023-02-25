@@ -867,6 +867,83 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 266794261}
   m_CullTransparentMesh: 1
+--- !u!1 &293644658
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 293644659}
+  - component: {fileID: 293644661}
+  - component: {fileID: 293644660}
+  m_Layer: 0
+  m_Name: OptionPanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &293644659
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 293644658}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1666148585}
+  m_Father: {fileID: 468025009}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &293644660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 293644658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &293644661
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 293644658}
+  m_CullTransparentMesh: 1
 --- !u!1 &320736266
 GameObject:
   m_ObjectHideFlags: 0
@@ -1456,7 +1533,7 @@ RectTransform:
   - {fileID: 130465233}
   - {fileID: 1047907460}
   - {fileID: 1790807628}
-  - {fileID: 1666148585}
+  - {fileID: 293644659}
   - {fileID: 1585646570}
   - {fileID: 385532113}
   - {fileID: 320736267}
@@ -4593,12 +4670,12 @@ GameObject:
   - component: {fileID: 1666148585}
   - component: {fileID: 1666148586}
   m_Layer: 0
-  m_Name: OptionPanel
+  m_Name: OptionPanelImg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1666148585
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4619,8 +4696,8 @@ RectTransform:
   - {fileID: 847934405}
   - {fileID: 1299935228}
   - {fileID: 1150700204}
-  m_Father: {fileID: 468025009}
-  m_RootOrder: 6
+  m_Father: {fileID: 293644659}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4690,7 +4767,7 @@ MonoBehaviour:
   closePlayOneBrush: {fileID: 1585646569}
   losePanel: {fileID: 385532112}
   winPanel: {fileID: 320736266}
-  optionPanel: {fileID: 1666148584}
+  optionPanel: {fileID: 293644658}
   stageClearPanel: {fileID: 1928458958}
   onBushObj: {fileID: 2108466361}
   QOne: {fileID: 1019020186}
@@ -4711,16 +4788,17 @@ MonoBehaviour:
   clockPrefab: {fileID: 7752752918192651380, guid: c6c2d70a71b1c8445a74ac620ffb8963, type: 3}
   characterMove: {fileID: 130465232}
   gameClearEffect: {fileID: 5076563371835118452, guid: 548f286e80304214cad6d894dc5d4f80, type: 3}
+  stageClearEffect: {fileID: 5081905892664921335, guid: fadd40f78beec254daadc5d65e2ff592, type: 3}
   minute: 9
   seconds: 60
-  clearAnimalImgData: {fileID: 0}
+  clearAnimalImgData: {fileID: 11400000, guid: b9f04202b7fa94e49b430f3f9d0d07f5, type: 2}
   ColorPanel: {fileID: 0}
   LineSize: {fileID: 0}
   ObjIndexs: 0
   ObjTwoIndex: 0
   ObjThreeIndex: 0
   totalPlayTime: 0
-  SavePalyTime: 0
+  savePalyTime: 0
 --- !u!1 &1729044868
 GameObject:
   m_ObjectHideFlags: 0

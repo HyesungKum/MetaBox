@@ -135,6 +135,14 @@ public class SoundManager : MonoBehaviour
             MyAudioMixer.SetFloat("BGM", -35);
     }
 
+    public void BGMValueOrgin()
+    {
+        if (BGMValue == -40f)
+            MyAudioMixer.SetFloat("BGM", -80);
+        else
+            MyAudioMixer.SetFloat("BGM", 0);
+    }
+
     public void TitleBGMPlay()
     {
         BGMAudioSurce.clip = titleAudioClip;
@@ -193,7 +201,7 @@ public class SoundManager : MonoBehaviour
     {
         animalAudioDictionary.TryGetValue(index, out animalAudioPlayClip);
         SFXSource.clip = animalAudioPlayClip;
-        MyAudioMixer.SetFloat("SFX", 0);
+        //MyAudioMixer.SetFloat("SFX", 0);
         SFXSource.Play();
     }
 

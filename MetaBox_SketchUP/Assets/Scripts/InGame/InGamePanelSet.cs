@@ -74,6 +74,7 @@ public class InGamePanelSet : MonoBehaviour
 
     [Header("[Game Clear Effect ]")]
     [SerializeField] GameObject gameClearEffect = null;
+    [SerializeField] GameObject stageClearEffect = null;
 
     [Header("[Play Time Setting]")]
     [SerializeField] private int minute;
@@ -89,6 +90,7 @@ public class InGamePanelSet : MonoBehaviour
 
     GameObject instClock = null;
     GameObject instEffect = null;
+    GameObject clearEffect = null;
 
     public LineColorChanged ColorPanel;
     public LineSizeChange LineSize;
@@ -106,7 +108,7 @@ public class InGamePanelSet : MonoBehaviour
     public int ObjThreeIndex;
 
     public int totalPlayTime;
-    public int SavePalyTime;
+    public int savePalyTime;
 
     bool isOptionPanelOpen = false;
 
@@ -253,12 +255,16 @@ public class InGamePanelSet : MonoBehaviour
             OneBrushPlayPanelSet(false);
 
             Invoke(nameof(WinPanelSet), 0.3f);
-
-            totalPlayTime = 1000;
-
-            string checkTimt = Minute.ToString() + (int)seconds;
-            SavePalyTime = int.Parse(checkTimt);
+            GetClearTime();
         }
+    }
+
+    int GetClearTime()
+    {
+        string check = Minute.ToString() + seconds.ToString(); 
+        savePalyTime = int.Parse(check);
+        Debug.Log("savePalyTime : " + savePalyTime);
+        return savePalyTime;
     }
 
     void WinPanelSet()
@@ -313,6 +319,17 @@ public class InGamePanelSet : MonoBehaviour
 
     public void LineColorAndSizeChange(bool active) => lineChangedPanel.gameObject.SetActive(active);
 
+    public void InstAnimalClearEffect()
+    {
+        if (clearEffect == null)
+            clearEffect = ObjectPoolCP.PoolCp.Inst.BringObjectCp(stageClearEffect);
+    }
+
+    public void DestroyAnimalClearEffect()
+    {
+        ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(clearEffect);
+    }
+
     public void OnClickGoStartPanel()
     {
         SceneManager.LoadScene(SceneName.StartScene);
@@ -355,20 +372,17 @@ public class InGamePanelSet : MonoBehaviour
         SelectPanelSet selectPanelSet = null;
         selectPanel.TryGetComponent<SelectPanelSet>(out selectPanelSet);
         DrawLineCurve drawLine = null;
-
         QOne.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
         ObjIndexs = drawLine.ObjIndex;
-        //Debug.Log("ObjIndexs : " + ObjIndexs);
 
         QTwo.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
         ObjTwoIndex = drawLine.ObjIndex;
-        //Debug.Log("ObjTwoIndex : " + ObjTwoIndex);
 
         QThree.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
         ObjThreeIndex = drawLine.ObjIndex;
-        //Debug.Log("ObjThreeIndex : " + ObjThreeIndex);
 
         SelectPanelSet(true);
+        DestroyAnimalClearEffect();
         SelectPanelClearImgSet(selectPanelSet);
 
         selectPanelSet.character.transform.localPosition = new Vector2(915f, 400f);

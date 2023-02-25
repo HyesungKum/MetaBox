@@ -23,9 +23,6 @@ public class ChoicePanel : MonoBehaviour
     [Header("[Audio Index]")]
     [SerializeField] private int audioIndex = 0;
 
-    [Header("[stage Clear Effect]")]
-    [SerializeField] GameObject stageClearEffect = null;
-
     private int objIndex;
     GameObject instEffect = null;
 
@@ -43,9 +40,6 @@ public class ChoicePanel : MonoBehaviour
 
     void Awake()
     {
-        if (stageClearEffect == null)
-            stageClearEffect = Resources.Load<GameObject>("Particle/01.AnimalClear_Particles");
-
         clearAnimation.gameObject.SetActive(true);
         InGamePanelSet.Inst.StageClearPanelSet(false);
         clearAnimation.TryGetComponent<ClearAnimation>(out clearAnimaition);
@@ -53,11 +47,6 @@ public class ChoicePanel : MonoBehaviour
         Answers = choickKeyWord.KoreanAnswerKeyWord;
         obj.TryGetComponent<DrawLineCurve>(out drawline);
         waittime = new WaitForSeconds(0.2f);
-
-        #region
-        if (stageClearEffect == null)
-            stageClearEffect = Resources.Load<GameObject>("Particle/01.AnimalClear_Particles");
-        #endregion
     }
 
     void Start()
@@ -105,12 +94,6 @@ public class ChoicePanel : MonoBehaviour
             return 0;
     }
 
-    void InstAnimalClearEffect()
-    {
-        if (instEffect == null)
-            instEffect = ObjectPoolCP.PoolCp.Inst.BringObjectCp(stageClearEffect);
-    }
-
     int ClearCountDown()
     {
         InGamePanelSet.Inst.ClearCount -= 1;
@@ -121,7 +104,6 @@ public class ChoicePanel : MonoBehaviour
     {
         clearAnimaition.StartCoroutine(clearAnimaition.Moving());
         this.gameObject.SetActive(false);
-        SoundManager.Inst.BGMValueDown();
         SoundManager.Inst.AnimalAudioPlay(AudioIndex);
     }
 
@@ -131,7 +113,7 @@ public class ChoicePanel : MonoBehaviour
         if (InGamePanelSet.Inst.ClearCount > 0)
         {
             InGamePanelSet.Inst.StageClearPanelSet(true);
-            InstAnimalClearEffect();
+            InGamePanelSet.Inst.InstAnimalClearEffect();
         }
         if (InGamePanelSet.Inst.ClearCount == 0)
         {
