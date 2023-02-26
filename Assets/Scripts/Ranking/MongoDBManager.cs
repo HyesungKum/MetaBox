@@ -3,10 +3,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
-using UnityEngine.Analytics;
 
 namespace RankingDB
 {
@@ -73,14 +70,6 @@ namespace RankingDB
     }
     #endregion
 
-    public class DataSorting
-    {
-        public int rank;
-        public string id;
-        public int point;
-        public long playtime;
-    }
-
     #region SketchUpData
     [Serializable]
     public class SketchUpData
@@ -94,14 +83,25 @@ namespace RankingDB
     }
     #endregion
 
+    [Serializable]
+    public class DataSorting
+    {
+        public string id;
+        public long point;
+        public long playtime;
+    }
+
     public class MongoDBManager : MonoBehaviour
     {
         MongoClient clientData = new MongoClient("mongodb+srv://metabox:metabox@metabox.fon8dvx.mongodb.net/?retryWrites=true&w=majority");
         public IMongoDatabase dataBase = null;
+
+        #region Collection
         public IMongoCollection<BsonDocument> FreezeCollection = null;
         public IMongoCollection<BsonDocument> HeyCookCollection = null;
         public IMongoCollection<BsonDocument> MelodiaCollection = null;
         public IMongoCollection<BsonDocument> SketchUpCollection = null;
+        #endregion
 
         #region Each Game Data
         [Header("[Freeze Data]")]
@@ -114,81 +114,46 @@ namespace RankingDB
         [SerializeField] SketchUpData sketchUpData = null;
         #endregion
 
-        #region Freeze Dictionary
-        Dictionary<string, long> freezeLevelOneDict;
-        Dictionary<string, long> freezeLevelTwoDict;
-        Dictionary<string, long> freezeLevelThreeDict;
-        Dictionary<string, long> freezeLevelFourDict;
-        #endregion
+        public Dictionary<string, long> levelOneDict;
+        public Dictionary<string, long> levelTwoDict;
+        public Dictionary<string, long> levelThreeDict;
+        public Dictionary<string, long> levelFourDict;
 
-        #region HeyCook Dictionary
-        Dictionary<string, long> heyCookLevelOneDict;
-        Dictionary<string, long> heyCookLevelTwoDict;
-        Dictionary<string, long> heyCookLevelThreeDict;
-        Dictionary<string, long> heyCookLevelFourDict;
-        #endregion
+        DataSorting dataSorting = null;
+        public List<DataSorting> freezeLevelOneList;
+        public List<DataSorting> freezeLevelTwoList;
+        public List<DataSorting> freezeLevelThreeList;
+        public List<DataSorting> freezeLevelFourList;
 
         #region MelodiaDictionary
-        Dictionary<string, long> melodiaSongOneLevelOneDict;
-        Dictionary<string, long> melodiaSongOneLevelTwoDict;
-        Dictionary<string, long> melodiaSongOneLevelThreeDict;
-        Dictionary<string, long> melodiaSongTwoLevelFourDict;
+        public Dictionary<string, long> melodiaSongOneLevelOneDict;
+        public Dictionary<string, long> melodiaSongOneLevelTwoDict;
+        public Dictionary<string, long> melodiaSongOneLevelThreeDict;
+        public Dictionary<string, long> melodiaSongTwoLevelFourDict;
 
-        Dictionary<string, long> melodiaSongTwoLevelOneDict;
-        Dictionary<string, long> melodiaSongTwoLevelTwoDict;
-        Dictionary<string, long> melodiaSongTwoLevelThreeDict;
-        Dictionary<string, long> melodiaSongOneLevelFourDict;
+        public Dictionary<string, long> melodiaSongTwoLevelOneDict;
+        public Dictionary<string, long> melodiaSongTwoLevelTwoDict;
+        public Dictionary<string, long> melodiaSongTwoLevelThreeDict;
+        public Dictionary<string, long> melodiaSongOneLevelFourDict;
 
-        Dictionary<string, long> melodiaSongThreeLevelOneDict;
-        Dictionary<string, long> melodiaSongThreeLevelTwoDict;
-        Dictionary<string, long> melodiaSongThreeLevelThreeDict;
-        Dictionary<string, long> melodiaSongThreeLevelFourDict;      
+        public Dictionary<string, long> melodiaSongThreeLevelOneDict;
+        public Dictionary<string, long> melodiaSongThreeLevelTwoDict;
+        public Dictionary<string, long> melodiaSongThreeLevelThreeDict;
+        public Dictionary<string, long> melodiaSongThreeLevelFourDict;      
         
-        Dictionary<string, long> melodiaSongFourLevelOneDict;
-        Dictionary<string, long> melodiaSongFourLevelTwoDict;
-        Dictionary<string, long> melodiaSongFourLevelThreeDict;
-        Dictionary<string, long> melodiaSongFourLevelFourDict;
-        #endregion
-
-        #region SketchUP Dictionary
-        Dictionary<string, long> sketchUplevelOneDict;
-        Dictionary<string, long> sketchUplevelTwoDict;
-        Dictionary<string, long> sketchUplevelThreeDict;
-        Dictionary<string, long> sketchUplevelFourDict;
+        public Dictionary<string, long> melodiaSongFourLevelOneDict;
+        public Dictionary<string, long> melodiaSongFourLevelTwoDict;
+        public Dictionary<string, long> melodiaSongFourLevelThreeDict;
+        public Dictionary<string, long> melodiaSongFourLevelFourDict;
         #endregion
 
         [Space]
         [SerializeField] string id = null;
         public string ID { get { return id; } }
 
-        #region LevelString
-        string levelOne = "levelOne";
-        string levelTwo = "levelTwo";
-        string levelThree = "levelThree";
-        string levelFour = "levelFour";
-
-        string songOneLevelOne = "songOneLevelOne";
-        string songOneLevelTwo = "songOneLevelTwo";
-        string songOneLevelThree = "songOneLevelThree";
-        string songOneLevelFour = "songOneLevelFour";
-
-        string songTwoLevelOne = "songTwoLevelOne";
-        string songTwoLevelTwo = "songTwoLevelTwo";
-        string songTwoLevelThree = "songTwoLevelThree";
-        string songTwoLevelFour = "songTwoLevelFour";
-
-        string songThreeLevelOne = "songThreeLevelOne";
-        string songThreeLevelTwo = "songThreeLevelTwo";
-        string songThreeLevelThree = "songThreeLevelThree";
-        string songThreeLevelFour = "songThreeLevelFour";
-
-        string songFourLevelOne = "songFourLevelOne";
-        string songFourLevelTwo = "songFourLevelTwo";
-        string songFourLevelThree = "songFourLevelThree";
-        string songFourLevelFour = "songFourLevelFour";
-        #endregion
-
         public Dictionary<string, long> sortDict;
+        public List<DataSorting> sortList;
+
         [Space]
         [SerializeField] TopTenRankMgr topTenRank = null;
 
@@ -212,16 +177,13 @@ namespace RankingDB
             sketchUpData = new SketchUpData();
             #endregion
 
-            #region User Ranking Data Dictionary Reset
-            freezeLevelOneDict = new Dictionary<string, long>();
-            freezeLevelTwoDict = new Dictionary<string, long>();
-            freezeLevelThreeDict = new Dictionary<string, long>();
-            freezeLevelFourDict = new Dictionary<string, long>();
+            dataSorting = new DataSorting();
 
-            heyCookLevelOneDict = new Dictionary<string, long>();
-            heyCookLevelTwoDict = new Dictionary<string, long>();
-            heyCookLevelThreeDict = new Dictionary<string, long>();
-            heyCookLevelFourDict = new Dictionary<string, long>();
+            #region User Ranking Data Dictionary Reset
+            levelOneDict = new Dictionary<string, long>();
+            levelTwoDict = new Dictionary<string, long>();
+            levelThreeDict = new Dictionary<string, long>();
+            levelFourDict = new Dictionary<string, long>();
 
             melodiaSongOneLevelOneDict = new Dictionary<string, long>();
             melodiaSongOneLevelTwoDict = new Dictionary<string, long>();
@@ -242,11 +204,6 @@ namespace RankingDB
             melodiaSongFourLevelTwoDict = new Dictionary<string, long>();
             melodiaSongFourLevelThreeDict = new Dictionary<string, long>();
             melodiaSongFourLevelFourDict = new Dictionary<string, long>();
-
-            sketchUplevelOneDict = new Dictionary<string, long>();
-            sketchUplevelTwoDict = new Dictionary<string, long>();
-            sketchUplevelThreeDict = new Dictionary<string, long>();
-            sketchUplevelFourDict = new Dictionary<string, long>();
             #endregion
 
             #region Save Data to DB
@@ -273,58 +230,18 @@ namespace RankingDB
             //ChangedPoint(SketchUpCollection, "안녕4", "levelThree", 400);
             //ChangedPoint(SketchUpCollection, "안녕6", "levelFour", 600);
             #endregion
-
-            #region Get Each Collection All Data
-            #region Freeze
-            GetAllUserData(FreezeCollection, levelOne, ID, freezeLevelOneDict, topTenRank.freezeLevelShowRanking[0], 1, topTenRank.playerDataFreezeList);
-            GetAllUserData(FreezeCollection, levelTwo, ID, freezeLevelTwoDict, topTenRank.freezeLevelShowRanking[1], 2, topTenRank.playerDataFreezeList);
-            GetAllUserData(FreezeCollection, levelThree, ID, freezeLevelThreeDict, topTenRank.freezeLevelShowRanking[2], 3, topTenRank.playerDataFreezeList);
-            GetAllUserData(FreezeCollection, levelFour, ID, freezeLevelFourDict, topTenRank.freezeLevelShowRanking[3], 4, topTenRank.playerDataFreezeList);
-            #endregion
-
-            #region HeyCook
-            GetAllUserData(HeyCookCollection, levelOne, ID, heyCookLevelOneDict, topTenRank.heyCookLevelShowPanking[0], 1, topTenRank.playerDataHeyCookList);
-            GetAllUserData(HeyCookCollection, levelTwo, ID, heyCookLevelTwoDict, topTenRank.heyCookLevelShowPanking[1], 2, topTenRank.playerDataHeyCookList);
-            GetAllUserData(HeyCookCollection, levelThree, ID, heyCookLevelThreeDict, topTenRank.heyCookLevelShowPanking[2], 3, topTenRank.playerDataHeyCookList);
-            GetAllUserData(HeyCookCollection, levelFour, ID, heyCookLevelFourDict, topTenRank.heyCookLevelShowPanking[3], 4, topTenRank.playerDataHeyCookList);
-            #endregion
-
-            GetAllUserData(MelodiaCollection, songOneLevelOne, ID, melodiaSongOneLevelOneDict, topTenRank.melodiaSongOneRanking[0], 1,topTenRank.playerMelodiaSongOneDataList);
-            GetAllUserData(MelodiaCollection, songOneLevelTwo, ID, melodiaSongOneLevelTwoDict, topTenRank.melodiaSongOneRanking[1], 2,topTenRank.playerMelodiaSongOneDataList);
-            GetAllUserData(MelodiaCollection, songOneLevelThree, ID, melodiaSongOneLevelThreeDict, topTenRank.melodiaSongOneRanking[2], 3,topTenRank.playerMelodiaSongOneDataList);
-            GetAllUserData(MelodiaCollection, songOneLevelFour, ID, melodiaSongOneLevelFourDict, topTenRank.melodiaSongOneRanking[3], 4,topTenRank.playerMelodiaSongOneDataList);
-
-            GetAllUserData(MelodiaCollection, songTwoLevelOne, ID, melodiaSongTwoLevelOneDict, topTenRank.melodiaSongTwoRanking[0], 1, topTenRank.playerMelodiaSongTwoDataList);
-            GetAllUserData(MelodiaCollection, songTwoLevelTwo, ID, melodiaSongTwoLevelTwoDict, topTenRank.melodiaSongTwoRanking[1], 2, topTenRank.playerMelodiaSongTwoDataList);
-            GetAllUserData(MelodiaCollection, songTwoLevelThree, ID, melodiaSongTwoLevelThreeDict, topTenRank.melodiaSongTwoRanking[2], 3, topTenRank.playerMelodiaSongTwoDataList);
-            GetAllUserData(MelodiaCollection, songTwoLevelFour, ID, melodiaSongTwoLevelFourDict, topTenRank.melodiaSongTwoRanking[3], 4, topTenRank.playerMelodiaSongTwoDataList);
-
-            GetAllUserData(MelodiaCollection, songThreeLevelOne, ID, melodiaSongThreeLevelOneDict, topTenRank.melodiaSongThreeRanking[0], 1, topTenRank.playerMelodiaSongThreeDataList);
-            GetAllUserData(MelodiaCollection, songThreeLevelTwo, ID, melodiaSongThreeLevelTwoDict, topTenRank.melodiaSongThreeRanking[1], 2, topTenRank.playerMelodiaSongThreeDataList);
-            GetAllUserData(MelodiaCollection, songThreeLevelThree, ID, melodiaSongThreeLevelThreeDict, topTenRank.melodiaSongThreeRanking[2], 3, topTenRank.playerMelodiaSongThreeDataList);
-            GetAllUserData(MelodiaCollection, songThreeLevelFour, ID, melodiaSongThreeLevelFourDict, topTenRank.melodiaSongThreeRanking[3], 4, topTenRank.playerMelodiaSongThreeDataList);
-
-            GetAllUserData(MelodiaCollection, songFourLevelOne, ID, melodiaSongFourLevelOneDict, topTenRank.melodiaSongFourRanking[0], 1, topTenRank.playerMelodiaSongFourDataList);
-            GetAllUserData(MelodiaCollection, songFourLevelTwo, ID, melodiaSongFourLevelTwoDict, topTenRank.melodiaSongFourRanking[1], 2, topTenRank.playerMelodiaSongFourDataList);
-            GetAllUserData(MelodiaCollection, songFourLevelThree, ID, melodiaSongFourLevelThreeDict, topTenRank.melodiaSongFourRanking[2], 3, topTenRank.playerMelodiaSongFourDataList);
-            GetAllUserData(MelodiaCollection, songFourLevelFour, ID, melodiaSongFourLevelFourDict, topTenRank.melodiaSongFourRanking[3], 4, topTenRank.playerMelodiaSongFourDataList);
-
-            #region SketchUp
-            GetAllUserData(SketchUpCollection, levelOne, ID, sketchUplevelOneDict, topTenRank.sketchUPLevelShowRanking[0], 1, topTenRank.playerDataSketchUPList);
-            GetAllUserData(SketchUpCollection, levelTwo, ID, sketchUplevelTwoDict, topTenRank.sketchUPLevelShowRanking[1], 2, topTenRank.playerDataSketchUPList);
-            GetAllUserData(SketchUpCollection, levelThree, ID, sketchUplevelThreeDict, topTenRank.sketchUPLevelShowRanking[2], 3, topTenRank.playerDataSketchUPList);
-            GetAllUserData(SketchUpCollection, levelFour, ID, sketchUplevelFourDict, topTenRank.sketchUPLevelShowRanking[3], 4, topTenRank.playerDataSketchUPList);
-            #endregion
-            #endregion
         }
 
         #region GetAndSetUserData
-        public async void GetAllUserData(IMongoCollection<BsonDocument> collection, string levelNum, 
+        public async void GetAllUserData(IMongoCollection<BsonDocument> collection, string levelNum, GameObject playerData,
             string findId, Dictionary<string, long> dict, RectTransform pos, int level, List<playerData> list)
         {
             BsonDocument find = new BsonDocument();
             var allDataTask = collection.FindAsync(find);
             var scoreAwited = await allDataTask;
+
+            dict = new Dictionary<string, long>();
+            //list = new List<playerData>();
 
             BsonArray levelArry;
             string id;
@@ -334,15 +251,65 @@ namespace RankingDB
             {
                 id = (string)check.GetValue("_id");
                 levelArry = (BsonArray)check.GetValue(levelNum);
-                //Debug.Log("levelArry : " + levelArry);
                 point = (long)levelArry[0];
-                //Debug.Log("point : " + point);
                 dict.Add(id, point);
             }
 
-            //Debug.Log("Dict Count : " + dict.Count);
-            CheckSorting(list, level, findId, dict, pos);
+            CheckSorting(list, level, findId, playerData, dict, pos);
             sortDict.Clear();
+        }
+
+        public async void GetUserData(IMongoCollection<BsonDocument> collection, string levelNum, List<DataSorting> listAdd, RectTransform pos)
+        {
+            BsonDocument find = new BsonDocument();
+            var allDataTask = collection.FindAsync(find);
+            var scoreAwited = await allDataTask;
+             
+            BsonArray levelArry;
+            DataSorting newData;
+            string ids;
+            long points;
+            long playTime;
+
+            foreach (var check in scoreAwited.ToList())
+            {
+                ids = (string)check.GetValue("_id");
+                levelArry = (BsonArray)check.GetValue(levelNum);
+                //Debug.Log("levelArry : " + levelArry);
+                points = (long)levelArry[0];
+                playTime = (long)levelArry[1];
+
+                newData = new DataSorting();
+                newData.id = ids;
+                newData.point = points;
+                newData.playtime = playTime;
+
+                listAdd.Add(newData);
+            }
+
+            SotringList(listAdd, pos);
+        }
+
+        void SotringList(List<DataSorting> listSorting, RectTransform pos)
+        {
+            sortList = listSorting;
+            int listCount = listSorting.Count;
+            sortList.Sort(SortPoint);
+
+            int rank = 1;
+
+            for (int i = 0; i < 10; ++i)
+            {
+                //topTenRank.InstUserData(rank, sortList[i].id, sortList[i].point , pos);
+
+                rank += 1;
+                if (rank == 11) break;
+            }
+        }
+
+        int SortPoint(DataSorting a, DataSorting b)
+        {
+            return a.point > b.point ? -1 : 1;
         }
 
         #region
@@ -435,11 +402,11 @@ namespace RankingDB
         }
         #endregion
 
-        Dictionary<string, long> CheckSorting(List<playerData> list,int levelNum, string id, Dictionary<string, long> dict, RectTransform pos)
+        Dictionary<string, long> CheckSorting(List<playerData> list,int levelNum, string id, GameObject playerData,
+            Dictionary<string, long> dict, RectTransform pos)
         {
             sortDict = new Dictionary<string, long>();
             sortDict = SortDictionary(dict);
-
             int rank = 1;
 
             foreach (KeyValuePair<string, long> item in sortDict)
@@ -456,6 +423,7 @@ namespace RankingDB
                     break;
             }
 
+            topTenRank.FirstLevelPlayerData(playerData, list);
             return sortDict;
         }
 
@@ -519,107 +487,6 @@ namespace RankingDB
 
             Debug.Log("Find SketchUP : " + targetData);
             return targetData;
-        }
-        #endregion
-
-        #region Save Data
-        public async void SaveFreezeData(FreezeData newData, string id, long point)
-        {
-            newData.id = id;
-            newData.levelOne[0] = point;
-            newData.levelOne[1] = TimeSetting();
-
-            newData.levelTwo[0] = point;
-            newData.levelTwo[1] = TimeSetting();
-
-            newData.levelThree[0] = point;
-            newData.levelThree[1] = TimeSetting();
-
-            newData.levelFour[0] = point;
-            newData.levelFour[1] = TimeSetting();
-            await FreezeCollection.InsertOneAsync(newData.ToBsonDocument());
-            Debug.Log("[Freeze] NewData 추가 완료 : " + newData.ToBsonDocument());
-        }
-
-        public async void SaveHeyCookData(HeyCookData newData, string id, long point)
-        {
-            newData.id = id;
-            newData.levelOne[0] = point;
-            newData.levelOne[1] = TimeSetting();
-
-            newData.levelTwo[0] = point;
-            newData.levelTwo[1] = TimeSetting();
-
-            newData.levelThree[0] = point;
-            newData.levelThree[1] = TimeSetting();
-
-            newData.levelFour[0] = point;
-            newData.levelFour[1] = TimeSetting();
-
-            await HeyCookCollection.InsertOneAsync(newData.ToBsonDocument());
-            Debug.Log("[HeyCook] NewData 추가 완료 : " + newData.ToBsonDocument());
-        }
-
-        public async void SaveMelodiaDataBase(MelodiaData newData, string id, long point)
-        {
-            newData.id = id;
-            #region
-            newData.songOneLevelOne[0] = point;
-            newData.songOneLevelOne[1] = TimeSetting();
-            newData.songOneLevelTwo[0] = point;
-            newData.songOneLevelTwo[1] = TimeSetting();
-            newData.songOneLevelThree[0] = point;
-            newData.songOneLevelThree[1] = TimeSetting();
-            newData.songOneLevelFour[0] = point;
-            newData.songOneLevelFour[1] = TimeSetting();
-
-            newData.songTwoLevelOne[0] = point;
-            newData.songTwoLevelOne[1] = TimeSetting();
-            newData.songTwoLevelTwo[0] = point;
-            newData.songTwoLevelTwo[1] = TimeSetting();
-            newData.songTwoLevelThree[0] = point;
-            newData.songTwoLevelThree[1] = TimeSetting();
-            newData.songTwoLevelFour[0] = point;
-            newData.songTwoLevelFour[1] = TimeSetting();
-
-            newData.songThreeLevelOne[0] = point;
-            newData.songThreeLevelOne[1] = TimeSetting();
-            newData.songThreeLevelTwo[0] = point;
-            newData.songThreeLevelTwo[1] = TimeSetting();
-            newData.songThreeLevelThree[0] = point;
-            newData.songThreeLevelThree[1] = TimeSetting();
-            newData.songThreeLevelFour[0] = point;
-            newData.songThreeLevelFour[1] = TimeSetting();
-
-            newData.songFourLevelOne[0] = point;
-            newData.songFourLevelOne[1] = TimeSetting();
-            newData.songFourLevelTwo[0] = point;
-            newData.songFourLevelTwo[1] = TimeSetting();
-            newData.songFourLevelThree[0] = point;
-            newData.songFourLevelThree[1] = TimeSetting();
-            newData.songFourLevelFour[0] = point;
-            newData.songFourLevelFour[1] = TimeSetting();
-            #endregion
-            await MelodiaCollection.InsertOneAsync(newData.ToBsonDocument());
-            Debug.Log("[Melodia] NewData 추가 완료 :" + newData.ToBsonDocument());
-        }
-
-        public async void SaveSketchUpDataBase(SketchUpData newData, string id, long point)
-        {
-            newData.id = id;
-            newData.levelOne[0] = point;
-            newData.levelOne[1] = TimeSetting();
-
-            newData.levelTwo[0] = point;
-            newData.levelTwo[1] = TimeSetting();
-
-            newData.levelThree[0] = point;
-            newData.levelThree[1] = TimeSetting();
-
-            newData.levelFour[0] = point;
-            newData.levelFour[1] = TimeSetting();
-            await SketchUpCollection.InsertOneAsync(newData.ToBsonDocument());
-            Debug.Log("[SketchUp] NewData 추가 완료 : " + newData.ToBsonDocument());
         }
         #endregion
 
