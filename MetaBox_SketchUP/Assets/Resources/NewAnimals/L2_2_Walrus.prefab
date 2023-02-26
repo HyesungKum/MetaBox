@@ -819,7 +819,8 @@ MonoBehaviour:
   endNodeObj: {fileID: 0}
   prevObj: {fileID: 0}
   nextObj: {fileID: 0}
-  startPos: {x: 0, y: 0, z: 0}
+  firstObj: {fileID: 0}
+  lineVisitList: []
 --- !u!1 &1405590234929117869
 GameObject:
   m_ObjectHideFlags: 0
@@ -1168,7 +1169,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3834976605972391626
 Transform:
   m_ObjectHideFlags: 0
@@ -4253,4 +4254,3 @@ MonoBehaviour:
   choiceThreeBut: {fileID: 5053255522372420691}
   choiceFourBut: {fileID: 2313449389271500386}
   audioIndex: 5
-  stageClearEffect: {fileID: 5081905892664921335, guid: fadd40f78beec254daadc5d65e2ff592, type: 3}

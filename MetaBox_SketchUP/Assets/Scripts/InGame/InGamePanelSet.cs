@@ -88,12 +88,17 @@ public class InGamePanelSet : MonoBehaviour
     [Header("[Others]")]
     [SerializeField] ClearAnimalImgData clearAnimalImgData = null;
 
+    [Header("[Production]")]
+    [SerializeField] GameObject production;
+    [SerializeField] GameObject viewHall;
+
+    [Space]
+    public LineColorChanged ColorPanel;
+    public LineSizeChange LineSize;
+
     GameObject instClock = null;
     GameObject instEffect = null;
     GameObject clearEffect = null;
-
-    public LineColorChanged ColorPanel;
-    public LineSizeChange LineSize;
 
     WaitForSeconds waitHalf = null;
     WaitForSeconds waitOnSceonds = null;
@@ -125,8 +130,9 @@ public class InGamePanelSet : MonoBehaviour
         LineSizeObj.TryGetComponent<LineSizeChange>(out LineSize);
 
         // === changed (true) ===
-        waitTimeObjs.gameObject.SetActive(true);
-        StartCoroutine(CountDowns());
+        //waitTimeObjs.gameObject.SetActive(true);
+        Production();
+        //StartCoroutine(CountDowns());
         playTimeText.gameObject.SetActive(false);
 
         // === changed (false) ===
@@ -138,42 +144,42 @@ public class InGamePanelSet : MonoBehaviour
         loseReStartBut.onClick.AddListener(delegate
         {
             OnClickGoStartPanel();
-            SoundManager.Inst.GameLoseSFXPlay(); 
+            SoundManager.Inst.GameLoseSFXPlay();
             SoundManager.Inst.ButtonEffect(loseReStartBut.transform.position);
         });
 
         winReStartBut.onClick.AddListener(delegate
         {
             OnClickGoStartPanel();
-            SoundManager.Inst.GameClearSFXPlay(); 
+            SoundManager.Inst.GameClearSFXPlay();
             SoundManager.Inst.ButtonEffect(winReStartBut.transform.position);
         });
 
         quitBut.onClick.AddListener(delegate
         {
             OnClickGoStartPanel();
-            SoundManager.Inst.ButtonSFXPlay(); 
+            SoundManager.Inst.ButtonSFXPlay();
             SoundManager.Inst.ButtonEffect(quitBut.transform.position);
         });
 
         optionBut.onClick.AddListener(delegate
         {
             SoundManager.Inst.ButtonEffect(optionBut.transform.position);
-            Invoke(nameof(OnClickOptionBut),0.4f);
-            SoundManager.Inst.ButtonSFXPlay(); 
+            Invoke(nameof(OnClickOptionBut), 0.4f);
+            SoundManager.Inst.ButtonSFXPlay();
         });
 
         resumeBut.onClick.AddListener(delegate
         {
             OnClickOptionBut();
-            SoundManager.Inst.ButtonSFXPlay(); 
+            SoundManager.Inst.ButtonSFXPlay();
             SoundManager.Inst.ButtonEffect(resumeBut.transform.position);
         });
 
         closePanelBut.onClick.AddListener(delegate
         {
             OnClickInGameGoSelectPanel();
-            SoundManager.Inst.ButtonSFXPlay(); 
+            SoundManager.Inst.ButtonSFXPlay();
             SoundManager.Inst.ButtonEffect(closePanelBut.transform.position);
         });
 
@@ -261,7 +267,7 @@ public class InGamePanelSet : MonoBehaviour
 
     int GetClearTime()
     {
-        string check = Minute.ToString() + seconds.ToString(); 
+        string check = Minute.ToString() + seconds.ToString();
         savePalyTime = int.Parse(check);
         Debug.Log("savePalyTime : " + savePalyTime);
         return savePalyTime;
@@ -319,6 +325,56 @@ public class InGamePanelSet : MonoBehaviour
 
     public void LineColorAndSizeChange(bool active) => lineChangedPanel.gameObject.SetActive(active);
 
+    public void ProductionSet(bool active) => production.gameObject.SetActive(active);
+
+    void Production()
+    {
+        StartCoroutine(ViewHallExtension());
+    }
+
+    IEnumerator ViewHallExtension()
+    {
+        ProductionSet(true);
+        float timer = 0f;
+        Time.timeScale = 1;
+
+        while (viewHall.transform.localScale.x <= 30)
+        {
+            timer += Time.deltaTime / 20f;
+
+            viewHall.transform.localScale = Vector3.Lerp(viewHall.transform.localScale, Vector3.one * 35f, timer);
+            yield return null;
+        }
+
+        viewHall.transform.localScale = Vector3.one * 30f;
+
+        ProductionSet(false);
+        waitTimeObjs.gameObject.SetActive(true);
+        StartCoroutine(CountDowns());
+    }
+
+    public void MoveScene(int sceneIndex)
+    {
+        StartCoroutine(ViewHallShrink(sceneIndex));
+    }
+
+    IEnumerator ViewHallShrink(int sceneIndex)
+    {
+        ProductionSet(true);
+
+        float timer = 0f;
+        while (viewHall.transform.localScale.x >= 0.8f)
+        {
+            timer += Time.deltaTime / 15f;
+
+            viewHall.transform.localScale = Vector3.Lerp(viewHall.transform.localScale, Vector3.zero, timer);
+            yield return null;
+        }
+
+        viewHall.transform.localScale = Vector3.zero;
+        SceneManager.LoadScene(sceneIndex);
+    }
+
     public void InstAnimalClearEffect()
     {
         if (clearEffect == null)
@@ -327,12 +383,15 @@ public class InGamePanelSet : MonoBehaviour
 
     public void DestroyAnimalClearEffect()
     {
-        ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(clearEffect);
+        if (clearEffect != null)
+            ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(clearEffect);
     }
 
     public void OnClickGoStartPanel()
     {
-        SceneManager.LoadScene(SceneName.StartScene);
+        Time.timeScale = 1;
+        MoveScene(SceneName.StartScene);
+        //SceneManager.LoadScene(SceneName.StartScene);
         SoundManager.Inst.TitleBGMPlay(); // 타이틀 BGM 바꿔주기
     }
 
