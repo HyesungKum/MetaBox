@@ -80,7 +80,10 @@ public class KitchenTable : MonoBehaviour
         //Guest Table reference
         if (guestTable == null)
         {
+            #if UNITY_EDITOR
             Debug.Log("## KitchenTable Error : dont Found Target Guest");
+            #endif
+
             return;
         }
 
@@ -218,8 +221,6 @@ public class KitchenTable : MonoBehaviour
 
             float fixedX = Mathf.Round(targetTr.position.x);
             float fixedY = Mathf.Round(targetTr.position.y);
-
-            Debug.Log($"{fixedX} {fixedY}");
 
             targetTr.position = Vector3.Lerp(targetTr.position, TargetPos, Time.deltaTime * ingredMoveSpeed);
 
