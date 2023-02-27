@@ -114,11 +114,8 @@ public class StartManager : MonoBehaviour
         optionInitBuctton.onClick.AddListener(()=> SoundManager.Inst.CallSfx("ButtonClick"));
 
         //apply exit check listener
-        ExitCheckExitButton.onClick.AddListener(() => Application.Quit());
+        ExitCheckExitButton.onClick.AddListener(() => AppQuit());
         ExitCheckExitButton.onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
-        
-        ExitCheckVillageButton.onClick.AddListener(() => AppTrans.MoveScene(mainPackName));
-        ExitCheckVillageButton.onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
 
         ExitCheckReturnButton.onClick.AddListener(() => ShowUI(mainUIGroup));
         ExitCheckReturnButton.onClick.AddListener(() => SoundManager.Inst.CallSfx("ButtonClick"));
@@ -200,9 +197,15 @@ public class StartManager : MonoBehaviour
         bgmSlider.value = SoundManager.Inst.GetVolume("BGM");
         sfxSlider.value = SoundManager.Inst.GetVolume("SFX");
     }
-
     void ToggleSlider(Slider target)
     {
         target.interactable = target.interactable == true ? false : true;
+    }
+
+    //=========================================Application Quit Routine======================================
+    void AppQuit()
+    {
+        if (SaveLoadManger.Inst.curUserData.troughTown) AppTrans.MoveScene(mainPackName);
+        else Application.Quit();
     }
 }

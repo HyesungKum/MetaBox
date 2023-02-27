@@ -28,12 +28,18 @@ public class NavMesh2Agent : MonoBehaviour
     public bool IsMove = false;
     public bool IsLookRight = true;
     [SerializeField] bool MoveOrder = false;
-    [field:SerializeField] public bool OnField { get; private set; }
+    [field: SerializeField] public bool OnField { get; private set; }
 
-    //============================================delegate===============================================
-    public delegate void Clear();
-    private Clear NodeClear = null;
-    public void CallNodeClear() => NodeClear?.Invoke();
+    //============================================delegate=============================================== 
+    public delegate void CallBack();
+
+    private CallBack nodeClear = null;
+    public CallBack moveEvent = null;
+    public CallBack stopEvent = null;
+
+    private void CallNodeClear() => nodeClear?.Invoke();
+    private void CallMoveEvent() => moveEvent?.Invoke();
+    private void CallStopEvent() => stopEvent?.Invoke();
 
     private void Awake()
     {
@@ -43,6 +49,7 @@ public class NavMesh2Agent : MonoBehaviour
 
         //delegate chain
         navMesh2D.connectFinish += Initializing;
+        EventReceiver.gameIn += StopAgentMove;
     }
 
     private void OnEnable()
@@ -53,6 +60,7 @@ public class NavMesh2Agent : MonoBehaviour
     private void OnDisable()
     {
         navMesh2D.connectFinish -= Initializing;
+        EventReceiver.gameIn -= StopAgentMove;
     }
 
     //========================================Find Mesh Data & Position Init========================================
@@ -84,11 +92,12 @@ public class NavMesh2Agent : MonoBehaviour
 
         //initailizing
         IsMove = true;
+        CallMoveEvent();
 
         StartNode = null;
         EndNode = null;
         pathNode = null;
-        
+
         openQueue.Clear();
         closedList = new();
         pathStack = new();
@@ -99,7 +108,7 @@ public class NavMesh2Agent : MonoBehaviour
 
         //clean value
         CallNodeClear();
-        NodeClear = null;
+        nodeClear = null;
 
         //set start, end
         StartNode = navMesh2D.PosToNode(this.transform.position);
@@ -110,12 +119,22 @@ public class NavMesh2Agent : MonoBehaviour
             #if UNITY_EDITOR
             Debug.Log("##NavMesh2Agent Error : cannot found path");
             #endif
-
+            IsMove = false;
+            CallStopEvent();
             return;
         }
 
         //a star path finding
         AstarPathFinding();
+    }
+
+    //=================================================StopAgentMoving==================================================
+    private void StopAgentMove(string game)
+    {
+        StopCoroutine(nameof(AgentNodeMove));
+        StopCoroutine(nameof(AgentDetailMove));
+        IsMove = false;
+        CallStopEvent();
     }
 
     //===================================================PathFinding====================================================
@@ -130,7 +149,7 @@ public class NavMesh2Agent : MonoBehaviour
         //set score
         curNode.GScore = 0;
         curNode.HScore = EndNode.CalH(curNode);
-        NodeClear += curNode.Clear;
+        nodeClear += curNode.Clear;
 
         //finding path
         while (true)
@@ -202,7 +221,7 @@ public class NavMesh2Agent : MonoBehaviour
                 tarNode.parentNode = curNode;
 
                 //clean chain
-                NodeClear += tarNode.Clear;
+                nodeClear += tarNode.Clear;
 
                 //input openQueue
                 openQueue.Enqueue(tarNode, tarNode.FScore);
@@ -218,7 +237,7 @@ public class NavMesh2Agent : MonoBehaviour
                 tarNode.parentNode = curNode;
 
                 //clean chain
-                NodeClear += tarNode.Clear;
+                nodeClear += tarNode.Clear;
 
                 //arrived target
                 if (tarNode.HScore == 0)
@@ -244,9 +263,14 @@ public class NavMesh2Agent : MonoBehaviour
     {
         MoveOrder = false;
 
-        if (pathStack.Count == 1) yield break;
-        Vector3 targetPos = pathStack.Pop();
+        if (pathStack.Count <= 1)
+        {
+            IsMove = false;
+            CallStopEvent();
+            yield break;
+        }
 
+        Vector3 targetPos = pathStack.Pop();
         Vector3 dir = targetPos - this.transform.position;
 
         //node move
@@ -280,7 +304,10 @@ public class NavMesh2Agent : MonoBehaviour
     /// <returns></returns>
     private IEnumerator AgentDetailMove()
     {
+        //looking position
         Vector3 dir = detailPos - this.transform.position;
+        if (dir.normalized.x > 0) IsLookRight = true;
+        else IsLookRight = false;
 
         //detail move
         while (true)
@@ -288,6 +315,7 @@ public class NavMesh2Agent : MonoBehaviour
             if (Vector3.Distance(this.transform.position, detailPos) < 0.2f)
             {
                 IsMove = false;
+                CallStopEvent();
                 yield break;
             }
 

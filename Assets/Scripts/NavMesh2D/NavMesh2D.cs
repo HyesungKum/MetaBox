@@ -124,6 +124,7 @@ public class NavMesh2D : MonoBehaviour
 
 
     //======================================make nav mesh and reference========================================
+    #if UNITY_EDITOR
     public void Bake()
     {
         //Create Scriptable Assets Instance
@@ -206,6 +207,7 @@ public class NavMesh2D : MonoBehaviour
         //Nav Mesh Reference
         this.navMeshData = navMeshData;
     }
+    #endif
 
     //============================================Poisition Check Function=====================================
     /// <summary>
@@ -323,7 +325,7 @@ public class NavMesh2D : MonoBehaviour
             }
         }
 
-        Gizmos.color = new(0f, 0f, 1f, 0.4f);
+        Gizmos.color = new(0f, 0f, 1f, 0.15f);
         Gizmos.matrix = this.transform.localToWorldMatrix;
         Gizmos.DrawCube(Vector3.zero, this.transform.GetComponent<BoxCollider2D>().size);
     }

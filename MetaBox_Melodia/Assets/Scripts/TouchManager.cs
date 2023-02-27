@@ -1,35 +1,26 @@
-using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class TouchManager : MonoBehaviour
 {
+    [SerializeField] Camera myCam = null;
     Vector3 touchedToScreen;
     Touch myTouch;
+    RaycastHit2D hitPoint2D;
+    PlayableNote myNote;
 
     bool isDragging = false;
 
-    PlayableNote myNote;
-    Vector3 myNoteOriginPos;
-
-    RaycastHit2D hitPoint2D;
-
     void Update()
     {
-        if (Input.touchCount <= 0)
-            return;
+        if (Input.touchCount <= 0) return;
 
         myTouch = Input.GetTouch(0);
 
         // if touched UI, no action required
-        if (EventSystem.current.IsPointerOverGameObject(myTouch.fingerId))
-        {
-            return;
-        }
+        if (EventSystem.current.IsPointerOverGameObject(myTouch.fingerId)) return;
 
-
-        touchedToScreen = Camera.main.ScreenToWorldPoint(new Vector3(myTouch.position.x, myTouch.position.y, Camera.main.nearClipPlane));
-
+        touchedToScreen = myCam.ScreenToWorldPoint(myTouch.position);
 
         // touch ended => drop object 
         if (isDragging && myTouch.phase == TouchPhase.Ended)
@@ -49,24 +40,18 @@ public class TouchManager : MonoBehaviour
             // ray hit resptect to world space point of touch point
             hitPoint2D = shootRay(touchedToScreen);
 
-            if (!hitPoint2D)
-                return;
+            if (!hitPoint2D) return;
 
             isMyNote(hitPoint2D);
         }
-        
-
     }
 
 
 
     RaycastHit2D shootRay(Vector2 targetT)
     {
-        RaycastHit2D hit;
-        Ray2D ray;
-
-        ray = new Ray2D(targetT, Vector2.zero);
-        hit = Physics2D.Raycast(ray.origin, ray.direction);
+        Ray2D ray = new Ray2D(targetT, Vector2.zero);
+        RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
 
         return hit;
     }
@@ -79,7 +64,7 @@ public class TouchManager : MonoBehaviour
             PlayableNote target = null;
 
             // if ray hits playablenote 
-            hitPoint.transform.gameObject.TryGetComponent(out target);
+            hitPoint.transform.TryGetComponent(out target);
 
             if (target != null)
             {
@@ -96,20 +81,16 @@ public class TouchManager : MonoBehaviour
             QNote note = null;
 
             hitPoint.transform.TryGetComponent(out note);
-            if(note != null) SoundManager.Inst.PlayNote(note.MyPitchNum, 1);
+            if(note != null) SoundManager.Inst.PlayNote(note.MyPitchNum);
         }
-
-        
-
     }
 
 
     // is drag stared? 
     void startDragging()
     {
-        //myNoteOriginPos = myNote.transform.position;
-        myNote.StartToMove();
         isDragging = true;
+        myNote.StartToMove();
     }
 
 
@@ -123,7 +104,6 @@ public class TouchManager : MonoBehaviour
     void dropObject()
     {
         isDragging = false;
-
         myNote.Dropped();
     }
 

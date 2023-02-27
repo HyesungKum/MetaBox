@@ -812,7 +812,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 217774000}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.34, y: -2.75, z: 0}
+  m_LocalPosition: {x: -1.05, y: -2.65, z: 0}
   m_LocalScale: {x: 1, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2407,6 +2407,12 @@ MonoBehaviour:
       date: 0
     - score: 0
       date: 0
+  curUserData:
+    ID: 
+    charIndex: 0
+    troughTown: 0
+  fileName: TownSaveData.json
+  defaultPath: /storage/emulated/0/MetaBox/SaveData/TownSaveData.json
   OnlineMode: 0
 --- !u!4 &458538477
 Transform:
@@ -2449,7 +2455,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 471473226}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.4, y: -2.94, z: 0}
+  m_LocalPosition: {x: 1.1, y: -2.87, z: 0}
   m_LocalScale: {x: 1, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2522,7 +2528,7 @@ Transform:
   m_GameObject: {fileID: 527527767}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 4.67, z: 0}
-  m_LocalScale: {x: 19.45, y: 6.17831, z: 0}
+  m_LocalScale: {x: 19.45, y: 4.5, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1669222389}
@@ -2921,7 +2927,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705625067}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -2.6, y: 0.2, z: 0}
+  m_LocalPosition: {x: -2.58, y: 0.85, z: 0}
   m_LocalScale: {x: 1, y: 1.15, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3114,7 +3120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCam: {fileID: 1579395710}
-  TouchVfx: {fileID: 3527676520550265843, guid: 91375ba91658c5c438a2cf58be43a478, type: 3}
+  TouchVfx: {fileID: 1219726807682785302, guid: b9e078769b93dde4f96a071452664fca, type: 3}
   TitleScene: 0
   touchedIngred: []
 --- !u!4 &787377201
@@ -5477,7 +5483,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32638745cf05df24e9ebd721d14fd9c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Level: 4
+  Level: 2
 --- !u!4 &1185082646
 Transform:
   m_ObjectHideFlags: 0
@@ -6559,7 +6565,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1350599525}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.41, y: -5.1, z: 0}
+  m_LocalPosition: {x: 0.39, y: -5.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9367,7 +9373,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -818.0017, y: 279.9984}
+  m_AnchoredPosition: {x: -706, y: 279.9984}
   m_SizeDelta: {x: 500, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1974202792
@@ -9822,7 +9828,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2136615745}
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 2.63, y: 0.42, z: 0}
+  m_LocalPosition: {x: 2.63, y: 1.1, z: 0}
   m_LocalScale: {x: 1, y: 1.15, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
