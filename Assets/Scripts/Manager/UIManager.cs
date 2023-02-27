@@ -1,6 +1,38 @@
 using KumTool.AppTransition;
 using UnityEngine;
 using UnityEngine.UI;
+using RankingDB;
+using TMPro;
+
+public class LevelString
+{
+    #region LevelString
+    public string levelOne = "levelOne";
+    public string levelTwo = "levelTwo";
+    public string levelThree = "levelThree";
+    public string levelFour = "levelFour";
+
+    public string songOneLevelOne = "songOneLevelOne";
+    public string songOneLevelTwo = "songOneLevelTwo";
+    public string songOneLevelThree = "songOneLevelThree";
+    public string songOneLevelFour = "songOneLevelFour";
+
+    public string songTwoLevelOne = "songTwoLevelOne";
+    public string songTwoLevelTwo = "songTwoLevelTwo";
+    public string songTwoLevelThree = "songTwoLevelThree";
+    public string songTwoLevelFour = "songTwoLevelFour";
+
+    public string songThreeLevelOne = "songThreeLevelOne";
+    public string songThreeLevelTwo = "songThreeLevelTwo";
+    public string songThreeLevelThree = "songThreeLevelThree";
+    public string songThreeLevelFour = "songThreeLevelFour";
+
+    public string songFourLevelOne = "songFourLevelOne";
+    public string songFourLevelTwo = "songFourLevelTwo";
+    public string songFourLevelThree = "songFourLevelThree";
+    public string songFourLevelFour = "songFourLevelFour";
+    #endregion
+}
 
 public class UIManager : MonoBehaviour
 {
@@ -41,33 +73,45 @@ public class UIManager : MonoBehaviour
     [SerializeField] Button exitButton;
     [SerializeField] Button resumeButton;
 
+    [Header("MongoDB Manger")]
+    [SerializeField] MongoDBManager mongoDBManager = null;
+    [SerializeField] TopTenRankMgr topTenRank = null;
+
+    [Header("Ranking Info Text")]
+    [SerializeField] TextMeshProUGUI rankingInfo = null;
+
+    LevelString levelString;
+    private const string defaultName = "com.MataBox.";
+
     private void Awake()
     {
+        levelString = new LevelString();
+        rankingInfo.gameObject.SetActive(false);
         //main UI Button Listener
-        optionButton.onClick.AddListener(()=> ShowUI(optionUIGrpoup));
+        optionButton.onClick.AddListener(() => ShowUI(optionUIGrpoup));
 
         //Game UI Group button listener
         heyCookStartButton.onClick.AddListener(() => AppTrans.MoveScene("com.MetaBox.HeyCook"));
-        heyCookExitButton.onClick.AddListener(()=> ShowUI(mainUIGroup));
+        heyCookExitButton.onClick.AddListener(() => DestroyRanking(mainUIGroup, topTenRank.heyCookLevelShowPanking));
 
         freezeStartButton.onClick.AddListener(() => AppTrans.MoveScene("com.MetaBox.Freeze"));
-        freezeExitButton.onClick.AddListener(()=> ShowUI(mainUIGroup));
+        freezeExitButton.onClick.AddListener(() => DestroyRanking(mainUIGroup, topTenRank.freezeLevelShowRanking));
 
         melodiaStartButton.onClick.AddListener(() => AppTrans.MoveScene("com.MetaBox.Melodia"));
-        melodiaExitButton.onClick.AddListener(()=> ShowUI(mainUIGroup));
+        melodiaExitButton.onClick.AddListener(() => DestroyMelodia(mainUIGroup));
 
         sketchUPStartButton.onClick.AddListener(() => AppTrans.MoveScene("com.MetaBox.SketchUP"));
-        sketchUPExitButton.onClick.AddListener(()=> ShowUI(mainUIGroup));
+        sketchUPExitButton.onClick.AddListener(() => DestroyRanking(mainUIGroup, topTenRank.sketchUPLevelShowRanking));
 
         //option UI Group Listener
         BgmSlider.onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("BGM", call));
         SfxSlider.onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("SFX", call));
         optionResumeButton.onClick.AddListener(() => ShowUI(mainUIGroup));
-        optionExitButton.onClick.AddListener(()=>ShowUI(exitCheckUIGroup));
+        optionExitButton.onClick.AddListener(() => ShowUI(exitCheckUIGroup));
 
         //Exit UI Group button Listener
-        exitButton.onClick.AddListener(()=> EventReceiver.CallAppQuit());
-        resumeButton.onClick.AddListener(()=> ShowUI(mainUIGroup));
+        exitButton.onClick.AddListener(() => EventReceiver.CallAppQuit());
+        resumeButton.onClick.AddListener(() => ShowUI(mainUIGroup));
 
         //delegate chain
         EventReceiver.gameIn += OpenGamePanel;
@@ -82,21 +126,20 @@ public class UIManager : MonoBehaviour
     {
         switch (gameName)
         {
-            case GameName.HeyCook :
+            case GameName.HeyCook:
                 {
                     SoundManager.Inst.CallSfx("HeyCookSfx");
-                    ShowUI(heyCookUIGroup);
-
+                    ShowHeyCookRank(heyCookUIGroup);
                     #if UNITY_ANDROID && !UNITY_EDITOR
                     if (PackageChecker.IsAppInstalled($"com.MetaBox.HeyCook")) heyCookStartButton.interactable = true;
                     else heyCookStartButton.interactable = false;
                     #endif
                 }
                 break;
-            case GameName.Freeze  :
+            case GameName.Freeze:
                 {
                     SoundManager.Inst.CallSfx("FreezeSfx");
-                    ShowUI(freezeUIGroup);
+                    ShowFreezeRank(freezeUIGroup);
 
                     #if UNITY_ANDROID && !UNITY_EDITOR
                     if (PackageChecker.IsAppInstalled($"com.MetaBox.Freeze")) freezeStartButton.interactable = true;
@@ -104,10 +147,10 @@ public class UIManager : MonoBehaviour
                     #endif
                 }
                 break;
-            case GameName.Melodia :
+            case GameName.Melodia:
                 {
                     SoundManager.Inst.CallSfx("MelodiaSfx");
-                    ShowUI(melodiaUIGroup);
+                    ShowMelodiaRank(melodiaUIGroup);
 
                     #if UNITY_ANDROID && !UNITY_EDITOR
                     if (PackageChecker.IsAppInstalled("com.MetaBox.Melodia")) melodiaStartButton.interactable = true;
@@ -115,10 +158,10 @@ public class UIManager : MonoBehaviour
                     #endif
                 }
                 break;
-            case GameName.SketchUP :
-                { 
+            case GameName.SketchUP:
+                {
                     SoundManager.Inst.CallSfx("SketchUPSfx");
-                    ShowUI(sketchUPUIGroup);
+                    ShowSketchUPRank(sketchUPUIGroup);
 
                     #if UNITY_ANDROID && !UNITY_EDITOR
                     if (PackageChecker.IsAppInstalled("com.MetaBox.SketchUP")) sketchUPStartButton.interactable = true;
@@ -131,8 +174,262 @@ public class UIManager : MonoBehaviour
 
     void ShowUI(GameObject targetUIObj)
     {
-        if(curUI.activeSelf) curUI.SetActive(false);
+        if (curUI.activeSelf) curUI.SetActive(false);
         curUI = targetUIObj;
         curUI.SetActive(true);
+    }
+
+    void ShowHeyCookRank(GameObject targetUIobj)
+    {
+        bool isOk = false;
+        if (curUI.activeSelf) curUI.SetActive(false);
+        if (targetUIobj == heyCookUIGroup && isOk == false)
+        {
+            rankingInfo.gameObject.SetActive(true);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.HeyCookCollection, levelString.levelOne, topTenRank.heyCookPlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelOneDict, topTenRank.heyCookLevelShowPanking[0], 1,
+                topTenRank.playerDataList);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.HeyCookCollection, levelString.levelTwo, topTenRank.heyCookPlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelTwoDict, topTenRank.heyCookLevelShowPanking[1], 2,
+                topTenRank.playerDataList);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.HeyCookCollection, levelString.levelThree, topTenRank.heyCookPlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelThreeDict, topTenRank.heyCookLevelShowPanking[2], 3,
+                topTenRank.playerDataList);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.HeyCookCollection, levelString.levelFour, topTenRank.heyCookPlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelFourDict, topTenRank.heyCookLevelShowPanking[3], 4,
+                topTenRank.playerDataList);
+
+            isOk = true;
+        }
+        if (isOk == true)
+        {
+            rankingInfo.gameObject.SetActive(false);
+            curUI = targetUIobj;
+            curUI.SetActive(true);
+
+            isOk = false;
+        }
+    }
+
+    void ShowFreezeRank(GameObject targetUIobj)
+    {
+        bool isOk = false;
+        if (curUI.activeSelf) curUI.SetActive(false);
+        if (targetUIobj == freezeUIGroup && isOk == false)
+        {
+            rankingInfo.gameObject.SetActive(true);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.FreezeCollection, levelString.levelOne, topTenRank.freezePlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelOneDict, topTenRank.freezeLevelShowRanking[0], 1,
+                topTenRank.playerDataList);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.FreezeCollection, levelString.levelTwo, topTenRank.freezePlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelTwoDict, topTenRank.freezeLevelShowRanking[1], 2,
+                topTenRank.playerDataList);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.FreezeCollection, levelString.levelThree, topTenRank.freezePlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelThreeDict, topTenRank.freezeLevelShowRanking[2], 3,
+                topTenRank.playerDataList);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.FreezeCollection, levelString.levelFour, topTenRank.freezePlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelFourDict, topTenRank.freezeLevelShowRanking[3], 4,
+                topTenRank.playerDataList);
+
+            isOk = true;
+        }
+        if (isOk == true)
+        {
+            rankingInfo.gameObject.SetActive(false);
+            curUI = targetUIobj;
+            curUI.SetActive(true);
+
+            isOk = false;
+        }
+    }
+
+    void ShowMelodiaRank(GameObject targetUIobj)
+    {
+        bool isOk = false;
+        if (curUI.activeSelf) curUI.SetActive(false);
+        if (targetUIobj == melodiaUIGroup && isOk == false)
+        {
+            rankingInfo.gameObject.SetActive(true);
+
+            #region songOne
+            mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songOneLevelOne, topTenRank.melodiaPlayerRank,
+                mongoDBManager.ID, mongoDBManager.melodiaSongOneLevelOneDict, topTenRank.melodiaSongOneRanking[0], 1,
+                topTenRank.playerMelodiaSongOneDataList);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songOneLevelTwo, topTenRank.melodiaPlayerRank,
+                mongoDBManager.ID, mongoDBManager.melodiaSongOneLevelTwoDict, topTenRank.melodiaSongOneRanking[1], 2,
+                topTenRank.playerMelodiaSongOneDataList);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songOneLevelThree, topTenRank.melodiaPlayerRank,
+                mongoDBManager.ID, mongoDBManager.melodiaSongOneLevelThreeDict, topTenRank.melodiaSongOneRanking[2], 3,
+                topTenRank.playerMelodiaSongOneDataList);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songOneLevelFour, topTenRank.melodiaPlayerRank,
+                mongoDBManager.ID, mongoDBManager.melodiaSongOneLevelFourDict, topTenRank.melodiaSongOneRanking[3], 4,
+                topTenRank.playerMelodiaSongOneDataList);
+            #endregion
+            #region songTwo
+            mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songTwoLevelOne, topTenRank.melodiaPlayerRank, mongoDBManager.ID,
+                mongoDBManager.melodiaSongTwoLevelOneDict, topTenRank.melodiaSongTwoRanking[0], 1, topTenRank.playerMelodiaSongTwoDataList);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songTwoLevelTwo, topTenRank.melodiaPlayerRank, mongoDBManager.ID,
+                mongoDBManager.melodiaSongTwoLevelTwoDict, topTenRank.melodiaSongTwoRanking[1], 2, topTenRank.playerMelodiaSongTwoDataList);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songTwoLevelThree, topTenRank.melodiaPlayerRank, mongoDBManager.ID,
+                mongoDBManager.melodiaSongTwoLevelThreeDict, topTenRank.melodiaSongTwoRanking[2], 3, topTenRank.playerMelodiaSongTwoDataList);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songTwoLevelFour, topTenRank.melodiaPlayerRank, mongoDBManager.ID,
+                mongoDBManager.melodiaSongTwoLevelFourDict, topTenRank.melodiaSongTwoRanking[3], 4, topTenRank.playerMelodiaSongTwoDataList);
+            #endregion
+
+            #region songThree
+            mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songThreeLevelOne, topTenRank.melodiaPlayerRank,
+                mongoDBManager.ID, mongoDBManager.melodiaSongThreeLevelOneDict, topTenRank.melodiaSongThreeRanking[0], 1,
+                topTenRank.playerMelodiaSongThreeDataList);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songThreeLevelTwo, topTenRank.melodiaPlayerRank, mongoDBManager.ID,
+                mongoDBManager.melodiaSongThreeLevelTwoDict, topTenRank.melodiaSongThreeRanking[1], 2, topTenRank.playerMelodiaSongThreeDataList);
+            mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songThreeLevelThree, topTenRank.melodiaPlayerRank, mongoDBManager.ID,
+                mongoDBManager.melodiaSongThreeLevelThreeDict, topTenRank.melodiaSongThreeRanking[2], 3, topTenRank.playerMelodiaSongThreeDataList);
+            mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songThreeLevelFour, topTenRank.melodiaPlayerRank, mongoDBManager.ID,
+                mongoDBManager.melodiaSongThreeLevelFourDict, topTenRank.melodiaSongThreeRanking[3], 4, topTenRank.playerMelodiaSongThreeDataList);
+            #endregion
+            #region songFour
+            mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songFourLevelOne, topTenRank.melodiaPlayerRank, mongoDBManager.ID,
+                mongoDBManager.melodiaSongFourLevelOneDict, topTenRank.melodiaSongFourRanking[0], 1, topTenRank.playerMelodiaSongFourDataList);
+            mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songFourLevelTwo, topTenRank.melodiaPlayerRank, mongoDBManager.ID,
+                mongoDBManager.melodiaSongFourLevelTwoDict, topTenRank.melodiaSongFourRanking[1], 2, topTenRank.playerMelodiaSongFourDataList);
+            mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songFourLevelThree, topTenRank.melodiaPlayerRank, mongoDBManager.ID,
+                mongoDBManager.melodiaSongFourLevelThreeDict, topTenRank.melodiaSongFourRanking[2], 3, topTenRank.playerMelodiaSongFourDataList);
+            mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songFourLevelFour, topTenRank.melodiaPlayerRank, mongoDBManager.ID,
+                mongoDBManager.melodiaSongFourLevelFourDict, topTenRank.melodiaSongFourRanking[3], 4, topTenRank.playerMelodiaSongFourDataList);
+            #endregion
+            isOk = true;
+        }
+        if (isOk == true)
+        {
+            rankingInfo.gameObject.SetActive(false);
+            curUI = targetUIobj;
+            curUI.SetActive(true);
+
+            isOk = false;
+        }
+    }
+
+    void ShowSketchUPRank(GameObject targetUIobj)
+    {
+        bool isOk = false;
+        if (curUI.activeSelf) curUI.SetActive(false);
+        if (targetUIobj == sketchUPUIGroup&& isOk == false)
+        {
+            rankingInfo.gameObject.SetActive(true);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.SketchUpCollection, levelString.levelOne, topTenRank.sketchUpPlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelOneDict, topTenRank.sketchUPLevelShowRanking[0], 1,
+                topTenRank.playerDataList);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.SketchUpCollection, levelString.levelTwo, topTenRank.sketchUpPlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelTwoDict, topTenRank.sketchUPLevelShowRanking[1], 2,
+                topTenRank.playerDataList);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.SketchUpCollection, levelString.levelThree, topTenRank.sketchUpPlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelThreeDict, topTenRank.sketchUPLevelShowRanking[2], 3,
+                topTenRank.playerDataList);
+
+            mongoDBManager.GetAllUserData(mongoDBManager.SketchUpCollection, levelString.levelFour, topTenRank.sketchUpPlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelFourDict, topTenRank.sketchUPLevelShowRanking[3], 4,
+                topTenRank.playerDataList);
+            isOk = true;
+        }
+        if (isOk == true)
+        {
+            rankingInfo.gameObject.SetActive(false);
+            curUI = targetUIobj;
+            curUI.SetActive(true);
+
+            isOk = false;
+        }
+    }
+
+    void DestroyRanking(GameObject targetUIobj, RectTransform[] pos)
+    {
+        if (curUI.activeSelf) curUI.SetActive(false);
+
+        topTenRank.DestroyChild(pos, 0);
+        topTenRank.DestroyChild(pos, 1);
+        topTenRank.DestroyChild(pos, 2);
+        topTenRank.DestroyChild(pos, 3);
+
+        DestroyDictAndList();
+        curUI = targetUIobj;
+        curUI.SetActive(true);
+    }
+
+    void DestroyDictAndList()
+    {
+        mongoDBManager.levelOneDict.Clear();
+        mongoDBManager.levelTwoDict.Clear();
+        mongoDBManager.levelThreeDict.Clear();
+        mongoDBManager.levelFourDict.Clear();
+
+        topTenRank.playerDataList.Clear();
+    }
+
+    void DestroyMelodia(GameObject targetUIobj)
+    {
+        if (curUI.activeSelf) curUI.SetActive(false);
+
+        DestroyChildObj(topTenRank.melodiaSongOneRanking);
+        DestroyChildObj(topTenRank.melodiaSongTwoRanking);
+        DestroyChildObj(topTenRank.melodiaSongThreeRanking);
+        DestroyChildObj(topTenRank.melodiaSongFourRanking);
+
+        DestroyMelodiaDictAndList();
+        curUI = targetUIobj;
+        curUI.SetActive(true);
+    }
+
+    void DestroyChildObj(RectTransform[] pos)
+    {
+        topTenRank.DestroyChild(pos, 0);
+        topTenRank.DestroyChild(pos, 1);
+        topTenRank.DestroyChild(pos, 2);
+        topTenRank.DestroyChild(pos, 3);
+    }
+
+    void DestroyMelodiaDictAndList()
+    {
+        mongoDBManager.melodiaSongOneLevelOneDict.Clear();
+        mongoDBManager.melodiaSongOneLevelTwoDict.Clear();
+        mongoDBManager.melodiaSongOneLevelThreeDict.Clear();
+        mongoDBManager.melodiaSongTwoLevelFourDict.Clear();
+
+        mongoDBManager.melodiaSongTwoLevelOneDict.Clear();
+        mongoDBManager.melodiaSongTwoLevelTwoDict.Clear();
+        mongoDBManager.melodiaSongTwoLevelThreeDict.Clear();
+        mongoDBManager.melodiaSongOneLevelFourDict.Clear();
+
+        mongoDBManager.melodiaSongThreeLevelOneDict.Clear();
+        mongoDBManager.melodiaSongThreeLevelTwoDict.Clear();
+        mongoDBManager.melodiaSongThreeLevelThreeDict.Clear();
+        mongoDBManager.melodiaSongThreeLevelFourDict.Clear();
+
+        mongoDBManager.melodiaSongFourLevelOneDict.Clear();
+        mongoDBManager.melodiaSongFourLevelTwoDict.Clear();
+        mongoDBManager.melodiaSongFourLevelThreeDict.Clear();
+        mongoDBManager.melodiaSongFourLevelFourDict.Clear();
+
+        topTenRank.playerMelodiaSongOneDataList.Clear();
+        topTenRank.playerMelodiaSongTwoDataList.Clear();
+        topTenRank.playerMelodiaSongThreeDataList.Clear();
+        topTenRank.playerMelodiaSongFourDataList.Clear();
     }
 }
