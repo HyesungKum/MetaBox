@@ -3,6 +3,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System;
+using MongoDB.Driver;
+using MongoDB.Bson;
+using Unity.VisualScripting;
 
 public class InGamePanelSet : MonoBehaviour
 {
@@ -25,6 +29,10 @@ public class InGamePanelSet : MonoBehaviour
         }
     }
     #endregion
+
+    MongoClient clientData = new MongoClient("mongodb+srv://metabox:metabox@metabox.fon8dvx.mongodb.net/?retryWrites=true&w=majority");
+    public IMongoDatabase dataBase = null;
+    public IMongoCollection<BsonDocument> SketchUpCollection = null;
 
     #region SerializeField
     [Header("[InGame Panel Set]")]
@@ -79,6 +87,8 @@ public class InGamePanelSet : MonoBehaviour
     [Header("[Play Time Setting]")]
     [SerializeField] private int minute;
     [SerializeField] private float seconds;
+    [SerializeField] int playPoint;
+    [SerializeField] string id;
 
     public float Secondes { get { return seconds; } set { seconds = value; } }
     public int Minute { get { return minute; } set { minute = value; } }
@@ -92,6 +102,10 @@ public class InGamePanelSet : MonoBehaviour
     [SerializeField] GameObject production;
     [SerializeField] GameObject viewHall;
 
+    [Header("[Ranking]")]
+    [SerializeField] TextMeshProUGUI playerPoint = null;
+    [SerializeField] TextMeshProUGUI rankingUpdata = null;
+
     [Space]
     public LineColorChanged ColorPanel;
     public LineSizeChange LineSize;
@@ -104,16 +118,24 @@ public class InGamePanelSet : MonoBehaviour
     WaitForSeconds waitOnSceonds = null;
 
     // === ClearCount ===
-    private int clearCount = 3;
+    public int clearCount = 3;
     public int ClearCount { get { return clearCount; } set { clearCount = value; } }
+
+    internal MongoClient ClientData { get => ClientData1; set => ClientData1 = value; }
+    internal MongoClient ClientData1 { get => ClientData2; set => ClientData2 = value; }
+    internal MongoClient ClientData2 { get => ClientData3; set => ClientData3 = value; }
+    internal MongoClient ClientData3 { get => ClientData4; set => ClientData4 = value; }
+    internal MongoClient ClientData4 { get => clientData; set => clientData = value; }
 
     // === Object Index ===
     public int ObjIndexs;
     public int ObjTwoIndex;
     public int ObjThreeIndex;
 
+    int levelIndexCheck;
     public int totalPlayTime;
-    public int savePalyTime;
+    public long savePalyTime;
+    long GetPoint;
 
     bool isOptionPanelOpen = false;
 
@@ -121,6 +143,13 @@ public class InGamePanelSet : MonoBehaviour
     {
         if (clearAnimalImgData == null)
             clearAnimalImgData = Resources.Load<ClearAnimalImgData>("Data/ClearAnimalImgData");
+
+        #region MongoDB database
+        dataBase = clientData.GetDatabase("RankingDB");
+        SketchUpCollection = dataBase.GetCollection<BsonDocument>("SketchUpRanking");
+        #endregion
+
+        levelIndexCheck = SoundManager.Inst.LevelIndex;
 
         waitHalf = new WaitForSeconds(0.5f);
         waitOnSceonds = new WaitForSeconds(1f);
@@ -259,26 +288,11 @@ public class InGamePanelSet : MonoBehaviour
         {
             LineColorAndSizeChange(false);
             OneBrushPlayPanelSet(false);
+            savePalyTime = (Minute * 60) + (int)Secondes;
+            Invoke(nameof(WinPanelSetting), 0.3f);
 
-            Invoke(nameof(WinPanelSet), 0.3f);
-            GetClearTime();
+            return;
         }
-    }
-
-    int GetClearTime()
-    {
-        string check = Minute.ToString() + seconds.ToString();
-        savePalyTime = int.Parse(check);
-        Debug.Log("savePalyTime : " + savePalyTime);
-        return savePalyTime;
-    }
-
-    void WinPanelSet()
-    {
-        WinPanelSet(true);
-
-        if (instEffect == null)
-            InstGameClearEffect();
     }
 
     void FirstSet(bool selectPanel)
@@ -294,37 +308,21 @@ public class InGamePanelSet : MonoBehaviour
     }
 
     public void QOneSet(bool active) => QOne.gameObject.SetActive(active);
-
     public GameObject QOneObj() => QOne.gameObject;
-
     public void QTwoSet(bool active) => QTwo.gameObject.SetActive(active);
-
     public GameObject QTwoObj() => QTwo.gameObject;
-
     public void QThreeSet(bool active) => QThree.gameObject.SetActive(active);
-
     public GameObject QThreeObj() => QThree.gameObject;
-
     void InstGameClearEffect() => instEffect = ObjectPoolCP.PoolCp.Inst.BringObjectCp(gameClearEffect);
-
     public void SelectPanelSet(bool active) => selectPanel.gameObject.SetActive(active);
-
     public void InGameSet(bool active) => closePlayOneBrush.gameObject.SetActive(active);
-
     public void CharacterMoveSet(bool active) => characterMove.gameObject.SetActive(active);
-
     public void InGameOptionSet(bool active) => optionPanel.gameObject.SetActive(active);
-
     public void OneBrushPlayPanelSet(bool active) => onBushObj.gameObject.SetActive(active);
-
     public void LosePanelSet(bool active) => losePanel.gameObject.SetActive(active);
-
     public void WinPanelSet(bool active) => winPanel.gameObject.SetActive(active);
-
     public void StageClearPanelSet(bool active) => stageClearPanel.gameObject.SetActive(active);
-
     public void LineColorAndSizeChange(bool active) => lineChangedPanel.gameObject.SetActive(active);
-
     public void ProductionSet(bool active) => production.gameObject.SetActive(active);
 
     void Production()
@@ -377,8 +375,7 @@ public class InGamePanelSet : MonoBehaviour
 
     public void InstAnimalClearEffect()
     {
-        if (clearEffect == null)
-            clearEffect = ObjectPoolCP.PoolCp.Inst.BringObjectCp(stageClearEffect);
+        clearEffect = ObjectPoolCP.PoolCp.Inst.BringObjectCp(stageClearEffect);
     }
 
     public void DestroyAnimalClearEffect()
@@ -391,7 +388,6 @@ public class InGamePanelSet : MonoBehaviour
     {
         Time.timeScale = 1;
         MoveScene(SceneName.StartScene);
-        //SceneManager.LoadScene(SceneName.StartScene);
         SoundManager.Inst.TitleBGMPlay(); // 타이틀 BGM 바꿔주기
     }
 
@@ -540,4 +536,77 @@ public class InGamePanelSet : MonoBehaviour
             button.enabled = false;
         }
     }
+
+    void WinPanelSetting()
+    {
+        WinPanelSet(true);
+        rankingUpdata.gameObject.SetActive(false);
+        playPoint = 600;
+        playerPoint.text = $"점수 : {savePalyTime}";
+
+        ChangedPoint(savePalyTime);
+
+        if (instEffect == null)
+            InstGameClearEffect();
+    }
+
+    #region Changed Point
+    public void ChangedPoint(long point)
+    {
+        BsonDocument filter = new BsonDocument { { "_id", id } };
+        BsonDocument targetData = SketchUpCollection.Find(filter).FirstOrDefault();
+
+        BsonArray levelArry;
+        string levelNum = CheckLevel();
+        levelArry = (BsonArray)targetData.GetValue(levelNum);
+        GetPoint = (long)levelArry[0];
+
+        if (savePalyTime > GetPoint)
+        {
+            rankingUpdata.gameObject.SetActive(true);
+
+            long[] level = new long[2];
+            level[0] = point;
+            level[1] = TimeSetting();
+
+            UpdateDefinition<BsonDocument> updatePoint = Builders<BsonDocument>.Update.Set(levelNum, level);
+            SketchUpCollection.UpdateOne(targetData, updatePoint);
+        }
+    }
+
+    #endregion
+
+    #region Play Game Time Setting : Year/Month/Day/Hour/Minute
+    public long TimeSetting()
+    {
+        string nowDate = DateTime.Now.ToString("yyyyMMddHHmm"); // 현재 시간
+        long time = long.Parse(nowDate);
+        return time;
+    }
+    #endregion
+
+    string CheckLevel()
+    {
+        if (levelIndexCheck == 1)
+        {
+            return "levelOne";
+        }
+        else if (levelIndexCheck == 2)
+        {
+            return "levelTwo";
+        }
+        else if (levelIndexCheck == 3)
+        {
+            return "levelThree";
+        }
+        else if (levelIndexCheck == 4)
+        {
+            return "levelFour";
+        }
+        else
+        {
+            return null;
+        }
+    }
+
 }

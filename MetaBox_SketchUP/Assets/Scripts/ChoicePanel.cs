@@ -87,7 +87,6 @@ public class ChoicePanel : MonoBehaviour
         drawline.ObjIndex = objIndex;
         if (obj.gameObject.active == false)
         {
-            //Debug.Log("objIndex : " + objIndex);
             return drawline.ObjIndex;
         }
         else
