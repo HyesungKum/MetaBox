@@ -2,12 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using ToolKum.AppTransition;
+using System;
+
+[Serializable]
+public struct UserData
+{
+    public bool troughTown;
+}
 
 public class QuitPanelSet : MonoBehaviour
 {
+    //================app transition============================
+    [Header("[Application Setting]")]
+    [SerializeField] string mainPackName = "com.MetaBox.MetaBox_Main";
+
     [Header("[Quit Panel Button]")]
     [SerializeField] Button quitPanelOkBut = null;
     [SerializeField] Button quitPanelQuitBut = null;
+
+    public UserData curUserData;
 
     void Awake()
     {
@@ -26,5 +40,9 @@ public class QuitPanelSet : MonoBehaviour
         this.gameObject.SetActive(false);
     }
 
-    private void AppQuit() => Application.Quit();
+    private void AppQuit()
+    {
+        if (curUserData.troughTown) AppTrans.MoveScene(mainPackName);
+        Application.Quit();
+    }
 }

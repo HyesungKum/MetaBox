@@ -65,15 +65,10 @@ public class StartSceneManager : MonoBehaviour
     }
 
     public void StartPanelSet(bool active) => startPanel.gameObject.SetActive(active);
-
     public void OptionPanelSet(bool active) => optionPanel.gameObject.SetActive(active);
-
     public void LevelPanelSet(bool active) => levelPanel.gameObject.SetActive(active);
-
     public void TutorialPanelSet(bool active) => tutorialPanel.gameObject.SetActive(active);
-
     public void QuitPanelSet(bool active) => quitPanel.gameObject.SetActive(active);
-
     public void ProductionSet(bool active) => production.gameObject.SetActive(active);
 
     void Production()
