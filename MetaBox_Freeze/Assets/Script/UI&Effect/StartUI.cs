@@ -1,8 +1,19 @@
+using Newtonsoft.Json;
+using System.IO;
+using ToolKum.AppTransition;
 using UnityEngine;
 using UnityEngine.UI;
 
+public struct UserData
+{
+    public string ID;
+    public int charIndex;
+    public bool troughTown;
+}
+
 public class StartUI : MonoBehaviour
 {
+    public static UserData curUserData = new();
     public static int MyLevel { get; private set; } = 0;
 
     [Header("Panel Control")]
@@ -33,6 +44,14 @@ public class StartUI : MonoBehaviour
     [SerializeField] Button quit = null;
     [SerializeField] Button back_Game = null;
 
+    [Header("[Application Setting]")]
+    [SerializeField] string mainPackName = "com.MetaBox.MetaBox_Main";
+    [SerializeField] private string localSavePath = "/MetaBox/SaveData/HCSaveData.json";
+#if UNITY_EDITOR
+    [SerializeField] private string defaultPath = "/MetaBox/SaveData/";
+#else
+    private string defaultPath = "/storage/emulated/0/MetaBox/SaveData/TownSaveData.json";
+#endif
 
     void Awake()
     {
@@ -55,7 +74,7 @@ public class StartUI : MonoBehaviour
 
         back_Start.onClick.AddListener(() => tutorialPanel.SetActive(false));
 
-        quit.onClick.AddListener(() => Application.Quit());
+        quit.onClick.AddListener(() => AppQuit());
         back_Game.onClick.AddListener(() => startPanel.SetActive(true));
         back_Game.onClick.AddListener(() => exitPanel.SetActive(false));
 
@@ -65,6 +84,29 @@ public class StartUI : MonoBehaviour
     {
         SoundManager.Instance.AddButtonListener();
         SoundManager.Instance.MusicStart(0);
+        FileCheck();
+    }
+
+    //=============================================Check Local File===============================================
+    private void FileCheck()
+    {
+        if (File.Exists(localSavePath))
+        {
+            curUserData = ReadSaveData(localSavePath);
+        }
+        else //존재하지 않을때 
+        {
+            curUserData.ID = "New";
+            curUserData.charIndex = 0;
+            curUserData.troughTown = false;
+        }
+    }
+    private UserData ReadSaveData(string path)
+    {
+        string dataStr = File.ReadAllText(path);
+        UserData readData = JsonConvert.DeserializeObject<UserData>(dataStr);
+
+        return readData;
     }
 
     void SetPanel(bool panel)
@@ -92,5 +134,11 @@ public class StartUI : MonoBehaviour
     {
         MyLevel = 4;
         fade.FadeOut(1);
+    }
+
+    void AppQuit()
+    {
+        if (curUserData.troughTown) AppTrans.MoveScene(mainPackName);
+        else Application.Quit();
     }
 }

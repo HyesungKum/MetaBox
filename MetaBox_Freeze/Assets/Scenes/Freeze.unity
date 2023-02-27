@@ -12736,9 +12736,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 981442414}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b41ac269b3cb0d34fba3d87ed3df0e6d, type: 3}
+  m_Script: {fileID: 11500000, guid: c86ed260c16c59849872d0a6d70399b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  curUserData:
+    ID: 
+    charIndex: 0
+    troughTown: 0
+  localSavePath: /MetaBox/SaveData/HCSaveData.json
+  defaultPath: /MetaBox/SaveData/
+  OnlineMode: 0
 --- !u!1 &992274889
 GameObject:
   m_ObjectHideFlags: 0

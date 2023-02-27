@@ -1,6 +1,16 @@
+using Newtonsoft.Json;
+using System.IO;
+using ToolKum.AppTransition;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
+public struct UserData
+{
+    public string ID;
+    public int charIndex;
+    public bool troughTown;
+}
 
 public enum Panel
 {
@@ -21,6 +31,7 @@ public enum SceneMode
 
 public class StartUI : MonoBehaviour
 {
+    public static UserData curUserData = new();
     public static SceneMode MySceneMode { get; private set; } = SceneMode.littlestar;
     public static int Level { get; private set; } = 1;
 
@@ -61,6 +72,14 @@ public class StartUI : MonoBehaviour
     [SerializeField] Button yes;
     [SerializeField] Button no;
 
+    [Header("[Application Setting]")]
+    [SerializeField] string mainPackName = "com.MetaBox.MetaBox_Main";
+    [SerializeField] private string localSavePath = "/MetaBox/SaveData/HCSaveData.json";
+#if UNITY_EDITOR
+    [SerializeField] private string defaultPath = "/MetaBox/SaveData/";
+#else
+    private string defaultPath = "/storage/emulated/0/MetaBox/SaveData/TownSaveData.json";
+#endif
 
     private void Awake()
     {
@@ -85,7 +104,7 @@ public class StartUI : MonoBehaviour
 
         endTutorial.onClick.AddListener(() => myTutorialPanel.SetActive(false));
 
-        yes.onClick.AddListener(() => Application.Quit());
+        yes.onClick.AddListener(() => AppQuit());
         no.onClick.AddListener(() => myExitPanel.SetActive(false));
 
     }
@@ -94,6 +113,29 @@ public class StartUI : MonoBehaviour
     {
         SoundManager.Inst.AddButtonListener();
         SoundManager.Inst.BGMPlay(1);
+        FileCheck();
+    }
+
+    //=============================================Check Local File===============================================
+    private void FileCheck()
+    {
+        if (File.Exists(localSavePath))
+        {
+            curUserData = ReadSaveData(localSavePath);
+        }
+        else //존재하지 않을때 
+        {
+            curUserData.ID = "New";
+            curUserData.charIndex = 0;
+            curUserData.troughTown = false;
+        }
+    }
+    private UserData ReadSaveData(string path)
+    {
+        string dataStr = File.ReadAllText(path);
+        UserData readData = JsonConvert.DeserializeObject<UserData>(dataStr);
+
+        return readData;
     }
 
     void SetPanel(Panel setPanel)
@@ -163,4 +205,10 @@ public class StartUI : MonoBehaviour
         SceneManager.LoadScene("Loading");
     }
     #endregion
+
+    void AppQuit()
+    {
+        if (curUserData.troughTown) AppTrans.MoveScene(mainPackName);
+        else Application.Quit();
+    }
 }
