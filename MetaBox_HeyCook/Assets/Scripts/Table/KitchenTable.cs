@@ -41,8 +41,8 @@ public class KitchenTable : MonoBehaviour
     /// </summary>
     private Vector3 TargetPos { get; set; }
 
-    private float TableRoundX { get; set; }
-    private float TableRoundY { get; set; }
+    [field:SerializeField] private float TableRoundX { get; set; }
+    [field: SerializeField] private float TableRoundY { get; set; }
 
     private float SubRoundX { get; set; }
     private float SubRoundY { get; set; }
@@ -218,6 +218,8 @@ public class KitchenTable : MonoBehaviour
 
             float fixedX = Mathf.Round(targetTr.position.x);
             float fixedY = Mathf.Round(targetTr.position.y);
+
+            Debug.Log($"{fixedX} {fixedY}");
 
             targetTr.position = Vector3.Lerp(targetTr.position, TargetPos, Time.deltaTime * ingredMoveSpeed);
 

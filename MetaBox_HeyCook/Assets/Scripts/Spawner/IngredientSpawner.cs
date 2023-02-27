@@ -108,7 +108,7 @@ public class IngredientSpawner : MonoBehaviour
         try
         {
             GameObject instObj = PoolCp.Inst.BringObjectCp(TempTable[index]);
-            instObj.transform.SetPositionAndRotation(this.transform.position, Quaternion.identity);
+            instObj.transform.SetPositionAndRotation(this.transform.position + Vector3.forward, Quaternion.identity);
             return instObj;
         }
         catch
