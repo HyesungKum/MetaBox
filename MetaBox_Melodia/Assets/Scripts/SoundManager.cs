@@ -79,6 +79,12 @@ public class SoundManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
         //==============================================
 
+        Application.targetFrameRate = 60;
+
+        Screen.autorotateToPortrait = true;
+        Screen.autorotateToPortraitUpsideDown = true;
+        Screen.autorotateToLandscapeLeft = true;
+        Screen.autorotateToLandscapeRight = true;
 
         Option.myDelegateAudioControl = AudioVolumeControl;
         musicPlaying = new WaitUntil(() => myBGM.isPlaying.Equals(false));

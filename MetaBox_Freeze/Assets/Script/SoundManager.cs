@@ -60,6 +60,12 @@ public class SoundManager : MonoBehaviour
         instance = this;
 
         Application.targetFrameRate = 60;
+
+        Screen.autorotateToPortrait = true;
+        Screen.autorotateToPortraitUpsideDown = true;
+        Screen.autorotateToLandscapeLeft = true;
+        Screen.autorotateToLandscapeRight = true;
+
         DontDestroyOnLoad(this.gameObject);
     }
 
