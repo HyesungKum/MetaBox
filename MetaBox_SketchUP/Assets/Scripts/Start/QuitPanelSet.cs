@@ -4,10 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using ToolKum.AppTransition;
 using System;
+using System.IO;
+using Newtonsoft.Json;
 
 [Serializable]
 public struct UserData
 {
+    public string id;
+    public int charIndex;
     public bool troughTown;
 }
 
@@ -21,6 +25,7 @@ public class QuitPanelSet : MonoBehaviour
     [SerializeField] Button quitPanelOkBut = null;
     [SerializeField] Button quitPanelQuitBut = null;
 
+    [SerializeField] private string localSavePath = "/MetaBox/SaveData/HCSaveData.json";
     public UserData curUserData;
 
     void Awake()
@@ -32,6 +37,23 @@ public class QuitPanelSet : MonoBehaviour
         quitPanelQuitBut.onClick.AddListener(delegate { OnClickQuitBut();  
             SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(quitPanelQuitBut.transform.position);
         });
+
+        if (File.Exists(localSavePath))
+        {
+            curUserData = ReadSaveData(localSavePath);
+        }
+        else//존재하지 않을때 
+        {
+            curUserData.id = "전설의연습생";
+        }
+    }
+
+    private UserData ReadSaveData(string path)
+    {
+        string dataStr = File.ReadAllText(path);
+        UserData readData = JsonConvert.DeserializeObject<UserData>(dataStr);
+
+        return readData;
     }
 
     void OnClickQuitBut()
@@ -42,7 +64,7 @@ public class QuitPanelSet : MonoBehaviour
 
     private void AppQuit()
     {
-        if (curUserData.troughTown) AppTrans.MoveScene(mainPackName);
-        Application.Quit();
+        if (curUserData.id == "전설의연습생") Application.Quit(); 
+        else AppTrans.MoveScene(mainPackName);
     }
 }
