@@ -130,10 +130,10 @@ public class UIManager : MonoBehaviour
                 {
                     SoundManager.Inst.CallSfx("HeyCookSfx");
                     ShowHeyCookRank(heyCookUIGroup);
-                    #if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
                     if (PackageChecker.IsAppInstalled($"com.MetaBox.HeyCook")) heyCookStartButton.interactable = true;
                     else heyCookStartButton.interactable = false;
-                    #endif
+#endif
                 }
                 break;
             case GameName.Freeze:
@@ -141,10 +141,10 @@ public class UIManager : MonoBehaviour
                     SoundManager.Inst.CallSfx("FreezeSfx");
                     ShowFreezeRank(freezeUIGroup);
 
-                    #if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
                     if (PackageChecker.IsAppInstalled($"com.MetaBox.Freeze")) freezeStartButton.interactable = true;
                     else freezeStartButton.interactable = false;
-                    #endif
+#endif
                 }
                 break;
             case GameName.Melodia:
@@ -152,10 +152,10 @@ public class UIManager : MonoBehaviour
                     SoundManager.Inst.CallSfx("MelodiaSfx");
                     ShowMelodiaRank(melodiaUIGroup);
 
-                    #if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
                     if (PackageChecker.IsAppInstalled("com.MetaBox.Melodia")) melodiaStartButton.interactable = true;
                     else melodiaStartButton.interactable = false;
-                    #endif
+#endif
                 }
                 break;
             case GameName.SketchUP:
@@ -163,10 +163,10 @@ public class UIManager : MonoBehaviour
                     SoundManager.Inst.CallSfx("SketchUPSfx");
                     ShowSketchUPRank(sketchUPUIGroup);
 
-                    #if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
                     if (PackageChecker.IsAppInstalled("com.MetaBox.SketchUP")) sketchUPStartButton.interactable = true;
                     else sketchUPStartButton.interactable = false;
-                    #endif
+#endif
                 }
                 break;
         }
@@ -181,9 +181,8 @@ public class UIManager : MonoBehaviour
 
     void ShowHeyCookRank(GameObject targetUIobj)
     {
-        bool isOk = false;
         if (curUI.activeSelf) curUI.SetActive(false);
-        if (targetUIobj == heyCookUIGroup && isOk == false)
+        if (targetUIobj == heyCookUIGroup)
         {
             rankingInfo.gameObject.SetActive(true);
 
@@ -202,24 +201,22 @@ public class UIManager : MonoBehaviour
             mongoDBManager.GetAllUserData(mongoDBManager.HeyCookCollection, levelString.levelFour, topTenRank.heyCookPlayerRank,
                 mongoDBManager.ID, mongoDBManager.levelFourDict, topTenRank.heyCookLevelShowPanking[3], 4,
                 topTenRank.playerDataList);
-
-            isOk = true;
         }
-        if (isOk == true)
-        {
-            rankingInfo.gameObject.SetActive(false);
-            curUI = targetUIobj;
-            curUI.SetActive(true);
 
-            isOk = false;
-        }
+        curUI = targetUIobj;
+        Invoke(nameof(ShowRanking), 0.5f);
+    }
+
+    void ShowRanking()
+    {
+        rankingInfo.gameObject.SetActive(false);
+        curUI.SetActive(true);
     }
 
     void ShowFreezeRank(GameObject targetUIobj)
     {
-        bool isOk = false;
         if (curUI.activeSelf) curUI.SetActive(false);
-        if (targetUIobj == freezeUIGroup && isOk == false)
+        if (targetUIobj == freezeUIGroup)
         {
             rankingInfo.gameObject.SetActive(true);
 
@@ -239,23 +236,15 @@ public class UIManager : MonoBehaviour
                 mongoDBManager.ID, mongoDBManager.levelFourDict, topTenRank.freezeLevelShowRanking[3], 4,
                 topTenRank.playerDataList);
 
-            isOk = true;
         }
-        if (isOk == true)
-        {
-            rankingInfo.gameObject.SetActive(false);
-            curUI = targetUIobj;
-            curUI.SetActive(true);
-
-            isOk = false;
-        }
+        curUI = targetUIobj;
+        Invoke(nameof(ShowRanking), 0.5f);
     }
 
     void ShowMelodiaRank(GameObject targetUIobj)
     {
-        bool isOk = false;
         if (curUI.activeSelf) curUI.SetActive(false);
-        if (targetUIobj == melodiaUIGroup && isOk == false)
+        if (targetUIobj == melodiaUIGroup )
         {
             rankingInfo.gameObject.SetActive(true);
 
@@ -312,23 +301,16 @@ public class UIManager : MonoBehaviour
             mongoDBManager.GetAllUserData(mongoDBManager.MelodiaCollection, levelString.songFourLevelFour, topTenRank.melodiaPlayerRank, mongoDBManager.ID,
                 mongoDBManager.melodiaSongFourLevelFourDict, topTenRank.melodiaSongFourRanking[3], 4, topTenRank.playerMelodiaSongFourDataList);
             #endregion
-            isOk = true;
         }
-        if (isOk == true)
-        {
-            rankingInfo.gameObject.SetActive(false);
-            curUI = targetUIobj;
-            curUI.SetActive(true);
 
-            isOk = false;
-        }
+        curUI = targetUIobj;
+        Invoke(nameof(ShowRanking), 0.5f);
     }
 
     void ShowSketchUPRank(GameObject targetUIobj)
     {
-        bool isOk = false;
         if (curUI.activeSelf) curUI.SetActive(false);
-        if (targetUIobj == sketchUPUIGroup&& isOk == false)
+        if (targetUIobj == sketchUPUIGroup )
         {
             rankingInfo.gameObject.SetActive(true);
 
@@ -347,16 +329,10 @@ public class UIManager : MonoBehaviour
             mongoDBManager.GetAllUserData(mongoDBManager.SketchUpCollection, levelString.levelFour, topTenRank.sketchUpPlayerRank,
                 mongoDBManager.ID, mongoDBManager.levelFourDict, topTenRank.sketchUPLevelShowRanking[3], 4,
                 topTenRank.playerDataList);
-            isOk = true;
         }
-        if (isOk == true)
-        {
-            rankingInfo.gameObject.SetActive(false);
-            curUI = targetUIobj;
-            curUI.SetActive(true);
 
-            isOk = false;
-        }
+        curUI = targetUIobj;
+        Invoke(nameof(ShowRanking), 0.5f);
     }
 
     void DestroyRanking(GameObject targetUIobj, RectTransform[] pos)
