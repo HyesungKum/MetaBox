@@ -3,6 +3,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System;
+using MongoDB.Driver;
+using MongoDB.Bson;
+using Unity.VisualScripting;
 
 public class InGamePanelSet : MonoBehaviour
 {
@@ -25,6 +29,10 @@ public class InGamePanelSet : MonoBehaviour
         }
     }
     #endregion
+
+    MongoClient clientData = new MongoClient("mongodb+srv://metabox:metabox@metabox.fon8dvx.mongodb.net/?retryWrites=true&w=majority");
+    public IMongoDatabase dataBase = null;
+    public IMongoCollection<BsonDocument> SketchUpCollection = null;
 
     #region SerializeField
     [Header("[InGame Panel Set]")]
@@ -74,10 +82,13 @@ public class InGamePanelSet : MonoBehaviour
 
     [Header("[Game Clear Effect ]")]
     [SerializeField] GameObject gameClearEffect = null;
+    [SerializeField] GameObject stageClearEffect = null;
 
     [Header("[Play Time Setting]")]
     [SerializeField] private int minute;
     [SerializeField] private float seconds;
+    [SerializeField] int playPoint;
+    [SerializeField] string id;
 
     public float Secondes { get { return seconds; } set { seconds = value; } }
     public int Minute { get { return minute; } set { minute = value; } }
@@ -87,26 +98,44 @@ public class InGamePanelSet : MonoBehaviour
     [Header("[Others]")]
     [SerializeField] ClearAnimalImgData clearAnimalImgData = null;
 
-    GameObject instClock = null;
-    GameObject instEffect = null;
+    [Header("[Production]")]
+    [SerializeField] GameObject production;
+    [SerializeField] GameObject viewHall;
 
+    [Header("[Ranking]")]
+    [SerializeField] TextMeshProUGUI playerPoint = null;
+    [SerializeField] TextMeshProUGUI rankingUpdata = null;
+
+    [Space]
     public LineColorChanged ColorPanel;
     public LineSizeChange LineSize;
+
+    GameObject instClock = null;
+    GameObject instEffect = null;
+    GameObject clearEffect = null;
 
     WaitForSeconds waitHalf = null;
     WaitForSeconds waitOnSceonds = null;
 
     // === ClearCount ===
-    private int clearCount = 3;
+    public int clearCount = 3;
     public int ClearCount { get { return clearCount; } set { clearCount = value; } }
+
+    internal MongoClient ClientData { get => ClientData1; set => ClientData1 = value; }
+    internal MongoClient ClientData1 { get => ClientData2; set => ClientData2 = value; }
+    internal MongoClient ClientData2 { get => ClientData3; set => ClientData3 = value; }
+    internal MongoClient ClientData3 { get => ClientData4; set => ClientData4 = value; }
+    internal MongoClient ClientData4 { get => clientData; set => clientData = value; }
 
     // === Object Index ===
     public int ObjIndexs;
     public int ObjTwoIndex;
     public int ObjThreeIndex;
 
+    int levelIndexCheck;
     public int totalPlayTime;
-    public int SavePalyTime;
+    public long savePalyTime;
+    long GetPoint;
 
     bool isOptionPanelOpen = false;
 
@@ -114,6 +143,13 @@ public class InGamePanelSet : MonoBehaviour
     {
         if (clearAnimalImgData == null)
             clearAnimalImgData = Resources.Load<ClearAnimalImgData>("Data/ClearAnimalImgData");
+
+        #region MongoDB database
+        dataBase = clientData.GetDatabase("RankingDB");
+        SketchUpCollection = dataBase.GetCollection<BsonDocument>("SketchUpRanking");
+        #endregion
+
+        levelIndexCheck = SoundManager.Inst.LevelIndex;
 
         waitHalf = new WaitForSeconds(0.5f);
         waitOnSceonds = new WaitForSeconds(1f);
@@ -123,8 +159,9 @@ public class InGamePanelSet : MonoBehaviour
         LineSizeObj.TryGetComponent<LineSizeChange>(out LineSize);
 
         // === changed (true) ===
-        waitTimeObjs.gameObject.SetActive(true);
-        StartCoroutine(CountDowns());
+        //waitTimeObjs.gameObject.SetActive(true);
+        Production();
+        //StartCoroutine(CountDowns());
         playTimeText.gameObject.SetActive(false);
 
         // === changed (false) ===
@@ -136,42 +173,42 @@ public class InGamePanelSet : MonoBehaviour
         loseReStartBut.onClick.AddListener(delegate
         {
             OnClickGoStartPanel();
-            SoundManager.Inst.GameLoseSFXPlay(); 
+            SoundManager.Inst.GameLoseSFXPlay();
             SoundManager.Inst.ButtonEffect(loseReStartBut.transform.position);
         });
 
         winReStartBut.onClick.AddListener(delegate
         {
             OnClickGoStartPanel();
-            SoundManager.Inst.GameClearSFXPlay(); 
+            SoundManager.Inst.GameClearSFXPlay();
             SoundManager.Inst.ButtonEffect(winReStartBut.transform.position);
         });
 
         quitBut.onClick.AddListener(delegate
         {
             OnClickGoStartPanel();
-            SoundManager.Inst.ButtonSFXPlay(); 
+            SoundManager.Inst.ButtonSFXPlay();
             SoundManager.Inst.ButtonEffect(quitBut.transform.position);
         });
 
         optionBut.onClick.AddListener(delegate
         {
             SoundManager.Inst.ButtonEffect(optionBut.transform.position);
-            Invoke(nameof(OnClickOptionBut),0.4f);
-            SoundManager.Inst.ButtonSFXPlay(); 
+            Invoke(nameof(OnClickOptionBut), 0.4f);
+            SoundManager.Inst.ButtonSFXPlay();
         });
 
         resumeBut.onClick.AddListener(delegate
         {
             OnClickOptionBut();
-            SoundManager.Inst.ButtonSFXPlay(); 
+            SoundManager.Inst.ButtonSFXPlay();
             SoundManager.Inst.ButtonEffect(resumeBut.transform.position);
         });
 
         closePanelBut.onClick.AddListener(delegate
         {
             OnClickInGameGoSelectPanel();
-            SoundManager.Inst.ButtonSFXPlay(); 
+            SoundManager.Inst.ButtonSFXPlay();
             SoundManager.Inst.ButtonEffect(closePanelBut.transform.position);
         });
 
@@ -251,22 +288,11 @@ public class InGamePanelSet : MonoBehaviour
         {
             LineColorAndSizeChange(false);
             OneBrushPlayPanelSet(false);
+            savePalyTime = (Minute * 60) + (int)Secondes;
+            Invoke(nameof(WinPanelSetting), 0.3f);
 
-            Invoke(nameof(WinPanelSet), 0.3f);
-
-            totalPlayTime = 1000;
-
-            string checkTimt = Minute.ToString() + (int)seconds;
-            SavePalyTime = int.Parse(checkTimt);
+            return;
         }
-    }
-
-    void WinPanelSet()
-    {
-        WinPanelSet(true);
-
-        if (instEffect == null)
-            InstGameClearEffect();
     }
 
     void FirstSet(bool selectPanel)
@@ -282,40 +308,86 @@ public class InGamePanelSet : MonoBehaviour
     }
 
     public void QOneSet(bool active) => QOne.gameObject.SetActive(active);
-
     public GameObject QOneObj() => QOne.gameObject;
-
     public void QTwoSet(bool active) => QTwo.gameObject.SetActive(active);
-
     public GameObject QTwoObj() => QTwo.gameObject;
-
     public void QThreeSet(bool active) => QThree.gameObject.SetActive(active);
-
     public GameObject QThreeObj() => QThree.gameObject;
-
     void InstGameClearEffect() => instEffect = ObjectPoolCP.PoolCp.Inst.BringObjectCp(gameClearEffect);
-
     public void SelectPanelSet(bool active) => selectPanel.gameObject.SetActive(active);
-
     public void InGameSet(bool active) => closePlayOneBrush.gameObject.SetActive(active);
-
     public void CharacterMoveSet(bool active) => characterMove.gameObject.SetActive(active);
-
     public void InGameOptionSet(bool active) => optionPanel.gameObject.SetActive(active);
-
     public void OneBrushPlayPanelSet(bool active) => onBushObj.gameObject.SetActive(active);
-
     public void LosePanelSet(bool active) => losePanel.gameObject.SetActive(active);
-
     public void WinPanelSet(bool active) => winPanel.gameObject.SetActive(active);
-
     public void StageClearPanelSet(bool active) => stageClearPanel.gameObject.SetActive(active);
-
     public void LineColorAndSizeChange(bool active) => lineChangedPanel.gameObject.SetActive(active);
+    public void ProductionSet(bool active) => production.gameObject.SetActive(active);
+
+    void Production()
+    {
+        StartCoroutine(ViewHallExtension());
+    }
+
+    IEnumerator ViewHallExtension()
+    {
+        ProductionSet(true);
+        float timer = 0f;
+        Time.timeScale = 1;
+
+        while (viewHall.transform.localScale.x <= 30)
+        {
+            timer += Time.deltaTime / 20f;
+
+            viewHall.transform.localScale = Vector3.Lerp(viewHall.transform.localScale, Vector3.one * 35f, timer);
+            yield return null;
+        }
+
+        viewHall.transform.localScale = Vector3.one * 30f;
+
+        ProductionSet(false);
+        waitTimeObjs.gameObject.SetActive(true);
+        StartCoroutine(CountDowns());
+    }
+
+    public void MoveScene(int sceneIndex)
+    {
+        StartCoroutine(ViewHallShrink(sceneIndex));
+    }
+
+    IEnumerator ViewHallShrink(int sceneIndex)
+    {
+        ProductionSet(true);
+
+        float timer = 0f;
+        while (viewHall.transform.localScale.x >= 0.8f)
+        {
+            timer += Time.deltaTime / 15f;
+
+            viewHall.transform.localScale = Vector3.Lerp(viewHall.transform.localScale, Vector3.zero, timer);
+            yield return null;
+        }
+
+        viewHall.transform.localScale = Vector3.zero;
+        SceneManager.LoadScene(sceneIndex);
+    }
+
+    public void InstAnimalClearEffect()
+    {
+        clearEffect = ObjectPoolCP.PoolCp.Inst.BringObjectCp(stageClearEffect);
+    }
+
+    public void DestroyAnimalClearEffect()
+    {
+        if (clearEffect != null)
+            ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(clearEffect);
+    }
 
     public void OnClickGoStartPanel()
     {
-        SceneManager.LoadScene(SceneName.StartScene);
+        Time.timeScale = 1;
+        MoveScene(SceneName.StartScene);
         SoundManager.Inst.TitleBGMPlay(); // 타이틀 BGM 바꿔주기
     }
 
@@ -355,20 +427,17 @@ public class InGamePanelSet : MonoBehaviour
         SelectPanelSet selectPanelSet = null;
         selectPanel.TryGetComponent<SelectPanelSet>(out selectPanelSet);
         DrawLineCurve drawLine = null;
-
         QOne.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
         ObjIndexs = drawLine.ObjIndex;
-        //Debug.Log("ObjIndexs : " + ObjIndexs);
 
         QTwo.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
         ObjTwoIndex = drawLine.ObjIndex;
-        //Debug.Log("ObjTwoIndex : " + ObjTwoIndex);
 
         QThree.transform.GetChild(0).TryGetComponent<DrawLineCurve>(out drawLine);
         ObjThreeIndex = drawLine.ObjIndex;
-        //Debug.Log("ObjThreeIndex : " + ObjThreeIndex);
 
         SelectPanelSet(true);
+        DestroyAnimalClearEffect();
         SelectPanelClearImgSet(selectPanelSet);
 
         selectPanelSet.character.transform.localPosition = new Vector2(915f, 400f);
@@ -467,4 +536,77 @@ public class InGamePanelSet : MonoBehaviour
             button.enabled = false;
         }
     }
+
+    void WinPanelSetting()
+    {
+        WinPanelSet(true);
+        rankingUpdata.gameObject.SetActive(false);
+        playPoint = 600;
+        playerPoint.text = $"점수 : {savePalyTime}";
+
+        ChangedPoint(savePalyTime);
+
+        if (instEffect == null)
+            InstGameClearEffect();
+    }
+
+    #region Changed Point
+    public void ChangedPoint(long point)
+    {
+        BsonDocument filter = new BsonDocument { { "_id", id } };
+        BsonDocument targetData = SketchUpCollection.Find(filter).FirstOrDefault();
+
+        BsonArray levelArry;
+        string levelNum = CheckLevel();
+        levelArry = (BsonArray)targetData.GetValue(levelNum);
+        GetPoint = (long)levelArry[0];
+
+        if (savePalyTime > GetPoint)
+        {
+            rankingUpdata.gameObject.SetActive(true);
+
+            long[] level = new long[2];
+            level[0] = point;
+            level[1] = TimeSetting();
+
+            UpdateDefinition<BsonDocument> updatePoint = Builders<BsonDocument>.Update.Set(levelNum, level);
+            SketchUpCollection.UpdateOne(targetData, updatePoint);
+        }
+    }
+
+    #endregion
+
+    #region Play Game Time Setting : Year/Month/Day/Hour/Minute
+    public long TimeSetting()
+    {
+        string nowDate = DateTime.Now.ToString("yyyyMMddHHmm"); // 현재 시간
+        long time = long.Parse(nowDate);
+        return time;
+    }
+    #endregion
+
+    string CheckLevel()
+    {
+        if (levelIndexCheck == 1)
+        {
+            return "levelOne";
+        }
+        else if (levelIndexCheck == 2)
+        {
+            return "levelTwo";
+        }
+        else if (levelIndexCheck == 3)
+        {
+            return "levelThree";
+        }
+        else if (levelIndexCheck == 4)
+        {
+            return "levelFour";
+        }
+        else
+        {
+            return null;
+        }
+    }
+
 }

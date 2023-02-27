@@ -141,7 +141,7 @@ public class RandomChoiceKeyWord : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            if (random <= 0) choiceOneButText.text = answer;
+            if (random == 0) choiceOneButText.text = answer;
             else if (random == 1) choiceOneButText.text = animalOne;
             else if (random == 2) choiceOneButText.text = animalTwo;
             else choiceOneButText.text = animalThree;
@@ -149,7 +149,7 @@ public class RandomChoiceKeyWord : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            if (randomtwo <= 0) choiceTwoButText.text = answer;
+            if (randomtwo == 0) choiceTwoButText.text = answer;
             else if (randomtwo == 1) choiceTwoButText.text = animalOne;
             else if (randomtwo == 2) choiceTwoButText.text = animalTwo;
             else choiceTwoButText.text = animalThree;
@@ -157,7 +157,7 @@ public class RandomChoiceKeyWord : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            if (randomThree <= 0) choiceThreeButText.text = answer;
+            if (randomThree == 0) choiceThreeButText.text = answer;
             else if (randomThree == 1) choiceThreeButText.text = animalOne;
             else if (randomThree == 2) choiceThreeButText.text = animalTwo;
             else choiceThreeButText.text = animalThree;
@@ -165,7 +165,7 @@ public class RandomChoiceKeyWord : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            if (randomFour <= 0) choiceFourButText.text = answer;
+            if (randomFour == 0) choiceFourButText.text = answer;
             else if (randomFour == 1) choiceFourButText.text = animalOne;
             else if (randomFour == 2) choiceFourButText.text = animalTwo;
             else choiceFourButText.text = animalThree;

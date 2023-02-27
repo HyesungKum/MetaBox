@@ -89,7 +89,7 @@ public class StartSceneManager : MonoBehaviour
 
         while (viewHall.transform.localScale.x <= 30)
         {
-            timer += Time.deltaTime / 15f;
+            timer += Time.deltaTime / 40f;
 
             viewHall.transform.localScale = Vector3.Lerp(viewHall.transform.localScale, Vector3.one * 35f, timer);
             yield return null;
