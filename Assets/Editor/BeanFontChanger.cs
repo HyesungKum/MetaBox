@@ -1,9 +1,7 @@
-using UnityEngine;
-using UnityEditor;
-using UnityEngine.SceneManagement;
 using TMPro;
-using UnityEngine.UI;
-using System;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace BeanTool
 {
