@@ -88,8 +88,8 @@ public class KitchenTable : MonoBehaviour
         }
 
         //TablePosition Round
-        TableRoundX = Mathf.Round(this.transform.position.x);
-        TableRoundY = Mathf.Round(this.transform.position.y);
+        TableRoundX = Mathf.Round(this.transform.position.x * 100f);
+        TableRoundY = Mathf.Round(this.transform.position.y * 100f);
 
         //submission Position Round
         SubRoundX = Mathf.Round(guestTable.transform.position.x);
@@ -219,8 +219,8 @@ public class KitchenTable : MonoBehaviour
         {
             if (curIngred == null) yield break;
 
-            float fixedX = Mathf.Round(targetTr.position.x);
-            float fixedY = Mathf.Round(targetTr.position.y);
+            float fixedX = Mathf.Round(targetTr.position.x * 100f);
+            float fixedY = Mathf.Round(targetTr.position.y * 100f);
 
             targetTr.position = Vector3.Lerp(targetTr.position, TargetPos, Time.deltaTime * ingredMoveSpeed);
 
