@@ -136,7 +136,7 @@ public class InGamePanelSet : MonoBehaviour
 
         #region MongoDB database
         id = LoadIDMgr.Inst.curUserData.id;
-        Debug.Log("id : " + id);
+        //Debug.Log("id : " + id);
         #endregion
 
         levelIndexCheck = SoundManager.Inst.LevelIndex;
