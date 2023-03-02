@@ -45,7 +45,7 @@ public class HeyCookData
 [Serializable]
 public struct UserData
 {
-    public string ID;
+    public string id;
     public int charIndex;
     public bool troughTown;
 }
@@ -62,20 +62,17 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
     public HeyCookData curPlayData;
     public UserData curUserData;
 
-    [SerializeField] private string localSavePath = "/MetaBox/SaveData/HCSaveData.json";
     #if UNITY_EDITOR
-    [SerializeField] private string defaultPath = "/MetaBox/SaveData/";
+    [SerializeField] private string localSavePath = "/MetaBox/SaveData/SaveData.json";
     #else
-    private string defaultPath = "/storage/emulated/0/MetaBox/SaveData/TownSaveData.json";
+    private string localSavePath = "/storage/emulated/0/MetaBox/SaveData/SaveData.json";
     #endif
 
     //===============================InternetConnection======================
     public bool OnlineMode;
 
-    protected override void Awake()
+    private void Start()
     {
-        base.Awake();
-
         //check internet connection
         if (Application.internetReachability == NetworkReachability.NotReachable)
         {
@@ -93,12 +90,9 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
 
         //delegate chain
         EventReceiver.saveCallBack += SaveData;
-    }
 
-    private void Start()
-    {
         FileCheck();
-        LoadData(curPlayData.id);
+        LoadData(GetID());
     }
 
     private void OnDisable()
@@ -123,14 +117,12 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
     }
     private void SaveMongoDB(int gameLevel, long score)
     {
-        if (curPlayData.id == null) return;
-
-        BsonDocument filter = new BsonDocument { { "_id", curPlayData.id } };
+        BsonDocument filter = new() { { "_id", GetID() } };
         BsonDocument targetData = HeyCookCollection.Find(filter).FirstOrDefault();
 
         if (targetData == null)
         {
-            SaveDefaultID(curPlayData.id);
+            SaveDefaultID(GetID());
             targetData = HeyCookCollection.Find(filter).FirstOrDefault();
         }
 
@@ -160,8 +152,6 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
             case 3: PlayerPrefs.SetInt(ScoreType.HARD, (int)score); break;
             case 4: PlayerPrefs.SetInt(ScoreType.VERYHARD, (int)score); break;
         }
-
-        LoadData(curPlayData.id);
     }
 
     #region create instance Id
@@ -192,6 +182,7 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
         await HeyCookCollection.InsertOneAsync(newData.ToBsonDocument());
     }
     #endregion
+
     //==============================================Loading Data=================================================
     public void LoadData(string playerID)
     {
@@ -222,21 +213,16 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
         BsonDocument document = HeyCookCollection.Find(filter).FirstOrDefault();
 
         //online data init
-        long onlineEasy = 0;
-        long onlineNoraml = 0;
-        long onlineHard = 0;
-        long onlineVeryHard = 0;
+        long onlineEasy;
+        long onlineNoraml;
+        long onlineHard;
+        long onlineVeryHard;
 
         //get local data
         int localEasy = PlayerPrefs.GetInt(ScoreType.EASY, 0);
         int localNormal = PlayerPrefs.GetInt(ScoreType.NORMAL, 0);
         int localHard = PlayerPrefs.GetInt(ScoreType.HARD, 0);
         int localVeryHard = PlayerPrefs.GetInt(ScoreType.VERYHARD, 0);
-
-        long temp1Score = 0;
-        long temp2Score = 0;
-        long temp3Score = 0;
-        long temp4Score = 0;
 
         //return pickup Data if was not null
         if (document == null)
@@ -267,19 +253,8 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
             curPlayData.levelThree[0] = localHard > onlineHard ? localHard : onlineHard;
             curPlayData.levelFour[0] = localVeryHard > onlineVeryHard ? localVeryHard : onlineVeryHard;
 
-            temp1Score = curPlayData.levelOne[0];
-            temp2Score = curPlayData.levelTwo[0];
-            temp3Score = curPlayData.levelThree[0];
-            temp4Score = curPlayData.levelFour[0];
-
             return;
         }
-
-        //apply save data
-        SaveMongoDB(Level.EASY,    temp1Score);
-        SaveMongoDB(Level.NORMAL,  temp2Score);
-        SaveMongoDB(Level.HARD,    temp3Score);
-        SaveMongoDB(Level.VERYHARD,temp4Score);
     }
 
     //=============================================Getting Data===================================================
@@ -288,10 +263,10 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
     {
         switch (level)
         {
-            case 0: return (int)curPlayData.levelOne[0];
-            case 1: return (int)curPlayData.levelTwo[0];
-            case 2: return (int)curPlayData.levelThree[0];
-            case 3: return (int)curPlayData.levelFour[0];
+            case 1: return (int)curPlayData.levelOne[0];
+            case 2: return (int)curPlayData.levelTwo[0];
+            case 3: return (int)curPlayData.levelThree[0];
+            case 4: return (int)curPlayData.levelFour[0];
             default: return 0;
         }
     }
@@ -302,13 +277,13 @@ public class SaveLoadManger : MonoSingleTon<SaveLoadManger>
         if (File.Exists(localSavePath))
         {
             curUserData = ReadSaveData(localSavePath);
-
-            curPlayData.id = curUserData.ID;
         }
         else//존재하지 않을때 
         {
-            curPlayData.id = "전설의연습생";
+            curUserData.id = "전설의연습생";
         }
+
+        curPlayData.id = curUserData.id;
     }
     private UserData ReadSaveData(string path)
     {

@@ -11,6 +11,10 @@ public class LevelTable
     [SerializeField] public int countDown;
     [SerializeField] public float beltSpeed;
     [SerializeField] public float spawnTime;
+    [Space]
+    [SerializeField] public int ImmeTime;
+    [SerializeField] public float ImmeBeltSpeed;
+    [SerializeField] public float ImmeSpawnTime;
 
     [Header("Data Reference Sttings")]
     [SerializeField] public FoodGroup foodDataGroup;

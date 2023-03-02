@@ -2357,22 +2357,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a1c5ebd426b9be4791e77750b34b7c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playData:
-    id: kimDuck
-    levelDatas:
-    - score: 0
-      date: 0
-    - score: 0
-      date: 0
-    - score: 0
-      date: 0
-    - score: 0
-      date: 0
+  curPlayData:
+    id: 
+    levelOne: 00000000000000000000000000000000
+    levelTwo: 00000000000000000000000000000000
+    levelThree: 00000000000000000000000000000000
+    levelFour: 00000000000000000000000000000000
   curUserData:
-    ID: 
+    id: 
     charIndex: 0
     troughTown: 0
-  defaultPath: /MetaBox/SaveData/
+  localSavePath: /MetaBox/SaveData/SaveData.json
   OnlineMode: 0
 --- !u!4 &1714977184
 Transform:
