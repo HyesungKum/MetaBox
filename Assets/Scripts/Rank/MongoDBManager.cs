@@ -194,7 +194,6 @@ namespace RankingDB
             {
                 curUserData = ReadSaveData(localSavePath);
                 ID = curUserData.id;
-                //Debug.Log("id : " + id);
             }
 
             #region Data Reset
