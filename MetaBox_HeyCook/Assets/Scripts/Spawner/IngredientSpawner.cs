@@ -35,7 +35,9 @@ public class IngredientSpawner : MonoBehaviour
     {
         //delegate unchain
         EventReceiver.GameStart -= SpawnStart;
+        EventReceiver.GameImminent -= SpawnImminent;
     }
+
     //======================================spawn Timing Controll=================================================
     /// <summary>
     /// spawner Initializing routine
@@ -69,10 +71,15 @@ public class IngredientSpawner : MonoBehaviour
 
         //delegate chain
         EventReceiver.GameStart += SpawnStart;
+        EventReceiver.GameImminent += SpawnImminent;
+    }
+    private void SpawnImminent(float immeTime, float speed)
+    {
+        spawnTime = immeTime;
     }
 
     //=====================================Spawn Reference Object using ObjPool===================================
-    void SpawnStart()
+    private void SpawnStart()
     {
         StartCoroutine(nameof(TimingSpawn));
     }

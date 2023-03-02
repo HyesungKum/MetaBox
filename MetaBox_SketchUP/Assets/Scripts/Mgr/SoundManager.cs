@@ -7,20 +7,20 @@ using UnityEngine.UI;
 public class SoundManager : MonoBehaviour
 {
     #region Singleton
-    private static SoundManager instatce;
+    private static SoundManager instance;
     public static SoundManager Inst
     {
         get
         {
-            if (instatce == null)
+            if (instance == null)
             {
-                instatce = FindObjectOfType<SoundManager>();
-                if (instatce == null)
+                instance = FindObjectOfType<SoundManager>();
+                if (instance == null)
                 {
-                    instatce = new GameObject(nameof(SoundManager), typeof(SoundManager)).GetComponent<SoundManager>();
+                    instance = new GameObject(nameof(SoundManager), typeof(SoundManager)).GetComponent<SoundManager>();
                 }
             }
-            return instatce;
+            return instance;
         }
     }
     #endregion
@@ -60,12 +60,12 @@ public class SoundManager : MonoBehaviour
 
     void Awake()
     {
-        if (instatce == null)
-            instatce = this;
-        else if (instatce != this)
+        if (instance == null)
+            instance = this;
+        else if (instance != this)
             Destroy(gameObject);
 
-        DontDestroyOnLoad(instatce.gameObject);
+        DontDestroyOnLoad(instance.gameObject);
 
         BGMAudioSurce.playOnAwake = true;
         BGMAudioSurce.loop = true;
@@ -135,6 +135,14 @@ public class SoundManager : MonoBehaviour
             MyAudioMixer.SetFloat("BGM", -35);
     }
 
+    public void BGMValueOrgin()
+    {
+        if (BGMValue == -40f)
+            MyAudioMixer.SetFloat("BGM", -80);
+        else
+            MyAudioMixer.SetFloat("BGM", 0);
+    }
+
     public void TitleBGMPlay()
     {
         BGMAudioSurce.clip = titleAudioClip;
@@ -193,7 +201,7 @@ public class SoundManager : MonoBehaviour
     {
         animalAudioDictionary.TryGetValue(index, out animalAudioPlayClip);
         SFXSource.clip = animalAudioPlayClip;
-        MyAudioMixer.SetFloat("SFX", 0);
+        //MyAudioMixer.SetFloat("SFX", 0);
         SFXSource.Play();
     }
 

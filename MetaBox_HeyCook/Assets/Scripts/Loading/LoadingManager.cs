@@ -1,8 +1,5 @@
 using Kum;
 using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -32,8 +29,8 @@ public class LoadingManager : MonoSingleTon<LoadingManager>
     private new void Awake()
     {
         secPerFrame = Time.deltaTime;
-        StartButton.onClick.AddListener(()=> SceneOutReady());
-        StartButton.onClick.AddListener(()=> EventReceiver.CallButtonClicked());
+        StartButton.onClick.AddListener(() => SceneOutReady());
+        StartButton.onClick.AddListener(() => EventReceiver.CallButtonClicked());
     }
 
     private void Start()

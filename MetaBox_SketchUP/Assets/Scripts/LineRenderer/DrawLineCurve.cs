@@ -161,7 +161,7 @@ public class DrawLineCurve : MonoBehaviour
         {
             GameObject hitObjCheck = hitInfo.transform.gameObject; // 다음 포지션 체크
             linerender.SetCurvePosition(touchPos); // 라인렌더러 포지션 고불 고불하게 그리게 해주기
-            
+
             if (hitObjCheck == prevObj)
             {
                 linerender.SetPosition(0, startPos); // 라인렌더러 포지션 셋팅 해주기
@@ -194,7 +194,7 @@ public class DrawLineCurve : MonoBehaviour
                 lineStack.Push(currentLine);
                 lineVisitList.Add(hitObjCheck);
                 //Debug.Log("nextObj)lineStack Count : " + lineStack.Count);
-                
+
                 // 효과 출력
                 InstPrticle(nextObj.gameObject.transform.position); // 임펙트
                 SoundManager.Inst.ConnectLineSFXPlay(); // 효과음
@@ -237,13 +237,13 @@ public class DrawLineCurve : MonoBehaviour
         if (lineStack.Count == 0)
             startNodeObj = null;
 
-        if(linerender.GetPosition(0) == linerender.GetPosition(1))
+        if (linerender.GetPosition(0) == linerender.GetPosition(1))
             DestroyLine();
 
         if (lineStack.Contains(currentLine) == false)
             DestroyLine();
-        
-        if(linerender.GetPositionCount() > 3)
+
+        if (linerender.GetPositionCount() > 3)
             DestroyLine();
 
         // 그어지고 있는 라인은 취소
@@ -304,27 +304,22 @@ public class DrawLineCurve : MonoBehaviour
 
     void DestroyLine()
     {
-        ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(currentLine);
-        linerender.PosReset();
+        if (currentLine != null)
+        {
+            ObjectPoolCP.PoolCp.Inst.DestoryObjectCp(currentLine);
+            linerender.PosReset();
+        }
     }
 
     void StackPop()
     {
         if (lineStack.Count == 0) return;
 
+        revertBut.interactable = true;
         currentLine = lineStack.Pop(); // 스택 에서 빼기
-        //Debug.Log("stackPop : " + lineStack.Count);
         currentLine.TryGetComponent<LineRender>(out linerender);
         linerender.PosReset();
         lineVisitList.RemoveAt(lineVisitList.Count - 1); // 리스트 마지막에서 빼기
-        if (lineVisitList.Count == 0) return;
-    }
-
-    void OnClickRevertBut()
-    {
-        StackPop();
-        DestroyLine();
-        StackCountZeroNull();
 
         if (lineVisitList.Count == 0)
         {
@@ -336,12 +331,21 @@ public class DrawLineCurve : MonoBehaviour
             }
             return;
         }
+    }
 
-        GameObject check = lineVisitList[lineVisitList.Count - 1];
-        circleObj.cdNode = circleObj.cdLinkedList.SearchObj(check); // 원형 양방향 리스트에서 노드가 있는지 찾기
-        startNodeObj = circleObj.cdNode.data.circlePointObj;
-        endNodeObj = null;
+    void OnClickRevertBut()
+    {
+        StackPop();
+        DestroyLine();
+        StackCountZeroNull();
 
+        if (lineVisitList.Count > 0)
+        {
+            GameObject check = lineVisitList[lineVisitList.Count - 1];
+            circleObj.cdNode = circleObj.cdLinkedList.SearchObj(check); // 원형 양방향 리스트에서 노드가 있는지 찾기
+            startNodeObj = circleObj.cdNode.data.circlePointObj;
+            endNodeObj = null;
+        }
     }
 
     public int ChoicePanelObjIndex()

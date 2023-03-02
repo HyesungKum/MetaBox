@@ -7,7 +7,7 @@ using UnityEngine;
 [Serializable]
 struct UserData
 {
-    public string ID;
+    public string id;
     public int charIndex;
     public bool troughTown;
 }
@@ -18,9 +18,9 @@ public class DataCheckManager : MonoSingleTon<DataCheckManager>
     [SerializeField] UserData curUserData;
 
     public int GetCharIndex() => curUserData.charIndex;
-    public string GetID() => curUserData.ID;
+    public string GetID() => curUserData.id;
     //====================================================save path===========================================================
-    [SerializeField] string fileName = "TownSaveData.json";
+    [SerializeField] string fileName = "SaveData.json";
 
     #if UNITY_EDITOR
     [SerializeField] private string defaultPath = "/MetaBox/SaveData/";
@@ -63,7 +63,7 @@ public class DataCheckManager : MonoSingleTon<DataCheckManager>
     {
         UserData userData = new()
         {
-            ID = id,
+            id = id,
             charIndex = charIndex,
             troughTown = troughTown
         };
@@ -75,6 +75,7 @@ public class DataCheckManager : MonoSingleTon<DataCheckManager>
         EventReceiver.CallSaveDoneEvent();
     }
 
+    //=======================================================SaveFile IO=================================================
     /// <summary>
     /// save any data in path to json,
     /// if u dont have path will be make,
@@ -97,8 +98,6 @@ public class DataCheckManager : MonoSingleTon<DataCheckManager>
 
         File.WriteAllText(path + fileName, jsonData);
     }
-
-    //=======================================================SaveFile IO=================================================
     /// <summary>
     /// read json file and transform saveData struct in path
     /// </summary>

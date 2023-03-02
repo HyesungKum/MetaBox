@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7366145845451466463}
   - component: {fileID: 7863091713501930214}
   - component: {fileID: 7745286692117182171}
+  - component: {fileID: 8001415820232098684}
   m_Layer: 0
   m_Name: TouchParticle
   m_TagString: Untagged
@@ -50,7 +51,7 @@ ParticleSystem:
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 0
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0
@@ -4919,6 +4920,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OnlyDeactivate: 0
+--- !u!114 &8001415820232098684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1219726807682785302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cb516a977d84604bae284d6b797e82e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 0.5
+  loop: 0
 --- !u!1 &6358698039506285918
 GameObject:
   m_ObjectHideFlags: 0

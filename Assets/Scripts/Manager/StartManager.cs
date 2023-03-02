@@ -1,7 +1,6 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public enum Env
@@ -12,10 +11,6 @@ public enum Env
 
 public class StartManager : MonoBehaviour
 {
-    //================app transition============================
-    [Header("[Application Setting]")]
-    [SerializeField] string mainPackName = "com.MetaBox.MetaBox_Main";
-
     //=================UI==========================
     [Header("[Current Active UI]")]
     [SerializeField] GameObject curUI;
@@ -140,10 +135,7 @@ public class StartManager : MonoBehaviour
         Production();
     }
 
-    void SceneMove(int level)
-    {
-        StartCoroutine(nameof(ViewHallShrink));
-    }
+    void SceneMove(int level)=> StartCoroutine(nameof(ViewHallShrink));
     void ShowUI(GameObject targetUIObj)
     {
         curUI.SetActive(false);
@@ -152,11 +144,7 @@ public class StartManager : MonoBehaviour
     }
 
     //==========================================Production Controll==========================================
-    void Production()
-    {
-        StartCoroutine(nameof(ViewHallExtension));
-    }
-
+    void Production() => StartCoroutine(nameof(ViewHallExtension));
     IEnumerator ViewHallExtension()
     {
         production.SetActive(true);
@@ -187,8 +175,6 @@ public class StartManager : MonoBehaviour
         }
 
         viewHall.transform.localScale = Vector3.zero;
-
-        //SceneManager.LoadScene(SceneName.Loading);
     }
 
     //==========================================Sound Slider Controll========================================

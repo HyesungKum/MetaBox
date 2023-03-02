@@ -32,12 +32,15 @@ namespace Kum
             }
         }
 
-        protected virtual void Awake()
+        protected void Awake()
         {
-            if (FindObjectOfType<T>(typeof(T) as T).gameObject != this.gameObject) Destroy(this.gameObject);
+            if (FindObjectOfType<T>(typeof(T) as T).gameObject != this.gameObject)
             {
-                DontDestroyOnLoad(this.gameObject);
+                Destroy(this.gameObject);
+                return;
             }
+
+            DontDestroyOnLoad(this.gameObject);
         }
 
         protected void OnApplicationQuit()

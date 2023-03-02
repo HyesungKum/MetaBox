@@ -2406,22 +2406,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a1c5ebd426b9be4791e77750b34b7c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playData:
-    id: kimDuck
-    levelDatas:
-    - score: 0
-      date: 0
-    - score: 0
-      date: 0
-    - score: 0
-      date: 0
-    - score: 0
-      date: 0
+  curPlayData:
+    id: 
+    levelOne: 00000000000000000000000000000000
+    levelTwo: 00000000000000000000000000000000
+    levelThree: 00000000000000000000000000000000
+    levelFour: 00000000000000000000000000000000
   curUserData:
-    ID: 
+    id: 
     charIndex: 0
     troughTown: 0
-  defaultPath: /storage/emulated/0/MetaBox/SaveData/TownSaveData.json
+  localSavePath: /MetaBox/SaveData/HCSaveData.json
   OnlineMode: 0
 --- !u!4 &458538477
 Transform:
@@ -5543,6 +5538,9 @@ MonoBehaviour:
     countDown: 0
     beltSpeed: 0
     spawnTime: 0
+    ImmeTime: 0
+    ImmeBeltSpeed: 0
+    ImmeSpawnTime: 0
     foodDataGroup: {fileID: 0}
     ingredGroup: {fileID: 0}
     guestGroup: {fileID: 0}

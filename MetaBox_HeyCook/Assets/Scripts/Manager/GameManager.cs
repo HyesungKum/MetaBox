@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Threading;
-using UnityEngine;
 using Kum;
+using System.Collections;
 using System.Linq;
+using UnityEngine;
 
 public class GameManager : MonoSingleTon<GameManager>
 {
@@ -23,15 +22,15 @@ public class GameManager : MonoSingleTon<GameManager>
 
     //=====================var=======================
     [Header("Currnet Score")]
-    [SerializeField] private int score = 0;
+    [SerializeField] private int score;
     
     [Header("Limit Time")]
-    [SerializeField] private int countDown = 180;
-    private float timer = 0f; 
-    [HideInInspector] public int count = 0;
+    [SerializeField] private int countDown;
+    private float timer; 
+    [HideInInspector] public int count;
 
     [Header("Imminent Time")]
-    [SerializeField] private int imTime = 30;
+    [SerializeField] private int imTime;
     private bool audioToken = true;
 
     [Header("Current Game Status")]
@@ -42,7 +41,7 @@ public class GameManager : MonoSingleTon<GameManager>
     public bool IsHighScore;
 
     [Header("Game Difficulty Level")]
-    private int level = 1;
+    private int level;
 
     //======================timer====================
     Coroutine TickRoutine;
@@ -65,7 +64,10 @@ public class GameManager : MonoSingleTon<GameManager>
         curLevelData = levelData.levelTables[level - 1];
 
         //value setting
+        timer = 0f;
         countDown = curLevelData.countDown;
+        imTime = curLevelData.ImmeTime;
+
         if (beltZoneL != null   ) beltZoneL.beltSpeed = curLevelData.beltSpeed;
         if (beltZoneR != null   ) beltZoneR.beltSpeed = curLevelData.beltSpeed;
         if (rightSpawner != null) rightSpawner.spawnTime = curLevelData.spawnTime;
@@ -121,20 +123,22 @@ public class GameManager : MonoSingleTon<GameManager>
     }
 
     //=========================================Game Life Controll============================================
-    void GamePasue()
+    private void GamePasue()
     {
         StopCoroutine(TickRoutine);
         IsPause = true;
         Time.timeScale = 0;
     }
-    void GameResume()
+    private void GameResume()
     {
         TickRoutine = StartCoroutine(nameof(TickUpdate));
         IsPause = false;
         Time.timeScale = 1f;   
     }
-    void GameOver()
+    private void GameOver()
     {
+        if (IsGameOver) return;
+
         StopCoroutine(TickRoutine);
         IsGameOver = true;
         Time.timeScale = 0f;
@@ -185,6 +189,7 @@ public class GameManager : MonoSingleTon<GameManager>
             if (audioToken && countDown == imTime)
             {
                 audioToken = false;
+                EventReceiver.CallGameImminent(curLevelData.ImmeSpawnTime , curLevelData.ImmeBeltSpeed);
                 SoundManager.Inst.SetBGMSpeed(1.3f);
             }
             if (countDown == 0) EventReceiver.CallGameOver();

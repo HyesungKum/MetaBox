@@ -9,7 +9,7 @@ using PlasticGui.WorkspaceWindow.ExternalTools;
 public class Jenkins
 {
     static string[] SCENES = FindEnabledEditorScenes();
-    static string APP_NAME = "SketchUP";
+    static string APP_NAME = "DreamSketch";
 
     [UnityEditor.MenuItem("TestBuild/BuildStart", false, 1)]
     static void PerformBuild()

@@ -116,9 +116,9 @@ public class NavMesh2Agent : MonoBehaviour
 
         if (StartNode == null || EndNode == null || EndNode.obstacle)
         {
-#if UNITY_EDITOR
+            #if UNITY_EDITOR
             Debug.Log("##NavMesh2Agent Error : cannot found path");
-#endif
+            #endif
             IsMove = false;
             CallStopEvent();
             return;
