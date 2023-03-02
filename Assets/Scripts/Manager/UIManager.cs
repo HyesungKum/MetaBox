@@ -81,7 +81,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI rankingInfo = null;
 
     LevelString levelString;
-    private const string defaultName = "com.MataBox.";
 
     private void Awake()
     {
@@ -91,16 +90,16 @@ public class UIManager : MonoBehaviour
         optionButton.onClick.AddListener(() => ShowUI(optionUIGrpoup));
 
         //Game UI Group button listener
-        heyCookStartButton.onClick.AddListener(() => AppTrans.MoveScene("com.MetaBox.HeyCook"));
+        heyCookStartButton.onClick.AddListener(() => AppTrans.MoveScene(GameManager.Inst.HeyCookPackageName));
         heyCookExitButton.onClick.AddListener(() => DestroyRanking(mainUIGroup, topTenRank.heyCookLevelShowPanking));
 
-        freezeStartButton.onClick.AddListener(() => AppTrans.MoveScene("com.MetaBox.Freeze"));
+        freezeStartButton.onClick.AddListener(() => AppTrans.MoveScene(GameManager.Inst.PoliRunPackageName));
         freezeExitButton.onClick.AddListener(() => DestroyRanking(mainUIGroup, topTenRank.freezeLevelShowRanking));
 
-        melodiaStartButton.onClick.AddListener(() => AppTrans.MoveScene("com.MetaBox.Melodia"));
+        melodiaStartButton.onClick.AddListener(() => AppTrans.MoveScene(GameManager.Inst.MelodiaPackageName));
         melodiaExitButton.onClick.AddListener(() => DestroyMelodia(mainUIGroup));
 
-        sketchUPStartButton.onClick.AddListener(() => AppTrans.MoveScene("com.MetaBox.SketchUP"));
+        sketchUPStartButton.onClick.AddListener(() => AppTrans.MoveScene(GameManager.Inst.DreamSketchPackageName));
         sketchUPExitButton.onClick.AddListener(() => DestroyRanking(mainUIGroup, topTenRank.sketchUPLevelShowRanking));
 
         //option UI Group Listener
@@ -136,7 +135,7 @@ public class UIManager : MonoBehaviour
 #endif
                 }
                 break;
-            case GameName.Freeze:
+            case GameName.PoliRun:
                 {
                     SoundManager.Inst.CallSfx("FreezeSfx");
                     ShowFreezeRank(freezeUIGroup);
@@ -158,7 +157,7 @@ public class UIManager : MonoBehaviour
 #endif
                 }
                 break;
-            case GameName.SketchUP:
+            case GameName.DreamSketch:
                 {
                     SoundManager.Inst.CallSfx("SketchUPSfx");
                     ShowSketchUPRank(sketchUPUIGroup);
