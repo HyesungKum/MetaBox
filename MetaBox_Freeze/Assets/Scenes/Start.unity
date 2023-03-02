@@ -3870,7 +3870,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1454697316}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa12fb6ef7c2745429fab42eadd3af88, type: 3}
+  m_Script: {fileID: 11500000, guid: 7676cf5959e686945b4e154a4313d573, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   startPanel: {fileID: 168774029}
@@ -3891,6 +3891,10 @@ MonoBehaviour:
   back_Start: {fileID: 1932248293}
   quit: {fileID: 646036990}
   back_Game: {fileID: 1162010855}
+  touchEff: {fileID: 6759499290572221957, guid: acc38adddd9fdb64280d9ddc568713fb, type: 3}
+  mainPackName: com.MetaBox.MetaBox_Main
+  localSavePath: /MetaBox/SaveData/HCSaveData.json
+  defaultPath: /MetaBox/SaveData/
 --- !u!1 &1505074512
 GameObject:
   m_ObjectHideFlags: 0
@@ -4152,7 +4156,6 @@ MonoBehaviour:
   audioMixer: {fileID: 24100000, guid: 69cb9d6516a12154cab1b0ff45527d66, type: 2}
   audioBGM: {fileID: 1551697336}
   audioSFX: {fileID: 1551697337}
-  touchEff: {fileID: 6759499290572221957, guid: acc38adddd9fdb64280d9ddc568713fb, type: 3}
 --- !u!82 &1551697336
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5829,7 +5832,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2000365629}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
 --- !u!114 &2000365629
 MonoBehaviour:
   m_ObjectHideFlags: 0

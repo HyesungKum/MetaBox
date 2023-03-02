@@ -79,13 +79,6 @@ public class SaveUserData : MonoBehaviour
     //===================================CurData=============================
     public PlayData curPlayData = new();
 
-    [SerializeField] private string localSavePath = "/MetaBox/SaveData/HCSaveData.json";
-#if UNITY_EDITOR
-    [SerializeField] private string defaultPath = "/MetaBox/SaveData/";
-#else
-    private string defaultPath = "/storage/emulated/0/MetaBox/SaveData/TownSaveData.json";
-#endif
-
     //===============================InternetConnection======================
     public bool OnlineMode;
 
@@ -112,7 +105,7 @@ public class SaveUserData : MonoBehaviour
 
     private void Start()
     {
-        curPlayData.id = StartUI.curUserData.ID;
+        curPlayData.id = StartUI.curUserData.id;
         LoadData(curPlayData.id);
     }
 

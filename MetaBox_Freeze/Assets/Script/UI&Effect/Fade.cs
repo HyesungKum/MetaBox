@@ -48,6 +48,7 @@ public class Fade : MonoBehaviour
             startTime += Time.deltaTime;
             yield return null;
         }
+
         SceneManager.LoadScene(scene);
     }
 }
