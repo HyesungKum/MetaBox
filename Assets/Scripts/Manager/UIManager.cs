@@ -57,9 +57,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] Button melodiaExitButton;
     [SerializeField] Button melodiaStartButton;
     [Space]
-    [SerializeField] GameObject sketchUPUIGroup;
-    [SerializeField] Button sketchUPExitButton;
-    [SerializeField] Button sketchUPStartButton;
+    [SerializeField] GameObject dreamSketchUIGroup;
+    [SerializeField] Button dreamSketchExitButton;
+    [SerializeField] Button dreamSketchStartButton;
 
     [Header("Option UI Group")]
     [SerializeField] GameObject optionUIGrpoup;
@@ -94,13 +94,13 @@ public class UIManager : MonoBehaviour
         heyCookExitButton.onClick.AddListener(() => DestroyRanking(mainUIGroup, topTenRank.heyCookLevelShowPanking));
 
         freezeStartButton.onClick.AddListener(() => AppTrans.MoveScene(GameManager.Inst.PoliRunPackageName));
-        freezeExitButton.onClick.AddListener(() => DestroyRanking(mainUIGroup, topTenRank.freezeLevelShowRanking));
+        freezeExitButton.onClick.AddListener(() => DestroyRanking(mainUIGroup, topTenRank.poliRunLevelShowRanking));
 
         melodiaStartButton.onClick.AddListener(() => AppTrans.MoveScene(GameManager.Inst.MelodiaPackageName));
         melodiaExitButton.onClick.AddListener(() => DestroyMelodia(mainUIGroup));
 
-        sketchUPStartButton.onClick.AddListener(() => AppTrans.MoveScene(GameManager.Inst.DreamSketchPackageName));
-        sketchUPExitButton.onClick.AddListener(() => DestroyRanking(mainUIGroup, topTenRank.sketchUPLevelShowRanking));
+        dreamSketchStartButton.onClick.AddListener(() => AppTrans.MoveScene(GameManager.Inst.DreamSketchPackageName));
+        dreamSketchExitButton.onClick.AddListener(() => DestroyRanking(mainUIGroup, topTenRank.dreamSketchLevelShowRanking));
 
         //option UI Group Listener
         BgmSlider.onValueChanged.AddListener((call) => SoundManager.Inst.VolumeControll("BGM", call));
@@ -160,7 +160,7 @@ public class UIManager : MonoBehaviour
             case GameName.DreamSketch:
                 {
                     SoundManager.Inst.CallSfx("SketchUPSfx");
-                    ShowSketchUPRank(sketchUPUIGroup);
+                    ShowSketchUPRank(dreamSketchUIGroup);
 
 #if UNITY_ANDROID && !UNITY_EDITOR
                     if (PackageChecker.IsAppInstalled("com.MetaBox.SketchUP")) sketchUPStartButton.interactable = true;
@@ -219,20 +219,20 @@ public class UIManager : MonoBehaviour
         {
             rankingInfo.gameObject.SetActive(true);
 
-            mongoDBManager.GetAllUserData(mongoDBManager.FreezeCollection, levelString.levelOne, topTenRank.freezePlayerRank,
-                mongoDBManager.ID, mongoDBManager.levelOneDict, topTenRank.freezeLevelShowRanking[0], 1,
+            mongoDBManager.GetAllUserData(mongoDBManager.PoliRunCollection, levelString.levelOne, topTenRank.poliRunPlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelOneDict, topTenRank.poliRunLevelShowRanking[0], 1,
                 topTenRank.playerDataList);
 
-            mongoDBManager.GetAllUserData(mongoDBManager.FreezeCollection, levelString.levelTwo, topTenRank.freezePlayerRank,
-                mongoDBManager.ID, mongoDBManager.levelTwoDict, topTenRank.freezeLevelShowRanking[1], 2,
+            mongoDBManager.GetAllUserData(mongoDBManager.PoliRunCollection, levelString.levelTwo, topTenRank.poliRunPlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelTwoDict, topTenRank.poliRunLevelShowRanking[1], 2,
                 topTenRank.playerDataList);
 
-            mongoDBManager.GetAllUserData(mongoDBManager.FreezeCollection, levelString.levelThree, topTenRank.freezePlayerRank,
-                mongoDBManager.ID, mongoDBManager.levelThreeDict, topTenRank.freezeLevelShowRanking[2], 3,
+            mongoDBManager.GetAllUserData(mongoDBManager.PoliRunCollection, levelString.levelThree, topTenRank.poliRunPlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelThreeDict, topTenRank.poliRunLevelShowRanking[2], 3,
                 topTenRank.playerDataList);
 
-            mongoDBManager.GetAllUserData(mongoDBManager.FreezeCollection, levelString.levelFour, topTenRank.freezePlayerRank,
-                mongoDBManager.ID, mongoDBManager.levelFourDict, topTenRank.freezeLevelShowRanking[3], 4,
+            mongoDBManager.GetAllUserData(mongoDBManager.PoliRunCollection, levelString.levelFour, topTenRank.poliRunPlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelFourDict, topTenRank.poliRunLevelShowRanking[3], 4,
                 topTenRank.playerDataList);
 
         }
@@ -309,24 +309,24 @@ public class UIManager : MonoBehaviour
     void ShowSketchUPRank(GameObject targetUIobj)
     {
         if (curUI.activeSelf) curUI.SetActive(false);
-        if (targetUIobj == sketchUPUIGroup )
+        if (targetUIobj == dreamSketchUIGroup )
         {
             rankingInfo.gameObject.SetActive(true);
 
-            mongoDBManager.GetAllUserData(mongoDBManager.SketchUpCollection, levelString.levelOne, topTenRank.sketchUpPlayerRank,
-                mongoDBManager.ID, mongoDBManager.levelOneDict, topTenRank.sketchUPLevelShowRanking[0], 1,
+            mongoDBManager.GetAllUserData(mongoDBManager.DreamSketchCollection, levelString.levelOne, topTenRank.dreamSketchPlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelOneDict, topTenRank.dreamSketchLevelShowRanking[0], 1,
                 topTenRank.playerDataList);
 
-            mongoDBManager.GetAllUserData(mongoDBManager.SketchUpCollection, levelString.levelTwo, topTenRank.sketchUpPlayerRank,
-                mongoDBManager.ID, mongoDBManager.levelTwoDict, topTenRank.sketchUPLevelShowRanking[1], 2,
+            mongoDBManager.GetAllUserData(mongoDBManager.DreamSketchCollection, levelString.levelTwo, topTenRank.dreamSketchPlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelTwoDict, topTenRank.dreamSketchLevelShowRanking[1], 2,
                 topTenRank.playerDataList);
 
-            mongoDBManager.GetAllUserData(mongoDBManager.SketchUpCollection, levelString.levelThree, topTenRank.sketchUpPlayerRank,
-                mongoDBManager.ID, mongoDBManager.levelThreeDict, topTenRank.sketchUPLevelShowRanking[2], 3,
+            mongoDBManager.GetAllUserData(mongoDBManager.DreamSketchCollection, levelString.levelThree, topTenRank.dreamSketchPlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelThreeDict, topTenRank.dreamSketchLevelShowRanking[2], 3,
                 topTenRank.playerDataList);
 
-            mongoDBManager.GetAllUserData(mongoDBManager.SketchUpCollection, levelString.levelFour, topTenRank.sketchUpPlayerRank,
-                mongoDBManager.ID, mongoDBManager.levelFourDict, topTenRank.sketchUPLevelShowRanking[3], 4,
+            mongoDBManager.GetAllUserData(mongoDBManager.DreamSketchCollection, levelString.levelFour, topTenRank.dreamSketchPlayerRank,
+                mongoDBManager.ID, mongoDBManager.levelFourDict, topTenRank.dreamSketchLevelShowRanking[3], 4,
                 topTenRank.playerDataList);
         }
 
