@@ -1045,16 +1045,9 @@ MonoBehaviour:
   choiceTwoButText: {fileID: 6835713400099185676}
   choiceThreeButText: {fileID: 7260785511250654460}
   choiceFourButText: {fileID: 305116259207629994}
-  answerKeyWord: reindeer
-  koreanAnswerKeyWord: "\uC21C\uB85D"
-  animalOne: tiger
-  koreaAnimalOne: "\uD638\uB791\uC774"
-  animalTwo: giraffe
-  koreaAnimalTwo: "\uAE30\uB9B0"
-  animalThree: deer
-  koreaAnimalThree: "\uC0AC\uC2B4"
+  answerKeyWord: "\uC21C\uB85D"
   AnimalDataContainer: {fileID: 11400000, guid: 471252da2fcdf874f90c57d86572cdae, type: 2}
-  animalDataList: []
+  animalNameList: []
 --- !u!114 &5121001456035856492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1074,7 +1067,6 @@ MonoBehaviour:
   choiceThreeBut: {fileID: 365204500849962050}
   choiceFourBut: {fileID: 2803281545746700002}
   audioIndex: 2
-  stageClearEffect: {fileID: 5081905892664921335, guid: fadd40f78beec254daadc5d65e2ff592, type: 3}
 --- !u!1 &2395235104973672785
 GameObject:
   m_ObjectHideFlags: 0
@@ -2270,9 +2262,7 @@ MonoBehaviour:
   endNodeObj: {fileID: 0}
   prevObj: {fileID: 0}
   nextObj: {fileID: 0}
-  checkPopObj: {fileID: 0}
   firstObj: {fileID: 0}
-  startPos: {x: 0, y: 0, z: 0}
   lineVisitList: []
 --- !u!1 &5349102167077564928
 GameObject:

@@ -2842,16 +2842,9 @@ MonoBehaviour:
   choiceTwoButText: {fileID: 2913685081552355171}
   choiceThreeButText: {fileID: 3646249594228745847}
   choiceFourButText: {fileID: 4515192444004247054}
-  answerKeyWord: rabbit
-  koreanAnswerKeyWord: "\uD1A0\uB07C"
-  animalOne: deer
-  koreaAnimalOne: "\uC0AC\uC2B4"
-  animalTwo: elephant
-  koreaAnimalTwo: "\uCF54\uB07C\uB9AC"
-  animalThree: penguin
-  koreaAnimalThree: "\uD3AD\uADC4"
+  answerKeyWord: "\uD1A0\uB07C"
   AnimalDataContainer: {fileID: 11400000, guid: 471252da2fcdf874f90c57d86572cdae, type: 2}
-  animalDataList: []
+  animalNameList: []
 --- !u!114 &2077410073429773091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2871,7 +2864,6 @@ MonoBehaviour:
   choiceThreeBut: {fileID: 4453832118501338199}
   choiceFourBut: {fileID: 141784983337971018}
   audioIndex: 12
-  stageClearEffect: {fileID: 5081905892664921335, guid: fadd40f78beec254daadc5d65e2ff592, type: 3}
 --- !u!1 &5690770337083886841
 GameObject:
   m_ObjectHideFlags: 0
@@ -3035,7 +3027,8 @@ MonoBehaviour:
   endNodeObj: {fileID: 0}
   prevObj: {fileID: 0}
   nextObj: {fileID: 0}
-  startPos: {x: 0, y: 0, z: 0}
+  firstObj: {fileID: 0}
+  lineVisitList: []
 --- !u!1 &6257457960872965068
 GameObject:
   m_ObjectHideFlags: 0
