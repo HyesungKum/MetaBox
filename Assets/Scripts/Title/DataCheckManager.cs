@@ -20,7 +20,7 @@ public class DataCheckManager : MonoSingleTon<DataCheckManager>
     public int GetCharIndex() => curUserData.charIndex;
     public string GetID() => curUserData.ID;
     //====================================================save path===========================================================
-    [SerializeField] string fileName = "TownSaveData.json";
+    [SerializeField] string fileName = "SaveData.json";
 
     #if UNITY_EDITOR
     [SerializeField] private string defaultPath = "/MetaBox/SaveData/";
