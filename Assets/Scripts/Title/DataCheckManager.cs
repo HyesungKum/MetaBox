@@ -7,7 +7,7 @@ using UnityEngine;
 [Serializable]
 struct UserData
 {
-    public string ID;
+    public string id;
     public int charIndex;
     public bool troughTown;
 }
@@ -18,7 +18,7 @@ public class DataCheckManager : MonoSingleTon<DataCheckManager>
     [SerializeField] UserData curUserData;
 
     public int GetCharIndex() => curUserData.charIndex;
-    public string GetID() => curUserData.ID;
+    public string GetID() => curUserData.id;
     //====================================================save path===========================================================
     [SerializeField] string fileName = "SaveData.json";
 
@@ -63,7 +63,7 @@ public class DataCheckManager : MonoSingleTon<DataCheckManager>
     {
         UserData userData = new()
         {
-            ID = id,
+            id = id,
             charIndex = charIndex,
             troughTown = troughTown
         };
