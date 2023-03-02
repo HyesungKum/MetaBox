@@ -171,13 +171,12 @@ namespace RankingDB
             #endregion
 
             #region Data Reset
+            dataSorting = new DataSorting();
             freezeData = new FreezeData();
             heyCookData = new HeyCookData();
             melodiaData = new MelodiaData();
             sketchUpData = new SketchUpData();
             #endregion
-
-            dataSorting = new DataSorting();
 
             #region User Ranking Data Dictionary Reset
             levelOneDict = new Dictionary<string, long>();
