@@ -64,12 +64,11 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         DataManager.Instance.LoadGameData();
-        SoundManager.Instance.AddButtonListener();
-        LevelSetting(StartUI.MyLevel);
+        LevelSetting(StartManager.MyLevel);
         if (postPrefab == null) postPrefab = (GameObject)Resources.Load(nameof(postPrefab));
         wait1 = new WaitForSeconds(1f);
         waitWaveStart = new WaitForSeconds(4f);
-        SoundManager.Instance.MusicStart(1);
+        SoundManager.Instance.PlayBGM(1);
     }
 
     public void LevelSetting(int level)

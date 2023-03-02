@@ -43,12 +43,6 @@ public class SaveUserData : MonoBehaviour
     //===================================CurData=============================
     public PlayData curPlayData = new();
 
-    [SerializeField] private string localSavePath = "/MetaBox/SaveData/HCSaveData.json";
-#if UNITY_EDITOR
-    [SerializeField] private string defaultPath = "/MetaBox/SaveData/";
-#else
-    private string defaultPath = "/storage/emulated/0/MetaBox/SaveData/TownSaveData.json";
-#endif
 
     //===============================InternetConnection======================
     public bool OnlineMode;
@@ -67,7 +61,7 @@ public class SaveUserData : MonoBehaviour
             // MongoDB database name
             dataBase = clientData.GetDatabase("RankingDB");
             // MongoDB collection name
-            Collection = dataBase.GetCollection<BsonDocument>("FreezeRanking");
+            Collection = dataBase.GetCollection<BsonDocument>("PoliRunRanking");
         }
 
         //delegate
@@ -76,7 +70,7 @@ public class SaveUserData : MonoBehaviour
 
     private void Start()  
     {
-        curPlayData.id = StartUI.curUserData.ID;
+        curPlayData.id = StartManager.curUserData.id;
         LoadData(curPlayData.id);
     }
 
@@ -158,9 +152,9 @@ public class SaveUserData : MonoBehaviour
     public void SaveData()
     {
         if (curPlayData.id == null) return;
-        if (GetOldScore(StartUI.MyLevel) < GameManager.Instance.PlayTime)
+        if (GetOldScore(StartManager.MyLevel) < GameManager.Instance.PlayTime)
         {
-            switch (StartUI.MyLevel)
+            switch (StartManager.MyLevel)
             {
                 case 1: curPlayData.levelOne[0] = GameManager.Instance.PlayTime; break;
                 case 2: curPlayData.levelTwo[0] = GameManager.Instance.PlayTime; break;
@@ -168,8 +162,8 @@ public class SaveUserData : MonoBehaviour
                 case 4: curPlayData.levelFour[0] = GameManager.Instance.PlayTime; break;
             }
 
-            if (OnlineMode) SaveMongoDB(StartUI.MyLevel, GameManager.Instance.PlayTime);
-            else SaveLocalDB(StartUI.MyLevel, GameManager.Instance.PlayTime);
+            if (OnlineMode) SaveMongoDB(StartManager.MyLevel, GameManager.Instance.PlayTime);
+            else SaveLocalDB(StartManager.MyLevel, GameManager.Instance.PlayTime);
         }
     }
     private void SaveMongoDB(int gameLevel, long playtime)

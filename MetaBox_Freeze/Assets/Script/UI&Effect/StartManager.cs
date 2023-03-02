@@ -1,20 +1,24 @@
 using Newtonsoft.Json;
+using ObjectPoolCP;
+using System.Collections;
 using System.IO;
 using ToolKum.AppTransition;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public struct UserData
 {
-    public string ID;
+    public string id;
     public int charIndex;
     public bool troughTown;
 }
 
-public class StartUI : MonoBehaviour
+public class StartManager : MonoBehaviour
 {
     public static UserData curUserData = new();
     public static int MyLevel { get; private set; } = 0;
+
 
     [Header("Panel Control")]
     [SerializeField] GameObject startPanel = null;
@@ -44,13 +48,17 @@ public class StartUI : MonoBehaviour
     [SerializeField] Button quit = null;
     [SerializeField] Button back_Game = null;
 
+    [Header("Button Event")]
+    [SerializeField] GameObject touchEff = null;
+    WaitForSeconds playEff = new WaitForSeconds(2f);
+
     [Header("[Application Setting]")]
-    [SerializeField] string mainPackName = "com.MetaBox.MetaBox_Main";
-    [SerializeField] private string localSavePath = "/MetaBox/SaveData/HCSaveData.json";
+    [SerializeField] string mainPackName = "com.MetaBox.DreamCatcher";
+
 #if UNITY_EDITOR
-    [SerializeField] private string defaultPath = "/MetaBox/SaveData/";
+    [SerializeField] private string localSavePath = "/MetaBox/SaveData/SaveData.json";
 #else
-    private string defaultPath = "/storage/emulated/0/MetaBox/SaveData/TownSaveData.json";
+    private string localSavePath = "/storage/emulated/0/MetaBox/SaveData/SaveData.json";
 #endif
 
     void Awake()
@@ -78,16 +86,15 @@ public class StartUI : MonoBehaviour
         back_Game.onClick.AddListener(() => startPanel.SetActive(true));
         back_Game.onClick.AddListener(() => exitPanel.SetActive(false));
 
+        AddButtonListener();
     }
 
     private void Start()
     {
-        SoundManager.Instance.AddButtonListener();
-        SoundManager.Instance.MusicStart(0);
+        SoundManager.Instance.PlayBGM(0);
         FileCheck();
     }
 
-    //=============================================Check Local File===============================================
     private void FileCheck()
     {
         if (File.Exists(localSavePath))
@@ -96,7 +103,7 @@ public class StartUI : MonoBehaviour
         }
         else //존재하지 않을때 
         {
-            curUserData.ID = "New";
+            curUserData.id = "New";
             curUserData.charIndex = 0;
             curUserData.troughTown = false;
         }
@@ -108,6 +115,48 @@ public class StartUI : MonoBehaviour
 
         return readData;
     }
+
+
+    #region Button
+    public void AddButtonListener()
+    {
+        GameObject[] rootObj = GetSceneRootObject();
+
+        for (int i = 0; i < rootObj.Length; i++)
+        {
+            GameObject go = (GameObject)rootObj[i] as GameObject;
+            Component[] buttons = go.transform.GetComponentsInChildren(typeof(Button), true);
+            foreach (Button button in buttons)
+            {
+                button.onClick.AddListener(delegate { OnClickButton(button.transform.position); });
+                button.onClick.AddListener(() => SoundManager.Instance.PlaySFX(SFX.Button));
+            }
+        }
+    }
+
+    void OnClickButton(Vector3 pos)
+    {
+        StartCoroutine(TouchEff(pos));
+    }
+
+    IEnumerator TouchEff(Vector3 movepoint)
+    {
+        GameObject effect = PoolCp.Inst.BringObjectCp(touchEff);
+        effect.transform.position = movepoint;
+
+        yield return playEff;
+
+        if (effect != null) PoolCp.Inst.DestoryObjectCp(effect);
+    }
+
+    GameObject[] GetSceneRootObject()
+    {
+        Scene curscene = SceneManager.GetActiveScene();
+        return curscene.GetRootGameObjects();
+    }
+
+    #endregion
+
 
     void SetPanel(bool panel)
     {
@@ -142,3 +191,4 @@ public class StartUI : MonoBehaviour
         else Application.Quit();
     }
 }
+

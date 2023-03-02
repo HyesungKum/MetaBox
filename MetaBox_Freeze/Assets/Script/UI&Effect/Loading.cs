@@ -8,7 +8,7 @@ public class Loading : MonoBehaviour
 {
     AsyncOperation asyncLoad = null;
 
-    [Header("UI Control")]
+    [Header("LoadingUI Control")]
     [SerializeField] Slider loadingBar = null;
     [SerializeField] TextMeshProUGUI loadingprogress = null;
 
@@ -32,7 +32,7 @@ public class Loading : MonoBehaviour
 
     IEnumerator Loop()
     {
-        asyncLoad = SceneManager.LoadSceneAsync("Freeze");
+        asyncLoad = SceneManager.LoadSceneAsync("Main");
         asyncLoad.allowSceneActivation = false;
         SoundManager.Instance.PlaySFX(SFX.Siren);
 

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public struct UserData
 {
-    public string ID;
+    public string id;
     public int charIndex;
     public bool troughTown;
 }
@@ -73,12 +73,12 @@ public class StartUI : MonoBehaviour
     [SerializeField] Button no;
 
     [Header("[Application Setting]")]
-    [SerializeField] string mainPackName = "com.MetaBox.MetaBox_Main";
-    [SerializeField] private string localSavePath = "/MetaBox/SaveData/HCSaveData.json";
+    [SerializeField] string mainPackName = "com.MetaBox.DreamCatcher";
+
 #if UNITY_EDITOR
-    [SerializeField] private string defaultPath = "/MetaBox/SaveData/";
+    [SerializeField] private string localSavePath = "/MetaBox/SaveData/SaveData.json";
 #else
-    private string defaultPath = "/storage/emulated/0/MetaBox/SaveData/TownSaveData.json";
+    private string localSavePath = "/storage/emulated/0/MetaBox/SaveData/SaveData.json";
 #endif
 
     private void Awake()
@@ -125,7 +125,7 @@ public class StartUI : MonoBehaviour
         }
         else //존재하지 않을때 
         {
-            curUserData.ID = "New";
+            curUserData.id = "New";
             curUserData.charIndex = 0;
             curUserData.troughTown = false;
         }

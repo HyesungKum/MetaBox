@@ -687,6 +687,7 @@ MonoBehaviour:
   stageNum: {fileID: 1065946476}
   stageCount: {fileID: 1530598214}
   fade: {fileID: 667991672}
+  touchEff: {fileID: 6759499290572221957, guid: acc38adddd9fdb64280d9ddc568713fb, type: 3}
 --- !u!1 &160879599
 GameObject:
   m_ObjectHideFlags: 0
@@ -12738,10 +12739,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c86ed260c16c59849872d0a6d70399b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  curUserData:
-    ID: 
-    charIndex: 0
-    troughTown: 0
   localSavePath: /MetaBox/SaveData/HCSaveData.json
   defaultPath: /MetaBox/SaveData/
   OnlineMode: 0

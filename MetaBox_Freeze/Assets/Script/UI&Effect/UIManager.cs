@@ -1,6 +1,8 @@
+using ObjectPoolCP;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -38,24 +40,67 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] Fade fade = null;
 
-    WaitForSeconds waitHalf = null;
-    WaitForSeconds wait1 = null;
+    [Header("Button Event")]
+    [SerializeField] GameObject touchEff = null;
+
+    WaitForSeconds waitHalf = new WaitForSeconds(0.5f);
+    WaitForSeconds wait1 = new WaitForSeconds(1f);
 
     void Awake()
     {
         option.onClick.AddListener(OnClick_Option);
-        waitHalf = new WaitForSeconds(0.5f);
-        wait1 = new WaitForSeconds(1f);
 
         optionPanel.SetActive(false);
         gameClearPanel.SetActive(false);
         gameFailPanel.SetActive(false);
 
-
         countDown.gameObject.SetActive(false);
         gameStart.gameObject.SetActive(false);
         stageClear.SetActive(false);
+
+        AddButtonListener();
     }
+
+    #region Button
+    public void AddButtonListener()
+    {
+        GameObject[] rootObj = GetSceneRootObject();
+
+        for (int i = 0; i < rootObj.Length; i++)
+        {
+            GameObject go = (GameObject)rootObj[i] as GameObject;
+            Component[] buttons = go.transform.GetComponentsInChildren(typeof(Button), true);
+            foreach (Button button in buttons)
+            {
+                button.onClick.AddListener(delegate { OnClickButton(button.transform.position); });
+                button.onClick.AddListener(() => SoundManager.Instance.PlaySFX(SFX.Button));
+            }
+        }
+    }
+
+    void OnClickButton(Vector3 pos)
+    {
+        StartCoroutine(TouchEff(pos));
+    }
+
+    IEnumerator TouchEff(Vector3 movepoint)
+    {
+        GameObject effect = PoolCp.Inst.BringObjectCp(touchEff);
+        effect.transform.position = movepoint;
+
+        yield return wait1;
+        yield return wait1;
+
+        if (effect != null) PoolCp.Inst.DestoryObjectCp(effect);
+    }
+
+    GameObject[] GetSceneRootObject()
+    {
+        Scene curscene = SceneManager.GetActiveScene();
+        return curscene.GetRootGameObjects();
+    }
+
+    #endregion
 
     public void DataSetting()
     {
@@ -116,7 +161,7 @@ public class UIManager : MonoBehaviour
 
         Time.timeScale = 1f;
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
-        
+
         fade.FadeOut(0);
     }
 }
