@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 #region Data Structor
 [Serializable]
-public class FreezeData
+public class PoliRunData
 {
     public string id;
 
@@ -59,7 +59,7 @@ public class MelodiaSongArry
     public long[] levelFour = new long[3];
 }
 [Serializable]
-public class SketchUpData
+public class DreamSketchData
 {
     public string id;
 
@@ -74,10 +74,10 @@ public class MongoIDManager : MonoBehaviour
 {
     readonly MongoClient clientData = new("mongodb+srv://metabox:metabox@metabox.fon8dvx.mongodb.net/?retryWrites=true&w=majority");
     IMongoDatabase dataBase = null;
-    IMongoCollection<BsonDocument> FreezeCollection = null;
+    IMongoCollection<BsonDocument> PoliRunCollection = null;
     IMongoCollection<BsonDocument> HeyCookCollection = null;
     IMongoCollection<BsonDocument> MelodiaCollection = null;
-    IMongoCollection<BsonDocument> SketchUpCollection = null;
+    IMongoCollection<BsonDocument> DreamSketchCollection = null;
 
     [Header("[Login UserID]")]
     [SerializeField] TMP_InputField inputID = null;
@@ -102,10 +102,10 @@ public class MongoIDManager : MonoBehaviour
         dataBase = clientData.GetDatabase("RankingDB");
 
         // MongoDB collection name
-        FreezeCollection = dataBase.GetCollection<BsonDocument>("FreezeRanking");
+        PoliRunCollection = dataBase.GetCollection<BsonDocument>("PoliRunRanking");
         HeyCookCollection = dataBase.GetCollection<BsonDocument>("HeyCookRanking");
         MelodiaCollection = dataBase.GetCollection<BsonDocument>("MelodiaRanking");
-        SketchUpCollection = dataBase.GetCollection<BsonDocument>("SketchUpRanking");
+        DreamSketchCollection = dataBase.GetCollection<BsonDocument>("DreamSketchRanking");
 
         // === Button Event Setting ===
         IDSaveButton.interactable = false;
@@ -134,29 +134,29 @@ public class MongoIDManager : MonoBehaviour
             return;
         }
 
-        BsonDocument checkFreezeID = CheckFreezeID(ID);
+        BsonDocument checkPoliRunID = CheckPoliRunID(ID);
         BsonDocument checkHeyCookID = CheckHeyCookID(ID);
         BsonDocument checkMelodiaID = CheckMelodiaID(ID);
-        BsonDocument checkSketchUpID = CheckSketchUpID(ID);
+        BsonDocument checkDreamSketchID = CheckDreamSketchID(ID);
 
-        if (checkFreezeID == null && checkHeyCookID == null &&
-            checkMelodiaID == null && checkSketchUpID == null)
+        if (checkPoliRunID == null && checkHeyCookID == null &&
+            checkMelodiaID == null && checkDreamSketchID == null)
         {
             IDSaveButton.interactable = false;
             inputID.interactable = false;
             infoText.gameObject.SetActive(false);
 
-            FreezeData freezeData = new();
+            PoliRunData polirunData = new();
             HeyCookData heyCookData = new();
             MelodiaData melodiaData = new();
-            SketchUpData sketchUpData = new();
+            DreamSketchData dreamSketchData = new();
 
             long curTime = TimeSetting();
 
-            SaveFreezeDataBase(freezeData, ID, 0, curTime);
+            SavePoliRunDataBase(polirunData, ID, 0, curTime);
             SaveHeyCookDataBase(heyCookData, ID, 0, curTime);
             SaveMelodiaDataBase(melodiaData, ID, 0, curTime);
-            SaveSketchUpDataBase(sketchUpData, ID, 0, curTime);
+            SaveDreamSketchDataBase(dreamSketchData, ID, 0, curTime);
 
             EventReceiver.CallSaveEvent(ID, GetCharIndex, true);
         }
@@ -168,10 +168,10 @@ public class MongoIDManager : MonoBehaviour
     }
 
     //==============================================================Check ID Overlap on MongoDB===========================================================
-    BsonDocument CheckFreezeID(string findId)
+    BsonDocument CheckPoliRunID(string findId)
     {
         BsonDocument filter = new () { { "_id", findId } };
-        BsonDocument targetData = FreezeCollection.Find(filter).FirstOrDefault();
+        BsonDocument targetData = PoliRunCollection.Find(filter).FirstOrDefault();
 
         return targetData;
     }
@@ -189,16 +189,15 @@ public class MongoIDManager : MonoBehaviour
 
         return targetData;
     }
-    BsonDocument CheckSketchUpID(string findId)
+    BsonDocument CheckDreamSketchID(string findId)
     {
         BsonDocument filter = new() { { "_id", findId } };
-        BsonDocument targetData = SketchUpCollection.Find(filter).FirstOrDefault();
+        BsonDocument targetData = DreamSketchCollection.Find(filter).FirstOrDefault();
 
         return targetData;
     }
-
     //==================================================================Save Default Data=================================================================
-    public async void SaveFreezeDataBase(FreezeData newData, string id, long point, long time)
+    public async void SavePoliRunDataBase(PoliRunData newData, string id, long point, long time)
     {
         newData.id = id;
         newData.levelOne[0] = point;
@@ -212,7 +211,7 @@ public class MongoIDManager : MonoBehaviour
 
         newData.levelFour[0] = point;
         newData.levelFour[1] = TimeSetting();
-        await FreezeCollection.InsertOneAsync(newData.ToBsonDocument());
+        await PoliRunCollection.InsertOneAsync(newData.ToBsonDocument());
     }
     public async void SaveHeyCookDataBase(HeyCookData newData, string id, long point, long time)
     {
@@ -273,7 +272,7 @@ public class MongoIDManager : MonoBehaviour
         #endregion
         await MelodiaCollection.InsertOneAsync(newData.ToBsonDocument());
     }
-    public async void SaveSketchUpDataBase(SketchUpData newData, string id, long point , long time)
+    public async void SaveDreamSketchDataBase(DreamSketchData newData, string id, long point , long time)
     {
         newData.id = id;
         newData.levelOne[0] = point;
@@ -287,7 +286,7 @@ public class MongoIDManager : MonoBehaviour
 
         newData.levelFour[0] = point;
         newData.levelFour[1] = TimeSetting();
-        await SketchUpCollection.InsertOneAsync(newData.ToBsonDocument());
+        await DreamSketchCollection.InsertOneAsync(newData.ToBsonDocument());
     }
 
     //============================================== Play Game Time Setting : Year/Month/Day/Hour/Minute=================================================

@@ -36,25 +36,27 @@ public class TopTenRankMgr : MonoBehaviour
     [SerializeField] GameObject userDataPrefab = null;
 
     [Header("[Player Ranking]")]
-    [SerializeField] public GameObject freezePlayerRank = null;
+    [SerializeField] public GameObject poliRunPlayerRank = null;
     [SerializeField] public GameObject heyCookPlayerRank = null;
     [SerializeField] public GameObject melodiaPlayerRank = null;
-    [SerializeField] public GameObject sketchUpPlayerRank = null;
+    [SerializeField] public GameObject dreamSketchPlayerRank = null;
 
-    #region Freeze
-    [Header("[Freeze]")]
-    [SerializeField] public ScrollRect freezeScrollRect = null;
-    [SerializeField] public RectTransform[] freezeLevelShowRanking = null;
+    #region PoliRun
+    [Header("[PoliRun]")]
+    [SerializeField] public ScrollRect poliRunScrollRect = null;
+    [SerializeField] public RectTransform[] poliRunLevelShowRanking = null;
     [Space]
-    [SerializeField] Button[] freezeLevelButs = null;
+    [SerializeField] Button[] poliRunLevelButs = null;
     #endregion
+
     #region HeyCook
-    [Header("[HeyCook")]
+    [Header("[HeyCook]")]
     [SerializeField] public ScrollRect heyCookScrollRect = null;
     [SerializeField] public RectTransform[] heyCookLevelShowPanking = null;
     [Space]
     [SerializeField] Button[] heyCookLevelButton = null;
     #endregion
+
     #region Melodia
     [Header("[Melodia]")]
     [SerializeField] public ScrollRect melodiaSongOneScrollRect = null;
@@ -73,12 +75,13 @@ public class TopTenRankMgr : MonoBehaviour
     [SerializeField] Button[] melodiaSongThreeLevelButtons = null;
     [SerializeField] Button[] melodiaSongFourLevelButtons = null;
     #endregion
-    #region SketchUP
-    [Header("[SketchUP]")]
-    [SerializeField] public ScrollRect sketchUPScrollRect = null;
-    [SerializeField] public RectTransform[] sketchUPLevelShowRanking = null;
+
+    #region DreamSketch
+    [Header("[Dream Sketch]")]
+    [SerializeField] public ScrollRect DreamSketchScrollRect = null;
+    [SerializeField] public RectTransform[] dreamSketchLevelShowRanking = null;
     [Space]
-    [SerializeField] Button[] sketchUPLevelButtons;
+    [SerializeField] Button[] DreamSketchLevelButtons;
     #endregion
 
     [Space]
@@ -99,7 +102,7 @@ public class TopTenRankMgr : MonoBehaviour
 
     void Awake()
     {
-        sketchUpPlayerRank.TryGetComponent<UserDatePrefab>(out userDataSet);
+        dreamSketchPlayerRank.TryGetComponent<UserDatePrefab>(out userDataSet);
         playerData = new playerData();
         levelset = new levelSet();
 
@@ -113,11 +116,11 @@ public class TopTenRankMgr : MonoBehaviour
 
         #region Button Event Setting
         // freeze Button
-        FirstSet(freezeLevelShowRanking);
-        freezeLevelButs[0].onClick.AddListener(delegate { CheckTruePos(freezeScrollRect, freezeLevelShowRanking, freezePlayerRank, playerDataList, 0); });
-        freezeLevelButs[1].onClick.AddListener(delegate { CheckTruePos(freezeScrollRect, freezeLevelShowRanking, freezePlayerRank, playerDataList, 1); });
-        freezeLevelButs[2].onClick.AddListener(delegate { CheckTruePos(freezeScrollRect, freezeLevelShowRanking, freezePlayerRank, playerDataList, 2); });
-        freezeLevelButs[3].onClick.AddListener(delegate { CheckTruePos(freezeScrollRect, freezeLevelShowRanking, freezePlayerRank, playerDataList, 3); });
+        FirstSet(poliRunLevelShowRanking);
+        poliRunLevelButs[0].onClick.AddListener(delegate { CheckTruePos(poliRunScrollRect, poliRunLevelShowRanking, poliRunPlayerRank, playerDataList, 0); });
+        poliRunLevelButs[1].onClick.AddListener(delegate { CheckTruePos(poliRunScrollRect, poliRunLevelShowRanking, poliRunPlayerRank, playerDataList, 1); });
+        poliRunLevelButs[2].onClick.AddListener(delegate { CheckTruePos(poliRunScrollRect, poliRunLevelShowRanking, poliRunPlayerRank, playerDataList, 2); });
+        poliRunLevelButs[3].onClick.AddListener(delegate { CheckTruePos(poliRunScrollRect, poliRunLevelShowRanking, poliRunPlayerRank, playerDataList, 3); });
         #endregion
 
         #region heyCook Button
@@ -156,12 +159,12 @@ public class TopTenRankMgr : MonoBehaviour
         melodiaSongFourLevelButtons[3].onClick.AddListener(delegate { CheckTruePos(melodiaSongFourScrollRect, melodiaSongFourRanking, melodiaPlayerRank, playerMelodiaSongFourDataList, 3); });
         #endregion
 
-        #region sketchUP Button
-        FirstSet(sketchUPLevelShowRanking);
-        sketchUPLevelButtons[0].onClick.AddListener(delegate { CheckTruePos(sketchUPScrollRect, sketchUPLevelShowRanking, sketchUpPlayerRank, playerDataList, 0); });
-        sketchUPLevelButtons[1].onClick.AddListener(delegate { CheckTruePos(sketchUPScrollRect, sketchUPLevelShowRanking, sketchUpPlayerRank, playerDataList, 1); });
-        sketchUPLevelButtons[2].onClick.AddListener(delegate { CheckTruePos(sketchUPScrollRect, sketchUPLevelShowRanking, sketchUpPlayerRank, playerDataList, 2); });
-        sketchUPLevelButtons[3].onClick.AddListener(delegate { CheckTruePos(sketchUPScrollRect, sketchUPLevelShowRanking, sketchUpPlayerRank, playerDataList, 3); });
+        #region DreamSketch Button
+        FirstSet(dreamSketchLevelShowRanking);
+        DreamSketchLevelButtons[0].onClick.AddListener(delegate { CheckTruePos(DreamSketchScrollRect, dreamSketchLevelShowRanking, dreamSketchPlayerRank, playerDataList, 0); });
+        DreamSketchLevelButtons[1].onClick.AddListener(delegate { CheckTruePos(DreamSketchScrollRect, dreamSketchLevelShowRanking, dreamSketchPlayerRank, playerDataList, 1); });
+        DreamSketchLevelButtons[2].onClick.AddListener(delegate { CheckTruePos(DreamSketchScrollRect, dreamSketchLevelShowRanking, dreamSketchPlayerRank, playerDataList, 2); });
+        DreamSketchLevelButtons[3].onClick.AddListener(delegate { CheckTruePos(DreamSketchScrollRect, dreamSketchLevelShowRanking, dreamSketchPlayerRank, playerDataList, 3); });
         #endregion
     }
 
@@ -316,7 +319,7 @@ public class TopTenRankMgr : MonoBehaviour
 
     public void DestroyChild(RectTransform[] pos, int posnum)
     {
-        for (int i = 0; i < 10; ++i)
+        for (int i = 0; i < pos[posnum].transform.childCount; ++i)
         {
             instData = pos[posnum].transform.GetChild(i).gameObject;
             UserDataReset(instData);

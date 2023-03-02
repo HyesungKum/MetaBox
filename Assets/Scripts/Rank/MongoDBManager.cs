@@ -1,15 +1,17 @@
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Newtonsoft.Json;
 
 namespace RankingDB
 {
-    #region FreezeData
+    #region PoliRunData
     [Serializable]
-    public class FreezeData
+    public class PoliRunData
     {
         public string id;
 
@@ -70,9 +72,9 @@ namespace RankingDB
     }
     #endregion
 
-    #region SketchUpData
+    #region DreamSketchData
     [Serializable]
-    public class SketchUpData
+    public class DreamSketchData
     {
         public string id;
 
@@ -91,39 +93,47 @@ namespace RankingDB
         public long playtime;
     }
 
+    [Serializable]
+    public struct UserData
+    {
+        public string id;
+        public int charIndex;
+        public bool troughTown;
+    }
+
     public class MongoDBManager : MonoBehaviour
     {
         MongoClient clientData = new MongoClient("mongodb+srv://metabox:metabox@metabox.fon8dvx.mongodb.net/?retryWrites=true&w=majority");
         public IMongoDatabase dataBase = null;
 
         #region Collection
-        public IMongoCollection<BsonDocument> FreezeCollection = null;
+        public IMongoCollection<BsonDocument> PoliRunCollection = null;
         public IMongoCollection<BsonDocument> HeyCookCollection = null;
         public IMongoCollection<BsonDocument> MelodiaCollection = null;
-        public IMongoCollection<BsonDocument> SketchUpCollection = null;
+        public IMongoCollection<BsonDocument> DreamSketchCollection = null;
         #endregion
 
         #region Each Game Data
-        [Header("[Freeze Data]")]
-        [SerializeField] FreezeData freezeData = null;
+        [Header("[PoliRun Data]")]
+        [SerializeField] PoliRunData poliRunData = null;
         [Header("[HeyCook Data]")]
         [SerializeField] HeyCookData heyCookData = null;
         [Header("[Melodia Data]")]
         [SerializeField] MelodiaData melodiaData = null;
-        [Header("[SketchUp Data]")]
-        [SerializeField] SketchUpData sketchUpData = null;
+        [Header("[DreamSketch Data]")]
+        [SerializeField] DreamSketchData dreamSketchData = null;
         #endregion
-
+        [Space]
         public Dictionary<string, long> levelOneDict;
         public Dictionary<string, long> levelTwoDict;
         public Dictionary<string, long> levelThreeDict;
         public Dictionary<string, long> levelFourDict;
 
         DataSorting dataSorting = null;
-        public List<DataSorting> freezeLevelOneList;
-        public List<DataSorting> freezeLevelTwoList;
-        public List<DataSorting> freezeLevelThreeList;
-        public List<DataSorting> freezeLevelFourList;
+        public List<DataSorting> LevelOneList;
+        public List<DataSorting> LevelTwoList;
+        public List<DataSorting> LevelThreeList;
+        public List<DataSorting> LevelFourList;
 
         #region MelodiaDictionary
         public Dictionary<string, long> melodiaSongOneLevelOneDict;
@@ -147,9 +157,19 @@ namespace RankingDB
         public Dictionary<string, long> melodiaSongFourLevelFourDict;
         #endregion
 
-        [Space]
-        [SerializeField] string id = null;
-        public string ID { get { return id; } }
+        //=== app transition ===
+        [Header("[Application Setting]")]
+        [SerializeField] string fileName = "TownSaveData.json";
+        [SerializeField] public string mainPackName = "com.MetaBox.MetaBox_Main";
+#if UNITY_EDITOR
+        [SerializeField] private string localSavePath = "/MetaBox/SaveData/SaveData.json";
+#else
+    private string localSavePath = "/storage/emulated/0/MetaBox/SaveData/SaveData.json";
+#endif
+        public UserData curUserData;
+
+        private string id;
+        public string ID { get { return id; } set { id = value; } }
 
         public Dictionary<string, long> sortDict;
         public List<DataSorting> sortList;
@@ -164,18 +184,25 @@ namespace RankingDB
             #endregion
 
             #region MongoDB collection name
-            FreezeCollection = dataBase.GetCollection<BsonDocument>("FreezeRanking");
+            PoliRunCollection = dataBase.GetCollection<BsonDocument>("PoliRunRanking");
             HeyCookCollection = dataBase.GetCollection<BsonDocument>("HeyCookRanking");
             MelodiaCollection = dataBase.GetCollection<BsonDocument>("MelodiaRanking");
-            SketchUpCollection = dataBase.GetCollection<BsonDocument>("SketchUpRanking");
+            DreamSketchCollection = dataBase.GetCollection<BsonDocument>("DreamSketchRanking");
             #endregion
+
+            if (File.Exists(localSavePath))
+            {
+                curUserData = ReadSaveData(localSavePath);
+                ID = curUserData.id;
+                //Debug.Log("id : " + id);
+            }
 
             #region Data Reset
             dataSorting = new DataSorting();
-            freezeData = new FreezeData();
+            poliRunData = new PoliRunData();
             heyCookData = new HeyCookData();
             melodiaData = new MelodiaData();
-            sketchUpData = new SketchUpData();
+            dreamSketchData = new DreamSketchData();
             #endregion
 
             #region User Ranking Data Dictionary Reset
@@ -205,11 +232,6 @@ namespace RankingDB
             melodiaSongFourLevelFourDict = new Dictionary<string, long>();
             #endregion
 
-            #region Save Data to DB
-            //SaveFreezeData(freezeData, "¾È³ç1", 10);
-            //SaveFreezeData(freezeData, "¾È³ç2", 20);
-            #endregion
-
             #region DB Data All Delete
             //DeleteAllCollectionDataBase(FreezeCollection);
             //DeleteAllCollectionDataBase(HeyCookCollection);
@@ -218,16 +240,7 @@ namespace RankingDB
             #endregion
 
             #region Find ID Check
-            //CheckFreezeID(ID);
-            //CheckHeyCookID(ID);
-            //CheckMelodiaID(ID);
-            //CheckSketchUPID(ID);
-            #endregion
-
-            #region Changed Point
-            //ChangedPoint(SketchUpCollection, "¾È³ç2", "levelTwo", 250);
-            //ChangedPoint(SketchUpCollection, "¾È³ç4", "levelThree", 400);
-            //ChangedPoint(SketchUpCollection, "¾È³ç6", "levelFour", 600);
+            //FindID();
             #endregion
         }
 
@@ -315,7 +328,7 @@ namespace RankingDB
         public async void GetFreezeUserData(string levelNum, string findId, RectTransform pos)
         {
             BsonDocument find = new BsonDocument();
-            var allDataTask = FreezeCollection.FindAsync(find);
+            var allDataTask = PoliRunCollection.FindAsync(find);
             var scoreAwited = await allDataTask;
 
             BsonArray levelArry;
@@ -381,7 +394,7 @@ namespace RankingDB
         public async void GetSketchUpUserDatas(string levelNum, string findId, Dictionary<string, long> dict, RectTransform pos, int level)
         {
             BsonDocument find = new BsonDocument();
-            var allDataTask = SketchUpCollection.FindAsync(find);
+            var allDataTask = DreamSketchCollection.FindAsync(find);
             var scoreAwited = await allDataTask;
 
             BsonArray levelArry;
@@ -444,47 +457,19 @@ namespace RankingDB
         }
         #endregion
 
+        private UserData ReadSaveData(string path)
+        {
+            string dataStr = File.ReadAllText(path);
+            UserData readData = JsonConvert.DeserializeObject<UserData>(dataStr);
+
+            return readData;
+        }
+
         #region Find ID
         public BsonDocument FindID(IMongoCollection<BsonDocument> collection, string id)
         {
             BsonDocument findId = new BsonDocument { { "_id", id } };
             BsonDocument targetData = collection.Find(findId).FirstOrDefault();
-            return targetData;
-        }
-
-        public BsonDocument CheckFreezeID(string findId)
-        {
-            BsonDocument filter = new BsonDocument { { "_id", findId } };
-            BsonDocument targetData = FreezeCollection.Find(filter).FirstOrDefault();
-
-            Debug.Log("Find Freeze ID : " + targetData);
-            return targetData;
-        }
-
-        public BsonDocument CheckHeyCookID(string findId)
-        {
-            BsonDocument filter = new BsonDocument { { "_id", findId } };
-            BsonDocument targetData = HeyCookCollection.Find(filter).FirstOrDefault();
-
-            Debug.Log("Find HeyCook ID : " + targetData);
-            return targetData;
-        }
-
-        public BsonDocument CheckMelodiaID(string findId)
-        {
-            BsonDocument filter = new BsonDocument { { "_id", findId } };
-            BsonDocument targetData = MelodiaCollection.Find(filter).FirstOrDefault();
-
-            Debug.Log("Find Melodia ID : " + targetData);
-            return targetData;
-        }
-
-        public BsonDocument CheckSketchUPID(string findId)
-        {
-            BsonDocument filter = new BsonDocument { { "_id", findId } };
-            BsonDocument targetData = SketchUpCollection.Find(filter).FirstOrDefault();
-
-            Debug.Log("Find SketchUP : " + targetData);
             return targetData;
         }
         #endregion
@@ -501,22 +486,6 @@ namespace RankingDB
 
             UpdateDefinition<BsonDocument> updatePoint = Builders<BsonDocument>.Update.Set(levelNum, level);
             collection.UpdateOne(targetData, updatePoint);
-        }
-
-        public void ChangedSketchUpPoint(SketchUpData newData, string levleNum, string id)
-        {
-            BsonDocument filter = new BsonDocument { { "_id", id } };
-            BsonDocument targetData = SketchUpCollection.Find(filter).FirstOrDefault();
-            //Debug.Log("targetData : " + targetData);
-
-            long point = 2000;
-
-            long[] level = new long[2];
-            level[0] = point;
-            level[1] = TimeSetting();
-
-            UpdateDefinition<BsonDocument> updatePoint = Builders<BsonDocument>.Update.Set(levleNum, level);
-            SketchUpCollection.UpdateOne(targetData, updatePoint);
         }
         #endregion
 

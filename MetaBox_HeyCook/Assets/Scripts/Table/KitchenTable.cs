@@ -172,6 +172,8 @@ public class KitchenTable : MonoBehaviour
     //===============================Ingredeint In Out==================================
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (curIngred != null) return;
+
         if (NowCooking) return;
 
         if (collision.CompareTag(nameof(Ingredient)))
