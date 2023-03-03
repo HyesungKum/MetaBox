@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb5b4ede711941e4bba365b96ad694f3, type: 3}
+  m_Name: BoiledEgg
+  m_EditorClassIdentifier: 
+  foodName: BoiledEgg
+  foodImage: {fileID: 21300000, guid: 98040194e8b1afe4c8256a68196e2c9a, type: 3}
+  combineImage: {fileID: 21300000, guid: 016f6c03a678c9843bb83bc7b23bc9f4, type: 3}
+  cookType: 1
+  needTask: 5
+  Score: 30
+  cookingVfx: {fileID: 262072481014029920, guid: ab096f596f19e8f4785824cf76aa859b, type: 3}
+  foodVfx: {fileID: 5723804073002972127, guid: c787953b9b18834419f74f8081acc426, type: 3}
+  needIngred:
+  - {fileID: 11400000, guid: d275e6ba5d6bd22489cf7b059bccaad7, type: 2}
+  - {fileID: 11400000, guid: fa36750512be34d41827dcb1d551e370, type: 2}
+  - {fileID: 11400000, guid: c54feb3ac9a0d26458f4b40315615f98, type: 2}
