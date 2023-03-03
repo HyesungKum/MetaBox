@@ -1,12 +1,10 @@
+using MongoDB.Bson;
+using MongoDB.Driver;
+using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
 using UnityEngine.SceneManagement;
-using System;
-using MongoDB.Driver;
-using MongoDB.Bson;
-using Unity.VisualScripting;
+using UnityEngine.UI;
 
 public class InGamePanelSet : MonoBehaviour
 {
@@ -136,7 +134,6 @@ public class InGamePanelSet : MonoBehaviour
 
         #region MongoDB database
         id = LoadIDMgr.Inst.curUserData.id;
-        Debug.Log("id : " + id);
         #endregion
 
         levelIndexCheck = SoundManager.Inst.LevelIndex;
@@ -373,7 +370,6 @@ public class InGamePanelSet : MonoBehaviour
             InGameOptionSet(true);
             OneBrushPlayPanelSet(false);
             InGameSet(false);
-            LineColorAndSizeChange(false);
             Time.timeScale = 0;
             isOptionPanelOpen = true;
         }
@@ -389,7 +385,6 @@ public class InGamePanelSet : MonoBehaviour
             {
                 OneBrushPlayPanelSet(true);
                 InGameSet(true);
-                LineColorAndSizeChange(true);
             }
 
             Time.timeScale = 1;

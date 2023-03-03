@@ -27,9 +27,7 @@ public class ChoicePanel : MonoBehaviour
     GameObject instEffect = null;
 
     public int AudioIndex { get { return audioIndex; } }
-
-    private string answers;
-    public string Answers { get { return answers; } set { answers = value; } }
+    public string Answers { get ;  set ; }
 
     RandomChoiceKeyWord choickKeyWord;
     WaitForSeconds waittime;
@@ -44,7 +42,7 @@ public class ChoicePanel : MonoBehaviour
         InGamePanelSet.Inst.StageClearPanelSet(false);
         clearAnimation.TryGetComponent<ClearAnimation>(out clearAnimaition);
         TryGetComponent<RandomChoiceKeyWord>(out choickKeyWord);
-        Answers = choickKeyWord.KoreanAnswerKeyWord;
+        Answers = choickKeyWord.answer;
         obj.TryGetComponent<DrawLineCurve>(out drawline);
         waittime = new WaitForSeconds(0.2f);
     }

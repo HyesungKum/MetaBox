@@ -62,7 +62,6 @@ public class DrawLineCurve : MonoBehaviour
         lineVisitList = new List<GameObject>();
 
         choiceWordPanel.gameObject.SetActive(false); // 선택 판넬 비활성화
-
         InGamePanelSet.Inst.LineColorAndSizeChange(true);
         clearAnimation.gameObject.SetActive(false); // 애니메이션 이미지 비활성화
     }

@@ -2,39 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "AnimalData", menuName = "Data/AnimalData", order = 0)]
+[CreateAssetMenu(fileName = "AnimalNameData", menuName = "Data/AnimalNameData", order = 0)]
 
 public class ChoicePanelData : ScriptableObject
 {
     [Header("[Level Choice Panel Animal String]")]
-    [SerializeField] private string polarbear = "polarbear"; //ºÏ±Ø°õ
-    [SerializeField] private string reindeer = "reindeer";   //¼ø·Ï
-    [SerializeField] private string penguin = "penguin";     //Æë±Ï
-
-    [SerializeField] private string orca = "orca";           //¹ü°í·¡
-    [SerializeField] private string walrus = "walrus";       //¹Ù´ÙÄÚ³¢¸®
-    [SerializeField] private string dolphin = "dolphin";     //µ¹°í·¡
-
-    [SerializeField] private string giraffe = "giraffe";     //±â¸°
-    [SerializeField] private string elephant = "elephant";   //ÄÚ³¢¸®
-    [SerializeField] private string cheetah = "cheetah";     //Ä¡Å¸
-
-    [SerializeField] private string tiger = "tiger";         //È£¶ûÀÌ
-    [SerializeField] private string deer = "deer";           //»ç½¿
-    [SerializeField] private string rabbit = "rabbit";       //Åä³¢
-
-    #region Property
-    public string Polarbear { get { return polarbear; } set { polarbear = value; } }
-    public string Reindeer { get { return reindeer; } set { reindeer = value; } }
-    public string Penguin { get { return penguin; } set { penguin = value; } }
-    public string Orca { get { return orca; } set { orca = value; } }
-    public string Walrus { get { return walrus; } set { walrus = value; } }
-    public string Dolphin { get { return dolphin; } set { dolphin = value; } }
-    public string Giraffe { get { return giraffe; } set { giraffe = value; } }
-    public string Elephant { get { return elephant; } set { elephant = value; } }
-    public string Cheetah { get { return cheetah; } set { cheetah = value; } }
-    public string Tiger { get { return tiger; } set { tiger = value; } }
-    public string Deer { get { return deer; } set { deer = value; } }
-    public string Rabbit { get { return rabbit; } set { rabbit = value; } }
-    #endregion
+    [SerializeField] public string Polarbear = "ºÏ±Ø°õ"; //ºÏ±Ø°õ
+    [SerializeField] public string Reindeer = "¼ø·Ï";   //¼ø·Ï
+    [SerializeField] public string Penguin = "Æë±Ï";     //Æë±Ï
+                     
+    [SerializeField] public string Orca = "¹ü°í·¡";           //¹ü°í·¡
+    [SerializeField] public string Walrus = "¹Ù´ÙÄÚ³¢¸®";       //¹Ù´ÙÄÚ³¢¸®
+    [SerializeField] public string Dolphin = "µ¹°í·¡";     //µ¹°í·¡
+            
+    [SerializeField] public string Giraffe = "±â¸°";     //±â¸°
+    [SerializeField] public string Elephant = "ÄÚ³¢¸®";   //ÄÚ³¢¸®
+    [SerializeField] public string Cheetah = "Ä¡Å¸";     //Ä¡Å¸
+              
+    [SerializeField] public string Tiger = "È£¶ûÀÌ";         //È£¶ûÀÌ
+    [SerializeField] public string Deer = "»ç½¿";           //»ç½¿
+    [SerializeField] public string Rabbit = "Åä³¢";       //Åä³¢
 }

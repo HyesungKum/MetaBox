@@ -48,9 +48,6 @@ public class LoadIDMgr : MonoBehaviour
     }
     #endregion
 
-    //=== ID Check ===
-    [SerializeField] TextMeshProUGUI idCheck = null;
-
     // === MongoDB ===
     MongoClient clientData = new MongoClient("mongodb+srv://metabox:metabox@metabox.fon8dvx.mongodb.net/?retryWrites=true&w=majority");
     public IMongoDatabase dataBase = null;
@@ -58,13 +55,14 @@ public class LoadIDMgr : MonoBehaviour
 
     //=== app transition ===
     [Header("[Application Setting]")]
-    [SerializeField] string fileName = "TownSaveData.json";
-    [SerializeField] public string mainPackName = "com.MetaBox.MetaBox_Main";
+    [SerializeField] public string mainPackName = "com.MetaBox.DreamCatcher";
 #if UNITY_EDITOR
     [SerializeField] private string localSavePath = "/MetaBox/SaveData/SaveData.json";
 #else
     private string localSavePath = "/storage/emulated/0/MetaBox/SaveData/SaveData.json";
 #endif
+
+    public string id { get; set ; }
     public UserData curUserData;
     public DreamSketchData dreamSketchData;
 
@@ -83,11 +81,12 @@ public class LoadIDMgr : MonoBehaviour
         if (File.Exists(localSavePath))
         {
             curUserData = ReadSaveData(localSavePath);
-            idCheck.text = curUserData.id;
+            id = $"아이디 : {curUserData.id}";
         }
         else//존재하지 않을때 
         {
             curUserData.id = "전설의연습생";
+            id = $"아이디 : {curUserData.id}";
             if (FindID(curUserData.id) == null)
             {
                 SaveSketchUpDataBase(curUserData.id, 0);
@@ -108,7 +107,6 @@ public class LoadIDMgr : MonoBehaviour
     {
         string dataStr = File.ReadAllText(path);
         UserData readData = JsonConvert.DeserializeObject<UserData>(dataStr);
-
         return readData;
     }
 

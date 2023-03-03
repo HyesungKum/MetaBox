@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class StartPanelSet : MonoBehaviour
 {
@@ -12,10 +11,11 @@ public class StartPanelSet : MonoBehaviour
     [SerializeField] Button exitBut = null;
     [SerializeField] Button tutorial = null;
 
-    [SerializeField] string mainPackName = "com.MetaBox.MetaBox_Main";
+    [Header("[ID Check]")]
+    [SerializeField] TextMeshProUGUI id = null;
 
     void Awake()
-    {
+    { 
         gameStartBut.onClick.AddListener(delegate {  OnClickStartBut(); 
             SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(gameStartBut.transform.position); }); 
 
@@ -25,11 +25,13 @@ public class StartPanelSet : MonoBehaviour
         tutorial.onClick.AddListener(delegate { OnClickTutorial(); 
             SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(tutorial.transform.position);});
 
-        gotoTownBut.onClick.AddListener(delegate { MoveTown(mainPackName); 
-            SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(gotoTownBut.transform.position);});
-
         exitBut.onClick.AddListener(delegate{ OnClickQuitBut(); 
             SoundManager.Inst.ButtonSFXPlay(); SoundManager.Inst.ButtonEffect(exitBut.transform.position);});
+    }
+
+    void Start()
+    {
+        id.text = LoadIDMgr.Inst.id;
     }
 
     public void OnClickStartBut()
@@ -48,15 +50,6 @@ public class StartPanelSet : MonoBehaviour
     {
         StartSceneManager.Inst.TutorialPanelSet(true);
         this.gameObject.SetActive(false);
-    }
-
-    void MoveTown(string pakageName)
-    {
-        AndroidJavaClass jc = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-        AndroidJavaObject jo = jc.GetStatic<AndroidJavaObject>("currentActivity");
-        AndroidJavaObject pm = jo.Call<AndroidJavaObject>("getPackageManager");
-        AndroidJavaObject intent = pm.Call<AndroidJavaObject>("getLaunchIntentForPackage", pakageName);
-        jo.Call("startActivity", intent);
     }
 
     void OnClickQuitBut()
