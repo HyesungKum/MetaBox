@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
     public CallBackFunction policeReset = null; //police animator set - idle
 
 
-    [Header("Thief Control")]
+    //Thief Control
     public CallBackFunction spawnThief = null;
     public CallBackFunction openThief = null;
     public CallBackFunction hideThief = null;
@@ -51,7 +51,6 @@ public class GameManager : MonoBehaviour
     public GameData FreezeData { get; private set; }
     public List<StageData> StageDatas { get; private set; }
     public bool IsGaming { get; set; } = false;
-    public bool IsPreparing { get; private set; } = false; //wave Ready
     public int CurStage { get; private set; } = -1;
     public int PlayTime { get; private set; } = 0;
     public int CatchNumber { get; private set; } = 0;
