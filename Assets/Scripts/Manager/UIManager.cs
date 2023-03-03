@@ -163,8 +163,8 @@ public class UIManager : MonoBehaviour
                     ShowSketchUPRank(dreamSketchUIGroup);
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-                    if (PackageChecker.IsAppInstalled("com.MetaBox.SketchUP")) sketchUPStartButton.interactable = true;
-                    else sketchUPStartButton.interactable = false;
+                    if (PackageChecker.IsAppInstalled("com.MetaBox.DreamSketch")) dreamSketchStartButton.interactable = true;
+                    else dreamSketchStartButton.interactable = false;
 #endif
                 }
                 break;

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb5b4ede711941e4bba365b96ad694f3, type: 3}
+  m_Name: Hamburger
+  m_EditorClassIdentifier: 
+  foodName: Hamburger
+  foodImage: {fileID: 21300000, guid: 6c45bea7118de5d4a8dd4ff2d5d3249e, type: 3}
+  combineImage: {fileID: 21300000, guid: f9f9be1c34222204aab080ec3c70585e, type: 3}
+  cookType: 1
+  needTask: 6
+  Score: 40
+  cookingVfx: {fileID: 262072481014029920, guid: ab096f596f19e8f4785824cf76aa859b, type: 3}
+  foodVfx: {fileID: 5723804073002972127, guid: c787953b9b18834419f74f8081acc426, type: 3}
+  needIngred:
+  - {fileID: 11400000, guid: 613ff0f0c897ed641b0d319bf10d1bd3, type: 2}
+  - {fileID: 11400000, guid: 371f2fe4e08537f4ea4d9102a8f2c9e8, type: 2}
+  - {fileID: 11400000, guid: 9f043823d5eadda489b8a951602eff07, type: 2}

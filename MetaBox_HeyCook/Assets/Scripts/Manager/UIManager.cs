@@ -11,6 +11,9 @@ public class UIManager : MonoBehaviour
     [Header("[Master UI]")]
     [SerializeField] GameObject UICanvas;
 
+    [Header("[Vfx UI]")]
+    [SerializeField] GameObject VfxUICanvas;
+
     //current activation UI Object
     [Header("[Current Active UI]")]
     [SerializeField] GameObject curUI;
@@ -157,13 +160,13 @@ public class UIManager : MonoBehaviour
     void UICorrectIngred(Vector3 pos)
     {
          GameObject instText = PoolCp.Inst.BringObjectCp(correctVfx);
-         instText.transform.SetParent(UICanvas.transform, false);
+         instText.transform.SetParent(VfxUICanvas.transform, false);
          instText.transform.position = pos;
     }
     void UIWrongIngred(Vector3 pos)
     {
         GameObject instText = PoolCp.Inst.BringObjectCp(wrongVfx);
-        instText.transform.SetParent(UICanvas.transform, false);
+        instText.transform.SetParent(VfxUICanvas.transform, false);
         instText.transform.position = pos;
     }
 
