@@ -392,7 +392,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC5B4\uB824\uC6C0"
+  m_text: "\uC0AC\uBC14\uB098"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 23566142ca7bc234a8bca3ac4456c564, type: 2}
   m_sharedMaterial: {fileID: -2008219648814307868, guid: 23566142ca7bc234a8bca3ac4456c564, type: 2}
@@ -652,7 +652,7 @@ MonoBehaviour:
   gotoTownBut: {fileID: 1846317774}
   exitBut: {fileID: 1439455261}
   tutorial: {fileID: 1222258747}
-  mainPackName: com.MetaBox.MetaBox_Main
+  id: {fileID: 1879856024}
 --- !u!114 &346255104
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -673,7 +673,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1e3e413a4a3311945b4852007d168ac4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c62c81dfba9d8aa47b72b19f2a482564, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1228,7 +1228,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC26C\uC6C0"
+  m_text: "\uBD81\uADF9"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 23566142ca7bc234a8bca3ac4456c564, type: 2}
   m_sharedMaterial: {fileID: -2008219648814307868, guid: 23566142ca7bc234a8bca3ac4456c564, type: 2}
@@ -2113,7 +2113,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uB9E4\uC6B0 \n\uC5B4\uB824\uC6C0"
+  m_text: "\uC232"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 23566142ca7bc234a8bca3ac4456c564, type: 2}
   m_sharedMaterial: {fileID: -2008219648814307868, guid: 23566142ca7bc234a8bca3ac4456c564, type: 2}
@@ -5076,7 +5076,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uBCF4\uD1B5"
+  m_text: "\uBC14\uB2E4"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 23566142ca7bc234a8bca3ac4456c564, type: 2}
   m_sharedMaterial: {fileID: -2008219648814307868, guid: 23566142ca7bc234a8bca3ac4456c564, type: 2}
@@ -5525,7 +5525,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1879856023
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6618,6 +6618,18 @@ PrefabInstance:
       propertyPath: idCheck
       value: 
       objectReference: {fileID: 1879856024}
+    - target: {fileID: 2999989870160570108, guid: 2fd0addf48de57d45941b1c6749dc781, type: 3}
+      propertyPath: fileName
+      value: SaveData.json
+      objectReference: {fileID: 0}
+    - target: {fileID: 2999989870160570108, guid: 2fd0addf48de57d45941b1c6749dc781, type: 3}
+      propertyPath: mainPackName
+      value: com.MetaBox.DreamCatcher
+      objectReference: {fileID: 0}
+    - target: {fileID: 2999989870160570108, guid: 2fd0addf48de57d45941b1c6749dc781, type: 3}
+      propertyPath: localSavePath
+      value: /MetaBox/SaveData/SaveData.json
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2fd0addf48de57d45941b1c6749dc781, type: 3}
 --- !u!1001 &4136518319366683276

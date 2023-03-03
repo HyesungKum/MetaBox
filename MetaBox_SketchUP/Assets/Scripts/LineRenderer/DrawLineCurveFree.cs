@@ -30,18 +30,22 @@ public class DrawLineCurveFree : MonoBehaviour
             #region Began
             case TouchPhase.Began:
                 {
-                    //RaycastHit2D hitInfo = RayCheck();
+                    RaycastHit2D hitInfo = RayCheck();
 
-                    //if (hitInfo)
-                    //{
+                    if (hitInfo)
+                    {
                         //hitInfo.collider.name
                         //Debug.Log("hitInfo collider.name: " + hitInfo.transform.gameObject);
                         currentLine = ObjectPoolCP.PoolCp.Inst.BringObjectCp(linePrefab);
-                        // ºôµå ÇÒ´ë SetParent »©±â
                         currentLine.transform.SetParent(this.transform);
-                    
+                        currentLine.TryGetComponent<LineRender>(out linerender);
 
-                   //}
+                        Vector3 pos = hitInfo.transform.position;
+                        // ºôµå ÇÒ´ë SetParent »©±â
+
+                        linerender.SetPosition(0, pos);
+                        linerender.SetPosition(1, pos);
+                    }
                 }
                 break;
             #endregion
@@ -49,14 +53,13 @@ public class DrawLineCurveFree : MonoBehaviour
             #region Move
             case TouchPhase.Moved:
                 {
-                    //RaycastHit2D hitInfo = RayCheck();
+                    RaycastHit2D hitInfo = RayCheck();
 
-                    //if (hitInfo)
-                    //{
+                    if (hitInfo)
+                    {
                         currentLine.TryGetComponent<LineRender>(out linerender);
                         linerender.SetCurvePosition(touchPos);
-
-                   // }
+                    }
                 }
                 break;
                 #endregion
@@ -65,7 +68,7 @@ public class DrawLineCurveFree : MonoBehaviour
 
     RaycastHit2D RayCheck()
     {
-        touchPos = mainCam.ScreenToWorldPoint(new Vector3(myTouch.position.x, myTouch.position.y, 
+        touchPos = mainCam.ScreenToWorldPoint(new Vector3(myTouch.position.x, myTouch.position.y,
             Camera.main.nearClipPlane));
 
         Ray2D ray = new Ray2D(touchPos, Vector2.zero);

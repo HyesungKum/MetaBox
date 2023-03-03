@@ -931,7 +931,8 @@ MonoBehaviour:
   endNodeObj: {fileID: 0}
   prevObj: {fileID: 0}
   nextObj: {fileID: 0}
-  startPos: {x: 0, y: 0, z: 0}
+  firstObj: {fileID: 0}
+  lineVisitList: []
 --- !u!1 &1102995999242271260
 GameObject:
   m_ObjectHideFlags: 0
@@ -1030,16 +1031,9 @@ MonoBehaviour:
   choiceTwoButText: {fileID: 5055874117793061346}
   choiceThreeButText: {fileID: 3760940957667539744}
   choiceFourButText: {fileID: 7593244917080415437}
-  answerKeyWord: dolphin
-  koreanAnswerKeyWord: "\uB3CC\uACE0\uB798"
-  animalOne: orca
-  koreaAnimalOne: "\uBC94\uACE0\uB798"
-  animalTwo: walrus
-  koreaAnimalTwo: "\uBC14\uB2E4\uCF54\uB07C\uB9AC"
-  animalThree: penguin
-  koreaAnimalThree: "\uD3AD\uADC4"
+  answerKeyWord: "\uB3CC\uACE0\uB798"
   AnimalDataContainer: {fileID: 11400000, guid: 471252da2fcdf874f90c57d86572cdae, type: 2}
-  animalDataList: []
+  animalNameList: []
 --- !u!114 &237027026244067919
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1059,7 +1053,6 @@ MonoBehaviour:
   choiceThreeBut: {fileID: 887798895909927320}
   choiceFourBut: {fileID: 3477963926879612131}
   audioIndex: 6
-  stageClearEffect: {fileID: 5081905892664921335, guid: fadd40f78beec254daadc5d65e2ff592, type: 3}
 --- !u!1 &1183690711844623911
 GameObject:
   m_ObjectHideFlags: 0
