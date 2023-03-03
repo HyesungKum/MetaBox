@@ -6,12 +6,28 @@ using UnityEngine.UI;
 
 namespace BeanTool
 {
-    public class BeanMaterialChanger
+    public class BeanMaterialChanger : EditorWindow
     {
-        public const string PATH_MATERIAL_URP = "Assets/Materials/UrpMaterial.mat";
+        private Material changeMaterial;
 
         [MenuItem("BeanTool/BeanMaterialChanger")]
-        public static void ChangeMaterial()
+        public static void ShowWindow()
+        {
+            GetWindow<BeanMaterialChanger>("Material Changer");
+        }
+
+        private void OnGUI()
+        {
+            GUILayout.Label("Select Material", EditorStyles.boldLabel);
+            changeMaterial = (Material)EditorGUILayout.ObjectField(changeMaterial, typeof(Material), false);
+            
+            if (GUILayout.Button("Change Material"))
+            {
+                ChangeMaterial();
+            }
+        }
+
+        private void ChangeMaterial()
         {
             GameObject[] rootObj = GetSceneRootObject();
 
@@ -21,18 +37,19 @@ namespace BeanTool
                 Component[] com1 = go.transform.GetComponentsInChildren(typeof(SpriteRenderer), true);
                 foreach (SpriteRenderer sr in com1)
                 {
-                    sr.material = AssetDatabase.LoadAssetAtPath<Material>(PATH_MATERIAL_URP);
+                    sr.material = changeMaterial;
                 }
                 Component[] com2 = go.transform.GetComponentsInChildren(typeof(Image), true);
                 foreach (Image img in com2)
                 {
-                    img.material = AssetDatabase.LoadAssetAtPath<Material>(PATH_MATERIAL_URP);
+                    img.material = changeMaterial;
                 }
             }
 
             GameObject workObj = new GameObject("plz Delete job complete!");
         }
-        static GameObject[] GetSceneRootObject()
+
+        private GameObject[] GetSceneRootObject()
         {
             Scene curscene = EditorSceneManager.GetActiveScene();
             return curscene.GetRootGameObjects();
