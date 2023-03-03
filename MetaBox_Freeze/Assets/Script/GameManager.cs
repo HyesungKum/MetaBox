@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator WaveReady()
     {
-        if(CurStage.Equals(-1)) yield return wait1;
+        yield return wait1;
         yield return wait1;
         WaveSetting();
         playTimerEvent?.Invoke();
@@ -125,7 +125,7 @@ public class GameManager : MonoBehaviour
         {
             wantedThiefs.Add(PoolCp.Inst.BringObjectCp(theifImgPref));
             wantedThiefs[i].transform.position = new Vector2(xPos, 3.7f);
-            xPos += 0.7f;
+            xPos += 0.9f;
         }
     }
 
