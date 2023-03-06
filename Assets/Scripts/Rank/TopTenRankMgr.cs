@@ -218,14 +218,21 @@ public class TopTenRankMgr : MonoBehaviour
         if(rank == 1)
         {
             userDataSet.RankImgChangeTopOne();
+            userDataSet.MedalImgSetTure();
+            userDataSet.RankOneSprite();
         }
         else if(rank == 2)
         {
             userDataSet.RankImgChangeTopTwo();
+            userDataSet.MedalImgSetTure();
+            userDataSet.RankTwoSprite();
+
         }
         else if( rank == 3)
         {
             userDataSet.RankImgChangeTopThree();
+            userDataSet.MedalImgSetTure();
+            userDataSet.RankThreeSprite();
         }
         userDataSet.ShowIDSet(id);
         userDataSet.ShowPointSet(point);

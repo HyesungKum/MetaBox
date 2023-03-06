@@ -38,7 +38,7 @@ public class UIManager : MonoBehaviour
 {
     //current activation UI Object
     [Header("[Current Active UI]")]
-    [SerializeField] GameObject curUI;
+    [SerializeField] GameObject curUI = null;
 
     [Header("UI Group")]
     [SerializeField] GameObject mainUIGroup;
@@ -78,7 +78,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] TopTenRankMgr topTenRank = null;
 
     [Header("Ranking Info Text")]
-    [SerializeField] TextMeshProUGUI rankingInfo = null;
+    [SerializeField] GameObject rankingInfo = null;
 
     LevelString levelString;
 
@@ -243,7 +243,7 @@ public class UIManager : MonoBehaviour
     void ShowMelodiaRank(GameObject targetUIobj)
     {
         if (curUI.activeSelf) curUI.SetActive(false);
-        if (targetUIobj == melodiaUIGroup )
+        if (targetUIobj == melodiaUIGroup)
         {
             rankingInfo.gameObject.SetActive(true);
 
@@ -303,13 +303,13 @@ public class UIManager : MonoBehaviour
         }
 
         curUI = targetUIobj;
-        Invoke(nameof(ShowRanking), 0.5f);
+        Invoke(nameof(ShowRanking), 1f);
     }
 
     void ShowSketchUPRank(GameObject targetUIobj)
     {
         if (curUI.activeSelf) curUI.SetActive(false);
-        if (targetUIobj == dreamSketchUIGroup )
+        if (targetUIobj == dreamSketchUIGroup)
         {
             rankingInfo.gameObject.SetActive(true);
 
