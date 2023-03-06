@@ -30,8 +30,8 @@ Transform:
   m_LocalScale: {x: 0.8, y: 0.7, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4247210873432764273}
   - {fileID: 4187510819553731303}
+  - {fileID: 2144952698527429636}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   postImg: {fileID: 2605831806906307485}
-  thiefImg: {fileID: 834948064442759793}
+  thiefImg: {fileID: 4604940324700764149}
   arrestImg: {fileID: 7097556916676321586}
   PostPosYCurve:
     serializedVersion: 2
@@ -192,7 +192,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!1 &7381704832073272295
+--- !u!1 &3350341803735592788
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -200,37 +200,37 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4247210873432764273}
-  - component: {fileID: 834948064442759793}
+  - component: {fileID: 2144952698527429636}
+  - component: {fileID: 4604940324700764149}
   m_Layer: 0
-  m_Name: ThiefFreeze
+  m_Name: JokerNPCImg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4247210873432764273
+--- !u!4 &2144952698527429636
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7381704832073272295}
+  m_GameObject: {fileID: 3350341803735592788}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.10000069, y: -0.25, z: 0}
-  m_LocalScale: {x: 1.1666665, y: 1.4, z: 2}
+  m_LocalPosition: {x: -0.02, y: -0.23, z: 0}
+  m_LocalScale: {x: 0.49646756, y: 0.64844733, z: 31.744001}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1087136972640896512}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &834948064442759793
+--- !u!212 &4604940324700764149
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7381704832073272295}
+  m_GameObject: {fileID: 3350341803735592788}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -265,12 +265,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: fd81ab9109ad9eb418e7cb8d55044bd0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 19cdda4d2d7396a4e8bb75f23302714b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.0857143, y: 1.3428571}
+  m_Size: {x: 2.48, y: 3.07}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -306,7 +306,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1087136972640896512}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7097556916676321586
 SpriteRenderer:
