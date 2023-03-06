@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 using UnityEditor;
 
 public class BatchRename : ScriptableWizard
@@ -40,7 +37,6 @@ public class BatchRename : ScriptableWizard
 
         if (Selection.objects != null)
             helpString = "Number of objects selected: " + Selection.objects.Length;
-
     }
 
     // 이름 변경 
@@ -60,5 +56,4 @@ public class BatchRename : ScriptableWizard
             PostFix += Increment;
         }
     }
-
 }

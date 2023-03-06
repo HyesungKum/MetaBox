@@ -8,10 +8,10 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: PassMaterial
-  m_Shader: {fileID: 4800000, guid: 9a325b06a0fb8ae418af883312e92a43, type: 3}
-  m_ValidKeywords:
+  m_Shader: {fileID: 4800000, guid: 231cbd397be105d4793a8960418b3bb1, type: 3}
+  m_ValidKeywords: []
+  m_InvalidKeywords:
   - _ALPHATEST_ON
-  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -73,6 +73,9 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _StencilComp: 7
+    - _StencilPass: 0
+    - _StencilRef: 1
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:

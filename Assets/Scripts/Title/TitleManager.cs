@@ -1,6 +1,5 @@
 using Kum;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -19,6 +18,14 @@ public class TitleManager : MonoSingleTon<TitleManager>
 
     private new void Awake()
     {
+        //application settings
+        Application.targetFrameRate = 300;
+
+        Screen.autorotateToPortrait = true;
+        Screen.autorotateToPortraitUpsideDown = true;
+        Screen.autorotateToLandscapeLeft = true;
+        Screen.autorotateToLandscapeRight = true;
+
         //reference
         mainCam.TryGetComponent(out mainAudioListener);
 
